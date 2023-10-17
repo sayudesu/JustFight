@@ -17,13 +17,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ログテキストを作成するかどうか
 	SetOutApplicationLogValidFlag(Game::kCreateLogText);
 
-
 	// ＤＸライブラリ初期化処理
 	if (DxLib_Init() == -1)		
 	{
 		// エラーが起きたら直ちに終了
 		return -1;			
 	}
+
+	// 3D関連の設定
+	// Zバッファを有効にする。
+	SetUseZBuffer3D(true);
+	// Zバッファへの書き込みを有効にする。
+	// Effekseerを使用する場合、2DゲームでもZバッファを使用する。
+	SetWriteZBuffer3D(true);
+	// ポリゴンの裏面を描画しない
+	SetUseBackCulling(true);
 
 	// ダブルバッファモード
 	SetDrawScreen(DX_SCREEN_BACK);

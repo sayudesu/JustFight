@@ -143,16 +143,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Object\Camera\Camera.cpp" />
+    <ClCompile Include="Object\CharacterBase.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Object\Enemy\Enemy.cpp" />
+    <ClCompile Include="Object\Player\Player.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneDebug.cpp" />
+    <ClCompile Include="Scene\SceneMain.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="util\Pad.cpp" />
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Camera\Camera.h" />
+    <ClInclude Include="Object\CharacterBase.h" />
+    <ClInclude Include="Object\Enemy\Enemy.h" />
+    <ClInclude Include="Object\Player\Player.h" />
     <ClInclude Include="scene\SceneBase.h" />
     <ClInclude Include="scene\SceneDebug.h" />
+    <ClInclude Include="Scene\SceneMain.h" />
     <ClInclude Include="scene\SceneManager.h" />
     <ClInclude Include="util\Pad.h" />
     <ClInclude Include="util\Vec2.h" />

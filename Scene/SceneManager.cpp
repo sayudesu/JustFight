@@ -2,6 +2,7 @@
 #include <cassert>
 #include "SceneBase.h"
 #include "SceneDebug.h"
+#include "SceneMain.h"
 #include "../Util/Pad.h"
 
 SceneManager::SceneManager():
