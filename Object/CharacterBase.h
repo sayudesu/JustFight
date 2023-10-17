@@ -13,14 +13,16 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
-private:
 	virtual void UpdateInput();
 	virtual void Attack();
 	virtual void Guard();
 
-private:
+protected:
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
+	// 3Dモデルハンドル
+	int m_lanceHnadle;
+	int m_shieldHnadle;
 	// 位置
 	VECTOR m_pos;
 	// 移動量
