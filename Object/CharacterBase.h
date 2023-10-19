@@ -14,7 +14,6 @@ public:
 	virtual void Draw();
 	// “ü—Í
 	virtual void Input();
-protected:
 	// ƒAƒCƒhƒ‹ó‘Ô
 	virtual void Idle();
 	// UŒ‚
