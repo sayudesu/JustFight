@@ -5,11 +5,11 @@ namespace
 {
 	// フレーム管理
 	// 攻撃最大フレーム
-	constexpr int kAttackFrameMax = 25;
+	constexpr int kAttackFrameMax = 60 * 1;
 	// ガード最大フレーム
 	constexpr int kGuardFrameMax  = 15;
 	// ジャストガード最大フレーム
-	constexpr int kJustGuardFrameMax = 4;
+	constexpr int kJustGuardFrameMax = 12;
 
 	// 最大体力
 	constexpr int kHpMax = 6;

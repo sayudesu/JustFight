@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-16" view-index="0" gantt-divider-location="351" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
+<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-17" view-index="0" gantt-divider-location="351" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
     <description>
         <![CDATA[2.5Dアクション]]>
     </description>
@@ -8,7 +8,7 @@
         <field id="tpd5" name="終了日" width="75" order="2"/>
         <option id="filter.completedTasks" value="false"/>
         <timeline>
-            <![CDATA[1,2,3,0]]>
+            <![CDATA[3,2,0,1]]>
         </timeline>
         <option id="color.recent">
             <![CDATA[#ff6666 #ff0066 #ff3333 #ffcccc #ffff00 #cccccc #ccccff #ff9999 #ffffcc]]>
@@ -104,6 +104,7 @@
                     </notes>
                 </task>
                 <task id="23" name="ジャストガードされた場合の処理を実装する" color="#ff6666" meeting="false" start="2023-10-21" duration="1" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true"/>
+                <task id="29" name="ジャストガードされた後の硬直状態" color="#ff6666" meeting="false" start="2023-10-21" duration="1" complete="0" thirdDate="2023-10-21" thirdDate-constraint="0" priority="2" expand="true"/>
             </task>
             <task id="4" name="プレイヤー" color="#ff3333" meeting="false" start="2023-10-22" duration="4" complete="0" thirdDate="2023-10-08" thirdDate-constraint="0" priority="2" expand="true">
                 <task id="24" name="攻撃実装" color="#ff6666" meeting="false" start="2023-10-22" duration="1" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true"/>

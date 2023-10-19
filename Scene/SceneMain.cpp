@@ -115,11 +115,11 @@ void SceneMain::Draw()
 	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pPlayer->GetStamina(), 100, 15, 0xffff00);
 	DEBUG::FrameMeter("Eスタミナ", 100, 200, m_pEnemy->GetStamina(),  100, 15, 0xffff00);
 
-	DEBUG::FrameMeter("P攻撃フレーム", 100, 250, m_pPlayer->GetAttackFrameMax(), m_pPlayer->GetAttackFrame(), 30,0xffff00);
+	DEBUG::FrameMeter("P攻撃フレーム", 100, 250, m_pPlayer->GetAttackFrameMax(), m_pPlayer->GetAttackFrame(), 20,0xffff00);
 	DEBUG::FrameMeter("P防御フレーム", 100, 300, m_pPlayer->GetGuardFrameMax(), m_pPlayer->GetGuardFrame(), 30, 0xffff00);
 	DEBUG::FrameMeter("              + JustGuard", 100, 300, m_pPlayer->GetJustGuardFrameMax(), m_pPlayer->GetJustGuardFrame(), 30, 0xffffff);
 
-	DEBUG::FrameMeter("E攻撃フレーム", 100, 400, m_pEnemy->GetAttackFrameMax(), m_pEnemy->GetAttackFrame(), 30, 0xffff00);
+	DEBUG::FrameMeter("E攻撃フレーム", 100, 400, m_pEnemy->GetAttackFrameMax(), m_pEnemy->GetAttackFrame(), 20, 0xffff00);
 	DEBUG::FrameMeter("E防御フレーム", 100, 450, m_pEnemy->GetGuardFrameMax(), m_pEnemy->GetGuardFrame(), 30, 0xffff00);
 	DEBUG::FrameMeter("              + JustGuard", 100, 300, m_pEnemy->GetJustGuardFrameMax(), m_pEnemy->GetJustGuardFrame(), 30, 0xffffff);
 

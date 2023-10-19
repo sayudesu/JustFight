@@ -12,9 +12,9 @@ public:
 	virtual void End();
 	virtual void Update();
 	virtual void Draw();
-
 	// 入力
 	virtual void Input();
+protected:
 	// アイドル状態
 	virtual void Idle();
 	// 攻撃
@@ -42,7 +42,7 @@ public:
 	
 	// 攻撃を受けたかどうか
 	void SetDamage(bool isDamage);
-
+	// スタミナの管理
 	void SetStamina(int addStamina, int subStamina);
 protected:
 	// メンバ関数ポインタ
