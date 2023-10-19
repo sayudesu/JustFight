@@ -7,7 +7,7 @@ class Enemy : public CharacterBase
 public:
 	Enemy(VECTOR pos);
 	virtual ~Enemy();
-	void UpdateInput()override;
+	void Input()override;
 private:
 };
 

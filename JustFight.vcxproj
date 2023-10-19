@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DEBUG.cpp" />
+    <ClCompile Include="Util\MyLoadModel.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\CharacterBase.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -156,6 +158,8 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DEBUG.h" />
+    <ClInclude Include="Util\MyLoadModel.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\CharacterBase.h" />
     <ClInclude Include="Object\Enemy\Enemy.h" />

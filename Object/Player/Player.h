@@ -8,7 +8,8 @@ public:
 	Player(VECTOR pos);
 	virtual ~Player();
 	
+	// ƒ{ƒ^ƒ““ü—Í
+	void Input()override;
 private:
-	void UpdateInput()override;
 };
 

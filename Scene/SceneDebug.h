@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneBase.h"
+#include <vector>
 
 class SceneDebug : public SceneBase
 {
@@ -12,4 +13,6 @@ public:
 
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
+private:
+	std::vector<int>m_handle;
 };
