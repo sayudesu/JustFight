@@ -45,6 +45,11 @@ SceneBase* SceneMain::Update()
 	m_pEnemy->Update();
 	m_pEnemy->Input();
 
+	m_pCamera->Update();
+
+	m_pCamera->SetTargetPos(m_pPlayer->GetPos());
+	m_pCamera->SetLockonPos(m_pEnemy->GetPos());
+
 	m_pPlayer->SetDamage(false);
 	// Enemy‚ÌUŒ‚‚µ‚½ê‡‚Ìˆ—
 	if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())

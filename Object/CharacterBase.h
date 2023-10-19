@@ -21,6 +21,9 @@ public:
 	// 防御
 	virtual void Guard();
 public:
+	// 位置
+	VECTOR GetPos();
+
 	// 現在の攻撃フレーム
 	int GetAttackFrame();
 	// 現在の防御フレーム

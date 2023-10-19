@@ -146,6 +146,11 @@ void CharacterBase::Guard()
 	MV1SetPosition(m_shieldHnadle, m_posSield);
 }
 
+VECTOR CharacterBase::GetPos()
+{
+	return m_pos;
+}
+
 void CharacterBase::Draw()
 {
 	// ‘Ì
