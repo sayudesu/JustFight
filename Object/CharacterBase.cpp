@@ -24,8 +24,8 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_shieldHnadle(-1),
 	m_pos(pos),
 	m_vec(VGet(0,0,0)),
-	m_posWeapon(VGet(0, 0, 0)),
-	m_posSield(VGet(0, 0, 0)),
+	m_vecWeapon(VGet(0, 0, 0)),
+	m_vecSield(VGet(0, 0, 0)),
 	m_hp(kHpMax),
 	m_stamina(kStaminaMax),
 	m_isAttack(false),
@@ -43,16 +43,21 @@ CharacterBase::~CharacterBase()
 
 void CharacterBase::Init()
 {
-	m_lanceHnadle  = MyModel3D::Load("Data/Model/Lance.mv1");
+	m_lanceHnadle  = MyModel3D::Load("Data/Model/Lance2.mv1");
 	m_shieldHnadle = MyModel3D::Load("Data/Model/Shield.mv1");
 
-	m_posWeapon = VGet(m_pos.x + 30.0f, m_pos.y + 100.0f, m_pos.z - 130.0f);
-	m_posSield  = VGet(m_pos.x + 50.0f, m_pos.y + 100.0f, m_pos.z + 130.0f);
+	{
+		VECTOR move = VTransform(VGet(-80.0f, 100.0f, 0.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
+		MV1SetPosition(m_lanceHnadle, move);
+	}
+	{
+		VECTOR move = VTransform(VGet(100.0f, 100.0f, -50.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
+		MV1SetPosition(m_shieldHnadle, move);
+	}
 
-	MV1SetPosition(m_lanceHnadle, m_posWeapon);
-	MV1SetPosition(m_shieldHnadle, m_posSield);
-
-	MV1SetRotationXYZ(m_lanceHnadle,  VGet(0, 0, -90 * DX_PI_F / 180.0f));
+	MV1SetRotationXYZ(m_lanceHnadle,  VGet(0.0f, 0.0f,0.0f));
 	MV1SetRotationXYZ(m_shieldHnadle, VGet(0, -90 * DX_PI_F / 180.0f, 0));
 
 	MV1SetScale(m_shieldHnadle, VGet(3, 3, 3));
@@ -78,14 +83,14 @@ void CharacterBase::Idle()
 	SetStamina(0.2f, 0.0f);
 
 	{
-		VECTOR move = VTransform(VGet(-80.0f, 0.0f, 0.0f), m_rotMtx);
-		move = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+		VECTOR move = VTransform(VGet(-80.0f, 100.0f, 0.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle,0.0f));
 	}
 	{
-		VECTOR move = VTransform(VGet(100.0f, 0.0f, -50.0f), m_rotMtx);
-		move = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+		VECTOR move = VTransform(VGet(100.0f, 100.0f, -50.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_shieldHnadle, move);
 		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
 	}
@@ -102,8 +107,8 @@ void CharacterBase::Attack()
 	else
 	{
 		m_attackFrame = 0;
-		m_posWeapon = VGet(m_pos.x + 30.0f, m_pos.y + 100.0f, m_pos.z - 130.0f);
 		m_isAttack = false;
+		m_vecWeapon.z = 0.0f;
 		m_pFunc = &CharacterBase::Idle;
 	}
 
@@ -111,57 +116,79 @@ void CharacterBase::Attack()
 	if (m_attackFrame > kAttackFrameMax / 2)
 	{
 		// 武器モデルの移動
-		if(m_pos.x + 30.0f + 150.0f > m_posWeapon.x)
+		if(m_vecWeapon.z > -200.0f)
 		{
-			m_posWeapon.x += 50.0f;
-			m_posWeapon.z = m_pos.z;
+			m_vecWeapon.z -= 50.0f;
 		}
 	}
 	else
 	{
-		m_posWeapon.x -= 0.5f;
+		m_vecWeapon.z += 1.5f;
 	}
 
-	MV1SetPosition(m_lanceHnadle, m_posWeapon);
+	{
+		VECTOR move = VTransform(VGet(-80.0f, 100.0f, m_vecWeapon.z), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
+		MV1SetPosition(m_lanceHnadle, move);
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle,0.0f));
+	}
+	{
+		VECTOR move = VTransform(VGet(100.0f, 100.0f, -50.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
+		MV1SetPosition(m_shieldHnadle, move);
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+	}
 }
 
 void CharacterBase::Guard()
 {
 	SetStamina(0.0f, 0.0f);
-	
-	VECTOR move = VTransform(VGet(-5.0f, 0.0f, 0.0f), m_rotMtx);
-//	VECTOR resultPos = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
 
-	m_posSield = VAdd(m_posSield, move);
+	if (m_vecSield.x > 0.0f)
+	{
+		m_vecSield.x -= 15.0f;
+	}
+	else
+	{
+		m_vecSield.x = 0.0f;
+	}
 
-	//if (m_guardFrame < kGuardFrameMax)
-	//{
-	//	m_guardFrame++;
+	if (m_guardFrame < kGuardFrameMax)
+	{
+		m_guardFrame++;
 
-	//	// ジャストガードのフレーム
-	//	// + 1 はジャストガードの範囲外を示す
-	//	if (m_justGuardFrame < kJustGuardFrameMax + 1)
-	//	{
-	//		m_justGuardFrame++;
-	//	}
-	//	
-	//	
-	//}
-	//else
-	//{
-	//	m_guardFrame = kGuardFrameMax;
-	//}
+		// ジャストガードのフレーム
+		// + 1 はジャストガードの範囲外を示す
+		if (m_justGuardFrame < kJustGuardFrameMax + 1)
+		{
+			m_justGuardFrame++;
+		}
+	}
+	else
+	{
+		m_guardFrame = kGuardFrameMax;
+	}
 	
 	if (!m_isGuard)
 	{
 		m_guardFrame = 0;
 		m_justGuardFrame = 0;
-		//m_posSield = VGet(m_pos.x + 50.0f, m_pos.y + 100.0f, m_pos.z + 130.0f);
+		m_vecSield.x = 100.0f;
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	MV1SetPosition(m_shieldHnadle, m_posSield);
-	MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+	{
+		VECTOR move = VTransform(VGet(m_vecSield.x, 100.0f, -50.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
+		MV1SetPosition(m_shieldHnadle, move);
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+	}
+	{
+		VECTOR move = VTransform(VGet(-80.0f, 100.0f, 0.0f), m_rotMtx);
+		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
+		MV1SetPosition(m_lanceHnadle, move);
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+	}
 }
 
 

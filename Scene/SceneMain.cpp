@@ -52,6 +52,8 @@ SceneBase* SceneMain::Update()
 
 	m_pCamera->SetPlayerAngle(m_pPlayer->GetAngle());
 
+	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
+
 	m_pPlayer->SetDamage(false);
 	// Enemy‚ÌUŒ‚‚µ‚½ê‡‚Ìˆ—
 	if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())

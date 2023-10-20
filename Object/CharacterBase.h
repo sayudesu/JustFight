@@ -54,34 +54,25 @@ public:
 	void SetStamina(float addStamina, float subStamina);
 
 	void SetAngle(VECTOR angle);
-protected:
-	// メンバ関数ポインタ
-	void(CharacterBase::*m_pFunc)();
-
+private:
 	// 3Dモデルハンドル
 	int m_lanceHnadle;
 	int m_shieldHnadle;
 
-	// 位置
 	// 移動量
 	// 角度
-	VECTOR m_pos;
 	VECTOR m_vec;
 	VECTOR m_angle;
 	MATRIX m_rotMtx;
 
 	// 装備位置
-	VECTOR m_posWeapon;
-	VECTOR m_posSield;
+	VECTOR m_vecWeapon;
+	VECTOR m_vecSield;
 
 	// 体力
 	// スタミナ
 	int m_hp;
 	float m_stamina;
-
-	// 今の状態
-	bool m_isAttack;
-	bool m_isGuard;
 
 	// フレーム関連
 	int m_attackFrame;
@@ -89,5 +80,16 @@ protected:
 	int m_justGuardFrame;
 
 	float tempPlayerAngle;
+
+protected:
+	// メンバ関数ポインタ
+	void(CharacterBase::*m_pFunc)();
+
+	// 位置
+	VECTOR m_pos;
+
+	// 今の状態
+	bool m_isAttack;
+	bool m_isGuard;
 };
 
