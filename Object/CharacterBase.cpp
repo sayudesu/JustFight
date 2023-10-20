@@ -79,14 +79,14 @@ void CharacterBase::Idle()
 
 	{
 		VECTOR move = VTransform(VGet(-80.0f, 0.0f, 0.0f), m_rotMtx);
-		m_posWeapon = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
-		MV1SetPosition(m_lanceHnadle, m_posWeapon);
+		move = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+		MV1SetPosition(m_lanceHnadle, move);
 		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
 	}
 	{
 		VECTOR move = VTransform(VGet(100.0f, 0.0f, -50.0f), m_rotMtx);
-		m_posSield = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
-		MV1SetPosition(m_shieldHnadle, m_posSield);
+		move = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+		MV1SetPosition(m_shieldHnadle, move);
 		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
 	}
 }
@@ -130,26 +130,27 @@ void CharacterBase::Guard()
 	SetStamina(0.0f, 0.0f);
 	
 	VECTOR move = VTransform(VGet(-5.0f, 0.0f, 0.0f), m_rotMtx);
-	VECTOR resultPos = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+//	VECTOR resultPos = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
 
+	m_posSield = VAdd(m_posSield, move);
 
-	if (m_guardFrame < kGuardFrameMax)
-	{
-		m_guardFrame++;
+	//if (m_guardFrame < kGuardFrameMax)
+	//{
+	//	m_guardFrame++;
 
-		// ジャストガードのフレーム
-		// + 1 はジャストガードの範囲外を示す
-		if (m_justGuardFrame < kJustGuardFrameMax + 1)
-		{
-			m_justGuardFrame++;
-		}
-		
-		m_posSield = VAdd(m_posSield, move);
-	}
-	else
-	{
-		m_guardFrame = kGuardFrameMax;
-	}
+	//	// ジャストガードのフレーム
+	//	// + 1 はジャストガードの範囲外を示す
+	//	if (m_justGuardFrame < kJustGuardFrameMax + 1)
+	//	{
+	//		m_justGuardFrame++;
+	//	}
+	//	
+	//	
+	//}
+	//else
+	//{
+	//	m_guardFrame = kGuardFrameMax;
+	//}
 	
 	if (!m_isGuard)
 	{

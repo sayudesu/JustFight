@@ -61,17 +61,17 @@ SceneBase* SceneMain::Update()
 			m_pPlayer->GetJustGuardFrame() < m_pPlayer->GetJustGuardFrameMax())
 		{
 			m_pPlayer->SetStamina(30, 0);
-			printfDx("ジャストガード成功\n");
+			printfDx("Pジャストガード成功\n");
 		}
 		else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())
 		{
 			m_pPlayer->SetStamina(0, 30);
-			printfDx("ガード成功\n");
+			printfDx("Pガード成功\n");
 		}
 		else
 		{
 			m_pPlayer->SetDamage(true);
-			printfDx("ガード失敗\n");
+			printfDx("Pガード失敗\n");
 		}
 	}
 
@@ -84,17 +84,17 @@ SceneBase* SceneMain::Update()
 			m_pEnemy->GetJustGuardFrame() < m_pEnemy->GetJustGuardFrameMax())
 		{
 			m_pEnemy->SetStamina(30, 0);
-			printfDx("ジャストガード成功\n");
+			printfDx("Eジャストガード成功\n");
 		}
 		else if (m_pEnemy->GetGuardFrame() == m_pEnemy->GetGuardFrameMax())
 		{
 			m_pEnemy->SetStamina(0, 30);
-			printfDx("ガード成功\n");
+			printfDx("Eガード成功\n");
 		}
 		else
 		{
 			m_pEnemy->SetDamage(true);
-			printfDx("ガード失敗\n");
+			printfDx("Eガード失敗\n");
 		}
 	}
 
