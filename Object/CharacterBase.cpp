@@ -1,5 +1,6 @@
 #include "CharacterBase.h"
 #include "../Util/MyLoadModel.h"
+#include <cmath>
 
 namespace
 {
@@ -14,7 +15,7 @@ namespace
 	// 最大体力
 	constexpr int kHpMax = 6;
 	// 最大スタミナ
-	constexpr int kStaminaMax = 100;
+	constexpr float kStaminaMax = 100.0f;
 }
 
 CharacterBase::CharacterBase(VECTOR pos):
@@ -74,12 +75,25 @@ void CharacterBase::Input()
 
 void CharacterBase::Idle()
 {
-	SetStamina(1, 0);
+	SetStamina(0.2f, 0.0f);
+
+	{
+		VECTOR move = VTransform(VGet(-80.0f, 0.0f, 0.0f), m_rotMtx);
+		m_posWeapon = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+		MV1SetPosition(m_lanceHnadle, m_posWeapon);
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+	}
+	{
+		VECTOR move = VTransform(VGet(100.0f, 0.0f, -50.0f), m_rotMtx);
+		m_posSield = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+		MV1SetPosition(m_shieldHnadle, m_posSield);
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+	}
 }
 
 void CharacterBase::Attack()
 {
-	SetStamina(0, 1);
+	SetStamina(0.0f, 1.0f);
 	// 攻撃フレームの制御
 	if (m_attackFrame < kAttackFrameMax)
 	{
@@ -113,7 +127,12 @@ void CharacterBase::Attack()
 
 void CharacterBase::Guard()
 {
-	SetStamina(0, 0);
+	SetStamina(0.0f, 0.0f);
+	
+	VECTOR move = VTransform(VGet(-5.0f, 0.0f, 0.0f), m_rotMtx);
+	VECTOR resultPos = VAdd(VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z), move);
+
+
 	if (m_guardFrame < kGuardFrameMax)
 	{
 		m_guardFrame++;
@@ -124,11 +143,8 @@ void CharacterBase::Guard()
 		{
 			m_justGuardFrame++;
 		}
-
-		if (m_pos.z < m_posSield.z)
-		{
-			m_posSield.z -= 20.0f;
-		}
+		
+		m_posSield = VAdd(m_posSield, move);
 	}
 	else
 	{
@@ -139,17 +155,14 @@ void CharacterBase::Guard()
 	{
 		m_guardFrame = 0;
 		m_justGuardFrame = 0;
-		m_posSield = VGet(m_pos.x + 50.0f, m_pos.y + 100.0f, m_pos.z + 130.0f);
+		//m_posSield = VGet(m_pos.x + 50.0f, m_pos.y + 100.0f, m_pos.z + 130.0f);
 		m_pFunc = &CharacterBase::Idle;
 	}
 
 	MV1SetPosition(m_shieldHnadle, m_posSield);
+	MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
 }
 
-VECTOR CharacterBase::GetPos()
-{
-	return m_pos;
-}
 
 void CharacterBase::Draw()
 {
@@ -161,43 +174,62 @@ void CharacterBase::Draw()
 	MV1DrawModel(m_shieldHnadle);
 }
 
+VECTOR CharacterBase::GetPos()
+{
+	return m_pos;
+}
 
-int CharacterBase::GetAttackFrame()
+void CharacterBase::SetAngle(VECTOR angle)
+{
+	m_angle = angle;
+}
+
+void CharacterBase::SetPlayerOnlyAngle(float angle)
+{
+	tempPlayerAngle = angle;
+}
+
+void CharacterBase::SetRotMtx(MATRIX rotMtx)
+{
+	m_rotMtx = rotMtx;
+}
+
+int CharacterBase::GetAttackFrame()const
 {
 	return m_attackFrame;
 }
 
-int CharacterBase::GetGuardFrame()
+int CharacterBase::GetGuardFrame()const
 {
 	return m_guardFrame;
 }
 
-int CharacterBase::GetJustGuardFrame()
+int CharacterBase::GetJustGuardFrame()const
 {
 	return m_justGuardFrame;
 }
 
-int CharacterBase::GetAttackFrameMax()
+int CharacterBase::GetAttackFrameMax()const
 {
 	return kAttackFrameMax;
 }
 
-int CharacterBase::GetGuardFrameMax()
+int CharacterBase::GetGuardFrameMax()const
 {
 	return kGuardFrameMax;
 }
 
-int CharacterBase::GetJustGuardFrameMax()
+int CharacterBase::GetJustGuardFrameMax()const
 {
 	return kJustGuardFrameMax;
 }
 
-int CharacterBase::GetHp()
+int CharacterBase::GetHp()const
 {
 	return m_hp;
 }
 
-int CharacterBase::GetStamina()
+int CharacterBase::GetStamina()const
 {
 	return m_stamina;
 }
@@ -210,8 +242,9 @@ void CharacterBase::SetDamage(bool isDamage)
 	}
 }
 
-void CharacterBase::SetStamina(int addStamina,int subStamina)
+void CharacterBase::SetStamina(float addStamina,float subStamina)
 {
+	// 最大値と最小値を超えないように制御
 	if (m_stamina < kStaminaMax)
 	{
 		m_stamina += addStamina;
@@ -220,12 +253,12 @@ void CharacterBase::SetStamina(int addStamina,int subStamina)
 	{
 		m_stamina = kStaminaMax;
 	}
-	if (m_stamina > 0)
+	if (m_stamina > 0.0f)
 	{
 		m_stamina -= subStamina;
 	}
 	else
 	{
-		m_stamina = 0;
+		m_stamina = 0.0f;
 	}
 }

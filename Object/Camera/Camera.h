@@ -13,6 +13,8 @@ public:
 public:
 	void SetTargetPos(VECTOR pos);
 	void SetLockonPos(VECTOR pos);
+
+	void SetPlayerAngle(float angle);
 private:
 	// ˆÊ’u
 	VECTOR m_pos;
@@ -20,6 +22,7 @@ private:
 	VECTOR m_posTarget;
 	VECTOR m_posLockon;
 	// Šp“x
-	VECTOR m_angle;
+	float m_angle;
+	float m_playerAngle;
 };
 

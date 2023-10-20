@@ -31,7 +31,7 @@ void SceneManager::End()
 void SceneManager::Update()
 {
 	assert(m_pScene);
-	if (!m_pScene)	return;
+	if (!m_pScene)return;
 
 	Pad::update();
 	SceneBase* pScene = m_pScene->Update();

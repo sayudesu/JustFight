@@ -6,12 +6,18 @@ namespace
 {
 	// 視野角
 	constexpr float kFov = 60.0f * DX_PI_F / 180.0f;
+
+	// カメラの初期位置
+	constexpr VECTOR kCameraPos{ 0.0f, 520.0f, 520.0f };
+	constexpr VECTOR kCameraTarget{ 0.0f, 200.0f, -120.0f };
 }
 
 Camera::Camera():
 	m_pos(VGet(0,300,-1000)),
 	m_posTarget(VGet(0,0,0)),
-	m_angle(VGet(0, 0, 0))
+	m_posLockon(VGet(0,0,0)),
+	m_angle(0.0f),
+	m_playerAngle(0.0f)
 {
 }
 
@@ -31,28 +37,24 @@ void Camera::Init()
 
 void Camera::Update()
 {
-	DINPUT_JOYSTATE input;
-	// 入力状態を取得
-	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
+	m_angle = (m_angle * 0.8f) + (m_playerAngle * 0.2f);
+	MATRIX cameraRotMtx = MGetRotY(m_angle);
 
-	// カメラの回転角度を調整
-	if (input.Rx > 30)
-	{
-		m_angle.y -= 3.0f;
-	}
-	if (input.Rx < -30)
-	{
-		m_angle.y += 3.0f;
-	}
+	// ジャンプ時は単純にプレイヤーに服従するのではなく
+	//プレイヤーの立っていた位置を見るようにする
+	VECTOR cameraTrans = m_posTarget;
+	cameraTrans.y = m_posTarget.y * 0.0f;
+	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
 
-	// カメラの位置を更新
-	// カメラの高さを300.0fに固定
-	m_pos.x = m_posTarget.x + 500.0f * sinf(m_angle.y * DX_PI / 180);
-	m_pos.y = m_posTarget.y + 300.0f; // カメラの高さを固定
-	m_pos.z = m_posTarget.z - 500.0f * cosf(m_angle.y * DX_PI / 180);
+	// プレイヤーの回転に合わせてカメラ位置、注視点を回転させる
+	// プレイヤーの回転情報と平行移動情報を合成
+	MATRIX cameraMtx = MMult(cameraRotMtx, playerTransMtx);
 
-	// カメラ位置の設定
-	SetCameraPositionAndTarget_UpVecY(m_pos, m_posTarget);
+	VECTOR cameraPos = VTransform(kCameraPos, cameraMtx);
+	VECTOR cameraTarget = VTransform(kCameraTarget, cameraMtx);
+
+	// カメラの位置、どこを見ているかを設定する
+	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
 }
 
 void Camera::SetTargetPos(VECTOR pos)
@@ -63,4 +65,9 @@ void Camera::SetTargetPos(VECTOR pos)
 void Camera::SetLockonPos(VECTOR pos)
 {
 	m_posLockon = pos;
+}
+
+void Camera::SetPlayerAngle(float angle)
+{
+	m_playerAngle = angle;
 }

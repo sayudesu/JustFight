@@ -50,6 +50,8 @@ SceneBase* SceneMain::Update()
 	m_pCamera->SetTargetPos(m_pPlayer->GetPos());
 	m_pCamera->SetLockonPos(m_pEnemy->GetPos());
 
+	m_pCamera->SetPlayerAngle(m_pPlayer->GetAngle());
+
 	m_pPlayer->SetDamage(false);
 	// Enemy‚ÌUŒ‚‚µ‚½ê‡‚Ìˆ—
 	if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())
@@ -111,7 +113,6 @@ void SceneMain::Draw()
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xaaaaaa,true);
 
 	m_pPlayer->Draw();
-	m_pEnemy->Draw();
 	m_pEnemy->Draw();
 
 #if _DEBUG
