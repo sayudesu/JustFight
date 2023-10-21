@@ -55,6 +55,7 @@ SceneBase* SceneMain::Update()
 	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 
 	m_pPlayer->SetDamage(false);
+	m_pPlayer->SetJustGuard(false);
 	// Enemyの攻撃した場合の処理
 	if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())
 	{	
@@ -63,6 +64,7 @@ SceneBase* SceneMain::Update()
 			m_pPlayer->GetJustGuardFrame() < m_pPlayer->GetJustGuardFrameMax())
 		{
 			m_pPlayer->SetStamina(30, 0);
+			m_pPlayer->SetJustGuard(true);
 			printfDx("Pジャストガード成功\n");
 		}
 		else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())

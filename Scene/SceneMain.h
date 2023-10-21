@@ -21,5 +21,4 @@ private:
 	std::unique_ptr<Camera> m_pCamera;
 	std::unique_ptr<Player> m_pPlayer;
 	std::unique_ptr<Enemy>  m_pEnemy;
-
 };

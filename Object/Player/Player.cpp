@@ -15,6 +15,7 @@ Player::Player(VECTOR pos):
 
 	m_isAttack = false;
 	m_isGuard  = false;
+	m_isJustGuard = false;
 
 	m_angle = 0.0f;
 }
@@ -65,20 +66,23 @@ void Player::Input()
 	}
 	SetRotMtx(rotMtx);
 
-	if (Pad::isTrigger(PAD_INPUT_6) && !m_isGuard)
+	if (!m_isJustGuard)
 	{
-		m_isAttack = true;
-		m_pFunc = &Player::Attack;
-	}
+		if (Pad::isTrigger(PAD_INPUT_6) && !m_isGuard)
+		{
+			m_isAttack = true;
+			m_pFunc = &Player::Attack;
+		}
 
-	if (Pad::isPress(PAD_INPUT_5) && !m_isAttack)
-	{
-		m_isGuard = true;
-		m_pFunc = &Player::Guard;
-	}
-	else
-	{
-		m_isGuard = false;
+		if (Pad::isPress(PAD_INPUT_5) && !m_isAttack)
+		{
+			m_isGuard = true;
+			m_pFunc = &Player::Guard;
+		}
+		else
+		{
+			m_isGuard = false;
+		}
 	}
 }
 

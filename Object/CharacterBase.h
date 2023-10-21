@@ -23,6 +23,8 @@ protected:
 	virtual void Attack();
 	// 防御
 	virtual void Guard();
+	// ジャストガード
+	virtual void JustGuard();
 protected:
 	void SetRotMtx(MATRIX rotMtx);
 public:
@@ -49,6 +51,8 @@ public:
 	
 	// 攻撃を受けたかどうか
 	void SetDamage(bool isDamage);
+	void SetJustGuard(bool isJustGuard);
+
 	// スタミナの管理
 	void SetStamina(float addStamina, float subStamina);
 
@@ -91,5 +95,6 @@ protected:
 	// 今の状態
 	bool m_isAttack;
 	bool m_isGuard;
+	bool m_isJustGuard;
 };
 
