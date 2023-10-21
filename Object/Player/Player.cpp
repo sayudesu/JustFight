@@ -9,13 +9,14 @@ namespace
 }
 
 Player::Player(VECTOR pos):
-	CharacterBase(pos),
-	m_angle(0.0f)
+	CharacterBase(pos)
 {
 	m_pFunc = &Player::Idle;
 
 	m_isAttack = false;
 	m_isGuard  = false;
+
+	m_angle = 0.0f;
 }
 
 Player::~Player()
@@ -38,7 +39,7 @@ void Player::Input()
 		m_angle -= 0.05f;
 	}
 
-	SetPlayerOnlyAngle(m_angle);
+	SetAngle(m_angle);
 
 	// プレイヤーの進行方向
 	MATRIX rotMtx = MGetRotY(m_angle);

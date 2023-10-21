@@ -86,17 +86,17 @@ SceneBase* SceneMain::Update()
 			m_pEnemy->GetJustGuardFrame() < m_pEnemy->GetJustGuardFrameMax())
 		{
 			m_pEnemy->SetStamina(30, 0);
-			printfDx("Eジャストガード成功\n");
+		//	printfDx("Eジャストガード成功\n");
 		}
 		else if (m_pEnemy->GetGuardFrame() == m_pEnemy->GetGuardFrameMax())
 		{
 			m_pEnemy->SetStamina(0, 30);
-			printfDx("Eガード成功\n");
+		//	printfDx("Eガード成功\n");
 		}
 		else
 		{
 			m_pEnemy->SetDamage(true);
-			printfDx("Eガード失敗\n");
+		//	printfDx("Eガード失敗\n");
 		}
 	}
 

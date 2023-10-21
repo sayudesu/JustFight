@@ -13,7 +13,5 @@ public:
 
 public:
 	float GetAngle()const;
-private:
-	float m_angle;
 };
 

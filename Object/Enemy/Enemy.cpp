@@ -17,20 +17,13 @@ void Enemy::Input()
 	// 入力状態を取得
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
-	// カメラの回転角度を調整
-	if (input.Rx > 30)
-	{
-		m_angle += 0.05f;
-	}
-	if (input.Rx < -30)
-	{
-		m_angle -= 0.05f;
-	}
+	const VECTOR direction = VSub(m_targetPos, m_pos);
+	const float angle = atan2f(-direction.x, -direction.z);
 
-	SetPlayerOnlyAngle(m_angle);
+	SetAngle(angle);
 
 	// プレイヤーの進行方向
-	MATRIX rotMtx = MGetRotY(m_angle);
+	MATRIX rotMtx = MGetRotY(angle);
 
 	SetRotMtx(rotMtx);
 

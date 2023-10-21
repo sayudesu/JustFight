@@ -86,13 +86,13 @@ void CharacterBase::Idle()
 		VECTOR move = VTransform(VGet(-80.0f, 100.0f, 0.0f), m_rotMtx);
 		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle,0.0f));
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle,0.0f));
 	}
 	{
 		VECTOR move = VTransform(VGet(100.0f, 100.0f, -50.0f), m_rotMtx);
 		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_shieldHnadle, move);
-		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 }
 
@@ -109,6 +109,7 @@ void CharacterBase::Attack()
 		m_attackFrame = 0;
 		m_isAttack = false;
 		m_vecWeapon.z = 0.0f;
+		m_vecWeapon.x = -80.0f;
 		m_pFunc = &CharacterBase::Idle;
 	}
 
@@ -120,6 +121,10 @@ void CharacterBase::Attack()
 		{
 			m_vecWeapon.z -= 50.0f;
 		}
+		if (m_vecWeapon.x < -40.0f)
+		{
+			m_vecWeapon.x += 10.0f;
+		}
 	}
 	else
 	{
@@ -127,16 +132,16 @@ void CharacterBase::Attack()
 	}
 
 	{
-		VECTOR move = VTransform(VGet(-80.0f, 100.0f, m_vecWeapon.z), m_rotMtx);
+		VECTOR move = VTransform(VGet(m_vecWeapon.x, 100.0f, m_vecWeapon.z), m_rotMtx);
 		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle,0.0f));
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle,0.0f));
 	}
 	{
 		VECTOR move = VTransform(VGet(100.0f, 100.0f, -50.0f), m_rotMtx);
 		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_shieldHnadle, move);
-		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 }
 
@@ -181,13 +186,13 @@ void CharacterBase::Guard()
 		VECTOR move = VTransform(VGet(m_vecSield.x, 100.0f, -50.0f), m_rotMtx);
 		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_shieldHnadle, move);
-		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 	{
 		VECTOR move = VTransform(VGet(-80.0f, 100.0f, 0.0f), m_rotMtx);
 		move = VAdd(VGet(m_pos.x, m_pos.y, m_pos.z), move);
 		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, tempPlayerAngle, 0.0f));
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 }
 
@@ -207,14 +212,9 @@ VECTOR CharacterBase::GetPos()
 	return m_pos;
 }
 
-void CharacterBase::SetAngle(VECTOR angle)
+void CharacterBase::SetAngle(float angle)
 {
 	m_angle = angle;
-}
-
-void CharacterBase::SetPlayerOnlyAngle(float angle)
-{
-	tempPlayerAngle = angle;
 }
 
 void CharacterBase::SetRotMtx(MATRIX rotMtx)

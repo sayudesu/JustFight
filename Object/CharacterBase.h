@@ -24,7 +24,6 @@ protected:
 	// 防御
 	virtual void Guard();
 protected:
-	void SetPlayerOnlyAngle(float angle);
 	void SetRotMtx(MATRIX rotMtx);
 public:
 	// 位置
@@ -53,7 +52,7 @@ public:
 	// スタミナの管理
 	void SetStamina(float addStamina, float subStamina);
 
-	void SetAngle(VECTOR angle);
+	void SetAngle(float angle);
 private:
 	// 3Dモデルハンドル
 	int m_lanceHnadle;
@@ -62,7 +61,6 @@ private:
 	// 移動量
 	// 角度
 	VECTOR m_vec;
-	VECTOR m_angle;
 	MATRIX m_rotMtx;
 
 	// 装備位置
@@ -79,14 +77,16 @@ private:
 	int m_guardFrame;
 	int m_justGuardFrame;
 
-	float tempPlayerAngle;
-
 protected:
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
 
 	// 位置
 	VECTOR m_pos;
+	VECTOR m_targetPos;
+
+	// 角度
+	float m_angle;
 
 	// 今の状態
 	bool m_isAttack;
