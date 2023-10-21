@@ -4,7 +4,12 @@
 Enemy::Enemy(VECTOR pos) :
 	CharacterBase(pos)
 {
+	m_pFunc = &Enemy::Idle;
 
+	m_isAttack = false;
+	m_isGuard = false;
+//	m_isJustGuard = false;
+	m_isJustGuardBreak = false;
 }
 
 Enemy::~Enemy()
@@ -27,20 +32,23 @@ void Enemy::Input()
 
 	SetRotMtx(rotMtx);
 
-	if (GetRand(100) == 0 && !m_isGuard)
+	if (!m_isJustGuardBreak)
 	{
-		m_isAttack = true;
-		m_pFunc = &Enemy::Attack;
-	}
+		if (GetRand(100) == 0 && !m_isGuard)
+		{
+			m_isAttack = true;
+			m_pFunc = &Enemy::Attack;
+		}
 
-	if (GetRand(10) == 0 && !m_isAttack)
-	{
-		m_isGuard = true;
-		m_pFunc = &Enemy::Guard;
-	}
-	else
-	{
-		m_isGuard = false;
+		if (GetRand(10) == 0 && !m_isAttack)
+		{
+			m_isGuard = true;
+			m_pFunc = &Enemy::Guard;
+		}
+		else
+		{
+			m_isGuard = false;
+		}
 	}
 }
 

@@ -54,13 +54,14 @@ SceneBase* SceneMain::Update()
 
 	m_pEnemy->SetTargetPos(m_pPlayer->GetPos());
 
+	// Enemyの攻撃した場合の処理
 	m_pPlayer->SetDamage(false);
 	m_pPlayer->SetJustGuard(false);
-	// Enemyの攻撃した場合の処理
+	m_pPlayer->SetJustGuardBreak(m_pEnemy->IsJustGuard());
 	if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())
 	{	
 		// ジャストガード
-		if (m_pPlayer->GetJustGuardFrame() > 0 &&
+		if (m_pPlayer->GetJustGuardFrame() >= 0 &&
 			m_pPlayer->GetJustGuardFrame() < m_pPlayer->GetJustGuardFrameMax())
 		{
 			m_pPlayer->SetStamina(30, 0);
@@ -79,15 +80,18 @@ SceneBase* SceneMain::Update()
 		}
 	}
 
-	m_pEnemy->SetDamage(false);
 	// Enemyの攻撃した場合の処理
+	m_pEnemy->SetDamage(false);
+	m_pEnemy->SetJustGuard(false);
+	m_pEnemy->SetJustGuardBreak(m_pPlayer->IsJustGuard());
 	if (m_pPlayer->GetAttackFrame() == m_pPlayer->GetAttackFrameMax())
 	{
 		// ジャストガード
-		if (m_pEnemy->GetJustGuardFrame() > 0 &&
+		if (m_pEnemy->GetJustGuardFrame() >= 0 &&
 			m_pEnemy->GetJustGuardFrame() < m_pEnemy->GetJustGuardFrameMax())
 		{
 			m_pEnemy->SetStamina(30, 0);
+			m_pEnemy->SetJustGuard(true);
 		//	printfDx("Eジャストガード成功\n");
 		}
 		else if (m_pEnemy->GetGuardFrame() == m_pEnemy->GetGuardFrameMax())
@@ -131,7 +135,7 @@ void SceneMain::Draw()
 
 	DEBUG::FrameMeter("E攻撃フレーム", 100, 400, m_pEnemy->GetAttackFrameMax(), m_pEnemy->GetAttackFrame(), 20, 0xffff00);
 	DEBUG::FrameMeter("E防御フレーム", 100, 450, m_pEnemy->GetGuardFrameMax(), m_pEnemy->GetGuardFrame(), 30, 0xffff00);
-	DEBUG::FrameMeter("              + JustGuard", 100, 300, m_pEnemy->GetJustGuardFrameMax(), m_pEnemy->GetJustGuardFrame(), 30, 0xffffff);
+	DEBUG::FrameMeter("              + JustGuard", 100, 450, m_pEnemy->GetJustGuardFrameMax(), m_pEnemy->GetJustGuardFrame(), 30, 0xffffff);
 
 	DEBUG::Field();
 #endif

@@ -37,7 +37,8 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isJustGuard(false),
 	m_attackFrame(0),
 	m_guardFrame(0),
-	m_justGuardFrame(0)
+	m_justGuardFrame(0),
+	m_justGuardBreakFrame(0)
 {
 	m_pFunc = &CharacterBase::Idle;
 }
@@ -222,6 +223,39 @@ void CharacterBase::JustGuard()
 	}
 }
 
+void CharacterBase::JustGuardBreak()
+{
+	m_justGuardBreakFrame++;
+	
+	m_vecWeapon = kWeaponPos;
+	m_vecSield = kSieldPos;
+
+	// フレームのリセット
+	m_attackFrame = 0;
+	m_guardFrame = 0;
+	m_justGuardFrame = 0;
+
+	if (kAttackFrameMax + (kAttackFrameMax / 2) < m_justGuardBreakFrame)
+	{
+		m_justGuardBreakFrame = 0;
+		m_isJustGuardBreak = false;
+		m_pFunc = &CharacterBase::Idle;
+	}
+
+	{
+		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+		move = VAdd(m_pos, move);
+		MV1SetPosition(m_lanceHnadle, move);
+		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle, 0.0f));
+	}
+	{
+		VECTOR move = VTransform(m_vecSield, m_rotMtx);
+		move = VAdd(m_pos, move);
+		MV1SetPosition(m_shieldHnadle, move);
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, m_angle, 0.0f));
+	}
+}
+
 
 void CharacterBase::Draw()
 {
@@ -233,11 +267,6 @@ void CharacterBase::Draw()
 	MV1DrawModel(m_shieldHnadle);
 }
 
-VECTOR CharacterBase::GetPos()
-{
-	return m_pos;
-}
-
 void CharacterBase::SetAngle(float angle)
 {
 	m_angle = angle;
@@ -246,6 +275,11 @@ void CharacterBase::SetAngle(float angle)
 void CharacterBase::SetRotMtx(MATRIX rotMtx)
 {
 	m_rotMtx = rotMtx;
+}
+
+VECTOR CharacterBase::GetPos()const
+{
+	return m_pos;
 }
 
 int CharacterBase::GetAttackFrame()const
@@ -288,6 +322,11 @@ int CharacterBase::GetStamina()const
 	return m_stamina;
 }
 
+bool CharacterBase::IsJustGuard() const
+{
+	return m_isJustGuard;
+}
+
 void CharacterBase::SetDamage(bool isDamage)
 {
 	if (isDamage)
@@ -298,10 +337,15 @@ void CharacterBase::SetDamage(bool isDamage)
 
 void CharacterBase::SetJustGuard(bool isJustGuard)
 {
-	if (isJustGuard)
+	m_isJustGuard = isJustGuard;
+}
+
+void CharacterBase::SetJustGuardBreak(bool isJustGuardBreak)
+{
+	if (isJustGuardBreak)
 	{
-		m_isJustGuard = isJustGuard;
-		m_pFunc = &CharacterBase::JustGuard;
+		m_isJustGuardBreak = isJustGuardBreak;
+		m_pFunc = &CharacterBase::JustGuardBreak;
 	}
 }
 

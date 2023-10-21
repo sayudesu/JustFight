@@ -25,11 +25,14 @@ protected:
 	virtual void Guard();
 	// ジャストガード
 	virtual void JustGuard();
+	// ジャストガードをされた場合
+	virtual void JustGuardBreak();
 protected:
-	void SetRotMtx(MATRIX rotMtx);
+	virtual void SetAngle(float angle);
+	virtual void SetRotMtx(MATRIX rotMtx);
 public:
 	// 位置
-	VECTOR GetPos();
+	VECTOR GetPos()const;
 
 	// 現在の攻撃フレーム
 	int GetAttackFrame()const;
@@ -49,14 +52,16 @@ public:
 	// 現在のスタミナ
 	int GetStamina()const;
 	
+	// ジャストガードされたかどうか
+	bool IsJustGuard()const;
+
 	// 攻撃を受けたかどうか
 	void SetDamage(bool isDamage);
 	void SetJustGuard(bool isJustGuard);
+	void SetJustGuardBreak(bool isJustGuardBreak);
 
 	// スタミナの管理
 	void SetStamina(float addStamina, float subStamina);
-
-	void SetAngle(float angle);
 private:
 	// 3Dモデルハンドル
 	int m_lanceHnadle;
@@ -80,6 +85,7 @@ private:
 	int m_attackFrame;
 	int m_guardFrame;
 	int m_justGuardFrame;
+	int m_justGuardBreakFrame;
 
 protected:
 	// メンバ関数ポインタ
@@ -96,5 +102,6 @@ protected:
 	bool m_isAttack;
 	bool m_isGuard;
 	bool m_isJustGuard;
+	bool m_isJustGuardBreak;
 };
 
