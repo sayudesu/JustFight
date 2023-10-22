@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Util\Collision3D.cpp" />
     <ClCompile Include="DEBUG.cpp" />
     <ClCompile Include="Util\MyLoadModel.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Util\Collision3D.h" />
     <ClInclude Include="DEBUG.h" />
     <ClInclude Include="Util\MyLoadModel.h" />
     <ClInclude Include="Object\Camera\Camera.h" />

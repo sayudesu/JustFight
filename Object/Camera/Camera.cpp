@@ -55,6 +55,7 @@ void Camera::Update()
 
 	// ƒJƒƒ‰‚ÌˆÊ’uA‚Ç‚±‚ğŒ©‚Ä‚¢‚é‚©‚ğİ’è‚·‚é
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
+//	SetCameraPositionAndTarget_UpVecY(cameraPos, m_posLockon);
 }
 
 void Camera::SetTargetPos(VECTOR pos)

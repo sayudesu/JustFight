@@ -20,6 +20,12 @@ namespace
 	// ëïîıÇÃëäëŒà íu
 	const VECTOR kWeaponPos = { -80.0f, 100.0f, 0.0f };
 	const VECTOR kSieldPos = { 100.0f, 100.0f, -50.0f };
+
+	// çUåÇéûÇÃìñÇΩÇËîªíË
+	// ïêäÌÇÃîºåa
+	constexpr float kWeaponAttackRadius = 30.0f;
+	// ïêäÌÇÃçUåÇéûÇÃîªíËÇÃëäëŒà íu
+	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -240.0f };
 }
 
 CharacterBase::CharacterBase(VECTOR pos):
@@ -81,6 +87,16 @@ void CharacterBase::Update()
 	(this->*m_pFunc)();
 }
 
+void CharacterBase::Draw()
+{
+	// ëÃ
+	DrawCapsule3D(m_pos, VGet(m_pos.x, m_pos.y + 200.0f, m_pos.z), 40.0f, 8, 0x00ff00, 0xffffff, true);
+	// ïêäÌ
+	MV1DrawModel(m_lanceHnadle);
+	// èÇ
+	MV1DrawModel(m_shieldHnadle);
+}
+
 void CharacterBase::Input()
 {
 }
@@ -128,7 +144,7 @@ void CharacterBase::Attack()
 		{
 			m_vecWeapon.z -= 50.0f;
 		}
-		if (m_vecWeapon.x < -40.0f)
+		if (m_vecWeapon.x < -20.0f)
 		{
 			m_vecWeapon.x += 10.0f;
 		}
@@ -256,17 +272,6 @@ void CharacterBase::JustGuardBreak()
 	}
 }
 
-
-void CharacterBase::Draw()
-{
-	// ëÃ
-	DrawCapsule3D(m_pos, VGet(m_pos.x, m_pos.y + 200.0f, m_pos.z), 40.0f, 8, 0x00ff00, 0xffffff, true);
-	// ïêäÌ
-	MV1DrawModel(m_lanceHnadle);
-	// èÇ
-	MV1DrawModel(m_shieldHnadle);
-}
-
 void CharacterBase::SetAngle(float angle)
 {
 	m_angle = angle;
@@ -280,6 +285,35 @@ void CharacterBase::SetRotMtx(MATRIX rotMtx)
 VECTOR CharacterBase::GetPos()const
 {
 	return m_pos;
+}
+
+VECTOR CharacterBase::GetWeaponPos() const
+{
+	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+	move = VAdd(m_pos, move);
+	return move;
+}
+
+VECTOR CharacterBase::GetSieldPos() const
+{
+	VECTOR move = VTransform(m_vecSield, m_rotMtx);
+	move = VAdd(m_pos, move);
+	return move;
+}
+
+MATRIX CharacterBase::GetRot()const
+{
+	return m_rotMtx;
+}
+
+float CharacterBase::GetWeaponAttackRadius() const
+{
+	return kWeaponAttackRadius;
+}
+
+VECTOR CharacterBase::GetWeaponAttackRelative() const
+{
+	return kWeaponAttackPos;
 }
 
 int CharacterBase::GetAttackFrame()const

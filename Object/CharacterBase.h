@@ -33,6 +33,14 @@ protected:
 public:
 	// ˆÊ’u
 	VECTOR GetPos()const;
+	VECTOR GetWeaponPos()const;
+	VECTOR GetSieldPos()const;
+
+	MATRIX GetRot()const;
+
+	float GetWeaponAttackRadius()const;
+
+	VECTOR GetWeaponAttackRelative()const;
 
 	// Œ»İ‚ÌUŒ‚ƒtƒŒ[ƒ€
 	int GetAttackFrame()const;
