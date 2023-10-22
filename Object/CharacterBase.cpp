@@ -23,9 +23,11 @@ namespace
 
 	// UŒ‚‚Ì“–‚½‚è”»’è
 	// •Ší‚Ì”¼Œa
-	constexpr float kWeaponAttackRadius = 30.0f;
+	constexpr float kWeaponAttackRadius = 70.0f;
 	// •Ší‚ÌUŒ‚‚Ì”»’è‚Ì‘Š‘ÎˆÊ’u
-	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -240.0f };
+	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -200.0f };
+	// ‚‚Ì”¼Œa
+	constexpr float kSieldRadius = 100.0f;
 
 	// ƒK[ƒh‚µ‚Ä‚¢‚é‚ÉUŒ‚‚ğó‚¯‚½ê‡‚ÌƒmƒbƒNƒoƒbƒN‚ÅˆÚ“®‚·‚é‘Š‘ÎˆÊ’u
 	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-15.0f };
@@ -61,7 +63,7 @@ CharacterBase::~CharacterBase()
 void CharacterBase::Init()
 {
 	m_weaponHnadle  = MyModel3D::Load("Data/Model/Lance2.mv1");
-	m_shieldHnadle = MyModel3D::Load("Data/Model/Shield.mv1");
+	m_shieldHnadle  = MyModel3D::Load("Data/Model/Shield.mv1");
 
 	{
 		m_vecWeapon = kWeaponPos;
@@ -78,7 +80,6 @@ void CharacterBase::Init()
 		MV1SetRotationXYZ(m_shieldHnadle, VGet(0, -90 * DX_PI_F / 180.0f, 0));
 		MV1SetScale(m_shieldHnadle, VGet(3, 3, 3));
 	}
-
 }
 
 void CharacterBase::End()
@@ -334,6 +335,16 @@ float CharacterBase::GetWeaponAttackRadius() const
 VECTOR CharacterBase::GetWeaponAttackRelative() const
 {
 	return kWeaponAttackPos;
+}
+
+float CharacterBase::GetSieldRadius() const
+{
+	return kSieldRadius;
+}
+
+VECTOR CharacterBase::GetSieldRelative() const
+{
+	return kSieldPos;
 }
 
 int CharacterBase::GetAttackFrame()const

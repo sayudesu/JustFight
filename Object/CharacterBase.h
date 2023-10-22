@@ -41,6 +41,9 @@ public:
 	float GetWeaponAttackRadius()const;
 	VECTOR GetWeaponAttackRelative()const;
 
+	float GetSieldRadius()const;
+	VECTOR GetSieldRelative()const;
+
 	// 現在の攻撃フレーム
 	int GetAttackFrame()const;
 	// 現在の防御フレーム

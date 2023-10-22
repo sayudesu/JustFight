@@ -26,8 +26,8 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {	
 	m_pCamera = std::make_unique<Camera>();
-	m_pPlayer = std::make_unique<Player>(VGet(-300, 0, 0));
-	m_pEnemy  = std::make_unique<Enemy> (VGet( 300, 0, 0));
+	m_pPlayer = std::make_unique<Player>(VGet(-300.0f, 0.0f, 0.0f));
+	m_pEnemy  = std::make_unique<Enemy> (VGet( 300.0f, 0.0f, 0.0f));
 	m_pColl   = std::make_unique<Collision3D>();
 
 	m_pCamera->Init();
@@ -73,17 +73,20 @@ SceneBase* SceneMain::Update()
 			if (m_pPlayer->GetJustGuardFrame() > 0 &&
 				m_pPlayer->GetJustGuardFrame() < m_pPlayer->GetJustGuardFrameMax())
 			{
-				m_pPlayer->SetStamina(30, 0);
+				m_pPlayer->SetStamina(30.0f, 0.0f);
 				m_pPlayer->SetJustGuard(true);
 				printfDx("PƒWƒƒƒXƒgƒK[ƒh¬Œ÷\n");
 				// U“®ŠJŽn
-				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000 / 2, -1);
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
 			}
 			else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())
 			{
-				m_pPlayer->SetStamina(0, 30);
-				m_pPlayer->SetGuard(true);
-				printfDx("PƒK[ƒh¬Œ÷\n");
+				if (CheckHItPlayerSield())
+				{
+					m_pPlayer->SetStamina(0.0f, 30.0f);
+					m_pPlayer->SetGuard(true);
+					printfDx("PƒK[ƒh¬Œ÷\n");
+				}
 			}
 			else
 			{
@@ -91,9 +94,9 @@ SceneBase* SceneMain::Update()
 				{
 					m_pPlayer->SetDamage(true);
 					// U“®ŠJŽn
-					StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
+					StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
+					printfDx("PƒK[ƒhŽ¸”s\n");
 				}
-				printfDx("PƒK[ƒhŽ¸”s\n");
 			}
 		}
 
@@ -109,12 +112,12 @@ SceneBase* SceneMain::Update()
 			if (m_pEnemy->GetJustGuardFrame() > 0 &&
 				m_pEnemy->GetJustGuardFrame() < m_pEnemy->GetJustGuardFrameMax())
 			{
-				m_pEnemy->SetStamina(30, 0);
+				m_pEnemy->SetStamina(30.0f, 0.0f);
 				m_pEnemy->SetJustGuard(true);
 			}
 			else if (m_pEnemy->GetGuardFrame() == m_pEnemy->GetGuardFrameMax())
 			{
-				m_pEnemy->SetStamina(0, 30);
+				m_pEnemy->SetStamina(0.0f, 30.0f);
 			}
 			else
 			{
@@ -169,11 +172,10 @@ bool SceneMain::CheckHitEnemy()
 		m_pPlayer->GetWeaponPos(), m_pEnemy->GetPos(),
 		m_pPlayer->GetWeaponAttackRadius(), m_pEnemy->GetWeaponAttackRadius(),
 		m_pPlayer->GetRot(), m_pEnemy->GetRot(),
-		m_pPlayer->GetWeaponAttackRelative(), VGet(0, 100, 0)))
+		m_pPlayer->GetWeaponAttackRelative(), VGet(0.0f, 100.0f, 0.0f)))
 	{
 		return true;
 	}
-
 	return false;
 }
 
@@ -183,11 +185,36 @@ bool SceneMain::CheckHitPlayer()
 		m_pEnemy->GetWeaponPos(), m_pPlayer->GetPos(),
 		m_pEnemy->GetWeaponAttackRadius(), m_pPlayer->GetWeaponAttackRadius(),
 		m_pEnemy->GetRot(), m_pPlayer->GetRot(),
-		m_pEnemy->GetWeaponAttackRelative(), VGet(0, 100, 0)))
+		m_pEnemy->GetWeaponAttackRelative(), VGet(0.0f, 100.0f, 0.0f)))
 	{
 		return true;
 	}
+	return false;
+}
 
+bool SceneMain::CheckHItEnemySield()
+{
+	if (m_pColl->IsCheckHit(
+		m_pPlayer->GetWeaponPos(), m_pEnemy->GetSieldPos(),
+		m_pPlayer->GetWeaponAttackRadius(), m_pEnemy->GetSieldRadius(),
+		m_pPlayer->GetRot(), m_pEnemy->GetRot(),
+		m_pPlayer->GetWeaponAttackRelative(), VGet(0.0f, 0.0f, 0.0f)))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool SceneMain::CheckHItPlayerSield()
+{
+	if (m_pColl->IsCheckHit(
+		m_pEnemy->GetWeaponPos(), m_pPlayer->GetSieldPos(),
+		m_pEnemy->GetWeaponAttackRadius(), m_pPlayer->GetSieldRadius(),
+		m_pEnemy->GetRot(), m_pPlayer->GetRot(),
+		m_pEnemy->GetWeaponAttackRelative(), VGet(0.0f, 0.0f, 0.0f)))
+	{
+		return true;
+	}
 	return false;
 }
 

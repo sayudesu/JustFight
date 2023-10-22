@@ -21,6 +21,8 @@ public:
 private:
 	bool CheckHitEnemy();
 	bool CheckHitPlayer();
+	bool CheckHItEnemySield();
+	bool CheckHItPlayerSield();
 private:
 	std::unique_ptr<Camera> m_pCamera;
 	std::unique_ptr<Player> m_pPlayer;
