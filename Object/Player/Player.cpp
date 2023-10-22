@@ -45,6 +45,7 @@ void Player::Input()
 
 	// プレイヤーの進行方向
 	MATRIX rotMtx = MGetRotY(m_angle);
+
 	if (Pad::isPress(PAD_INPUT_UP))
 	{
 		VECTOR move = VTransform(kVecZ, rotMtx);

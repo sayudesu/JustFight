@@ -62,8 +62,10 @@ SceneBase* SceneMain::Update()
 	// Enemyの攻撃した場合の処理
 	{
 		m_pPlayer->SetDamage(false);
+//		m_pPlayer->SetGuard(false);
 		m_pPlayer->SetJustGuard(false);
 		m_pPlayer->SetJustGuardBreak(m_pEnemy->IsJustGuard());
+		m_pPlayer->SetRota(m_pEnemy->GetRot());
 		// 攻撃フレームが最大数かどうか
 		if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())
 		{
@@ -74,10 +76,13 @@ SceneBase* SceneMain::Update()
 				m_pPlayer->SetStamina(30, 0);
 				m_pPlayer->SetJustGuard(true);
 				printfDx("Pジャストガード成功\n");
+				// 振動開始
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000 / 2, -1);
 			}
 			else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())
 			{
 				m_pPlayer->SetStamina(0, 30);
+				m_pPlayer->SetGuard(true);
 				printfDx("Pガード成功\n");
 			}
 			else
@@ -85,6 +90,8 @@ SceneBase* SceneMain::Update()
 				if (CheckHitPlayer())
 				{
 					m_pPlayer->SetDamage(true);
+					// 振動開始
+					StartJoypadVibration(DX_INPUT_PAD1, 1000, 60, -1);
 				}
 				printfDx("Pガード失敗\n");
 			}

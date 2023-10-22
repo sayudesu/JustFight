@@ -15,7 +15,7 @@ public:
 	virtual void Draw();
 
 	// 入力
-	virtual void Input();
+	virtual void Input() = 0;
 protected:
 	// アイドル状態
 	virtual void Idle();
@@ -39,7 +39,6 @@ public:
 	MATRIX GetRot()const;
 
 	float GetWeaponAttackRadius()const;
-
 	VECTOR GetWeaponAttackRelative()const;
 
 	// 現在の攻撃フレーム
@@ -63,22 +62,28 @@ public:
 	// ジャストガードされたかどうか
 	bool IsJustGuard()const;
 
+	// 相手の角度
+	void SetRota(MATRIX rot);
+
 	// 攻撃を受けたかどうか
 	void SetDamage(bool isDamage);
+	// ガードが成功しかたどうか
+	void SetGuard(bool isGuard);
+	// ジャストガードが成功したかどうか
 	void SetJustGuard(bool isJustGuard);
+	// ジャストガードをされかたどうか
 	void SetJustGuardBreak(bool isJustGuardBreak);
 
 	// スタミナの管理
 	void SetStamina(float addStamina, float subStamina);
 private:
 	// 3Dモデルハンドル
-	int m_lanceHnadle;
+	int m_weaponHnadle;
 	int m_shieldHnadle;
 
-	// 移動量
 	// 角度
-	VECTOR m_vec;
 	MATRIX m_rotMtx;
+	MATRIX m_enemyRotMtx;
 
 	// 装備位置
 	VECTOR m_vecWeapon;
@@ -95,12 +100,18 @@ private:
 	int m_justGuardFrame;
 	int m_justGuardBreakFrame;
 
+	int m_knockBackFrame;
+
+	// 敵からの攻撃をガードできたかどうか
+	bool m_isResultGuard;
+
 protected:
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
 
 	// 位置
 	VECTOR m_pos;
+	VECTOR m_vec;
 	VECTOR m_targetPos;
 
 	// 角度

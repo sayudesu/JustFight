@@ -26,14 +26,17 @@ namespace
 	constexpr float kWeaponAttackRadius = 30.0f;
 	// 武器の攻撃時の判定の相対位置
 	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -240.0f };
+
+	// ガードしている時に攻撃を受けた場合のノックバックで移動する相対位置
+	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-15.0f };
 }
 
 CharacterBase::CharacterBase(VECTOR pos):
 	m_pFunc(nullptr),
-	m_lanceHnadle(-1),
+	m_weaponHnadle(-1),
 	m_shieldHnadle(-1),
 	m_pos(pos),
-	m_vec(VGet(0,0,0)),
+	m_vec(kKnockBackPos),
 	m_vecWeapon(VGet(0, 0, 0)),
 	m_vecSield(VGet(0, 0, 0)),
 	m_hp(kHpMax),
@@ -41,10 +44,12 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isAttack(false),
 	m_isGuard(false),
 	m_isJustGuard(false),
+	m_isResultGuard(false),
 	m_attackFrame(0),
 	m_guardFrame(0),
 	m_justGuardFrame(0),
-	m_justGuardBreakFrame(0)
+	m_justGuardBreakFrame(0),
+	m_knockBackFrame(0)
 {
 	m_pFunc = &CharacterBase::Idle;
 }
@@ -55,15 +60,15 @@ CharacterBase::~CharacterBase()
 
 void CharacterBase::Init()
 {
-	m_lanceHnadle  = MyModel3D::Load("Data/Model/Lance2.mv1");
+	m_weaponHnadle  = MyModel3D::Load("Data/Model/Lance2.mv1");
 	m_shieldHnadle = MyModel3D::Load("Data/Model/Shield.mv1");
 
 	{
 		m_vecWeapon = kWeaponPos;
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle,  VGet(0.0f, 0.0f,0.0f));
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle,  VGet(0.0f, 0.0f,0.0f));
 	}
 	{
 		m_vecSield = kSieldPos;
@@ -78,7 +83,7 @@ void CharacterBase::Init()
 
 void CharacterBase::End()
 {
-	MyModel3D::End(m_lanceHnadle);
+	MyModel3D::End(m_weaponHnadle);
 	MyModel3D::End(m_shieldHnadle);
 }
 
@@ -92,13 +97,9 @@ void CharacterBase::Draw()
 	// 体
 	DrawCapsule3D(m_pos, VGet(m_pos.x, m_pos.y + 200.0f, m_pos.z), 40.0f, 8, 0x00ff00, 0xffffff, true);
 	// 武器
-	MV1DrawModel(m_lanceHnadle);
+	MV1DrawModel(m_weaponHnadle);
 	// 盾
 	MV1DrawModel(m_shieldHnadle);
-}
-
-void CharacterBase::Input()
-{
 }
 
 void CharacterBase::Idle()
@@ -108,8 +109,8 @@ void CharacterBase::Idle()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle,0.0f));
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle, VGet(0.0f, m_angle,0.0f));
 	}
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
@@ -157,8 +158,8 @@ void CharacterBase::Attack()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle,0.0f));
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle, VGet(0.0f, m_angle,0.0f));
 	}
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
@@ -170,7 +171,7 @@ void CharacterBase::Attack()
 
 void CharacterBase::Guard()
 {
-	SetStamina(0.0f, 0.0f);
+	SetStamina(0.05f, 0.0f);
 
 	if (m_vecSield.x > 0.0f)
 	{
@@ -196,6 +197,25 @@ void CharacterBase::Guard()
 	{
 		m_guardFrame = kGuardFrameMax;
 	}
+
+	// ガードが成功したら
+	if (m_isResultGuard)
+	{
+	//	m_knockBackFrame++;
+		printfDx("%f\n", m_vec.z);
+		if (m_vec.z < 0.0f)
+		{			
+			m_vec.z += 1.0f;
+			VECTOR move = VTransform(m_vec, m_enemyRotMtx);
+			m_pos = VAdd(m_pos, move);
+		}
+		else
+		{
+			m_vec = kKnockBackPos;
+			m_isResultGuard = false;
+		}
+	}
+
 	
 	if (!m_isGuard)
 	{
@@ -208,8 +228,8 @@ void CharacterBase::Guard()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle, 0.0f));
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
@@ -228,8 +248,8 @@ void CharacterBase::JustGuard()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle, 0.0f));
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
@@ -261,8 +281,8 @@ void CharacterBase::JustGuardBreak()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_lanceHnadle, move);
-		MV1SetRotationXYZ(m_lanceHnadle, VGet(0.0f, m_angle, 0.0f));
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle, VGet(0.0f, m_angle, 0.0f));
 	}
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
@@ -361,12 +381,22 @@ bool CharacterBase::IsJustGuard() const
 	return m_isJustGuard;
 }
 
+void CharacterBase::SetRota(MATRIX rot)
+{
+	m_enemyRotMtx = rot;
+}
+
 void CharacterBase::SetDamage(bool isDamage)
 {
 	if (isDamage)
 	{
 		m_hp--;
 	}
+}
+
+void CharacterBase::SetGuard(bool isGuard)
+{
+	m_isResultGuard = isGuard;
 }
 
 void CharacterBase::SetJustGuard(bool isJustGuard)
