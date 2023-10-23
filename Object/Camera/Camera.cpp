@@ -31,7 +31,7 @@ void Camera::Init()
 	SetCameraNearFar(100.0f, 4000.0f);
 	// どこを居てどこをみるか
 	SetCameraPositionAndTarget_UpVecY(m_pos, m_posTarget);
-	// 遠近法のセットアップ( ラジアン値に変換しています )
+	// FOV
 	SetupCamera_Perspective(kFov);
 }
 

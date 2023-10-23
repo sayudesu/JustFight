@@ -8,7 +8,7 @@ public:
 	Enemy(VECTOR pos);
 	virtual ~Enemy();
 	void Input()override;
-
+public:
 	void SetTargetPos(VECTOR pos);
 };
 

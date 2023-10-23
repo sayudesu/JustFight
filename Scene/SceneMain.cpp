@@ -62,7 +62,6 @@ SceneBase* SceneMain::Update()
 	// Enemyの攻撃した場合の処理
 	{
 		m_pPlayer->SetDamage(false);
-//		m_pPlayer->SetGuard(false);
 		m_pPlayer->SetJustGuard(false);
 		m_pPlayer->SetJustGuardBreak(m_pEnemy->IsJustGuard());
 		m_pPlayer->SetRota(m_pEnemy->GetRot());
@@ -141,12 +140,16 @@ SceneBase* SceneMain::Update()
 
 void SceneMain::Draw()
 {
-//	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xaaaaaa,true);
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
 
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
 
 #if _DEBUG
+	CheckHitPlayer();
+	CheckHitEnemy();
+	CheckHItPlayerSield();
+	CheckHItEnemySield();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pPlayer->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pEnemy->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pPlayer->GetStamina(), 100, 15, 0xffff00);

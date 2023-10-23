@@ -13,5 +13,7 @@ public:
 
 public:
 	float GetAngle()const;
+private:
+	void MoveAway();
 };
 

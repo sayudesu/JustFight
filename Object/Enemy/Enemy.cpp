@@ -40,15 +40,15 @@ void Enemy::Input()
 			m_pFunc = &Enemy::Attack;
 		}
 
-		//if (GetRand(10) == 0 && !m_isAttack)
-		//{
-		//	m_isGuard = true;
-		//	m_pFunc = &Enemy::Guard;
-		//}
-		//else
-		//{
-		//	m_isGuard = false;
-		//}
+		if (GetRand(10)  == 0 && !m_isAttack)
+		{
+			m_isGuard = true;
+			m_pFunc = &Enemy::Guard;
+		}
+		else
+		{
+			m_isGuard = false;
+		}
 	}
 }
 

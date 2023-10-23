@@ -6,6 +6,9 @@ namespace
 	// ÉvÉåÉCÉÑÅ[ÇÃà⁄ìÆó 
 	constexpr VECTOR kVecZ{ 0.0f,0.0f,-10.0f };
 	constexpr VECTOR kVecX{ -10.0f,0.0f,0.0f };
+
+	// âÒî
+	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
 }
 
 Player::Player(VECTOR pos):
@@ -48,29 +51,31 @@ void Player::Input()
 
 	if (Pad::isPress(PAD_INPUT_UP))
 	{
-		VECTOR move = VTransform(kVecZ, rotMtx);
+		const VECTOR move = VTransform(kVecZ, rotMtx);
 		m_pos = VAdd(m_pos, move);
 	}
-	if (Pad::isPress(PAD_INPUT_DOWN))
+	else if (Pad::isPress(PAD_INPUT_DOWN))
 	{
-		VECTOR move = VTransform(kVecZ, rotMtx);
+		const VECTOR move = VTransform(kVecZ, rotMtx);
 		m_pos = VSub(m_pos, move);
 	}
 	if (Pad::isPress(PAD_INPUT_RIGHT))
 	{
-		VECTOR move = VTransform(kVecX, rotMtx);
+		const VECTOR move = VTransform(kVecX, rotMtx);
 		m_pos = VAdd(m_pos, move);
 	}
-	if (Pad::isPress(PAD_INPUT_LEFT))
+	else if (Pad::isPress(PAD_INPUT_LEFT))
 	{
-		VECTOR move = VTransform(kVecX, rotMtx);
+		const VECTOR move = VTransform(kVecX, rotMtx);
 		m_pos = VSub(m_pos, move);
 	}
 	SetRotMtx(rotMtx);
 
 	if (!m_isJustGuardBreak)
 	{
-		if (Pad::isTrigger(PAD_INPUT_6) && !m_isGuard)
+		if (Pad::isTrigger(PAD_INPUT_6) &&
+			!m_isAttack &&
+			!m_isGuard)
 		{
 			m_isAttack = true;
 			m_pFunc = &Player::Attack;
@@ -86,9 +91,40 @@ void Player::Input()
 			m_isGuard = false;
 		}
 	}
+
+	// âÒîÇÃâºé¿ëï
+	{
+		static VECTOR away = kVecAwayZ;
+		static float isAway = false;
+
+		if (Pad::isTrigger(PAD_INPUT_3))
+		{
+			isAway = true;
+		
+		}
+
+		if (isAway)
+		{
+			if (away.z < 0.0f)
+			{
+				away.z += 1.0f;
+			}
+			else
+			{
+				away = kVecAwayZ;
+				isAway = false;
+			}
+			VECTOR move = VTransform(away, rotMtx);
+			m_pos = VSub(m_pos, move);
+		}
+	}
 }
 
 float Player::GetAngle()const
 {
 	return m_angle;
+}
+
+void Player::MoveAway()
+{
 }

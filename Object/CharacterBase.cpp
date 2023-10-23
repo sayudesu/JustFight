@@ -6,11 +6,11 @@ namespace
 {
 	// フレーム管理
 	// 攻撃最大フレーム
-	constexpr int kAttackFrameMax = 40;
+	constexpr int kAttackFrameMax = 35;
 	// ガード最大フレーム
 	constexpr int kGuardFrameMax  = 15;
 	// ジャストガード最大フレーム
-	constexpr int kJustGuardFrameMax = 12;
+	constexpr int kJustGuardFrameMax = 7;
 
 	// 最大体力
 	constexpr int kHpMax = 6;
@@ -19,7 +19,7 @@ namespace
 
 	// 装備の相対位置
 	const VECTOR kWeaponPos = { -80.0f, 100.0f, 0.0f };
-	const VECTOR kSieldPos = { 100.0f, 100.0f, -50.0f };
+	const VECTOR kSieldPos  = { 100.0f, 100.0f, -50.0f };
 
 	// 攻撃時の当たり判定
 	// 武器の半径
@@ -31,27 +31,36 @@ namespace
 
 	// ガードしている時に攻撃を受けた場合のノックバックで移動する相対位置
 	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-15.0f };
+
+	// 剣が元の位置に戻る速度
+	constexpr float kWeaponBackSpeed = 30.0f;
+	// 盾が元の位置に戻る速度
+	constexpr float kSieldBackSpeed  = 30.0f;
 }
 
 CharacterBase::CharacterBase(VECTOR pos):
 	m_pFunc(nullptr),
 	m_weaponHnadle(-1),
 	m_shieldHnadle(-1),
+	m_rotMtx({}),
+	m_enemyRotMtx({}),
 	m_pos(pos),
 	m_vec(kKnockBackPos),
+	m_targetPos(VGet(0,0,0)),
 	m_vecWeapon(VGet(0, 0, 0)),
 	m_vecSield(VGet(0, 0, 0)),
 	m_hp(kHpMax),
 	m_stamina(kStaminaMax),
+	m_angle(0.0f),
 	m_isAttack(false),
 	m_isGuard(false),
 	m_isJustGuard(false),
+	m_isJustGuardBreak(false),
 	m_isResultGuard(false),
 	m_attackFrame(0),
 	m_guardFrame(0),
 	m_justGuardFrame(0),
-	m_justGuardBreakFrame(0),
-	m_knockBackFrame(0)
+	m_justGuardBreakFrame(0)
 {
 	m_pFunc = &CharacterBase::Idle;
 }
@@ -107,6 +116,69 @@ void CharacterBase::Idle()
 {
 	SetStamina(0.2f, 0.0f);
 
+	// 武器を元の位置に戻す
+	{
+		bool isEndX = false;
+		bool isEndZ = false;
+		if (m_vecWeapon.x > kWeaponPos.x)
+		{
+			m_vecWeapon.x -= kWeaponBackSpeed;
+		}
+		else
+		{
+			isEndX = true;
+			m_vecWeapon.x = kWeaponPos.x;
+		}
+
+		if (m_vecWeapon.z < kWeaponPos.z)
+		{
+			m_vecWeapon.z += kWeaponBackSpeed;
+		}
+		else
+		{
+			isEndZ = true;
+			m_vecWeapon.z = kWeaponPos.z;
+		}
+		if (isEndX && isEndZ)
+		{
+			m_isAttack = false;
+		}
+
+		if (m_vecWeapon.y < kWeaponPos.y)
+		{
+			m_vecWeapon.y -= 30.0f;
+		}
+		else
+		{
+			m_vecWeapon.y = kWeaponPos.y;
+		}
+	}
+	// 盾を元の位置に戻す
+	{
+		if (m_vecSield.x < kSieldPos.x)
+		{
+			m_vecSield.x += kSieldBackSpeed;
+		}
+		else
+		{
+			m_vecSield.x = kSieldPos.x;
+		}
+
+		if (m_vecSield.y < kSieldPos.y)
+		{
+			m_vecSield.y -= 30.0f;
+		}
+		else
+		{
+			m_vecSield.y = kSieldPos.y;
+		}
+	}
+	printfDx("%d\n", m_hp);
+	if (m_hp < 0)
+	{
+		m_pFunc = &CharacterBase::Losers;
+	}
+
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
@@ -132,9 +204,9 @@ void CharacterBase::Attack()
 	else
 	{
 		m_attackFrame = 0;
-		m_isAttack = false;
-		m_vecWeapon.z = 0.0f;
-		m_vecWeapon.x = -80.0f;
+	//	m_isAttack = false;
+	//	m_vecWeapon.z = 0.0f;
+	//	m_vecWeapon.x = -80.0f;
 		m_pFunc = &CharacterBase::Idle;
 	}
 
@@ -202,8 +274,6 @@ void CharacterBase::Guard()
 	// ガードが成功したら
 	if (m_isResultGuard)
 	{
-	//	m_knockBackFrame++;
-		printfDx("%f\n", m_vec.z);
 		if (m_vec.z < 0.0f)
 		{			
 			m_vec.z += 1.0f;
@@ -222,7 +292,6 @@ void CharacterBase::Guard()
 	{
 		m_guardFrame = 0;
 		m_justGuardFrame = 0;
-		m_vecSield.x = 100.0f;
 		m_pFunc = &CharacterBase::Idle;
 	}
 
@@ -264,8 +333,17 @@ void CharacterBase::JustGuardBreak()
 {
 	m_justGuardBreakFrame++;
 	
-	m_vecWeapon = kWeaponPos;
-	m_vecSield = kSieldPos;
+//	m_vecWeapon = kWeaponPos;
+//	m_vecSield = kSieldPos;
+
+	if (m_vecWeapon.y < kWeaponPos.y + 60.0f)
+	{
+		m_vecWeapon.y += 10.0f;
+	}
+	if (m_vecSield.y < kSieldPos.y + 60.0f)
+	{
+		m_vecSield.y += 10.0f;
+	}
 
 	// フレームのリセット
 	m_attackFrame = 0;
@@ -277,6 +355,45 @@ void CharacterBase::JustGuardBreak()
 		m_justGuardBreakFrame = 0;
 		m_isJustGuardBreak = false;
 		m_pFunc = &CharacterBase::Idle;
+	}
+
+	{
+		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+		move = VAdd(m_pos, move);
+		MV1SetPosition(m_weaponHnadle, move);
+		MV1SetRotationXYZ(m_weaponHnadle, VGet(0.0f, m_angle, 0.0f));
+	}
+	{
+		VECTOR move = VTransform(m_vecSield, m_rotMtx);
+		move = VAdd(m_pos, move);
+		MV1SetPosition(m_shieldHnadle, move);
+		MV1SetRotationXYZ(m_shieldHnadle, VGet(0.0f, m_angle, 0.0f));
+	}
+}
+
+void CharacterBase::Winner()
+{
+
+}
+
+void CharacterBase::Losers()
+{
+
+	if (m_vecWeapon.y > 0.0f)
+	{
+		m_vecWeapon.y -= 3.0f;
+	}
+	else
+	{
+		m_vecWeapon.y = 0;
+	}
+	if (m_vecSield.y > 0.0f)
+	{
+		m_vecSield.y -= 3.0f;
+	}
+	else
+	{
+		m_vecSield.y = 0;
 	}
 
 	{

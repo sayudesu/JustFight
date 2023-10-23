@@ -27,6 +27,11 @@ protected:
 	virtual void JustGuard();
 	// ƒWƒƒƒXƒgƒK[ƒh‚ğ‚³‚ê‚½ê‡
 	virtual void JustGuardBreak();
+	// Ÿ—˜‚µ‚½ê‡
+	virtual void Winner();
+	// ”s–k‚µ‚½ê‡
+	virtual void Losers();
+
 protected:
 	virtual void SetAngle(float angle);
 	virtual void SetRotMtx(MATRIX rotMtx);
@@ -102,8 +107,6 @@ private:
 	int m_guardFrame;
 	int m_justGuardFrame;
 	int m_justGuardBreakFrame;
-
-	int m_knockBackFrame;
 
 	// “G‚©‚ç‚ÌUŒ‚‚ğƒK[ƒh‚Å‚«‚½‚©‚Ç‚¤‚©
 	bool m_isResultGuard;
