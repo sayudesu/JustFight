@@ -73,18 +73,25 @@ void Player::Input()
 
 	if (!m_isJustGuardBreak)
 	{
-		if (Pad::isTrigger(PAD_INPUT_6) &&
-			!m_isAttack &&
-			!m_isGuard)
+		if (GetStamina() > 20.0f)
 		{
-			m_isAttack = true;
-			m_pFunc = &Player::Attack;
-		}
+			if (Pad::isTrigger(PAD_INPUT_6) &&
+				!m_isAttack &&
+				!m_isGuard)
+			{
+				m_isAttack = true;
+				m_pFunc = &Player::Attack;
+			}
 
-		if (Pad::isPress(PAD_INPUT_5) && !m_isAttack)
-		{
-			m_isGuard = true;
-			m_pFunc = &Player::Guard;
+			if (Pad::isPress(PAD_INPUT_5) && !m_isAttack)
+			{
+				m_isGuard = true;
+				m_pFunc = &Player::Guard;
+			}
+			else
+			{
+				m_isGuard = false;
+			}
 		}
 		else
 		{

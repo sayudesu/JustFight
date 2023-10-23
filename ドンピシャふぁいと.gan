@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-11" view-index="0" gantt-divider-location="336" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
+<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-03" view-index="0" gantt-divider-location="336" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
     <description>
         <![CDATA[2.5Dアクション]]>
     </description>
@@ -42,7 +42,7 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" name="プロトタイプ" color="#ffff00" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2023-10-19" duration="11" complete="76" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="true">
+        <task id="0" name="プロトタイプ" color="#ffff00" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2023-10-19" duration="11" complete="76" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="false">
             <notes>
                 <![CDATA[これが完成しないとのこりの期間がえぐいてー]]>
             </notes>
@@ -126,6 +126,7 @@
                 <task id="28" name="敗北条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-28" thirdDate-constraint="0" priority="2" expand="true"/>
             </task>
         </task>
+        <task id="30" name="全体" meeting="false" start="2023-10-03" duration="1" complete="0" expand="true"/>
         <task id="1" name="アルファ" color="#ff9999" meeting="false" start="2023-10-30" duration="12" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="4" expand="true"/>
         <task id="2" name="ベータ" color="#ccccff" meeting="false" start="2023-11-11" duration="11" complete="0" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="true"/>
         <task id="3" name="マスター" color="#cccccc" meeting="false" start="2023-11-22" duration="17" complete="0" thirdDate="2023-11-15" thirdDate-constraint="0" priority="4" expand="true"/>

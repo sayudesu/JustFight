@@ -61,9 +61,11 @@ SceneBase* SceneMain::Update()
 
 	// Enemyの攻撃した場合の処理
 	{
-		m_pPlayer->SetDamage(false);
+		// ジャストガードが成功したかどうか
 		m_pPlayer->SetJustGuard(false);
+		// ジャストガードされたかどうか
 		m_pPlayer->SetJustGuardBreak(m_pEnemy->IsJustGuard());
+		// 敵の回転角度を取得
 		m_pPlayer->SetRota(m_pEnemy->GetRot());
 		// 攻撃フレームが最大数かどうか
 		if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())
@@ -72,29 +74,34 @@ SceneBase* SceneMain::Update()
 			if (m_pPlayer->GetJustGuardFrame() > 0 &&
 				m_pPlayer->GetJustGuardFrame() < m_pPlayer->GetJustGuardFrameMax())
 			{
+				// スタミナを減らす
 				m_pPlayer->SetStamina(30.0f, 0.0f);
+				// ジャストガードが成功したかどうか
 				m_pPlayer->SetJustGuard(true);
-				printfDx("Pジャストガード成功\n");
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
 			}
+			// 通常ガードが出来るかどうか
 			else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())
 			{
+				// エネミーの攻撃がプレイヤーの盾に当たったかどうか
 				if (CheckHItPlayerSield())
 				{
+					// プレイヤーのスタミナを減らす
 					m_pPlayer->SetStamina(0.0f, 30.0f);
+					// ガード成功したかどうか
 					m_pPlayer->SetGuard(true);
-					printfDx("Pガード成功\n");
 				}
 			}
 			else
 			{
+				// エネミーの攻撃がプレイヤーに当たったかどうか
 				if (CheckHitPlayer())
 				{
+					// プレイヤーにダメージを与える
 					m_pPlayer->SetDamage(true);
 					// 振動開始
 					StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
-					printfDx("Pガード失敗\n");
 				}
 			}
 		}
@@ -102,7 +109,6 @@ SceneBase* SceneMain::Update()
 	}
 	// Playerの攻撃した場合の処理
 	{
-		m_pEnemy->SetDamage(false);
 		m_pEnemy->SetJustGuard(false);
 		m_pEnemy->SetJustGuardBreak(m_pPlayer->IsJustGuard());
 		if (m_pPlayer->GetAttackFrame() == m_pPlayer->GetAttackFrameMax())
@@ -146,10 +152,10 @@ void SceneMain::Draw()
 	m_pEnemy->Draw();
 
 #if _DEBUG
-	CheckHitPlayer();
-	CheckHitEnemy();
-	CheckHItPlayerSield();
-	CheckHItEnemySield();
+	//CheckHitPlayer();
+	//CheckHitEnemy();
+	//CheckHItPlayerSield();
+	//CheckHItEnemySield();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pPlayer->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pEnemy->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pPlayer->GetStamina(), 100, 15, 0xffff00);

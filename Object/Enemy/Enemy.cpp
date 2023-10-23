@@ -34,21 +34,23 @@ void Enemy::Input()
 
 	if (!m_isJustGuardBreak)
 	{
-		if (GetRand(100) == 0 && !m_isGuard)
+		if (GetStamina() > 20.0f)
 		{
-			m_isAttack = true;
-			m_pFunc = &Enemy::Attack;
+			if (GetRand(100) == 0 && !m_isGuard)
+			{
+				m_isAttack = true;
+				m_pFunc = &Enemy::Attack;
+			}
 		}
-
-		if (GetRand(10)  == 0 && !m_isAttack)
-		{
-			m_isGuard = true;
-			m_pFunc = &Enemy::Guard;
-		}
-		else
-		{
-			m_isGuard = false;
-		}
+		//if (GetRand(10)  == 0 && !m_isAttack)
+		//{
+		//	m_isGuard = true;
+		//	m_pFunc = &Enemy::Guard;
+		//}
+		//else
+		//{
+		//	m_isGuard = false;
+		//}
 	}
 }
 

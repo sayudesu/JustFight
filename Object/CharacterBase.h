@@ -86,8 +86,8 @@ public:
 	void SetStamina(float addStamina, float subStamina);
 private:
 	// 3Dモデルハンドル
-	int m_weaponHnadle;
-	int m_shieldHnadle;
+	int m_weaponHandle;
+	int m_shieldHandle;
 
 	// 角度
 	MATRIX m_rotMtx;
@@ -110,6 +110,7 @@ private:
 
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
+	bool m_isResultDamage;
 
 protected:
 	// メンバ関数ポインタ
@@ -123,7 +124,7 @@ protected:
 	// 角度
 	float m_angle;
 
-	// 今の状態
+	// 状態
 	bool m_isAttack;
 	bool m_isGuard;
 	bool m_isJustGuard;

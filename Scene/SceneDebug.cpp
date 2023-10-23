@@ -97,6 +97,8 @@ void SceneDebug::Draw()
 
 	DrawExtendGraph(1000,100,300,300,m_handle.back(), false);
 
+#if _DEBUG
 	DrawString(0, 0, "SceneDebug", 0xffffff);
+#endif
 }
 
