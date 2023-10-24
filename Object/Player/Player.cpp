@@ -127,11 +127,6 @@ void Player::Input()
 	}
 }
 
-float Player::GetAngle()const
-{
-	return m_angle;
-}
-
 void Player::MoveAway()
 {
 }

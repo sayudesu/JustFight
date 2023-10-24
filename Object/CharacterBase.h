@@ -42,12 +42,15 @@ public:
 	VECTOR GetSieldPos()const;
 
 	MATRIX GetRot()const;
+	float GetAngle()const;
 
 	float GetWeaponAttackRadius()const;
 	VECTOR GetWeaponAttackRelative()const;
 
 	float GetSieldRadius()const;
 	VECTOR GetSieldRelative()const;
+
+	void SetTargetPos(VECTOR pos);
 
 	// Œ»İ‚ÌUŒ‚ƒtƒŒ[ƒ€
 	int GetAttackFrame()const;

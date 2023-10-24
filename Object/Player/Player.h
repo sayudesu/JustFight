@@ -10,9 +10,6 @@ public:
 	
 	// ƒ{ƒ^ƒ““ü—Í
 	void Input()override;
-
-public:
-	float GetAngle()const;
 private:
 	void MoveAway();
 };

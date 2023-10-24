@@ -445,6 +445,11 @@ MATRIX CharacterBase::GetRot()const
 	return m_rotMtx;
 }
 
+float CharacterBase::GetAngle() const
+{
+	return m_angle;
+}
+
 float CharacterBase::GetWeaponAttackRadius() const
 {
 	return kWeaponAttackRadius;
@@ -463,6 +468,11 @@ float CharacterBase::GetSieldRadius() const
 VECTOR CharacterBase::GetSieldRelative() const
 {
 	return kSieldPos;
+}
+
+void CharacterBase::SetTargetPos(VECTOR pos)
+{
+	m_targetPos = pos;
 }
 
 int CharacterBase::GetAttackFrame()const
