@@ -147,6 +147,7 @@
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
     <ClCompile Include="DEBUG.cpp" />
+    <ClCompile Include="Util\Effekseer3DDrawer.cpp" />
     <ClCompile Include="Util\MyLoadModel.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\CharacterBase.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />
     <ClInclude Include="DEBUG.h" />
+    <ClInclude Include="Util\Effekseer3DDrawer.h" />
     <ClInclude Include="Util\MyLoadModel.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\CharacterBase.h" />

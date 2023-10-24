@@ -396,6 +396,7 @@ void CharacterBase::Losers()
 		m_vecSield.y = 0;
 	}
 
+	
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);

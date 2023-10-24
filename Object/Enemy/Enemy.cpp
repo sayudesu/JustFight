@@ -34,9 +34,9 @@ void Enemy::Input()
 
 	if (!m_isJustGuardBreak)
 	{
-		if (GetStamina() > 20.0f)
+		//if (GetStamina() > 20.0f)
 		{
-			if (GetRand(100) == 0 && !m_isGuard)
+			if (GetRand(2) == 0 && !m_isGuard)
 			{
 				m_isAttack = true;
 				m_pFunc = &Enemy::Attack;

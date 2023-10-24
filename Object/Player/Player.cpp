@@ -73,7 +73,7 @@ void Player::Input()
 
 	if (!m_isJustGuardBreak)
 	{
-		if (GetStamina() > 20.0f)
+		//if (GetStamina() > 20.0f)
 		{
 			if (Pad::isTrigger(PAD_INPUT_6) &&
 				!m_isAttack &&
@@ -93,10 +93,10 @@ void Player::Input()
 				m_isGuard = false;
 			}
 		}
-		else
-		{
-			m_isGuard = false;
-		}
+		//else
+		//{
+		//	m_isGuard = false;
+		//}
 	}
 
 	// ‰ñ”ð‚Ì‰¼ŽÀ‘•

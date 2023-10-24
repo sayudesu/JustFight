@@ -38,20 +38,20 @@ void Camera::Init()
 void Camera::Update()
 {
 	m_angle = (m_angle * 0.8f) + (m_playerAngle * 0.2f);
-	MATRIX cameraRotMtx = MGetRotY(m_angle);
+	const MATRIX cameraRotMtx = MGetRotY(m_angle);
 
 	// ジャンプ時は単純にプレイヤーに服従するのではなく
 	//プレイヤーの立っていた位置を見るようにする
 	VECTOR cameraTrans = m_posTarget;
 	cameraTrans.y = m_posTarget.y * 0.0f;
-	MATRIX playerTransMtx = MGetTranslate(cameraTrans);
+	const MATRIX playerTransMtx = MGetTranslate(cameraTrans);
 
 	// プレイヤーの回転に合わせてカメラ位置、注視点を回転させる
 	// プレイヤーの回転情報と平行移動情報を合成
-	MATRIX cameraMtx = MMult(cameraRotMtx, playerTransMtx);
+	const MATRIX cameraMtx = MMult(cameraRotMtx, playerTransMtx);
 
-	VECTOR cameraPos = VTransform(kCameraPos, cameraMtx);
-	VECTOR cameraTarget = VTransform(kCameraTarget, cameraMtx);
+	const VECTOR cameraPos = VTransform(kCameraPos, cameraMtx);
+	const VECTOR cameraTarget = VTransform(kCameraTarget, cameraMtx);
 
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);

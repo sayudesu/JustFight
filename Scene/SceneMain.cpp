@@ -4,6 +4,7 @@
 #include "../Object/Player/Player.h"
 #include "../Object/Enemy/Enemy.h"
 #include "../Util/Collision3D.h"
+#include "../Util/Effekseer3DDrawer.h"
 #include "../Util/Game.h"
 #include "../DEBUG.h"
 
@@ -29,16 +30,22 @@ void SceneMain::Init()
 	m_pPlayer = std::make_unique<Player>(VGet(-300.0f, 0.0f, 0.0f));
 	m_pEnemy  = std::make_unique<Enemy> (VGet( 300.0f, 0.0f, 0.0f));
 	m_pColl   = std::make_unique<Collision3D>();
+	m_pEffect[0] = std::make_unique<Effekseer3DDrawer>();
+	m_pEffect[1] = std::make_unique<Effekseer3DDrawer>();
 
 	m_pCamera->Init();
 	m_pPlayer->Init();
 	m_pEnemy->Init();
+	m_pEffect[0]->Init("Data/Guard.efk",30.0f);
+	m_pEffect[1]->Init("Data/Guard2.efk", 130.0f);
 }
 
 void SceneMain::End()
 {
 	m_pPlayer->End();
 	m_pEnemy->End();
+	m_pEffect[0]->End();
+	m_pEffect[1]->End();
 }
 
 SceneBase* SceneMain::Update()
@@ -50,6 +57,16 @@ SceneBase* SceneMain::Update()
 	m_pEnemy->Input();
 
 	m_pCamera->Update();
+
+	for (auto& effect : m_pEffect)
+	{
+		effect->Update();
+
+		if (!effect->IsPlay())
+		{
+			effect->SetPlay(false);
+		}
+	}
 
 	// カメラにプレイヤーとエネミーの位置を渡す
 	m_pCamera->SetTargetPos(m_pPlayer->GetPos());
@@ -80,6 +97,11 @@ SceneBase* SceneMain::Update()
 				m_pPlayer->SetJustGuard(true);
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
+
+				m_pEffect[1]->SetPlay(true);
+				m_pEffect[1]->SetAngle(m_pPlayer->GetAngle());
+				m_pEffect[1]->SetPos(VGet(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y + 100.0f, m_pPlayer->GetPos().z));
+
 			}
 			// 通常ガードが出来るかどうか
 			else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())
@@ -91,6 +113,10 @@ SceneBase* SceneMain::Update()
 					m_pPlayer->SetStamina(0.0f, 10.0f);
 					// ガード成功したかどうか
 					m_pPlayer->SetGuard(true);
+
+					m_pEffect[0]->SetPlay(true);
+					m_pEffect[0]->SetAngle(m_pPlayer->GetAngle());
+					m_pEffect[0]->SetPos(m_pPlayer->GetSieldPos());
 				}
 			}
 			else
@@ -100,14 +126,13 @@ SceneBase* SceneMain::Update()
 				{
 					// プレイヤーにダメージを与える
 					m_pPlayer->SetDamage(true);
-					// 振動開始
+					// 振動開始+
 					StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
 				}
 			}
 		}
 
 	}
-	printfDx("%d\n", m_pPlayer->GetAttackFrame());
 	// Playerの攻撃した場合の処理
 	{
 		m_pEnemy->SetJustGuard(false);
@@ -151,6 +176,11 @@ void SceneMain::Draw()
 
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
+
+	for (auto& effect : m_pEffect)
+	{
+		effect->Draw();
+	}
 
 #if _DEBUG
 	//CheckHitPlayer();

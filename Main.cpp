@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include <EffekseerForDXLib.h> 
 
 #include "Util/Game.h"
 #include "Scene/SceneManager.h"
@@ -17,12 +18,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ログテキストを作成するかどうか
 	SetOutApplicationLogValidFlag(Game::kCreateLogText);
 
+	// ダブルバッファモード
+	SetDrawScreen(DX_SCREEN_BACK);
+
+	// DirectX11を使用するようにする。(DirectX9も可、一部機能不可)
+	// Effekseerを使用するには必ず設定する。
+	SetUseDirect3DVersion(DX_DIRECT3D_11);
+
 	// ＤＸライブラリ初期化処理
 	if (DxLib_Init() == -1)		
 	{
 		// エラーが起きたら直ちに終了
 		return -1;			
 	}
+
+	// Effekseerを初期化する。
+// 引数には画面に表示する最大パーティクル数を設定する。
+	if (Effekseer_Init(8000) == -1)
+	{
+		DxLib_End();
+		return -1;
+	}
+
+	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
+	// Effekseerを使用する場合は必ず設定する。
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+
+	// DXライブラリのデバイスロストした時のコールバックを設定する。
+	// ウインドウとフルスクリーンの切り替えが発生する場合は必ず実行する。
+	// ただし、DirectX11を使用する場合は実行する必要はない。
+	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// 3D関連の設定
 	// Zバッファを有効にする。
@@ -33,10 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ポリゴンの裏面を描画しない
 	SetUseBackCulling(true);
 
-	// ダブルバッファモード
-	SetDrawScreen(DX_SCREEN_BACK);
-
-	SceneManager* pScene = new SceneManager;
+	SceneManager* pScene = new SceneManager();
 
 	pScene->Init();
 
@@ -64,6 +86,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	pScene->End();
+
+	// Effekseerを終了する。
+	Effkseer_End();
 
 	// ＤＸライブラリ使用の終了処理
 	DxLib_End();				
