@@ -3,6 +3,8 @@
 #include "Util/Game.h"
 #include "Scene/SceneManager.h"
 
+#include "EffekseerForDXLib.h"
+
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -17,12 +19,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ログテキストを作成するかどうか
 	SetOutApplicationLogValidFlag(Game::kCreateLogText);
 
+	// DirectX9を使用するようにする。(DirectX11も可)
+	// Effekseerを使用するには必ず設定する。
+	SetUseDirect3DVersion(DX_DIRECT3D_11);
+
 	// ＤＸライブラリ初期化処理
 	if (DxLib_Init() == -1)		
 	{
 		// エラーが起きたら直ちに終了
 		return -1;			
 	}
+
+	// Effekseerを初期化する。
+// 引数には画面に表示する最大パーティクル数を設定する。
+	if (Effkseer_Init(8000) == -1)
+	{
+		DxLib_End();
+		return -1;
+	}
+
+	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
+	// Effekseerを使用する場合は必ず設定する。
+	SetChangeScreenModeGraphicsSystemResetFlag(false);
 
 	// 3D関連の設定
 	// Zバッファを有効にする。
@@ -64,6 +82,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	pScene->End();
+
+	// Effekseerを終了する。
+	Effkseer_End();
 
 	// ＤＸライブラリ使用の終了処理
 	DxLib_End();				

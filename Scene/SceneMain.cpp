@@ -146,7 +146,7 @@ SceneBase* SceneMain::Update()
 
 void SceneMain::Draw()
 {
-	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
+//	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
 
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();

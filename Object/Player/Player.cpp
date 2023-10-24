@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "../../Util/Pad.h"
 
+#include "../../Effekseer3DDrawer.h"
+
 namespace
 {
 	// ƒvƒŒƒCƒ„[‚ÌˆÚ“®—Ê
@@ -22,14 +24,20 @@ Player::Player(VECTOR pos):
 	m_isJustGuardBreak = false;
 
 	m_angle = 0.0f;
+
+	m_effect = new Effekseer3DDrawer;
+	m_effect->Init();
 }
 
 Player::~Player()
 {
+	m_effect->End();
 }
 
 void Player::Input()
 {
+	m_effect->Update();
+	m_effect->SetPos(VGet(m_pos.x + 150.0f, m_pos.y, m_pos.z));
 	DINPUT_JOYSTATE input;
 	// “ü—Íó‘Ô‚ðŽæ“¾
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
@@ -98,7 +106,7 @@ void Player::Input()
 			m_isGuard = false;
 		}
 	}
-
+	m_effect->Draw();
 	// ‰ñ”ð‚Ì‰¼ŽÀ‘•
 	{
 		static VECTOR away = kVecAwayZ;
