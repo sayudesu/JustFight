@@ -6,9 +6,12 @@ namespace
 {
 	// フレーム管理
 	// 攻撃最大フレーム
-	constexpr int kAttackFrameMax = 35;
+	constexpr int kAttackFrameMax = 5;
+	constexpr int kAttackGapFrameMax = 20;
+	constexpr int kAttackTotalFrame = kAttackFrameMax + kAttackGapFrameMax;
+
 	// ガード最大フレーム
-	constexpr int kGuardFrameMax  = 15;
+	constexpr int kGuardFrameMax  = 12;
 	// ジャストガード最大フレーム
 	constexpr int kJustGuardFrameMax = 7;
 
@@ -59,6 +62,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isResultGuard(false),
 	m_isResultDamage(false),
 	m_attackFrame(0),
+	m_attackGapFrame(0),
 	m_guardFrame(0),
 	m_justGuardFrame(0),
 	m_justGuardBreakFrame(0)
@@ -123,7 +127,7 @@ void CharacterBase::Idle()
 		bool isEndZ = false;
 		if (m_vecWeapon.x > kWeaponPos.x)
 		{
-			m_vecWeapon.x -= kWeaponBackSpeed;
+			m_vecWeapon.x -= 10.0f;
 		}
 		else
 		{
@@ -133,7 +137,7 @@ void CharacterBase::Idle()
 
 		if (m_vecWeapon.z < kWeaponPos.z)
 		{
-			m_vecWeapon.z += kWeaponBackSpeed;
+			m_vecWeapon.z += 30.0f;
 		}
 		else
 		{
@@ -147,7 +151,7 @@ void CharacterBase::Idle()
 
 		if (m_vecWeapon.y < kWeaponPos.y)
 		{
-			m_vecWeapon.y -= 30.0f;
+			m_vecWeapon.y -= 10.0f;
 		}
 		else
 		{
@@ -158,7 +162,7 @@ void CharacterBase::Idle()
 	{
 		if (m_vecSield.x < kSieldPos.x)
 		{
-			m_vecSield.x += kSieldBackSpeed;
+			m_vecSield.x += 30.0f;
 		}
 		else
 		{
@@ -203,36 +207,31 @@ void CharacterBase::Idle()
 void CharacterBase::Attack()
 {
 	SetStamina(0.0f, 1.0f);
-	// 攻撃フレームの制御
-	if (m_attackFrame < kAttackFrameMax)
+
+	// 最大フレーム内に目標地点まで移動する
+	// 始めに隙ようの後ろに動かす動作
+	if (m_attackGapFrame < kAttackGapFrameMax)
 	{
-		m_attackFrame++;
+		m_vecWeapon.z = kWeaponPos.z + (100.0f - kWeaponPos.z) * (m_attackGapFrame) / kAttackGapFrameMax;
+		m_attackGapFrame++;
+		tempPos = m_vecWeapon;
 	}
-	else
+	// 攻撃をする動作
+	if (m_attackGapFrame == kAttackGapFrameMax)
 	{
-		m_attackFrame = 0;
-	//	m_isAttack = false;
-	//	m_vecWeapon.z = 0.0f;
-	//	m_vecWeapon.x = -80.0f;
-		m_pFunc = &CharacterBase::Idle;
+		if (m_attackFrame < kAttackFrameMax)
+		{
+			m_vecWeapon.z = tempPos.z + (-200.0f - tempPos.z) * (m_attackFrame) / kAttackFrameMax;
+			m_vecWeapon.x = kWeaponPos.x + (0.0f - kWeaponPos.x) * (m_attackFrame) / kAttackFrameMax;
+			m_attackFrame++;
+		}
 	}
 
-	// 攻撃フレーム後半から攻撃開始
-	if (m_attackFrame > kAttackFrameMax / 2)
+	if (m_attackFrame + m_attackGapFrame == kAttackTotalFrame)
 	{
-		// 武器モデルの移動
-		if(m_vecWeapon.z > -200.0f)
-		{
-			m_vecWeapon.z -= 50.0f;
-		}
-		if (m_vecWeapon.x < -20.0f)
-		{
-			m_vecWeapon.x += 10.0f;
-		}
-	}
-	else
-	{
-		m_vecWeapon.z += 1.5f;
+		m_attackFrame = 0;
+		m_attackGapFrame = 0;
+		m_pFunc = &CharacterBase::Idle;
 	}
 
 	{
@@ -253,17 +252,10 @@ void CharacterBase::Guard()
 {
 	SetStamina(0.05f, 0.0f);
 
-	if (m_vecSield.x > 0.0f)
-	{
-		m_vecSield.x -= 15.0f;
-	}
-	else
-	{
-		m_vecSield.x = 0.0f;
-	}
-
+	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < kGuardFrameMax)
 	{
+		m_vecSield.x = kSieldPos.x + (0.0f - kSieldPos.x) * (float(m_guardFrame) / kGuardFrameMax);
 		m_guardFrame++;
 
 		// ジャストガードのフレーム
@@ -272,13 +264,16 @@ void CharacterBase::Guard()
 		{
 			m_justGuardFrame++;
 		}
+		
 	}
 	else
 	{
 		m_guardFrame = kGuardFrameMax;
+		m_vecSield.x = 0.0f;
 	}
 
 	// ガードが成功したら
+	// 後ろにノックバック
 	if (m_isResultGuard)
 	{
 		if (m_vec.z < 0.0f)
@@ -294,7 +289,7 @@ void CharacterBase::Guard()
 		}
 	}
 
-	
+	// ガードをやめた場合
 	if (!m_isGuard)
 	{
 		m_guardFrame = 0;
@@ -351,10 +346,11 @@ void CharacterBase::JustGuardBreak()
 
 	// フレームのリセット
 	m_attackFrame = 0;
+	m_attackGapFrame = 0;
 	m_guardFrame = 0;
 	m_justGuardFrame = 0;
-
-	if (kAttackFrameMax + (kAttackFrameMax / 2) < m_justGuardBreakFrame)
+	int total = kAttackFrameMax + kAttackGapFrameMax * 2;
+	if ((total) < m_justGuardBreakFrame)
 	{
 		m_justGuardBreakFrame = 0;
 		m_isJustGuardBreak = false;
@@ -470,7 +466,8 @@ VECTOR CharacterBase::GetSieldRelative() const
 
 int CharacterBase::GetAttackFrame()const
 {
-	return m_attackFrame;
+	const int totalFrame = m_attackFrame + m_attackGapFrame;
+	return totalFrame;
 }
 
 int CharacterBase::GetGuardFrame()const
@@ -485,7 +482,7 @@ int CharacterBase::GetJustGuardFrame()const
 
 int CharacterBase::GetAttackFrameMax()const
 {
-	return kAttackFrameMax;
+	return kAttackTotalFrame;
 }
 
 int CharacterBase::GetGuardFrameMax()const

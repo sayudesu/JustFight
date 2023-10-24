@@ -68,7 +68,7 @@ SceneBase* SceneMain::Update()
 		// 敵の回転角度を取得
 		m_pPlayer->SetRota(m_pEnemy->GetRot());
 		// 攻撃フレームが最大数かどうか
-		if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax())
+		if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax() - 1)
 		{
 			// ジャストガード
 			if (m_pPlayer->GetJustGuardFrame() > 0 &&
@@ -88,7 +88,7 @@ SceneBase* SceneMain::Update()
 				if (CheckHItPlayerSield())
 				{
 					// プレイヤーのスタミナを減らす
-					m_pPlayer->SetStamina(0.0f, 30.0f);
+					m_pPlayer->SetStamina(0.0f, 10.0f);
 					// ガード成功したかどうか
 					m_pPlayer->SetGuard(true);
 				}
@@ -107,11 +107,12 @@ SceneBase* SceneMain::Update()
 		}
 
 	}
+	printfDx("%d\n", m_pPlayer->GetAttackFrame());
 	// Playerの攻撃した場合の処理
 	{
 		m_pEnemy->SetJustGuard(false);
 		m_pEnemy->SetJustGuardBreak(m_pPlayer->IsJustGuard());
-		if (m_pPlayer->GetAttackFrame() == m_pPlayer->GetAttackFrameMax())
+		if (m_pPlayer->GetAttackFrame() == m_pPlayer->GetAttackFrameMax() - 1)
 		{
 			// ジャストガード
 			if (m_pEnemy->GetJustGuardFrame() > 0 &&
@@ -122,7 +123,7 @@ SceneBase* SceneMain::Update()
 			}
 			else if (m_pEnemy->GetGuardFrame() == m_pEnemy->GetGuardFrameMax())
 			{
-				m_pEnemy->SetStamina(0.0f, 30.0f);
+				m_pEnemy->SetStamina(0.0f, 10.0f);
 			}
 			else
 			{

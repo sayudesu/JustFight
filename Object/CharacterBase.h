@@ -103,6 +103,7 @@ private:
 	float m_stamina;
 
 	// フレーム関連
+	int m_attackGapFrame;
 	int m_attackFrame;
 	int m_guardFrame;
 	int m_justGuardFrame;
@@ -111,6 +112,9 @@ private:
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
 	bool m_isResultDamage;
+
+	// デバッグ
+	VECTOR tempPos = VGet(0, 0, 0);
 
 protected:
 	// メンバ関数ポインタ
