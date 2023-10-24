@@ -3,7 +3,7 @@
 namespace Game
 {
 	// ウインドウモード設定
-	constexpr bool kWindowMode = false;
+	constexpr bool kWindowMode = true;
 	// ウインドウ名
 	const char* const kTitleText = "ドンピシャふぁいと";
 	// ウインドウサイズ

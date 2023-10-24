@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-03" view-index="0" gantt-divider-location="336" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
+<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-08" view-index="0" gantt-divider-location="321" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
     <description>
         <![CDATA[2.5Dアクション]]>
     </description>
@@ -8,7 +8,7 @@
         <field id="tpd5" name="終了日" width="69" order="2"/>
         <option id="filter.completedTasks" value="false"/>
         <timeline>
-            <![CDATA[1,2,0,3]]>
+            <![CDATA[0,1,3,2]]>
         </timeline>
         <option id="color.recent">
             <![CDATA[#ff6666 #ff0066 #ff3333 #ffcccc #ffff00 #cccccc #ccccff #ff9999 #ffffcc]]>
@@ -42,13 +42,14 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" name="プロトタイプ" color="#ffff00" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2023-10-19" duration="11" complete="76" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="false">
-            <notes>
-                <![CDATA[これが完成しないとのこりの期間がえぐいてー]]>
-            </notes>
-            <task id="5" name="キャラクターベース" color="#ff3333" meeting="false" start="2023-10-19" duration="3" complete="92" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true">
+        <task id="30" name="全体" meeting="false" start="2023-10-19" duration="51" complete="29" expand="true">
+            <task id="0" name="プロトタイプ" color="#ffff00" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2023-10-19" duration="11" complete="76" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="false">
                 <notes>
-                    <![CDATA[プレイヤーのエネミーも同じ動きするのでどちらも継承する
+                    <![CDATA[これが完成しないとのこりの期間がえぐいてー]]>
+                </notes>
+                <task id="5" name="キャラクターベース" color="#ff3333" meeting="false" start="2023-10-19" duration="3" complete="92" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true">
+                    <notes>
+                        <![CDATA[プレイヤーのエネミーも同じ動きするのでどちらも継承する
 
 　攻撃を実装する
 
@@ -76,60 +77,60 @@
 　怯みモーション
 　死亡モーション
 　勝利モーション]]>
-                </notes>
-                <task id="16" name="攻撃モーション" color="#ff0066" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="17" name="ガードモーション(ジャストガードはエフェクトでごまかす)" color="#ff0066" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" priority="2" expand="true">
-                    <notes>
-                        <![CDATA[(ガードしてる場合攻撃ボタンは無効)]]>
                     </notes>
-                </task>
-                <task id="19" name="怯みモーション" color="#ff6666" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" expand="true"/>
-                <task id="20" name="死亡モーション" color="#ff6666" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" expand="true"/>
-                <task id="21" name="勝利モーション" color="#ff6666" meeting="false" start="2023-10-19" duration="1" complete="0" thirdDate="2023-10-19" thirdDate-constraint="0" expand="true"/>
-                <task id="13" name="攻撃フレームの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-20" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="15" name="ガードフレームの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-20" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="14" name="ジャストガードフレームの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-20" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="12" name="ジャストガードの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-13" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="7" name="体力実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-14" thirdDate-constraint="0" priority="2" expand="true">
-                    <notes>
-                        <![CDATA[攻撃された場合消費する]]>
-                    </notes>
-                </task>
-                <task id="11" name="スタミナ実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-11" thirdDate-constraint="0" priority="2" expand="true">
-                    <notes>
-                        <![CDATA[　　攻撃時消費する
+                    <task id="16" name="攻撃モーション" color="#ff0066" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="17" name="ガードモーション(ジャストガードはエフェクトでごまかす)" color="#ff0066" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" priority="2" expand="true">
+                        <notes>
+                            <![CDATA[(ガードしてる場合攻撃ボタンは無効)]]>
+                        </notes>
+                    </task>
+                    <task id="19" name="怯みモーション" color="#ff6666" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" expand="true"/>
+                    <task id="20" name="死亡モーション" color="#ff6666" meeting="false" start="2023-10-19" duration="1" complete="100" thirdDate="2023-10-19" thirdDate-constraint="0" expand="true"/>
+                    <task id="21" name="勝利モーション" color="#ff6666" meeting="false" start="2023-10-19" duration="1" complete="0" thirdDate="2023-10-19" thirdDate-constraint="0" expand="true"/>
+                    <task id="13" name="攻撃フレームの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-20" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="15" name="ガードフレームの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-20" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="14" name="ジャストガードフレームの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-20" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="12" name="ジャストガードの実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-13" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="7" name="体力実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-14" thirdDate-constraint="0" priority="2" expand="true">
+                        <notes>
+                            <![CDATA[攻撃された場合消費する]]>
+                        </notes>
+                    </task>
+                    <task id="11" name="スタミナ実装" color="#ff0066" meeting="false" start="2023-10-20" duration="1" complete="100" thirdDate="2023-10-11" thirdDate-constraint="0" priority="2" expand="true">
+                        <notes>
+                            <![CDATA[　　攻撃時消費する
 　　ガード時回復しない
 　　カード時攻撃を受けると消費する
 　　回復は何もしていない場合]]>
-                    </notes>
+                        </notes>
+                    </task>
+                    <task id="23" name="ジャストガードされた場合の処理を実装する" color="#ff6666" meeting="false" start="2023-10-21" duration="1" complete="100" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="29" name="ジャストガードされた後の硬直状態" color="#ff6666" meeting="false" start="2023-10-21" duration="1" complete="100" thirdDate="2023-10-21" thirdDate-constraint="0" priority="2" expand="true"/>
                 </task>
-                <task id="23" name="ジャストガードされた場合の処理を実装する" color="#ff6666" meeting="false" start="2023-10-21" duration="1" complete="100" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="29" name="ジャストガードされた後の硬直状態" color="#ff6666" meeting="false" start="2023-10-21" duration="1" complete="100" thirdDate="2023-10-21" thirdDate-constraint="0" priority="2" expand="true"/>
-            </task>
-            <task id="4" name="プレイヤー" color="#ff3333" meeting="false" start="2023-10-22" duration="4" complete="100" thirdDate="2023-10-08" thirdDate-constraint="0" priority="2" expand="true">
-                <task id="24" name="攻撃実装" color="#ff6666" meeting="false" start="2023-10-22" duration="1" complete="100" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="25" name="ガード" color="#ff6666" meeting="false" start="2023-10-22" duration="1" complete="100" thirdDate="2023-10-22" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="26" name="ジャストガード" color="#ff6666" meeting="false" start="2023-10-22" duration="4" complete="100" thirdDate="2023-10-22" thirdDate-constraint="0" priority="2" expand="true"/>
-            </task>
-            <task id="8" name="エネミー" color="#8cb6ce" meeting="false" start="2023-10-26" duration="2" complete="50" thirdDate="2023-10-15" thirdDate-constraint="0" expand="true">
-                <task id="10" name="AIの実装" color="#ff6666" meeting="false" start="2023-10-26" duration="2" complete="50" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true">
-                    <notes>
-                        <![CDATA[仮としてランダムな動きするAIを実装
+                <task id="4" name="プレイヤー" color="#ff3333" meeting="false" start="2023-10-22" duration="4" complete="100" thirdDate="2023-10-08" thirdDate-constraint="0" priority="2" expand="true">
+                    <task id="24" name="攻撃実装" color="#ff6666" meeting="false" start="2023-10-22" duration="1" complete="100" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="25" name="ガード" color="#ff6666" meeting="false" start="2023-10-22" duration="1" complete="100" thirdDate="2023-10-22" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="26" name="ジャストガード" color="#ff6666" meeting="false" start="2023-10-22" duration="4" complete="100" thirdDate="2023-10-22" thirdDate-constraint="0" priority="2" expand="true"/>
+                </task>
+                <task id="8" name="エネミー" color="#8cb6ce" meeting="false" start="2023-10-26" duration="2" complete="50" thirdDate="2023-10-15" thirdDate-constraint="0" expand="true">
+                    <task id="10" name="AIの実装" color="#ff6666" meeting="false" start="2023-10-26" duration="2" complete="50" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true">
+                        <notes>
+                            <![CDATA[仮としてランダムな動きするAIを実装
 
 　ランダムで動きを決める処理　(難易度次第)
 　動きのアルゴリズムをプログラムで決める(難易度次第)]]>
-                    </notes>
+                        </notes>
+                    </task>
+                </task>
+                <task id="9" name="勝利条件敗北条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true">
+                    <task id="27" name="勝利条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-18" thirdDate-constraint="0" priority="2" expand="true"/>
+                    <task id="28" name="敗北条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-28" thirdDate-constraint="0" priority="2" expand="true"/>
                 </task>
             </task>
-            <task id="9" name="勝利条件敗北条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="2" expand="true">
-                <task id="27" name="勝利条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-18" thirdDate-constraint="0" priority="2" expand="true"/>
-                <task id="28" name="敗北条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-28" thirdDate-constraint="0" priority="2" expand="true"/>
-            </task>
+            <task id="1" name="アルファ" color="#ff9999" meeting="false" start="2023-10-30" duration="12" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="4" expand="true"/>
+            <task id="2" name="ベータ" color="#ccccff" meeting="false" start="2023-11-11" duration="11" complete="0" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="true"/>
+            <task id="3" name="マスター" color="#cccccc" meeting="false" start="2023-11-22" duration="17" complete="0" thirdDate="2023-11-15" thirdDate-constraint="0" priority="4" expand="true"/>
         </task>
-        <task id="30" name="全体" meeting="false" start="2023-10-03" duration="1" complete="0" expand="true"/>
-        <task id="1" name="アルファ" color="#ff9999" meeting="false" start="2023-10-30" duration="12" complete="0" thirdDate="2023-10-15" thirdDate-constraint="0" priority="4" expand="true"/>
-        <task id="2" name="ベータ" color="#ccccff" meeting="false" start="2023-11-11" duration="11" complete="0" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="true"/>
-        <task id="3" name="マスター" color="#cccccc" meeting="false" start="2023-11-22" duration="17" complete="0" thirdDate="2023-11-15" thirdDate-constraint="0" priority="4" expand="true"/>
     </tasks>
     <resources/>
     <allocations/>

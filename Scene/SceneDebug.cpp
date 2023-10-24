@@ -1,6 +1,8 @@
 #include "SceneDebug.h"
 #include <DxLib.h>
 #include "SceneMain.h";
+#include "SceneResult.h";
+#include "SceneTitle.h";
 #include "../Util/Pad.h"
 
 namespace
@@ -54,6 +56,14 @@ SceneBase* SceneDebug::Update()
 	if (Pad::isTrigger(PAD_INPUT_1))
 	{
 		return new SceneMain();
+	}
+	if (Pad::isTrigger(PAD_INPUT_2))
+	{
+		return new SceneResult();
+	}
+	if (Pad::isTrigger(PAD_INPUT_3))
+	{
+		return new SceneTitle();
 	}
 
 	return this;

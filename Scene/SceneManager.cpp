@@ -1,8 +1,10 @@
 #include "SceneManager.h"
 #include <cassert>
-#include "SceneBase.h"
 #include "SceneDebug.h"
+#include "SceneBase.h"
+#include "SceneTitle.h"
 #include "SceneMain.h"
+#include "SceneResult.h"
 #include "../Util/Pad.h"
 
 SceneManager::SceneManager():
