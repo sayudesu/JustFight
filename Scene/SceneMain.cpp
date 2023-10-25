@@ -12,6 +12,7 @@
 
 #include "../Util/Pad.h"
 #include "SceneDebug.h"
+#include "SceneResult.h"
 
 SceneMain::SceneMain():
 	m_pCamera(nullptr),
@@ -35,8 +36,10 @@ void SceneMain::Init()
 	m_pEffect[1]    = std::make_unique<Effekseer3DDrawer>();
 
 	m_pCamera->Init();
+
 	m_pCharacter[0]->Init();
 	m_pCharacter[1]->Init();
+
 	m_pEffect[0]->Init("Data/Guard.efk",30.0f);
 	m_pEffect[1]->Init("Data/Guard2.efk", 130.0f);
 }
@@ -76,103 +79,29 @@ SceneBase* SceneMain::Update()
 
 	// カメラにプレイヤーの角度と位置を渡す
 	m_pCamera->SetPlayerAngle(m_pCharacter[0]->GetAngle());
+
 	m_pCharacter[1]->SetTargetPos(m_pCharacter[0]->GetPos());
+	m_pCharacter[0]->SetTargetPos(m_pCharacter[1]->GetPos());
 
 	UpdateCharacter(m_pCharacter[0].get(), m_pCharacter[1].get());
 	UpdateCharacter(m_pCharacter[1].get(), m_pCharacter[0].get());
-
-	{
-		//// Enemyの攻撃した場合の処理
-	//{
-	//	// ジャストガードが成功したかどうか
-	//	m_pPlayer->SetJustGuard(false);
-	//	// ジャストガードされたかどうか
-	//	m_pPlayer->SetJustGuardBreak(m_pEnemy->IsJustGuard());
-	//	// 敵の回転角度を取得
-	//	m_pPlayer->SetRota(m_pEnemy->GetRot());
-	//	// 攻撃フレームが最大数かどうか
-	//	if (m_pEnemy->GetAttackFrame() == m_pEnemy->GetAttackFrameMax() - 1)
-	//	{
-	//		// ジャストガード
-	//		if (m_pPlayer->GetJustGuardFrame() > 0 &&
-	//			m_pPlayer->GetJustGuardFrame() < m_pPlayer->GetJustGuardFrameMax())
-	//		{
-	//			// スタミナを減らす
-	//			m_pPlayer->SetStamina(30.0f, 0.0f);
-	//			// ジャストガードが成功したかどうか
-	//			m_pPlayer->SetJustGuard(true);
-	//			// 振動開始
-	//			StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
-
-	//			m_pEffect[1]->SetPlay(true);
-	//			m_pEffect[1]->SetAngle(m_pPlayer->GetAngle());
-	//			m_pEffect[1]->SetPos(VGet(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y + 100.0f, m_pPlayer->GetPos().z));
-
-	//		}
-	//		// 通常ガードが出来るかどうか
-	//		else if (m_pPlayer->GetGuardFrame() == m_pPlayer->GetGuardFrameMax())
-	//		{
-	//			// エネミーの攻撃がプレイヤーの盾に当たったかどうか
-	//			if (CheckHItPlayerSield())
-	//			{
-	//				// プレイヤーのスタミナを減らす
-	//				m_pPlayer->SetStamina(0.0f, 10.0f);
-	//				// ガード成功したかどうか
-	//				m_pPlayer->SetGuard(true);
-
-	//				m_pEffect[0]->SetPlay(true);
-	//				m_pEffect[0]->SetAngle(m_pPlayer->GetAngle());
-	//				m_pEffect[0]->SetPos(m_pPlayer->GetSieldPos());
-	//			}
-	//		}
-	//		else
-	//		{
-	//			// エネミーの攻撃がプレイヤーに当たったかどうか
-	//			if (CheckHitPlayer())
-	//			{
-	//				// プレイヤーにダメージを与える
-	//				m_pPlayer->SetDamage(true);
-	//				// 振動開始+
-	//				StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
-	//			}
-	//		}
-	//	}
-
-	//}
-	//// Playerの攻撃した場合の処理
-	//{
-	//	m_pEnemy->SetJustGuard(false);
-	//	m_pEnemy->SetJustGuardBreak(m_pPlayer->IsJustGuard());
-	//	if (m_pPlayer->GetAttackFrame() == m_pPlayer->GetAttackFrameMax() - 1)
-	//	{
-	//		// ジャストガード
-	//		if (m_pEnemy->GetJustGuardFrame() > 0 &&
-	//			m_pEnemy->GetJustGuardFrame() < m_pEnemy->GetJustGuardFrameMax())
-	//		{
-	//			m_pEnemy->SetStamina(30.0f, 0.0f);
-	//			m_pEnemy->SetJustGuard(true);
-	//		}
-	//		else if (m_pEnemy->GetGuardFrame() == m_pEnemy->GetGuardFrameMax())
-	//		{
-	//			m_pEnemy->SetStamina(0.0f, 10.0f);
-	//		}
-	//		else
-	//		{
-	//			if (CheckHitEnemy())
-	//			{
-	//				m_pEnemy->SetDamage(true);
-	//			}
-	//			//	printfDx("Eガード失敗\n");
-	//		}
-	//	}
-	//}
-	}
 	
 
 	if (Pad::isTrigger(PAD_INPUT_1))
 	{
 		clsDx();
 		return new SceneDebug();
+	}
+	
+	if (m_pCharacter[0]->GetHp() == 0 || m_pCharacter[1]->GetHp() == 0)
+	{
+		static int count = 0;
+		count++;
+		if (count == 60 * 5)
+		{
+			count = 0;
+			return new SceneResult();
+		}
 	}
 
 	return this;
@@ -193,10 +122,6 @@ void SceneMain::Draw()
 	}
 
 #if _DEBUG
-	//CheckHitPlayer();
-	//CheckHitEnemy();
-	//CheckHItPlayerSield();
-	//CheckHItEnemySield();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pCharacter[0]->GetStamina(), 100, 15, 0xffff00);
@@ -216,7 +141,7 @@ void SceneMain::Draw()
 
 }
 
-bool SceneMain::CheckHit(CharacterBase* chara1, CharacterBase* chara2)
+bool SceneMain::CheckWeaponAndBodyHit(CharacterBase* chara1, CharacterBase* chara2)
 {
 	if (m_pColl->IsCheckHit(
 		chara1->GetWeaponPos(), chara2->GetPos(),
@@ -229,7 +154,7 @@ bool SceneMain::CheckHit(CharacterBase* chara1, CharacterBase* chara2)
 	return false;
 }
 
-bool SceneMain::CheckHItSield(CharacterBase* chara1, CharacterBase* chara2)
+bool SceneMain::CheckWeaponAndSieldHIt(CharacterBase* chara1, CharacterBase* chara2)
 {
 	if (m_pColl->IsCheckHit(
 		chara1->GetWeaponPos(), chara2->GetSieldPos(),
@@ -248,7 +173,7 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 	chara1->SetJustGuard(false);
 	// ジャストガードされたかどうか
 	chara1->SetJustGuardBreak(chara2->IsJustGuard());
-	// 敵の回転角度を取得
+	// 回転角度を取得
 	chara1->SetRota(chara2->GetRot());
 	// 攻撃フレームが最大数かどうか
 	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
@@ -257,25 +182,29 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 		if (chara1->GetJustGuardFrame() > 0 &&
 			chara1->GetJustGuardFrame() < chara1->GetJustGuardFrameMax())
 		{
-			// スタミナを減らす
-			chara1->SetStamina(30.0f, 0.0f);
-			// ジャストガードが成功したかどうか
-			chara1->SetJustGuard(true);
-			// 振動開始
-			StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
+			// ジャストガードが成功しているので盾に当たっていても体に当たっていても
+			// 無敵判定になる
+			if ((CheckWeaponAndSieldHIt(chara1, chara2)) || (CheckWeaponAndBodyHit(chara1, chara2)))
+			{
+				// スタミナを減らす
+				chara1->SetStamina(30.0f, 0.0f);
+				// ジャストガードが成功したかどうか
+				chara1->SetJustGuard(true);
+				// 振動開始
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
 
-			m_pEffect[1]->SetPlay(true);
-			m_pEffect[1]->SetAngle(chara1->GetAngle());
-			m_pEffect[1]->SetPos(VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z));
-
+				m_pEffect[1]->SetPlay(true);
+				m_pEffect[1]->SetAngle(chara1->GetAngle());
+				m_pEffect[1]->SetPos(VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z));
+			}
 		}
 		// 通常ガードが出来るかどうか
 		else if (chara1->GetGuardFrame() == chara1->GetGuardFrameMax())
 		{
-			// エネミーの攻撃がプレイヤーの盾に当たったかどうか
-			if (CheckHItSield(chara1, chara2))
+			//攻撃が盾に当たったかどうか
+			if (CheckWeaponAndSieldHIt(chara1, chara2))
 			{
-				// プレイヤーのスタミナを減らす
+				// スタミナを減らす
 				chara1->SetStamina(0.0f, 10.0f);
 				// ガード成功したかどうか
 				chara1->SetGuard(true);
@@ -287,10 +216,10 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 		}
 		else
 		{
-			// エネミーの攻撃がプレイヤーに当たったかどうか
-			if (CheckHit(chara1, chara2))
+			// 攻撃が当たったかどうか
+			if (CheckWeaponAndBodyHit(chara1, chara2))
 			{
-				// プレイヤーにダメージを与える
+				// ダメージを与える
 				chara1->SetDamage(true);
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);

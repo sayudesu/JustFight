@@ -31,8 +31,11 @@ protected:
 	virtual void Winner();
 	// 敗北した場合
 	virtual void Losers();
-
+private:
+	// 位置情報の更新
+	virtual void UpdatePos();
 protected:
+	// 角度を取得
 	virtual void SetAngle(float angle);
 	virtual void SetRotMtx(MATRIX rotMtx);
 public:
@@ -41,16 +44,17 @@ public:
 	VECTOR GetWeaponPos()const;
 	VECTOR GetSieldPos()const;
 
+	// 角度
 	MATRIX GetRot()const;
 	float GetAngle()const;
-
+	
+	// 装備の判定用半径
 	float GetWeaponAttackRadius()const;
-	VECTOR GetWeaponAttackRelative()const;
-
 	float GetSieldRadius()const;
-	VECTOR GetSieldRelative()const;
 
-	void SetTargetPos(VECTOR pos);
+	// 装備の相対位置
+	VECTOR GetWeaponAttackRelative()const;
+	VECTOR GetSieldRelative()const;
 
 	// 現在の攻撃フレーム
 	int GetAttackFrame()const;
@@ -74,19 +78,22 @@ public:
 	bool IsJustGuard()const;
 
 	// 相手の角度
-	void SetRota(MATRIX rot);
+	void SetRota(const MATRIX rot);
 
 	// 攻撃を受けたかどうか
-	void SetDamage(bool isDamage);
+	void SetDamage(const bool isDamage);
 	// ガードが成功しかたどうか
-	void SetGuard(bool isGuard);
+	void SetGuard(const bool isGuard);
 	// ジャストガードが成功したかどうか
-	void SetJustGuard(bool isJustGuard);
+	void SetJustGuard(const bool isJustGuard);
 	// ジャストガードをされかたどうか
-	void SetJustGuardBreak(bool isJustGuardBreak);
+	void SetJustGuardBreak(const bool isJustGuardBreak);
 
 	// スタミナの管理
-	void SetStamina(float addStamina, float subStamina);
+	void SetStamina(const float addStamina, const float subStamina);
+
+	// ターゲットの位置を取得する
+	void SetTargetPos(const VECTOR pos);
 private:
 	// 3Dモデルハンドル
 	int m_weaponHandle;
@@ -96,9 +103,12 @@ private:
 	MATRIX m_rotMtx;
 	MATRIX m_enemyRotMtx;
 
-	// 装備位置
+	// 装備
 	VECTOR m_vecWeapon;
 	VECTOR m_vecSield;
+
+	// 一時的な武器の位置
+	VECTOR m_tempWeaponPos;
 
 	// 体力
 	// スタミナ
@@ -115,9 +125,6 @@ private:
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
 	bool m_isResultDamage;
-
-	// デバッグ
-	VECTOR tempPos = VGet(0, 0, 0);
 
 protected:
 	// メンバ関数ポインタ

@@ -10,11 +10,9 @@ namespace
 }
 
 class Camera;
-class Player;
-class Enemy;
+class CharacterBase;
 class Collision3D;
 class Effekseer3DDrawer;
-class CharacterBase;
 
 class SceneMain : public SceneBase
 {
@@ -28,9 +26,10 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
 private:
-	bool CheckHit(CharacterBase* chara1, CharacterBase* chara2);
-	bool CheckHItSield(CharacterBase* chara1, CharacterBase* chara2);
-
+	// 当たり判定
+	bool CheckWeaponAndBodyHit(CharacterBase* chara1, CharacterBase* chara2);
+	bool CheckWeaponAndSieldHIt(CharacterBase* chara1, CharacterBase* chara2);
+	// キャラクターの更新処理
 	void UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2);
 private:
 	std::unique_ptr<Camera> m_pCamera;

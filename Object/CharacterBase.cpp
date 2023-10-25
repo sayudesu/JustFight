@@ -52,6 +52,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_targetPos(VGet(0,0,0)),
 	m_vecWeapon(VGet(0, 0, 0)),
 	m_vecSield(VGet(0, 0, 0)),
+	m_tempWeaponPos(VGet(0, 0, 0)),
 	m_hp(kHpMax),
 	m_stamina(kStaminaMax),
 	m_angle(0.0f),
@@ -79,21 +80,13 @@ void CharacterBase::Init()
 	m_weaponHandle  = MyModel3D::Load("Data/Model/Lance2.mv1");
 	m_shieldHandle  = MyModel3D::Load("Data/Model/Shield.mv1");
 
-	{
-		m_vecWeapon = kWeaponPos;
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle,  VGet(0.0f, 0.0f,0.0f));
-	}
-	{
-		m_vecSield = kSieldPos;
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0, -90 * DX_PI_F / 180.0f, 0));
-		MV1SetScale(m_shieldHandle, VGet(3, 3, 3));
-	}
+	m_vecWeapon = kWeaponPos;
+	m_vecSield = kSieldPos;
+
+	// 位置情報の更新
+	UpdatePos();
+
+	MV1SetScale(m_shieldHandle, VGet(3.0f, 3.0f, 3.0f));
 }
 
 void CharacterBase::End()
@@ -179,7 +172,7 @@ void CharacterBase::Idle()
 		}
 	}
 
-	if (m_hp < 0)
+	if (m_hp == 0)
 	{
 		m_pFunc = &CharacterBase::Losers;
 	}
@@ -190,18 +183,8 @@ void CharacterBase::Idle()
 		m_hp--;
 	}
 
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, m_angle,0.0f));
-	}
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0.0f, m_angle, 0.0f));
-	}
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::Attack()
@@ -214,14 +197,14 @@ void CharacterBase::Attack()
 	{
 		m_vecWeapon.z = kWeaponPos.z + (100.0f - kWeaponPos.z) * (m_attackGapFrame) / kAttackGapFrameMax;
 		m_attackGapFrame++;
-		tempPos = m_vecWeapon;
+		m_tempWeaponPos = m_vecWeapon;
 	}
 	// 攻撃をする動作
 	if (m_attackGapFrame == kAttackGapFrameMax)
 	{
 		if (m_attackFrame < kAttackFrameMax)
 		{
-			m_vecWeapon.z = tempPos.z + (-200.0f - tempPos.z) * (m_attackFrame) / kAttackFrameMax;
+			m_vecWeapon.z = m_tempWeaponPos.z + (-200.0f - m_tempWeaponPos.z) * (m_attackFrame) / kAttackFrameMax;
 			m_vecWeapon.x = kWeaponPos.x + (0.0f - kWeaponPos.x) * (m_attackFrame) / kAttackFrameMax;
 			m_attackFrame++;
 		}
@@ -234,18 +217,8 @@ void CharacterBase::Attack()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, m_angle,0.0f));
-	}
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0.0f, m_angle, 0.0f));
-	}
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::Guard()
@@ -297,18 +270,8 @@ void CharacterBase::Guard()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, m_angle, 0.0f));
-	}
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0.0f, m_angle, 0.0f));
-	}
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::JustGuard()
@@ -317,18 +280,9 @@ void CharacterBase::JustGuard()
 	m_vecWeapon = kWeaponPos;
 	m_vecSield = kSieldPos;
 	m_pFunc = &CharacterBase::Idle;
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, m_angle, 0.0f));
-	}
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0.0f, m_angle, 0.0f));
-	}
+
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::JustGuardBreak()
@@ -357,18 +311,8 @@ void CharacterBase::JustGuardBreak()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, m_angle, 0.0f));
-	}
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0.0f, m_angle, 0.0f));
-	}
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::Winner()
@@ -395,19 +339,24 @@ void CharacterBase::Losers()
 	{
 		m_vecSield.y = 0;
 	}
-
 	
+	// 位置情報の更新
+	UpdatePos();
+}
+
+void CharacterBase::UpdatePos()
+{
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
 		MV1SetPosition(m_weaponHandle, move);
-		MV1SetRotationXYZ(m_weaponHandle, VGet(0.0f, m_angle, 0.0f));
+		MV1SetRotationXYZ(m_weaponHandle, VGet(0, m_angle, 0));
 	}
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
 		move = VAdd(m_pos, move);
 		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0.0f, m_angle, 0.0f));
+		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
 	}
 }
 

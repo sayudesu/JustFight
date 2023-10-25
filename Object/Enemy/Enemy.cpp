@@ -36,20 +36,20 @@ void Enemy::Input()
 	{
 		if (GetStamina() > 20.0f)
 		{
-			//if (GetRand(2) == 0 && !m_isGuard)
-			//{
-			//	m_isAttack = true;
-			//	m_pFunc = &Enemy::Attack;
-			//}
+			if (GetRand(2) == 0 && !m_isGuard)
+			{
+				m_isAttack = true;
+				m_pFunc = &Enemy::Attack;
+			}
 		}
-		if (GetRand(0)  == 0 && !m_isAttack)
-		{
-			m_isGuard = true;
-			m_pFunc = &Enemy::Guard;
-		}
-		else
-		{
-			m_isGuard = false;
-		}
+		//if (GetRand(0)  == 0 && !m_isAttack)
+		//{
+		//	m_isGuard = true;
+		//	m_pFunc = &Enemy::Guard;
+		//}
+		//else
+		//{
+		//	m_isGuard = false;
+		//}
 	}
 }

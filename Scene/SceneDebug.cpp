@@ -18,27 +18,27 @@ void SceneDebug::Init()
 {
 	// 非同期読み込み有効にする
 	SetUseASyncLoadFlag(true);
-	// リソースの読み込み
-	for (int i = 0; i < kTest; i++)
-	{
-		m_handle.push_back(LoadGraph("Data/test.bmp"));
-	}
-	m_handle.push_back(LoadGraph("Data/test2.bmp"));
+	//// リソースの読み込み
+	//for (int i = 0; i < kTest; i++)
+	//{
+	//	m_handle.push_back(LoadGraph("Data/test.bmp"));
+	//}
+	//m_handle.push_back(LoadGraph("Data/test2.bmp"));
 	// 非同期読み込み無効にする
 	SetUseASyncLoadFlag(false);
 
 	int x;
 	int y;
-	int result = GetGraphSize(m_handle.back(), &x, &y);
+//	int result = GetGraphSize(m_handle.back(), &x, &y);
 
 }
 
 void SceneDebug::End()
 {
-	for (int i = 0; i < kTest; i++)
-	{
-		DeleteGraph(m_handle[i]);
-	}
+	//for (int i = 0; i < kTest; i++)
+	//{
+	//	DeleteGraph(m_handle[i]);
+	//}
 }
 
 SceneBase* SceneDebug::Update()
@@ -100,12 +100,12 @@ void SceneDebug::Draw()
 		return;
 	}
 
-	for (int i = 0; i < kTest; i++)
-	{
-		DrawExtendGraph(100 + i, 100 + i, i + 1000, i + 1000, m_handle[i], false);
-	}
+	//for (int i = 0; i < kTest; i++)
+	//{
+	//	DrawExtendGraph(100 + i, 100 + i, i + 1000, i + 1000, m_handle[i], false);
+	//}
 
-	DrawExtendGraph(1000,100,300,300,m_handle.back(), false);
+//	DrawExtendGraph(1000,100,300,300,m_handle.back(), false);
 
 #if _DEBUG
 	DrawString(0, 0, "SceneDebug", 0xffffff);
