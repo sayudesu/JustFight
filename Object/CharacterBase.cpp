@@ -24,16 +24,19 @@ namespace
 	const VECTOR kWeaponPos = { -80.0f, 100.0f, 0.0f };
 	const VECTOR kSieldPos  = { 100.0f, 100.0f, -50.0f };
 
+	// モデルの当たり判定用範囲
+	constexpr float kModelRadus = 180.0f;
+
 	// 攻撃時の当たり判定
 	// 武器の半径
-	constexpr float kWeaponAttackRadius = 70.0f;
+	constexpr float kWeaponAttackRadius = 60.0f;
 	// 武器の攻撃時の判定の相対位置
-	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -200.0f };
+	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -300.0f };
 	// 盾の半径
-	constexpr float kSieldRadius = 100.0f;
+	constexpr float kSieldRadius = 50.0f;
 
 	// ガードしている時に攻撃を受けた場合のノックバックで移動する相対位置
-	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-15.0f };
+	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-20.0f };
 
 	// 剣が元の位置に戻る速度
 	constexpr float kWeaponBackSpeed = 30.0f;
@@ -60,8 +63,12 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isGuard(false),
 	m_isJustGuard(false),
 	m_isJustGuardBreak(false),
+	m_isAway(false),
 	m_isResultGuard(false),
 	m_isResultDamage(false),
+	m_isChanceAway(false),
+	m_isSlow(false),
+	m_slowCount(0),
 	m_attackFrame(0),
 	m_attackGapFrame(0),
 	m_guardFrame(0),
@@ -108,6 +115,34 @@ void CharacterBase::Draw()
 	MV1DrawModel(m_weaponHandle);
 	// 盾
 	MV1DrawModel(m_shieldHandle);
+}
+
+void CharacterBase::TargetMove()
+{
+	// 向きを算出
+	VECTOR m_dir = VSub(m_targetPos, m_pos);
+
+	// プレイヤーからエネミーまでの角度を求める
+	const float angle = atan2(m_dir.y, m_dir.x);
+
+	// 現在敵が向いている方向のベクトルを生成する
+	const MATRIX enemyRotMtx = MGetRotY(angle);
+
+	// 斜めになったとき((1, 1, 0)など)にいったん長さ１に戻す(正規化)
+	if (VSquareSize(m_dir) > 0)
+	{
+		m_dir = VNorm(m_dir);
+	}
+
+	// 速度を求める
+	const VECTOR velecity = VScale(m_dir, 5.0f);
+
+	// 位置を変える
+	m_pos = VAdd(m_pos, velecity);
+
+	//// 距離を測る
+	m_targetRange.x = static_cast<float>(sqrt(pow(m_pos.x - m_targetPos.x, 2) + pow(m_pos.x - m_targetPos.x, 2)));
+	m_targetRange.z = static_cast<float>(sqrt(pow(m_pos.z - m_targetPos.z, 2) + pow(m_pos.z - m_targetPos.z, 2)));
 }
 
 void CharacterBase::Idle()
@@ -181,6 +216,25 @@ void CharacterBase::Idle()
 	{
 		m_isResultDamage = false;
 		m_hp--;
+	}
+
+	if (m_isChanceAway)
+	{
+		m_isChanceAway = false;
+		if (m_isAway)
+		{
+			m_isSlow = true;
+		}
+	}
+
+	if (m_isSlow)
+	{
+		m_slowCount++;
+		if (m_slowCount == 60 * 3)
+		{
+			m_slowCount = 0;
+			m_isSlow = false;
+		}
 	}
 
 	// 位置情報の更新
@@ -399,6 +453,11 @@ float CharacterBase::GetAngle() const
 	return m_angle;
 }
 
+float CharacterBase::GetModelRadius() const
+{
+	return kModelRadus;
+}
+
 float CharacterBase::GetWeaponAttackRadius() const
 {
 	return kWeaponAttackRadius;
@@ -470,9 +529,24 @@ bool CharacterBase::IsJustGuard() const
 	return m_isJustGuard;
 }
 
+bool CharacterBase::IsSlowMode() const
+{
+	return m_isSlow;
+}
+
+bool CharacterBase::IsAttackRange() const
+{
+	return m_isAttackRange;
+}
+
 void CharacterBase::SetRota(MATRIX rot)
 {
 	m_enemyRotMtx = rot;
+}
+
+void CharacterBase::SetAttackRange(const bool isRange)
+{
+	m_isAttackRange = isRange;
 }
 
 void CharacterBase::SetDamage(bool isDamage)
@@ -497,6 +571,11 @@ void CharacterBase::SetJustGuardBreak(bool isJustGuardBreak)
 		m_isJustGuardBreak = isJustGuardBreak;
 		m_pFunc = &CharacterBase::JustGuardBreak;
 	}
+}
+
+void CharacterBase::SetChanceAway(const bool isChance)
+{
+	m_isChanceAway = isChance;
 }
 
 void CharacterBase::SetStamina(float addStamina,float subStamina)

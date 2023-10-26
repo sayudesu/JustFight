@@ -15,7 +15,6 @@ Player::Player(VECTOR pos):
 	CharacterBase(pos),
 	m_awayVec(VGet(0,0,0)),
 	m_awayRelativePos(VGet(0,0,0)),
-	m_isAway(false),
 	m_isUp(false),
 	m_isDown(false),
 	m_isLeft(false),
@@ -28,6 +27,8 @@ Player::Player(VECTOR pos):
 	m_isJustGuard = false;
 	m_isJustGuardBreak = false;
 
+	m_isAway = false;
+
 	m_angle = 0.0f;
 }
 
@@ -37,26 +38,33 @@ Player::~Player()
 
 void Player::Input()
 {
+	if(!m_isAttack)
+	{
+
+	}
 	DINPUT_JOYSTATE input;
 	// 入力状態を取得
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
-	//// カメラの回転角度を調整
-	//if (input.Rx > 30)
-	//{
-	//	m_angle += 0.05f;
-	//}
-	//if (input.Rx < -30)
-	//{
-	//	m_angle -= 0.05f;
-	//}
+	{
 
-	//SetAngle(m_angle);
+		//// カメラの回転角度を調整
+		//if (input.Rx > 30)
+		//{
+		//	m_angle += 0.05f;
+		//}
+		//if (input.Rx < -30)
+		//{
+		//	m_angle -= 0.05f;
+		//}
 
-	//// プレイヤーの進行方向
-	//MATRIX rotMtx = MGetRotY(m_angle);
+		//SetAngle(m_angle);
 
-	//SetRotMtx(rotMtx);
+		//// プレイヤーの進行方向
+		//MATRIX rotMtx = MGetRotY(m_angle);
+
+		//SetRotMtx(rotMtx);
+	}
 
 	const VECTOR direction = VSub(m_targetPos, m_pos);
 	const float angle = atan2f(-direction.x, -direction.z);

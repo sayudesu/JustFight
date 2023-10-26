@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include <deque>
 
 // カメラ管理クラス
 class Camera
@@ -12,17 +13,18 @@ public:
 	void Update();
 public:
 	void SetTargetPos(VECTOR pos);
-	void SetLockonPos(VECTOR pos);
 
 	void SetPlayerAngle(float angle);
 private:
 	// 位置
 	VECTOR m_pos;
 	// ターゲット位置
-	VECTOR m_posTarget;
-	VECTOR m_posLockon;
+	VECTOR m_targetPos;
 	// 角度
 	float m_angle;
 	float m_playerAngle;
+
+	std::deque<VECTOR> m_deqTargetPos;
+	std::deque<float> m_deqAnglePos;
 };
 

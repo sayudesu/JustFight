@@ -38,6 +38,9 @@ protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
 	virtual void SetRotMtx(MATRIX rotMtx);
+
+	// ターゲット位置追跡移動
+	virtual void TargetMove();
 public:
 	// 位置
 	VECTOR GetPos()const;
@@ -47,6 +50,9 @@ public:
 	// 角度
 	MATRIX GetRot()const;
 	float GetAngle()const;
+
+	// モデルの当たり判定用半径
+	float GetModelRadius()const;
 	
 	// 装備の判定用半径
 	float GetWeaponAttackRadius()const;
@@ -77,8 +83,17 @@ public:
 	// ジャストガードされたかどうか
 	bool IsJustGuard()const;
 
+	// スローになるかどうか
+	bool IsSlowMode()const;
+
+	// 攻撃範囲に入っているかどうか
+	bool IsAttackRange()const;
+
 	// 相手の角度
 	void SetRota(const MATRIX rot);
+
+	// 攻撃範囲に入っているかどうか
+	void SetAttackRange(const bool isRange);
 
 	// 攻撃を受けたかどうか
 	void SetDamage(const bool isDamage);
@@ -88,6 +103,9 @@ public:
 	void SetJustGuard(const bool isJustGuard);
 	// ジャストガードをされかたどうか
 	void SetJustGuardBreak(const bool isJustGuardBreak);
+
+	// 回避チャンスがあるかどうか
+	void SetChanceAway(const bool isChance);
 
 	// スタミナの管理
 	void SetStamina(const float addStamina, const float subStamina);
@@ -126,6 +144,15 @@ private:
 	bool m_isResultGuard;
 	bool m_isResultDamage;
 
+	// 回避したできるかどうか
+	bool m_isChanceAway;
+
+	// 回避が成功した際のスロー処理
+	bool m_isSlow;
+	int m_slowCount;
+
+	// 攻撃範囲にいるかどうか
+	bool m_isAttackRange;
 protected:
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
@@ -143,5 +170,11 @@ protected:
 	bool m_isGuard;
 	bool m_isJustGuard;
 	bool m_isJustGuardBreak;
+
+	// 回避
+	bool m_isAway;
+
+	// ターゲットの距離
+	VECTOR m_targetRange;
 };
 

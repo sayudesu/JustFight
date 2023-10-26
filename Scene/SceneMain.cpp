@@ -13,13 +13,21 @@
 #include "../Util/Pad.h"
 #include "SceneDebug.h"
 #include "SceneResult.h"
+#include "../BloodDrawer.h"
+
+namespace
+{
+	// キャラクターベースの配列番号
+	constexpr int kPlayerNo = 0;
+	constexpr int kEnemyNo = 1;
+}
 
 SceneMain::SceneMain():
 	m_pCamera(nullptr),
 	m_pColl(nullptr)
 {
-	m_pCharacter[0] = nullptr;
-	m_pCharacter[1] = nullptr;
+	m_pCharacter[kPlayerNo] = nullptr;
+	m_pCharacter[kEnemyNo] = nullptr;
 }
 
 SceneMain::~SceneMain()
@@ -29,35 +37,62 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {	
 	m_pCamera       = std::make_unique<Camera>();
-	m_pCharacter[0] = std::make_unique<Player>(VGet(-300.0f, 0.0f, 0.0f));
-	m_pCharacter[1] = std::make_unique<Enemy> (VGet( 300.0f, 0.0f, 0.0f));
+	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 0.0f, 0.0f));
+	m_pCharacter[kEnemyNo] = std::make_unique<Enemy> (VGet( 300.0f, 0.0f, 0.0f));
 	m_pColl         = std::make_unique<Collision3D>();
-	m_pEffect[0]    = std::make_unique<Effekseer3DDrawer>();
-	m_pEffect[1]    = std::make_unique<Effekseer3DDrawer>();
+	m_pEffect[kPlayerNo]    = std::make_unique<Effekseer3DDrawer>();
+	m_pEffect[kEnemyNo]    = std::make_unique<Effekseer3DDrawer>();
+
 
 	m_pCamera->Init();
 
-	m_pCharacter[0]->Init();
-	m_pCharacter[1]->Init();
+	m_pCharacter[kPlayerNo]->Init();
+	m_pCharacter[kEnemyNo]->Init();
 
-	m_pEffect[0]->Init("Data/Guard.efk",30.0f);
-	m_pEffect[1]->Init("Data/Guard2.efk", 130.0f);
+	m_pEffect[kPlayerNo]->Init("Data/Guard.efk",30.0f);
+	m_pEffect[kEnemyNo]->Init("Data/Guard2.efk", 130.0f);
 }
 
 void SceneMain::End()
 {
-	m_pCharacter[0]->End();
-	m_pCharacter[1]->End();
-	m_pEffect[0]->End();
-	m_pEffect[1]->End();
+	m_pCharacter[kPlayerNo]->End();
+	m_pCharacter[kEnemyNo]->End();
+	m_pEffect[kPlayerNo]->End();
+	m_pEffect[kEnemyNo]->End();
 }
 
 SceneBase* SceneMain::Update()
 {
-	for (auto& character : m_pCharacter)
+	// 仮
+	int slowNum = 1;
+	if (m_pCharacter[kPlayerNo]->IsSlowMode())
 	{
-		character->Update();
-		character->Input();
+		slowNum = 3;
+	}
+	else
+	{
+		slowNum = 1;
+	}
+
+	m_slowCount = (m_slowCount += 1) % slowNum;
+	if (m_slowCount == 0)
+	{
+		//printfDx("Slow\n");
+		//m_pCharacter[1]->Update();
+
+	}
+
+	m_pCharacter[kPlayerNo]->Update();
+	m_pCharacter[kEnemyNo]->Update();
+
+	m_pCharacter[kPlayerNo]->Input();
+	m_pCharacter[kEnemyNo]->Input();
+
+	m_pCharacter[kEnemyNo]->SetAttackRange(false);
+	// 敵の攻撃可能範囲まで移動する
+	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo].get(), m_pCharacter[1].get()))
+	{
+		m_pCharacter[kEnemyNo]->SetAttackRange(true);
 	}
 
 
@@ -72,19 +107,45 @@ SceneBase* SceneMain::Update()
 			effect->SetPlay(false);
 		}
 	}
+	
+	for (auto& blood : m_pBlood)
+	{
+		blood->Update();
+	}
+	for (int i = 0; i < m_pBlood.size(); i++)
+	{
+		if (m_pBlood[i]->IsGetErase())
+		{
+			// デリート処理
+			delete m_pBlood[i];
+			m_pBlood[i] = nullptr;
+			// 要素の削除
+			m_pBlood.erase(m_pBlood.begin() + i);
+		}
+	}
 
 	// カメラにプレイヤーとエネミーの位置を渡す
-	m_pCamera->SetTargetPos(m_pCharacter[0]->GetPos());
-	m_pCamera->SetLockonPos(m_pCharacter[1]->GetPos());
+	m_pCamera->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
 
 	// カメラにプレイヤーの角度と位置を渡す
-	m_pCamera->SetPlayerAngle(m_pCharacter[0]->GetAngle());
+	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
 
-	m_pCharacter[1]->SetTargetPos(m_pCharacter[0]->GetPos());
-	m_pCharacter[0]->SetTargetPos(m_pCharacter[1]->GetPos());
+	m_pCharacter[kPlayerNo]->SetTargetPos(m_pCharacter[kEnemyNo]->GetPos());
+	m_pCharacter[kEnemyNo]->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
 
-	UpdateCharacter(m_pCharacter[0].get(), m_pCharacter[1].get());
-	UpdateCharacter(m_pCharacter[1].get(), m_pCharacter[0].get());
+	UpdateCharacter(m_pCharacter[kPlayerNo].get(), m_pCharacter[kEnemyNo].get());
+	UpdateCharacter(m_pCharacter[kEnemyNo].get(), m_pCharacter[kPlayerNo].get());
+
+	CheckWeaponAndModelAboutHIt(m_pCharacter[kPlayerNo].get(), m_pCharacter[kEnemyNo].get());
+	CheckWeaponAndModelAboutHIt(m_pCharacter[kEnemyNo].get(), m_pCharacter[kPlayerNo].get());
+
+	CheckWeaponAndSieldHIt(m_pCharacter[kPlayerNo].get(), m_pCharacter[kEnemyNo].get());
+	CheckWeaponAndSieldHIt(m_pCharacter[kEnemyNo].get(), m_pCharacter[kPlayerNo].get());
+
+	CheckWeaponAndBodyHit(m_pCharacter[kPlayerNo].get(), m_pCharacter[kEnemyNo].get());
+	CheckWeaponAndBodyHit(m_pCharacter[kEnemyNo].get(), m_pCharacter[kPlayerNo].get());
+
+
 	
 
 	if (Pad::isTrigger(PAD_INPUT_1))
@@ -93,7 +154,7 @@ SceneBase* SceneMain::Update()
 		return new SceneDebug();
 	}
 	
-	if (m_pCharacter[0]->GetHp() == 0 || m_pCharacter[1]->GetHp() == 0)
+	if (m_pCharacter[kPlayerNo]->GetHp() == 0 || m_pCharacter[kEnemyNo]->GetHp() == 0)
 	{
 		static int count = 0;
 		count++;
@@ -121,6 +182,12 @@ void SceneMain::Draw()
 		effect->Draw();
 	}
 
+	
+	for (auto& blood : m_pBlood)
+	{
+		blood->Draw();
+	}
+	DEBUG::Field();
 #if _DEBUG
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
@@ -135,7 +202,7 @@ void SceneMain::Draw()
 	DEBUG::FrameMeter("E防御フレーム", 100, 450, m_pCharacter[1]->GetGuardFrameMax(), m_pCharacter[1]->GetGuardFrame(), 30, 0xffff00);
 	DEBUG::FrameMeter("              + JustGuard", 100, 450, m_pCharacter[1]->GetJustGuardFrameMax(), m_pCharacter[1]->GetJustGuardFrame(), 30, 0xffffff);
 
-	DEBUG::Field();
+	
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
 
@@ -160,7 +227,33 @@ bool SceneMain::CheckWeaponAndSieldHIt(CharacterBase* chara1, CharacterBase* cha
 		chara1->GetWeaponPos(), chara2->GetSieldPos(),
 		chara1->GetWeaponAttackRadius(), chara2->GetSieldRadius(),
 		chara1->GetRot(), chara2->GetRot(),
-		chara1->GetWeaponAttackRelative(), VGet(0.0f, 0.0f, 0.0f)))
+		chara1->GetWeaponAttackRelative(), VGet(0.0f, 0.0f, -50.0f)))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool SceneMain::CheckWeaponAndModelAboutHIt(CharacterBase* chara1, CharacterBase* chara2)
+{
+	if (m_pColl->IsCheckHit(
+		chara1->GetWeaponPos(), chara2->GetPos(),
+		chara1->GetWeaponAttackRadius(), chara2->GetModelRadius(),
+		chara1->GetRot(), chara2->GetRot(),
+		chara1->GetWeaponAttackRelative(), VGet(0.0f, 100.0f, 0.0f)))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool SceneMain::CheckModelAboutHIt(CharacterBase* chara1, CharacterBase* chara2)
+{
+	if (m_pColl->IsCheckHit(
+		chara1->GetPos(), chara2->GetPos(),
+		chara1->GetModelRadius(), chara2->GetModelRadius(),
+		chara1->GetRot(), chara2->GetRot(),
+		VGet(0.0f, 100.0f, 0.0f), VGet(0.0f, 100.0f, 0.0f)))
 	{
 		return true;
 	}
@@ -216,11 +309,23 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 		}
 		else
 		{
+			// 攻撃に当たる際に回避できるいるかどうか
+			if(CheckWeaponAndModelAboutHIt(chara1, chara2))
+			{
+				chara1->SetChanceAway(true);
+			//	printfDx("モデルの周囲に当たっています。\n");
+			}
 			// 攻撃が当たったかどうか
-			if (CheckWeaponAndBodyHit(chara1, chara2))
+			if (CheckWeaponAndBodyHit(chara1, chara2) && !chara1->IsSlowMode())
 			{
 				// ダメージを与える
 				chara1->SetDamage(true);
+
+				for (int i = 0; i < 30; i++)
+				{
+					m_pBlood.push_back(new BloodDrawer(VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z)));
+					m_pBlood.back()->Init(i);
+				}
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
 			}

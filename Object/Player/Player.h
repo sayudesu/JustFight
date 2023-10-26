@@ -19,7 +19,6 @@ private:
 private:
 	VECTOR m_awayVec;
 	VECTOR m_awayRelativePos;
-	bool m_isAway;
 
 	bool m_isUp;
 	bool m_isDown;
