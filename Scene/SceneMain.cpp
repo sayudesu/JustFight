@@ -15,6 +15,8 @@
 #include "SceneResult.h"
 #include "../BloodDrawer.h"
 
+#include "../Animation2D.h"
+
 namespace
 {
 	// キャラクターベースの配列番号
@@ -43,8 +45,11 @@ void SceneMain::Init()
 	m_pEffect[kPlayerNo]    = std::make_unique<Effekseer3DDrawer>();
 	m_pEffect[kEnemyNo]    = std::make_unique<Effekseer3DDrawer>();
 
+	m_pStun = std::make_unique<Animation2D>();
+
 
 	m_pCamera->Init();
+	m_pStun->Init("Data/Image/Sstun.png",11,11);
 
 	m_pCharacter[kPlayerNo]->Init();
 	m_pCharacter[kEnemyNo]->Init();
@@ -59,6 +64,7 @@ void SceneMain::End()
 	m_pCharacter[kEnemyNo]->End();
 	m_pEffect[kPlayerNo]->End();
 	m_pEffect[kEnemyNo]->End();
+	m_pStun->End();
 }
 
 SceneBase* SceneMain::Update()
@@ -88,13 +94,14 @@ SceneBase* SceneMain::Update()
 	m_pCharacter[kPlayerNo]->Input();
 	m_pCharacter[kEnemyNo]->Input();
 
+	m_pStun->Update();
+
 	m_pCharacter[kEnemyNo]->SetAttackRange(false);
 	// 敵の攻撃可能範囲まで移動する
 	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo].get(), m_pCharacter[1].get()))
 	{
 		m_pCharacter[kEnemyNo]->SetAttackRange(true);
 	}
-
 
 	m_pCamera->Update();
 
@@ -171,11 +178,13 @@ SceneBase* SceneMain::Update()
 void SceneMain::Draw()
 {
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
-
+	m_pStun->Draw();
 	for (auto& character : m_pCharacter)
 	{
 		character->Draw();
 	}
+
+	
 
 	for (auto& effect : m_pEffect)
 	{
@@ -268,6 +277,16 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 	chara1->SetJustGuardBreak(chara2->IsJustGuard());
 	// 回転角度を取得
 	chara1->SetRota(chara2->GetRot());
+
+	//if (chara1->IsStun())
+	//{
+	//}
+	if (!chara2->IsStun())
+	{
+		m_pStun->SetAnim(false);
+	}
+
+
 	// 攻撃フレームが最大数かどうか
 	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
 	{
@@ -283,12 +302,20 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				chara1->SetStamina(30.0f, 0.0f);
 				// ジャストガードが成功したかどうか
 				chara1->SetJustGuard(true);
+
+				chara2->SetJustGuardBreak(true);
+
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
 
 				m_pEffect[1]->SetPlay(true);
 				m_pEffect[1]->SetAngle(chara1->GetAngle());
 				m_pEffect[1]->SetPos(VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z));
+
+				// スタンアニメーションを描画する位置を渡す
+				m_pStun->SetPos3D(chara2->GetPos());
+				// スタンアニメーションを再生する
+				m_pStun->SetAnim(true);
 			}
 		}
 		// 通常ガードが出来るかどうか

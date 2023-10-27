@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// DXライブラリのデバイスロストした時のコールバックを設定する。
 	// ウインドウとフルスクリーンの切り替えが発生する場合は必ず実行する。
 	// ただし、DirectX11を使用する場合は実行する必要はない。
-	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+//	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 	// 3D関連の設定
 	// Zバッファを有効にする。

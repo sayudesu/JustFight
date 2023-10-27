@@ -15,6 +15,7 @@ class CharacterBase;
 class Collision3D;
 class Effekseer3DDrawer;
 class BloodDrawer;
+class Animation2D;
 
 class SceneMain : public SceneBase
 {
@@ -46,6 +47,8 @@ private:
 	std::unique_ptr<Effekseer3DDrawer> m_pEffect[kEffectNum];
 
 	std::vector<BloodDrawer*>m_pBlood;
+
+	std::unique_ptr<Animation2D>m_pStun;
 
 	// ゲームスロー再生用
 	int m_slowCount = 0;

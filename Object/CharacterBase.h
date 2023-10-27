@@ -80,8 +80,11 @@ public:
 	// 現在のスタミナ
 	int GetStamina()const;
 	
-	// ジャストガードされたかどうか
+	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
+
+	// ジャストガードをされたかどうか
+	bool IsStun()const;
 
 	// スローになるかどうか
 	bool IsSlowMode()const;
@@ -143,6 +146,9 @@ private:
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
 	bool m_isResultDamage;
+
+	// スタン状態かどうか
+	bool m_isStun;
 
 	// 回避したできるかどうか
 	bool m_isChanceAway;

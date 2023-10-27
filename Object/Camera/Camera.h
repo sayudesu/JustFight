@@ -24,7 +24,7 @@ private:
 	float m_angle;
 	float m_playerAngle;
 
-	std::deque<VECTOR> m_deqTargetPos;
-	std::deque<float> m_deqAnglePos;
+	std::deque<VECTOR> m_delayFrameTargetPos;
+	std::deque<float> m_delayFrameAngle;
 };
 

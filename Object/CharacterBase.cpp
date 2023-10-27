@@ -66,6 +66,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isAway(false),
 	m_isResultGuard(false),
 	m_isResultDamage(false),
+	m_isStun(false),
 	m_isChanceAway(false),
 	m_isSlow(false),
 	m_slowCount(0),
@@ -140,7 +141,7 @@ void CharacterBase::TargetMove()
 	// 位置を変える
 	m_pos = VAdd(m_pos, velecity);
 
-	//// 距離を測る
+	// 距離を測る
 	m_targetRange.x = static_cast<float>(sqrt(pow(m_pos.x - m_targetPos.x, 2) + pow(m_pos.x - m_targetPos.x, 2)));
 	m_targetRange.z = static_cast<float>(sqrt(pow(m_pos.z - m_targetPos.z, 2) + pow(m_pos.z - m_targetPos.z, 2)));
 }
@@ -271,6 +272,15 @@ void CharacterBase::Attack()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
+	if (m_isJustGuardBreak)
+	{
+		// スタン状態に上書き
+		m_isStun = true;
+		m_pFunc = &CharacterBase::JustGuardBreak;
+		printfDx("スタン中\n");
+	}
+
+
 	// 位置情報の更新
 	UpdatePos();
 }
@@ -324,6 +334,15 @@ void CharacterBase::Guard()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
+	if (m_isJustGuardBreak)
+	{
+		// スタン状態に上書き
+		m_isStun = true;
+		m_pFunc = &CharacterBase::JustGuardBreak;
+		printfDx("スタン中\n");
+	}
+
+
 	// 位置情報の更新
 	UpdatePos();
 }
@@ -357,11 +376,15 @@ void CharacterBase::JustGuardBreak()
 	m_attackGapFrame = 0;
 	m_guardFrame = 0;
 	m_justGuardFrame = 0;
-	int total = kAttackFrameMax + kAttackGapFrameMax * 2;
+
+	const int total = (((kAttackFrameMax + kAttackGapFrameMax) * 2) * 2);
+
 	if ((total) < m_justGuardBreakFrame)
 	{
+		printfDx("StunEnd\n");
 		m_justGuardBreakFrame = 0;
 		m_isJustGuardBreak = false;
+		m_isStun = false;
 		m_pFunc = &CharacterBase::Idle;
 	}
 
@@ -529,6 +552,11 @@ bool CharacterBase::IsJustGuard() const
 	return m_isJustGuard;
 }
 
+bool CharacterBase::IsStun() const
+{
+	return m_isStun;
+}
+
 bool CharacterBase::IsSlowMode() const
 {
 	return m_isSlow;
@@ -566,11 +594,7 @@ void CharacterBase::SetJustGuard(bool isJustGuard)
 
 void CharacterBase::SetJustGuardBreak(bool isJustGuardBreak)
 {
-	if (isJustGuardBreak)
-	{
-		m_isJustGuardBreak = isJustGuardBreak;
-		m_pFunc = &CharacterBase::JustGuardBreak;
-	}
+	m_isJustGuardBreak = isJustGuardBreak;
 }
 
 void CharacterBase::SetChanceAway(const bool isChance)
