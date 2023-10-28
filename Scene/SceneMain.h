@@ -16,6 +16,7 @@ class Collision3D;
 class Effekseer3DDrawer;
 class BloodDrawer;
 class Animation2D;
+class FIeldDrawer;
 
 class SceneMain : public SceneBase
 {
@@ -49,6 +50,8 @@ private:
 	std::vector<BloodDrawer*>m_pBlood;
 
 	std::unique_ptr<Animation2D>m_pStun;
+
+	std::unique_ptr<FIeldDrawer>m_pField;
 
 	// ゲームスロー再生用
 	int m_slowCount = 0;

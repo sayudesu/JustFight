@@ -17,6 +17,8 @@
 
 #include "../Animation2D.h"
 
+#include "../FIeldDrawer.h"
+
 namespace
 {
 	// キャラクターベースの配列番号
@@ -39,13 +41,14 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {	
 	m_pCamera       = std::make_unique<Camera>();
-	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 0.0f, 0.0f));
-	m_pCharacter[kEnemyNo] = std::make_unique<Enemy> (VGet( 300.0f, 0.0f, 0.0f));
+	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 300.0f, 0.0f));
+	m_pCharacter[kEnemyNo] = std::make_unique<Enemy> (VGet( 300.0f, 300.0f, 0.0f));
 	m_pColl         = std::make_unique<Collision3D>();
 	m_pEffect[kPlayerNo]    = std::make_unique<Effekseer3DDrawer>();
 	m_pEffect[kEnemyNo]    = std::make_unique<Effekseer3DDrawer>();
 
 	m_pStun = std::make_unique<Animation2D>();
+	m_pField = std::make_unique<FIeldDrawer>();
 
 
 	m_pCamera->Init();
@@ -56,6 +59,8 @@ void SceneMain::Init()
 
 	m_pEffect[kPlayerNo]->Init("Data/Guard.efk",30.0f);
 	m_pEffect[kEnemyNo]->Init("Data/Guard2.efk", 130.0f);
+
+	m_pField->Init();
 }
 
 void SceneMain::End()
@@ -65,6 +70,7 @@ void SceneMain::End()
 	m_pEffect[kPlayerNo]->End();
 	m_pEffect[kEnemyNo]->End();
 	m_pStun->End();
+	m_pField->End();
 }
 
 SceneBase* SceneMain::Update()
@@ -178,7 +184,10 @@ SceneBase* SceneMain::Update()
 void SceneMain::Draw()
 {
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
+
 	m_pStun->Draw();
+	m_pField->Draw();
+
 	for (auto& character : m_pCharacter)
 	{
 		character->Draw();

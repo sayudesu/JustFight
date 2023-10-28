@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="Animation2D.cpp" />
     <ClCompile Include="BloodDrawer.cpp" />
+    <ClCompile Include="FIeldDrawer.cpp" />
     <ClCompile Include="Scene\SceneResult.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Animation2D.h" />
     <ClInclude Include="BloodDrawer.h" />
+    <ClInclude Include="FIeldDrawer.h" />
     <ClInclude Include="Scene\SceneResult.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />

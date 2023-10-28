@@ -5,11 +5,11 @@
 namespace
 {
 	// 視野角
-	constexpr float kFov = 90.0f * DX_PI_F / 180.0f;
+	constexpr float kFov = 70.0f * DX_PI_F / 180.0f;
 
 	// カメラの初期位置
-	constexpr VECTOR kCameraPos{ -50.0f, 370.0f, 190.0f };
-	constexpr VECTOR kCameraTarget{ 0.0f, 200.0f, -240.0f };
+	constexpr VECTOR kCameraPos{ -50.0f, 670.0f, 350.0f };
+	constexpr VECTOR kCameraTarget{ 0.0f, 500.0f, -240.0f };
 
 	// カメラの追跡処理にディレイを入れるフレーム数
 	constexpr int kCameraDelayFrame = 8;
