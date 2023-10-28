@@ -55,11 +55,11 @@ void Effekseer3DDrawer::Update()
 
 void Effekseer3DDrawer::Draw()
 {
-//	static const int a = LoadGraph("Data/Background.png");
-//	DrawExtendGraph(0, 0, 1920, 1080, a, true);
-
-	// Effekseerにより再生中のエフェクトを描画する。
-	DrawEffekseer3D();
+	if (m_isEffectPlay)
+	{
+		// Effekseerにより再生中のエフェクトを描画する。
+		DrawEffekseer3D();
+	}
 }
 
 int Effekseer3DDrawer::IsPlay()const

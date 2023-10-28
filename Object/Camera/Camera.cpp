@@ -30,7 +30,7 @@ Camera::~Camera()
 void Camera::Init()
 {
 	// ‚Ç‚±‚©‚çA‚Ç‚±‚Ü‚ÅŒ©‚¦‚é‚©
-	SetCameraNearFar(100.0f, 4000.0f);
+	SetCameraNearFar(100.0f, 6000.0f);
 	// ‚Ç‚±‚ğ‹‚Ä‚Ç‚±‚ğ‚İ‚é‚©
 	SetCameraPositionAndTarget_UpVecY(m_pos, m_targetPos);
 	// FOV

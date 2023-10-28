@@ -14,8 +14,6 @@ Enemy::Enemy(VECTOR pos) :
 
 	m_isAttack = false;
 	m_isGuard = false;
-//	m_isJustGuard = false;
-	m_isJustGuardBreak = false;
 }
 
 Enemy::~Enemy()
@@ -47,7 +45,7 @@ void Enemy::Input()
 
 	SetRotMtx(rotMtx);
 
-	if (!m_isJustGuardBreak)
+	if (!IsStun())
 	{
 		if (IsAttackRange())
 		{
@@ -107,19 +105,6 @@ void Enemy::Input()
 					guardFrameCount++;
 					m_pFunc = &Enemy::Guard;
 				}
-
-
-
-
-				/*if (GetRand(2) == 0 && !m_isAttack)
-				{
-					m_isGuard = true;
-					m_pFunc = &Enemy::Guard;
-				}
-				else
-				{
-					m_isGuard = false;
-				}*/
 			}
 		}
 		else

@@ -25,7 +25,6 @@ Player::Player(VECTOR pos):
 	m_isAttack = false;
 	m_isGuard  = false;
 	m_isJustGuard = false;
-	m_isJustGuardBreak = false;
 
 	m_isAway = false;
 
@@ -146,7 +145,7 @@ void Player::Input()
 		}
 	}
 
-	if (!m_isJustGuardBreak)
+	if (!IsStun())
 	{
 		//if (GetStamina() > 20.0f)
 		{

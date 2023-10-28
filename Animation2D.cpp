@@ -75,7 +75,7 @@ void Animation2D::Draw()
 	}
 }
 
-void Animation2D::SetAnim(bool isAnim)
+void Animation2D::SetPlay(bool isAnim)
 {
 	m_isAnimStart = isAnim;
 }

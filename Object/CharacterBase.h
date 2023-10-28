@@ -26,7 +26,7 @@ protected:
 	// ジャストガード
 	virtual void JustGuard();
 	// ジャストガードをされた場合
-	virtual void JustGuardBreak();
+	virtual void Stun();
 	// 勝利した場合
 	virtual void Winner();
 	// 敗北した場合
@@ -83,11 +83,8 @@ public:
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
 
-	// ジャストガードをされたかどうか
+	// スタン状態かどうか
 	bool IsStun()const;
-
-	// スローになるかどうか
-	bool IsSlowMode()const;
 
 	// 攻撃範囲に入っているかどうか
 	bool IsAttackRange()const;
@@ -104,8 +101,8 @@ public:
 	void SetGuard(const bool isGuard);
 	// ジャストガードが成功したかどうか
 	void SetJustGuard(const bool isJustGuard);
-	// ジャストガードをされかたどうか
-	void SetJustGuardBreak(const bool isJustGuardBreak);
+	// スタンをするかどうか
+	void SetStun(const bool isStun);
 
 	// 回避チャンスがあるかどうか
 	void SetChanceAway(const bool isChance);
@@ -141,7 +138,7 @@ private:
 	int m_attackFrame;
 	int m_guardFrame;
 	int m_justGuardFrame;
-	int m_justGuardBreakFrame;
+	int m_stunFrame;
 
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
@@ -152,10 +149,6 @@ private:
 
 	// 回避したできるかどうか
 	bool m_isChanceAway;
-
-	// 回避が成功した際のスロー処理
-	bool m_isSlow;
-	int m_slowCount;
 
 	// 攻撃範囲にいるかどうか
 	bool m_isAttackRange;
@@ -175,7 +168,6 @@ protected:
 	bool m_isAttack;
 	bool m_isGuard;
 	bool m_isJustGuard;
-	bool m_isJustGuardBreak;
 
 	// 回避
 	bool m_isAway;

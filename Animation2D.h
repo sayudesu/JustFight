@@ -13,7 +13,7 @@ public:
 	virtual void Draw();
 
 public:
-	virtual void SetAnim(bool isAnim);
+	virtual void SetPlay(bool isAnim);
 	// ワールド座標をスクリーン座標に変換してから座標を受け取る
 	virtual void SetPos3D(VECTOR pos);
 private:

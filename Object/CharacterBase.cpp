@@ -29,9 +29,9 @@ namespace
 
 	// 攻撃時の当たり判定
 	// 武器の半径
-	constexpr float kWeaponAttackRadius = 60.0f;
+	constexpr float kWeaponAttackRadius = 100.0f;
 	// 武器の攻撃時の判定の相対位置
-	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -300.0f };
+	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -210.0f };
 	// 盾の半径
 	constexpr float kSieldRadius = 50.0f;
 
@@ -62,19 +62,16 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isAttack(false),
 	m_isGuard(false),
 	m_isJustGuard(false),
-	m_isJustGuardBreak(false),
 	m_isAway(false),
 	m_isResultGuard(false),
 	m_isResultDamage(false),
 	m_isStun(false),
 	m_isChanceAway(false),
-	m_isSlow(false),
-	m_slowCount(0),
 	m_attackFrame(0),
 	m_attackGapFrame(0),
 	m_guardFrame(0),
 	m_justGuardFrame(0),
-	m_justGuardBreakFrame(0)
+	m_stunFrame(0)
 {
 	m_pFunc = &CharacterBase::Idle;
 }
@@ -219,24 +216,6 @@ void CharacterBase::Idle()
 		m_hp--;
 	}
 
-	if (m_isChanceAway)
-	{
-		m_isChanceAway = false;
-		if (m_isAway)
-		{
-			m_isSlow = true;
-		}
-	}
-
-	if (m_isSlow)
-	{
-		m_slowCount++;
-		if (m_slowCount == 60 * 3)
-		{
-			m_slowCount = 0;
-			m_isSlow = false;
-		}
-	}
 
 	// 位置情報の更新
 	UpdatePos();
@@ -272,11 +251,9 @@ void CharacterBase::Attack()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	if (m_isJustGuardBreak)
+	if (m_isStun)
 	{
-		// スタン状態に上書き
-		m_isStun = true;
-		m_pFunc = &CharacterBase::JustGuardBreak;
+		m_pFunc = &CharacterBase::Stun;
 		printfDx("スタン中\n");
 	}
 
@@ -334,14 +311,11 @@ void CharacterBase::Guard()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	if (m_isJustGuardBreak)
+	if (m_isStun)
 	{
-		// スタン状態に上書き
-		m_isStun = true;
-		m_pFunc = &CharacterBase::JustGuardBreak;
+		m_pFunc = &CharacterBase::Stun;
 		printfDx("スタン中\n");
 	}
-
 
 	// 位置情報の更新
 	UpdatePos();
@@ -358,9 +332,9 @@ void CharacterBase::JustGuard()
 	UpdatePos();
 }
 
-void CharacterBase::JustGuardBreak()
+void CharacterBase::Stun()
 {
-	m_justGuardBreakFrame++;
+	m_stunFrame++;
 
 	if (m_vecWeapon.y < kWeaponPos.y + 60.0f)
 	{
@@ -377,13 +351,10 @@ void CharacterBase::JustGuardBreak()
 	m_guardFrame = 0;
 	m_justGuardFrame = 0;
 
-	const int total = (((kAttackFrameMax + kAttackGapFrameMax) * 2) * 2);
-
-	if ((total) < m_justGuardBreakFrame)
+	if (60 * 3 < m_stunFrame)
 	{
 		printfDx("StunEnd\n");
-		m_justGuardBreakFrame = 0;
-		m_isJustGuardBreak = false;
+		m_stunFrame = 0;
 		m_isStun = false;
 		m_pFunc = &CharacterBase::Idle;
 	}
@@ -557,11 +528,6 @@ bool CharacterBase::IsStun() const
 	return m_isStun;
 }
 
-bool CharacterBase::IsSlowMode() const
-{
-	return m_isSlow;
-}
-
 bool CharacterBase::IsAttackRange() const
 {
 	return m_isAttackRange;
@@ -592,9 +558,9 @@ void CharacterBase::SetJustGuard(bool isJustGuard)
 	m_isJustGuard = isJustGuard;
 }
 
-void CharacterBase::SetJustGuardBreak(bool isJustGuardBreak)
+void CharacterBase::SetStun(bool isStun)
 {
-	m_isJustGuardBreak = isJustGuardBreak;
+	m_isStun = isStun;
 }
 
 void CharacterBase::SetChanceAway(const bool isChance)
