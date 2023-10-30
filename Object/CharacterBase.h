@@ -1,6 +1,7 @@
 #pragma once
 #include <DxLib.h>
-#include <array>
+#include "../CharacterName.h"
+#include "../AttackData.h"
 
 // キャラクター専用基底クラス
 class CharacterBase
@@ -21,6 +22,8 @@ protected:
 	virtual void Idle();
 	// 攻撃
 	virtual void Attack();
+	// 強攻撃
+	virtual void StrongAttack();
 	// 防御
 	virtual void Guard();
 	// ジャストガード
@@ -33,7 +36,7 @@ protected:
 	virtual void Losers();
 private:
 	// 位置情報の更新
-	virtual void UpdatePos();
+	virtual void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
 protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
@@ -42,6 +45,10 @@ protected:
 	// ターゲット位置追跡移動
 	virtual void TargetMove();
 public:
+	// 自身が誰をを返す
+	CharacterName GetMyId();
+	AttackData GetMyAttackId();
+
 	// 位置
 	VECTOR GetPos()const;
 	VECTOR GetWeaponPos()const;
@@ -90,7 +97,7 @@ public:
 	bool IsAttackRange()const;
 
 	// 相手の角度
-	void SetRota(const MATRIX rot);
+	void SetTargetRota(const MATRIX rot);
 
 	// 攻撃範囲に入っているかどうか
 	void SetAttackRange(const bool isRange);
@@ -104,11 +111,9 @@ public:
 	// スタンをするかどうか
 	void SetStun(const bool isStun);
 
-	// 回避チャンスがあるかどうか
-	void SetChanceAway(const bool isChance);
-
 	// スタミナの管理
-	void SetStamina(const float addStamina, const float subStamina);
+	void SetAddStamina(const float addStamina);
+	void SetSubStamina(const float subStamina);
 
 	// ターゲットの位置を取得する
 	void SetTargetPos(const VECTOR pos);
@@ -147,9 +152,6 @@ private:
 	// スタン状態かどうか
 	bool m_isStun;
 
-	// 回避したできるかどうか
-	bool m_isChanceAway;
-
 	// 攻撃範囲にいるかどうか
 	bool m_isAttackRange;
 protected:
@@ -166,6 +168,7 @@ protected:
 
 	// 状態
 	bool m_isAttack;
+	bool m_isStrongAttack;
 	bool m_isGuard;
 	bool m_isJustGuard;
 
@@ -174,5 +177,8 @@ protected:
 
 	// ターゲットの距離
 	VECTOR m_targetRange;
+
+	CharacterName m_myId;
+	AttackData m_attackId;
 };
 

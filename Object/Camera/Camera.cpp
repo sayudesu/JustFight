@@ -8,11 +8,11 @@ namespace
 	constexpr float kFov = 70.0f * DX_PI_F / 180.0f;
 
 	// カメラの初期位置
-	constexpr VECTOR kCameraPos{ -50.0f, 670.0f, 350.0f };
-	constexpr VECTOR kCameraTarget{ 0.0f, 500.0f, -240.0f };
+	constexpr VECTOR kCameraPos{ -50.0f, 700.0f, 350.0f };
+	constexpr VECTOR kCameraTarget{ 0.0f, 350.0f, -280.0f };
 
 	// カメラの追跡処理にディレイを入れるフレーム数
-	constexpr int kCameraDelayFrame = 8;
+	constexpr int kCameraDelayFrame = 6;
 }
 
 Camera::Camera():
@@ -42,6 +42,7 @@ void Camera::Update()
 	// カメラの追跡処理にディレイを入れる
 	m_delayFrameTargetPos.push_front(m_targetPos);
 	m_delayFrameAngle.push_front(m_playerAngle);
+
 	if (m_delayFrameTargetPos.size() > kCameraDelayFrame &&
 		m_delayFrameAngle.size()  > kCameraDelayFrame)
 	{
@@ -62,6 +63,7 @@ void Camera::Update()
 	// プレイヤーの回転情報と平行移動情報を合成
 	const MATRIX cameraMtx = MMult(cameraRotMtx, playerTransMtx);
 
+	// 行列を使った座標変換
 	const VECTOR cameraPos = VTransform(kCameraPos, cameraMtx);
 	const VECTOR cameraTarget = VTransform(kCameraTarget, cameraMtx);
 

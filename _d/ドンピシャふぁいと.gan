@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-14" view-index="0" gantt-divider-location="321" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
+<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-09-28" view-index="0" gantt-divider-location="306" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
     <description>
         <![CDATA[2.5Dアクション]]>
     </description>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="名前" width="173" order="0"/>
-        <field id="tpd4" name="開始日" width="66" order="1"/>
-        <field id="tpd5" name="終了日" width="66" order="2"/>
+        <field id="tpd3" name="名前" width="164" order="0"/>
+        <field id="tpd4" name="開始日" width="63" order="1"/>
+        <field id="tpd5" name="終了日" width="63" order="2"/>
         <option id="filter.completedTasks" value="false"/>
         <timeline>
-            <![CDATA[2,1,3,0]]>
+            <![CDATA[3,1,0,2]]>
         </timeline>
         <option id="color.recent">
             <![CDATA[#ff6666 #ff0066 #ff3333 #ffcccc #ffff00 #cccccc #ccccff #ff9999 #ffffcc]]>
@@ -42,8 +42,8 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="30" name="全体" meeting="false" start="2023-10-19" duration="50" complete="22" expand="true">
-            <task id="0" name="プロトタイプ" color="#ffff00" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2023-10-19" duration="23" complete="45" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="true">
+        <task id="30" name="全体" meeting="false" start="2023-10-19" duration="50" complete="30" expand="true">
+            <task id="0" name="プロトタイプ" color="#ffff00" shape="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" meeting="false" start="2023-10-19" duration="23" complete="61" thirdDate="2023-10-17" thirdDate-constraint="0" priority="4" expand="true">
                 <notes>
                     <![CDATA[これが完成しないとのこりの期間がえぐいてー]]>
                 </notes>
@@ -126,17 +126,17 @@
                     <task id="27" name="勝利条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-18" thirdDate-constraint="0" priority="2" expand="true"/>
                     <task id="28" name="敗北条件" color="#ff6666" meeting="false" start="2023-10-28" duration="2" complete="0" thirdDate="2023-10-28" thirdDate-constraint="0" priority="2" expand="true"/>
                 </task>
-                <task id="44" name="マップの追加" color="#8cb6ce" meeting="false" start="2023-10-30" duration="2" complete="0" thirdDate="2023-11-18" thirdDate-constraint="0" expand="true">
+                <task id="44" name="マップの追加" color="#8cb6ce" meeting="false" start="2023-10-30" duration="2" complete="100" thirdDate="2023-11-18" thirdDate-constraint="0" expand="true">
                     <notes>
                         <![CDATA[コロシアム的な闘技場のモデルを探す]]>
                     </notes>
                 </task>
-                <task id="46" name="強攻撃の追加" color="#8cb6ce" meeting="false" start="2023-10-30" duration="3" complete="0" thirdDate="2023-10-30" thirdDate-constraint="0" expand="true">
+                <task id="46" name="強攻撃の追加" color="#8cb6ce" meeting="false" start="2023-10-30" duration="3" complete="100" thirdDate="2023-10-30" thirdDate-constraint="0" expand="true">
                     <notes>
                         <![CDATA[ガード不能]]>
                     </notes>
                 </task>
-                <task id="45" name="演出の追加：怯みの状態,ガード,ジャストガード" color="#8cb6ce" meeting="false" start="2023-10-30" duration="3" complete="0" thirdDate="2023-10-30" thirdDate-constraint="0" expand="true">
+                <task id="45" name="演出の追加：怯みの状態,ガード,ジャストガード" color="#8cb6ce" meeting="false" start="2023-10-30" duration="3" complete="40" thirdDate="2023-10-30" thirdDate-constraint="0" expand="true">
                     <notes>
                         <![CDATA[怯み演出がメイン
 
@@ -148,7 +148,7 @@
                         <![CDATA[からの調整期間...]]>
                     </notes>
                 </task>
-                <task id="48" name="ガード崩し" color="#8cb6ce" meeting="false" start="2023-11-06" duration="5" complete="0" thirdDate="2023-11-02" thirdDate-constraint="0" expand="true">
+                <task id="48" name="ガード崩し" color="#8cb6ce" meeting="false" start="2023-11-06" duration="5" complete="10" thirdDate="2023-11-02" thirdDate-constraint="0" expand="true">
                     <notes>
                         <![CDATA[ターゲットのガード状態の崩し、攻撃を有利にする]]>
                     </notes>

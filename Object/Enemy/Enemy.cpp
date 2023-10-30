@@ -14,6 +14,8 @@ Enemy::Enemy(VECTOR pos) :
 
 	m_isAttack = false;
 	m_isGuard = false;
+
+	m_myId = CharacterName::ENEMY;
 }
 
 Enemy::~Enemy()
@@ -53,8 +55,13 @@ void Enemy::Input()
 			{
 				static bool isAttack = false;
 				static bool isAttackResult = false;
+
+				static bool isStrongAttack = false;
+				static bool isStrongAttackResult = false;
+
 				static bool isGuard  = false;
 				static bool isGuardResult = false;
+
 				static int guardFrameCount = 0;
 				const int guardFrame = 60;
 
@@ -65,6 +72,16 @@ void Enemy::Input()
 					{
 						isAttack = true;
 						isAttackResult = true;
+					}
+				}
+
+				// —”‚Å‹­UŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
+				if (!isStrongAttack)
+				{
+					if (GetRand(90) == 0)
+					{
+						isStrongAttack = true;
+						isStrongAttackResult = true;
 					}
 				}
 
@@ -83,12 +100,27 @@ void Enemy::Input()
 				{
 					isAttackResult = false;
 					m_isAttack = true;
+					m_attackId = AttackData::NORMAL;
 					m_pFunc = &Enemy::Attack;
 				}
 				// UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
 				if (!m_isAttack)
 				{
 					isAttack = false;
+				}
+
+				// ‹­UŒ‚‚©‚Ç‚¤‚©
+				if (isStrongAttackResult && !m_isGuard)
+				{
+					isStrongAttackResult = false;
+					m_isStrongAttack = true;
+					m_attackId = AttackData::STRONG;
+					m_pFunc = &Enemy::StrongAttack;
+				}
+				// ‹­UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
+				if (!m_isStrongAttack)
+				{
+					isStrongAttack = false;
 				}
 
 
@@ -109,6 +141,7 @@ void Enemy::Input()
 		}
 		else
 		{
+			m_isGuard = false;
 			TargetMove();
 		}
 	}

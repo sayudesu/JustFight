@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include <memory>
 #include <vector>
+#include "../CharacterName.h"
 
 namespace
 {
@@ -15,7 +16,6 @@ class CharacterBase;
 class Collision3D;
 class Effekseer3DDrawer;
 class BloodDrawer;
-class Animation2D;
 class FIeldDrawer;
 
 class SceneMain : public SceneBase
@@ -47,16 +47,14 @@ private:
 	std::unique_ptr<Camera> m_pCamera;
 	// キャラクタークラス
 	std::unique_ptr<CharacterBase> m_pCharacter[kCharacterNum];
-	// キャラクタークラスの一時保存
-	CharacterBase* m_pTempCharacter;
 	// 判定クラス
 	std::unique_ptr<Collision3D>  m_pColl;
 	// エフェクトクラス
 	std::unique_ptr<Effekseer3DDrawer> m_pEffect[kEffectNum];
 	// 血描画クラス
 	std::vector<BloodDrawer*>m_pBlood;
-	// スタン描画クラス
-	std::unique_ptr<Animation2D>m_pStun;
 	// フィールドクラス
 	std::unique_ptr<FIeldDrawer>m_pField;
+
+	CharacterName m_name;
 };

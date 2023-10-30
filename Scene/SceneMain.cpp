@@ -15,9 +15,9 @@
 #include "SceneResult.h"
 #include "../BloodDrawer.h"
 
-#include "../Animation2D.h"
-
 #include "../FIeldDrawer.h"
+
+#include "../AttackData.h"
 
 namespace
 {
@@ -32,8 +32,6 @@ SceneMain::SceneMain():
 {
 	m_pCharacter[kPlayerNo] = nullptr;
 	m_pCharacter[kEnemyNo] = nullptr;
-
-	m_pTempCharacter = nullptr;
 }
 
 SceneMain::~SceneMain()
@@ -45,16 +43,14 @@ void SceneMain::Init()
 	// カメラクラス
 	m_pCamera       = std::make_unique<Camera>();
 	// キャラクタークラス
-	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 300.0f, 0.0f));
-	m_pCharacter[kEnemyNo] = std::make_unique<Enemy>(VGet(300.0f, 300.0f, 0.0f)); 
+	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 260.0f, 0.0f));
+	m_pCharacter[kEnemyNo] = std::make_unique<Enemy>(VGet(300.0f, 260.0f, 0.0f)); 
 	// 当たり判定クラス
 	m_pColl         = std::make_unique<Collision3D>();
 	// エフェクト描画クラス
 	m_pEffect[0]    = std::make_unique<Effekseer3DDrawer>();
 	m_pEffect[1]    = std::make_unique<Effekseer3DDrawer>();
 	m_pEffect[2]    = std::make_unique<Effekseer3DDrawer>();
-	// スタン描画クラス
-	m_pStun = std::make_unique<Animation2D>();
 	// フィールド描画クラス
 	m_pField = std::make_unique<FIeldDrawer>();
 
@@ -68,9 +64,9 @@ void SceneMain::Init()
 	m_pEffect[1]->Init("Data/Guard2.efk", 130.0f);
 	m_pEffect[2]->Init("Data/Hiyoko.efk", 30.0f);
 
-	m_pStun->Init("Data/Image/Sstun.png",11,11);
-
 	m_pField->Init();
+
+	m_name = CharacterName::NONE;
 }
 
 void SceneMain::End()
@@ -81,7 +77,6 @@ void SceneMain::End()
 	m_pEffect[0]->End();
 	m_pEffect[1]->End();
 	m_pEffect[2]->End();
-	m_pStun->End();
 	m_pField->End();
 
 	for (int i = 0; i < m_pBlood.size(); i++)
@@ -95,67 +90,94 @@ void SceneMain::End()
 SceneBase* SceneMain::Update()
 {
 	// キャラクター更新処理
+	m_pCharacter[kPlayerNo]->Input();
 	m_pCharacter[kPlayerNo]->Update();
-	m_pCharacter[kEnemyNo]->Update();
 
 	// キャラクターの操作処理
-	m_pCharacter[kPlayerNo]->Input();
 	m_pCharacter[kEnemyNo]->Input();
+	m_pCharacter[kEnemyNo]->Update();
 
 	// カメラの更新処理
 	m_pCamera->Update();
 
-	// スタンの更新処理
-	m_pStun->Update();
-
-	m_pCharacter[kEnemyNo]->SetAttackRange(false);
-	// 敵の攻撃可能範囲まで移動する
+	// 敵の攻撃可能範囲にいるかどうか
 	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo].get(), m_pCharacter[1].get()))
 	{
 		m_pCharacter[kEnemyNo]->SetAttackRange(true);
 	}
-
-	// エフェクト更新処理
-	for (auto& effect : m_pEffect)
+	else
 	{
-		effect->Update();
-
-		if (!effect->IsPlay())
-		{
-			effect->SetPlay(false);
-		}
+		m_pCharacter[kEnemyNo]->SetAttackRange(false);
 	}
 
-	if (m_pTempCharacter != nullptr)
+	//// エフェクト更新処理
+	//for (auto& effect : m_pEffect)
+	//{
+	//	effect->Update();
+
+	//	if (!effect->IsPlay())
+	//	{
+	//		effect->SetPlay(false);
+	//	}
+	//}
+
+	m_pEffect[0]->Update();
+
+	if (!m_pEffect[0]->IsPlay())
 	{
-		if (m_pTempCharacter->IsStun())
+		m_pEffect[0]->SetPlay(false);
+	}
+
+	m_pEffect[1]->Update();
+
+	if (!m_pEffect[1]->IsPlay())
+	{
+		m_pEffect[1]->SetPlay(false);
+	}
+
+
+	//m_pEffect[2]->Update();
+
+	//if (!m_pEffect[2]->IsPlay())
+	//{
+	//	m_pEffect[2]->SetPlay(false);
+	//}
+
+	m_pEffect[2]->Update();
+	if (m_name != CharacterName::NONE)
+	{
+		if (m_pCharacter[static_cast<int>(m_name)]->IsStun())
 		{
 			// スタンアニメーションを再生する
-			m_pStun->SetPlay(true);
 			m_pEffect[2]->SetPlay(true);
 		
 		}
 		else
 		{
-			m_pEffect[2]->SetPlay(false);
-		//	delete m_pTempCharacter;
+			if (!m_pEffect[2]->IsPlay())
+			{
+				m_name = CharacterName::NONE;
+				m_pEffect[2]->SetPlay(false);
+			}
 		}
 	}
 
-	// 血のエフェクトを更新
-	for (auto& blood : m_pBlood)
 	{
-		blood->Update();
-	}
-	for (int i = 0; i < m_pBlood.size(); i++)
-	{
-		if (m_pBlood[i]->IsGetErase())
+		// 血のエフェクトを更新
+		for (auto& blood : m_pBlood)
 		{
-			// デリート処理
-			delete m_pBlood[i];
-			m_pBlood[i] = nullptr;
-			// 要素の削除
-			m_pBlood.erase(m_pBlood.begin() + i);
+			blood->Update();
+		}
+		for (int i = 0; i < m_pBlood.size(); i++)
+		{
+			if (m_pBlood[i]->IsGetErase())
+			{
+				// デリート処理
+				delete m_pBlood[i];
+				m_pBlood[i] = nullptr;
+				// 要素の削除
+				m_pBlood.erase(m_pBlood.begin() + i);
+			}
 		}
 	}
 
@@ -175,6 +197,7 @@ SceneBase* SceneMain::Update()
 
 
 	{
+#if _DEBUG
 		CheckWeaponAndModelAboutHIt(m_pCharacter[kPlayerNo].get(), m_pCharacter[kEnemyNo].get());
 		CheckWeaponAndModelAboutHIt(m_pCharacter[kEnemyNo].get(), m_pCharacter[kPlayerNo].get());
 
@@ -183,6 +206,7 @@ SceneBase* SceneMain::Update()
 
 		CheckWeaponAndBodyHit(m_pCharacter[kPlayerNo].get(), m_pCharacter[kEnemyNo].get());
 		CheckWeaponAndBodyHit(m_pCharacter[kEnemyNo].get(), m_pCharacter[kPlayerNo].get());
+#endif
 	}
 	
 	{
@@ -197,9 +221,10 @@ SceneBase* SceneMain::Update()
 	{
 		static int count = 0;
 		count++;
-		if (count == 60 * 5)
+		if (count == 60 * 2)
 		{
 			count = 0;
+			clsDx();
 			return new SceneResult();
 		}
 	}
@@ -212,7 +237,6 @@ void SceneMain::Draw()
 //	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
 
 	m_pField->Draw();
-	m_pStun->Draw();
 
 	for (auto& character : m_pCharacter)
 	{
@@ -308,7 +332,7 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 	chara1->SetJustGuard(false);
 
 	// 回転角度を取得
-	chara1->SetRota(chara2->GetRot());
+	chara1->SetTargetRota(chara2->GetRot());
 
 	// 攻撃フレームが最大数かどうか
 	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
@@ -322,7 +346,7 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 			if ((CheckWeaponAndSieldHIt(chara1, chara2)) || (CheckWeaponAndBodyHit(chara1, chara2)))
 			{
 				// スタミナを減らす
-				chara1->SetStamina(30.0f, 0.0f);
+				chara1->SetAddStamina(30.0f);
 				// ジャストガードが成功したかどうか
 				chara1->SetJustGuard(true);
 
@@ -334,8 +358,8 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				// ターゲットをスタン状態にする
 				chara2->SetStun(true);
 
-				// スタンしたキャラクターを一時保存
-				m_pTempCharacter = chara2;
+				// スタンしたキャラクターの名前を一時保存
+				m_name = chara2->GetMyId();
 
 				m_pEffect[2]->SetPlay(true);
 				m_pEffect[2]->SetAngle(chara2->GetAngle());
@@ -351,14 +375,24 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 			//攻撃が盾に当たったかどうか
 			if (CheckWeaponAndSieldHIt(chara1, chara2))
 			{
-				// スタミナを減らす
-				chara1->SetStamina(0.0f, 10.0f);
 				// ガード成功したかどうか
 				chara1->SetGuard(true);
+				// 強い攻撃が来た場合
+				if (chara2->GetMyAttackId() == AttackData::STRONG)
+				{
+					// ターゲットをスタン状態にする
+					chara1->SetStun(true);
+
+					// スタミナを減らす
+					chara1->SetSubStamina(100.0f);
+				}
+				// スタミナを減らす
+				chara1->SetSubStamina(10.0f);
 
 				m_pEffect[0]->SetPlay(true);
 				m_pEffect[0]->SetAngle(chara1->GetAngle());
 				m_pEffect[0]->SetPos(chara1->GetSieldPos());
+
 			}
 		}
 		else

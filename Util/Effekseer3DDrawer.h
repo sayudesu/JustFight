@@ -12,7 +12,7 @@ public:
 	void Update();
 	void Draw();
 public:
-	// return	0:Ä¶’†A - 1 : Ä¶‚³‚ê‚Ä‚¢‚È‚¢A‚à‚µ‚­‚ÍÄ¶I—¹
+	// Œ»İÄ¶‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	int IsPlay()const;
 
 	void SetPos(VECTOR pos);

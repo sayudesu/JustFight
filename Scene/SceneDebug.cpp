@@ -27,8 +27,8 @@ void SceneDebug::Init()
 	// ”ñ“¯Šú“Ç‚İ‚İ–³Œø‚É‚·‚é
 	SetUseASyncLoadFlag(false);
 
-	int x;
-	int y;
+//	int x;
+//	int y;
 //	int result = GetGraphSize(m_handle.back(), &x, &y);
 
 }

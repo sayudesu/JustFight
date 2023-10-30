@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "../../Util/Pad.h"
+#include <corecrt_math.h>
 
 namespace
 {
@@ -29,6 +30,8 @@ Player::Player(VECTOR pos):
 	m_isAway = false;
 
 	m_angle = 0.0f;
+
+	m_myId = CharacterName::PLAYER;
 }
 
 Player::~Player()
@@ -37,16 +40,11 @@ Player::~Player()
 
 void Player::Input()
 {
-	if(!m_isAttack)
-	{
-
-	}
 	DINPUT_JOYSTATE input;
 	// ì¸óÕèÛë‘ÇéÊìæ
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
 	{
-
 		//// ÉJÉÅÉâÇÃâÒì]äpìxÇí≤êÆ
 		//if (input.Rx > 30)
 		//{
@@ -74,9 +72,9 @@ void Player::Input()
 	MATRIX rotMtx = MGetRotY(angle);
 
 	SetRotMtx(rotMtx);
-
-	if (m_isAway)
+	if (!IsStun())
 	{
+		// à⁄ìÆorâÒî
 		if (m_isAway)
 		{
 			static VECTOR away = kVecAwayZ;
@@ -98,66 +96,80 @@ void Player::Input()
 				frameCount = 0;
 			}
 		}
-	}
-	else
-	{
-		m_isUp = false;
-		m_isDown = false;
-		m_isRight = false;
-		m_isLeft = false;
-
-		if (Pad::isPress(PAD_INPUT_UP))
+		else
 		{
-			m_isUp = true;
+			m_isUp = false;
+			m_isDown = false;
+			m_isRight = false;
+			m_isLeft = false;
 
-			m_pos = AddMoving(kVecZ, rotMtx, m_pos);
+			if (Pad::isPress(PAD_INPUT_UP))
+			{
+				m_isUp = true;
 
-			MoveAway(0.0f, -60.0f, rotMtx);
+				m_pos = AddMoving(kVecZ, rotMtx, m_pos);
+
+				MoveAway(0.0f, -60.0f, rotMtx);
+			}
+			else if (Pad::isPress(PAD_INPUT_DOWN))
+			{
+				m_isDown = true;
+
+				m_pos = SubMoving(kVecZ, rotMtx, m_pos);
+
+				MoveAway(0.0f, 60.0f, rotMtx);
+			}
+			if (Pad::isPress(PAD_INPUT_RIGHT))
+			{
+				m_isRight = true;
+
+				m_pos = AddMoving(kVecX, rotMtx, m_pos);
+
+				MoveAway(-60.0f, 0.0f, rotMtx);
+			}
+			else if (Pad::isPress(PAD_INPUT_LEFT))
+			{
+				m_isLeft = true;
+
+				m_pos = SubMoving(kVecX, rotMtx, m_pos);
+
+				MoveAway(60.0f, 0.0f, rotMtx);
+			}
+
+			if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
+			{
+				MoveAway(0.0f, 60.0f, rotMtx);
+			}
 		}
-		else if (Pad::isPress(PAD_INPUT_DOWN))
+
+		// çUåÇorñhå‰
 		{
-			m_isDown = true;
-
-			m_pos = SubMoving(kVecZ, rotMtx, m_pos);
-
-			MoveAway(0.0f, 60.0f, rotMtx);
-		}
-		if (Pad::isPress(PAD_INPUT_RIGHT))
-		{
-			m_isRight = true;
-
-			m_pos = AddMoving(kVecX, rotMtx, m_pos);
-
-			MoveAway(-60.0f, 0.0f, rotMtx);
-		}
-		else if (Pad::isPress(PAD_INPUT_LEFT))
-		{
-			m_isLeft = true;
-
-			m_pos = SubMoving(kVecX, rotMtx, m_pos);
-
-			MoveAway(60.0f, 0.0f, rotMtx);
-		}
-
-		if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
-		{
-			MoveAway(0.0f, 60.0f, rotMtx);
-		}
-	}
-
-	if (!IsStun())
-	{
-		//if (GetStamina() > 20.0f)
-		{
+			// í èÌçUåÇ
 			if (Pad::isTrigger(PAD_INPUT_6) &&
-				!m_isAttack &&
+				!m_isAttack                 &&
+				!m_isStrongAttack           &&
 				!m_isGuard)
 			{
 				m_isAttack = true;
+				m_attackId = AttackData::NORMAL;
 				m_pFunc = &Player::Attack;
 			}
 
-			if (Pad::isPress(PAD_INPUT_5) && !m_isAttack)
+			// ã≠çUåÇ
+			if (input.Z < -100 &&
+				!m_isAttack &&
+				!m_isStrongAttack &&
+				!m_isGuard)
+			{
+				m_isStrongAttack = true;
+				m_attackId = AttackData::STRONG;
+				m_pFunc = &Player::StrongAttack;
+			}
+
+			// ñhå‰
+			if (Pad::isPress(PAD_INPUT_5) &&
+				!m_isAttack               &&
+				!m_isStrongAttack)
 			{
 				m_isGuard = true;
 				m_pFunc = &Player::Guard;
@@ -167,10 +179,6 @@ void Player::Input()
 				m_isGuard = false;
 			}
 		}
-		//else
-		//{
-		//	m_isGuard = false;
-		//}
 	}
 }
 

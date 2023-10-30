@@ -1,5 +1,6 @@
 #include "Effekseer3DDrawer.h"
 #include "EffekseerForDXLib.h"
+#include <cassert>
 
 Effekseer3DDrawer::Effekseer3DDrawer():
 	m_pos(VGet(0,0,0)),
@@ -18,6 +19,8 @@ void Effekseer3DDrawer::Init(const char* effectName,float size)
 {
 	// エフェクトリソースを読み込む。
 	m_handle = LoadEffekseerEffect(effectName, size);
+	assert(m_handle != -1);
+
 }
 
 void Effekseer3DDrawer::End()
@@ -64,6 +67,7 @@ void Effekseer3DDrawer::Draw()
 
 int Effekseer3DDrawer::IsPlay()const
 {
+    // 3D表示のエフェクトが再生中か取得する。
 	return IsEffekseer3DEffectPlaying(m_playingEffectHandle);
 }
 

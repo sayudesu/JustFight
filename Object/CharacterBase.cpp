@@ -7,8 +7,13 @@ namespace
 	// フレーム管理
 	// 攻撃最大フレーム
 	constexpr int kAttackFrameMax = 5;
-	constexpr int kAttackGapFrameMax = 20;
+	constexpr int kAttackGapFrameMax = 10;
 	constexpr int kAttackTotalFrame = kAttackFrameMax + kAttackGapFrameMax;
+
+	// 強攻撃
+	constexpr int kStrongAttackFrameMax = 5;
+	constexpr int kStrongAttackGapFrameMax = 60;
+	constexpr int kStrongAttackTotalFrame = kStrongAttackFrameMax + kStrongAttackGapFrameMax;
 
 	// ガード最大フレーム
 	constexpr int kGuardFrameMax  = 12;
@@ -60,20 +65,27 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_stamina(kStaminaMax),
 	m_angle(0.0f),
 	m_isAttack(false),
+	m_isStrongAttack(false),
 	m_isGuard(false),
 	m_isJustGuard(false),
 	m_isAway(false),
 	m_isResultGuard(false),
 	m_isResultDamage(false),
 	m_isStun(false),
-	m_isChanceAway(false),
 	m_attackFrame(0),
 	m_attackGapFrame(0),
 	m_guardFrame(0),
 	m_justGuardFrame(0),
 	m_stunFrame(0)
 {
+	// メンバ関数の初期
 	m_pFunc = &CharacterBase::Idle;
+
+	// 自身の判別用IDを初期化
+	m_myId = CharacterName::NONE;
+	// 攻撃判別を初期化
+	m_attackId = AttackData::NONE;
+
 }
 
 CharacterBase::~CharacterBase()
@@ -82,20 +94,24 @@ CharacterBase::~CharacterBase()
 
 void CharacterBase::Init()
 {
+	// モデルのロード
 	m_weaponHandle  = MyModel3D::Load("Data/Model/Lance2.mv1");
 	m_shieldHandle  = MyModel3D::Load("Data/Model/Shield.mv1");
 
+	// モデルの相対位置
 	m_vecWeapon = kWeaponPos;
 	m_vecSield = kSieldPos;
 
 	// 位置情報の更新
 	UpdatePos();
 
+	// モデルのサイズ調整
 	MV1SetScale(m_shieldHandle, VGet(3.0f, 3.0f, 3.0f));
 }
 
 void CharacterBase::End()
 {
+	// 解放処理
 	MyModel3D::End(m_weaponHandle);
 	MyModel3D::End(m_shieldHandle);
 }
@@ -139,13 +155,24 @@ void CharacterBase::TargetMove()
 	m_pos = VAdd(m_pos, velecity);
 
 	// 距離を測る
-	m_targetRange.x = static_cast<float>(sqrt(pow(m_pos.x - m_targetPos.x, 2) + pow(m_pos.x - m_targetPos.x, 2)));
-	m_targetRange.z = static_cast<float>(sqrt(pow(m_pos.z - m_targetPos.z, 2) + pow(m_pos.z - m_targetPos.z, 2)));
+	m_targetRange.x = sqrt(pow(m_pos.x - m_targetPos.x, 2.0f) + pow(m_pos.x - m_targetPos.x, 2.0f));
+	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
+}
+
+CharacterName CharacterBase::GetMyId()
+{
+	return m_myId;
+}
+
+AttackData CharacterBase::GetMyAttackId()
+{
+	return m_attackId;
 }
 
 void CharacterBase::Idle()
 {
-	SetStamina(0.2f, 0.0f);
+	SetAddStamina(0.2f);
+	m_attackId = AttackData::NONE;
 
 	// 武器を元の位置に戻す
 	{
@@ -173,6 +200,7 @@ void CharacterBase::Idle()
 		if (isEndX && isEndZ)
 		{
 			m_isAttack = false;
+			m_isStrongAttack = false;
 		}
 
 		if (m_vecWeapon.y < kWeaponPos.y)
@@ -223,7 +251,7 @@ void CharacterBase::Idle()
 
 void CharacterBase::Attack()
 {
-	SetStamina(0.0f, 1.0f);
+	SetSubStamina(1.0f);
 
 	// 最大フレーム内に目標地点まで移動する
 	// 始めに隙ようの後ろに動かす動作
@@ -262,9 +290,58 @@ void CharacterBase::Attack()
 	UpdatePos();
 }
 
+void CharacterBase::StrongAttack()
+{
+	SetSubStamina(0.4f);
+	int slideX = 0;
+	int slideY = 0;
+	int slideZ = 0;
+	// 最大フレーム内に目標地点まで移動する
+	// 始めに隙ようの後ろに動かす動作
+	if (m_attackGapFrame < kStrongAttackGapFrameMax)
+	{
+		m_vecWeapon.z = kWeaponPos.z + (100.0f - kWeaponPos.z) * (m_attackGapFrame) / kStrongAttackGapFrameMax;
+		m_attackGapFrame++;
+		m_tempWeaponPos = m_vecWeapon;
+		slideX = GetRand(6);
+		slideY = GetRand(6);
+		slideZ = GetRand(6);
+	}
+	// 攻撃をする動作
+	if (m_attackGapFrame == kStrongAttackGapFrameMax)
+	{
+		slideX = 0;
+		slideY = 0;
+		slideZ = 0;
+		if (m_attackFrame < kAttackFrameMax)
+		{
+			m_vecWeapon.z = m_tempWeaponPos.z + (-200.0f - m_tempWeaponPos.z) * (m_attackFrame) / kStrongAttackFrameMax;
+			m_vecWeapon.x = kWeaponPos.x + (0.0f - kWeaponPos.x) * (m_attackFrame) / kStrongAttackFrameMax;
+			m_attackFrame++;
+		}
+	}
+
+	if (m_attackFrame + m_attackGapFrame == kStrongAttackTotalFrame)
+	{
+		m_attackFrame = 0;
+		m_attackGapFrame = 0;
+		m_pFunc = &CharacterBase::Idle;
+	}
+
+	if (m_isStun)
+	{
+		m_pFunc = &CharacterBase::Stun;
+		printfDx("スタン中\n");
+	}
+
+
+	// 位置情報の更新
+	UpdatePos(slideX, slideY, slideZ);
+}
+
 void CharacterBase::Guard()
 {
-	SetStamina(0.05f, 0.0f);
+	SetAddStamina(0.05f);
 
 	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < kGuardFrameMax)
@@ -392,12 +469,12 @@ void CharacterBase::Losers()
 	UpdatePos();
 }
 
-void CharacterBase::UpdatePos()
+void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, move);
+		MV1SetPosition(m_weaponHandle, VGet(move.x + shiftX, move.y + shiftY, move.z + shiftZ));
 		MV1SetRotationXYZ(m_weaponHandle, VGet(0, m_angle, 0));
 	}
 	{
@@ -495,7 +572,17 @@ int CharacterBase::GetJustGuardFrame()const
 
 int CharacterBase::GetAttackFrameMax()const
 {
-	return kAttackTotalFrame;
+	if (m_isAttack)
+	{
+		return kAttackTotalFrame;
+	}
+
+	if (m_isStrongAttack)
+	{
+		return kStrongAttackTotalFrame;
+	}
+
+	return -1;
 }
 
 int CharacterBase::GetGuardFrameMax()const
@@ -533,7 +620,7 @@ bool CharacterBase::IsAttackRange() const
 	return m_isAttackRange;
 }
 
-void CharacterBase::SetRota(MATRIX rot)
+void CharacterBase::SetTargetRota(MATRIX rot)
 {
 	m_enemyRotMtx = rot;
 }
@@ -563,12 +650,7 @@ void CharacterBase::SetStun(bool isStun)
 	m_isStun = isStun;
 }
 
-void CharacterBase::SetChanceAway(const bool isChance)
-{
-	m_isChanceAway = isChance;
-}
-
-void CharacterBase::SetStamina(float addStamina,float subStamina)
+void CharacterBase::SetAddStamina(const float addStamina)
 {
 	// 最大値と最小値を超えないように制御
 	if (m_stamina < kStaminaMax)
@@ -579,6 +661,10 @@ void CharacterBase::SetStamina(float addStamina,float subStamina)
 	{
 		m_stamina = kStaminaMax;
 	}
+}
+
+void CharacterBase::SetSubStamina(const float subStamina)
+{
 	if (m_stamina > 0.0f)
 	{
 		m_stamina -= subStamina;

@@ -17,13 +17,14 @@ private:
 	// 回避用関数
 	void MoveAway(float x, float z, MATRIX rotMtx);
 private:
+	// 回避用のベクトル
 	VECTOR m_awayVec;
+	// 回避の移動用相対位置
 	VECTOR m_awayRelativePos;
 
 	bool m_isUp;
 	bool m_isDown;
 	bool m_isLeft;
 	bool m_isRight;
-
 };
 

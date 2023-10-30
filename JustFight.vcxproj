@@ -143,9 +143,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animation2D.cpp" />
     <ClCompile Include="BloodDrawer.cpp" />
     <ClCompile Include="FIeldDrawer.cpp" />
+    <ClCompile Include="LoadingDrawer.cpp" />
     <ClCompile Include="Scene\SceneResult.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
@@ -165,9 +165,11 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation2D.h" />
+    <ClInclude Include="AttackData.h" />
     <ClInclude Include="BloodDrawer.h" />
+    <ClInclude Include="CharacterName.h" />
     <ClInclude Include="FIeldDrawer.h" />
+    <ClInclude Include="LoadingDrawer.h" />
     <ClInclude Include="Scene\SceneResult.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />
