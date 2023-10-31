@@ -27,7 +27,7 @@ namespace
 namespace Pad
 {
 	// パッドの入力状態取得
-	void update()
+	void Update()
 	{
 		for (int padNo = 0; padNo < kMaxPad; padNo++)
 		{
@@ -66,32 +66,32 @@ namespace Pad
 	}
 
 	// 押し下げ判定
-	bool isPress(int button, int padNo)
+	bool IsPress(int button, int padNo)
 	{
 		return (padLog[padNo][0] & button);
 	}
 	// トリガー判定
-	bool isTrigger(int button, int padNo)
+	bool IsTrigger(int button, int padNo)
 	{
 		bool isNow = (padLog[padNo][0] & button);	// 現在の状態
 		bool isLast = (padLog[padNo][1] & button);	// １フレーム前の状態
 		return (isNow && !isLast);
 	}
-	void startRecordLog()
+	void StartRecordLog()
 	{
 		isRecordLog = true;
 		keyLog.clear();
 	}
 
-	void endRecordLog()
+	void EndRecordLog()
 	{
 		isRecordLog = false;
 	}
-	void startPlayLog()
+	void StartPlayLog()
 	{
 		playLogNo = 0;
 	}
-	void endPlayLog()
+	void EndPlayLog()
 	{
 		playLogNo = -1;
 	}

@@ -53,15 +53,15 @@ SceneBase* SceneDebug::Update()
 		}
 	}
 
-	if (Pad::isTrigger(PAD_INPUT_1))
+	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 		return new SceneMain();
 	}
-	if (Pad::isTrigger(PAD_INPUT_2))
+	if (Pad::IsTrigger(PAD_INPUT_2))
 	{
 		return new SceneResult();
 	}
-	if (Pad::isTrigger(PAD_INPUT_3))
+	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
 		return new SceneTitle();
 	}

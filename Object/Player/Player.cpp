@@ -19,7 +19,8 @@ Player::Player(VECTOR pos):
 	m_isUp(false),
 	m_isDown(false),
 	m_isLeft(false),
-	m_isRight(false)
+	m_isRight(false),
+	m_isCameraLockon(false)
 {
 	m_pFunc = &Player::Idle;
 
@@ -31,6 +32,7 @@ Player::Player(VECTOR pos):
 
 	m_angle = 0.0f;
 
+	// 自身がプレイヤーであると決める
 	m_myId = CharacterName::PLAYER;
 }
 
@@ -44,34 +46,31 @@ void Player::Input()
 	// 入力状態を取得
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
+	if (m_isCameraLockon)
 	{
-		//// カメラの回転角度を調整
-		//if (input.Rx > 30)
-		//{
-		//	m_angle += 0.05f;
-		//}
-		//if (input.Rx < -30)
-		//{
-		//	m_angle -= 0.05f;
-		//}
-
-		//SetAngle(m_angle);
-
-		//// プレイヤーの進行方向
-		//MATRIX rotMtx = MGetRotY(m_angle);
-
-		//SetRotMtx(rotMtx);
+		// カメラの回転角度を調整
+		if (input.Rx > 30)
+		{
+			m_angle += 0.05f;
+		}
+		if (input.Rx < -30)
+		{
+			m_angle -= 0.05f;
+		}
+	}
+	else
+	{
+		const VECTOR direction = VSub(m_targetPos, m_pos);
+		m_angle = atan2f(-direction.x, -direction.z);
 	}
 
-	const VECTOR direction = VSub(m_targetPos, m_pos);
-	const float angle = atan2f(-direction.x, -direction.z);
-
-	SetAngle(angle);
-
+	// angleを基底クラスに渡す
+	SetAngle(m_angle);
 	// プレイヤーの進行方向
-	MATRIX rotMtx = MGetRotY(angle);
-
+	MATRIX rotMtx = MGetRotY(m_angle);
+	// 回転行列を基底クラスに渡す
 	SetRotMtx(rotMtx);
+
 	if (!IsStun())
 	{
 		// 移動or回避
@@ -103,7 +102,7 @@ void Player::Input()
 			m_isRight = false;
 			m_isLeft = false;
 
-			if (Pad::isPress(PAD_INPUT_UP))
+			if (Pad::IsPress(PAD_INPUT_UP))
 			{
 				m_isUp = true;
 
@@ -111,7 +110,7 @@ void Player::Input()
 
 				MoveAway(0.0f, -60.0f, rotMtx);
 			}
-			else if (Pad::isPress(PAD_INPUT_DOWN))
+			else if (Pad::IsPress(PAD_INPUT_DOWN))
 			{
 				m_isDown = true;
 
@@ -119,7 +118,7 @@ void Player::Input()
 
 				MoveAway(0.0f, 60.0f, rotMtx);
 			}
-			if (Pad::isPress(PAD_INPUT_RIGHT))
+			if (Pad::IsPress(PAD_INPUT_RIGHT))
 			{
 				m_isRight = true;
 
@@ -127,7 +126,7 @@ void Player::Input()
 
 				MoveAway(-60.0f, 0.0f, rotMtx);
 			}
-			else if (Pad::isPress(PAD_INPUT_LEFT))
+			else if (Pad::IsPress(PAD_INPUT_LEFT))
 			{
 				m_isLeft = true;
 
@@ -145,7 +144,7 @@ void Player::Input()
 		// 攻撃or防御
 		{
 			// 通常攻撃
-			if (Pad::isTrigger(PAD_INPUT_6) &&
+			if (Pad::IsTrigger(PAD_INPUT_6) &&
 				!m_isAttack                 &&
 				!m_isStrongAttack           &&
 				!m_isGuard)
@@ -167,7 +166,7 @@ void Player::Input()
 			}
 
 			// 防御
-			if (Pad::isPress(PAD_INPUT_5) &&
+			if (Pad::IsPress(PAD_INPUT_5) &&
 				!m_isAttack               &&
 				!m_isStrongAttack)
 			{
@@ -178,6 +177,23 @@ void Player::Input()
 			{
 				m_isGuard = false;
 			}
+		}
+	}
+
+	{
+		// カメラの操作変更
+		static int frameCount = 0;
+		if (input.Buttons[9] == 128)
+		{
+			frameCount++;
+			if (frameCount == 1)
+			{
+				m_isCameraLockon = (!m_isCameraLockon);
+			}
+		}
+		else
+		{
+			frameCount = 0;
 		}
 	}
 }
@@ -200,7 +216,7 @@ void Player::MoveAway(float x, float z, MATRIX rotMtx)
 {
 	// 回避の仮実装
 	{
-		if (Pad::isTrigger(PAD_INPUT_3))
+		if (Pad::IsTrigger(PAD_INPUT_3))
 		{
 			m_isAway = true;
 			m_awayRelativePos.x = x;

@@ -6,6 +6,7 @@ Effekseer3DDrawer::Effekseer3DDrawer():
 	m_pos(VGet(0,0,0)),
 	m_handle(-1),
 	m_playingEffectHandle(-1),
+	m_isEffectPlay(false),
 	m_effectDrawTime(0),
 	m_angle(0)
 {

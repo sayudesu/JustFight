@@ -26,5 +26,8 @@ private:
 	bool m_isDown;
 	bool m_isLeft;
 	bool m_isRight;
+
+	// ƒJƒƒ‰‘€ì‘€ì‚Ì•ÏX
+	bool m_isCameraLockon;
 };
 

@@ -4,7 +4,7 @@
 #include "../Object/Player/Player.h"
 #include "../Object/Enemy/Enemy.h"
 #include "../Util/Collision3D.h"
-#include "../Util/Effekseer3DDrawer.h"
+#include "../EffekseerDrawer.h"
 #include "../Util/Game.h"
 #include "../DEBUG.h"
 
@@ -18,6 +18,8 @@
 #include "../FIeldDrawer.h"
 
 #include "../AttackData.h"
+
+#include "../EffectId.h"
 
 namespace
 {
@@ -47,10 +49,6 @@ void SceneMain::Init()
 	m_pCharacter[kEnemyNo] = std::make_unique<Enemy>(VGet(300.0f, 260.0f, 0.0f)); 
 	// 当たり判定クラス
 	m_pColl         = std::make_unique<Collision3D>();
-	// エフェクト描画クラス
-	m_pEffect[0]    = std::make_unique<Effekseer3DDrawer>();
-	m_pEffect[1]    = std::make_unique<Effekseer3DDrawer>();
-	m_pEffect[2]    = std::make_unique<Effekseer3DDrawer>();
 	// フィールド描画クラス
 	m_pField = std::make_unique<FIeldDrawer>();
 
@@ -59,10 +57,6 @@ void SceneMain::Init()
 
 	m_pCharacter[kPlayerNo]->Init();
 	m_pCharacter[kEnemyNo]->Init();
-
-	m_pEffect[0]->Init("Data/Guard.efk", 30.0f);
-	m_pEffect[1]->Init("Data/Guard2.efk", 130.0f);
-	m_pEffect[2]->Init("Data/Hiyoko.efk", 30.0f);
 
 	m_pField->Init();
 
@@ -74,9 +68,6 @@ void SceneMain::End()
 	// 解放処理
 	m_pCharacter[kPlayerNo]->End();
 	m_pCharacter[kEnemyNo]->End();
-	m_pEffect[0]->End();
-	m_pEffect[1]->End();
-	m_pEffect[2]->End();
 	m_pField->End();
 
 	for (int i = 0; i < m_pBlood.size(); i++)
@@ -110,57 +101,24 @@ SceneBase* SceneMain::Update()
 		m_pCharacter[kEnemyNo]->SetAttackRange(false);
 	}
 
-	//// エフェクト更新処理
-	//for (auto& effect : m_pEffect)
+	//m_pEffect[2]->Update();
+	//if (m_name != CharacterName::NONE)
 	//{
-	//	effect->Update();
-
-	//	if (!effect->IsPlay())
+	//	if (m_pCharacter[static_cast<int>(m_name)]->IsStun())
 	//	{
-	//		effect->SetPlay(false);
+	//		// スタンアニメーションを再生する
+	//		m_pEffect[2]->SetPlay(true);
+	//	
+	//	}
+	//	else
+	//	{
+	//		if (!m_pEffect[2]->IsPlay())
+	//		{
+	//			m_name = CharacterName::NONE;
+	//			m_pEffect[2]->SetPlay(false);
+	//		}
 	//	}
 	//}
-
-	m_pEffect[0]->Update();
-
-	if (!m_pEffect[0]->IsPlay())
-	{
-		m_pEffect[0]->SetPlay(false);
-	}
-
-	m_pEffect[1]->Update();
-
-	if (!m_pEffect[1]->IsPlay())
-	{
-		m_pEffect[1]->SetPlay(false);
-	}
-
-
-	//m_pEffect[2]->Update();
-
-	//if (!m_pEffect[2]->IsPlay())
-	//{
-	//	m_pEffect[2]->SetPlay(false);
-	//}
-
-	m_pEffect[2]->Update();
-	if (m_name != CharacterName::NONE)
-	{
-		if (m_pCharacter[static_cast<int>(m_name)]->IsStun())
-		{
-			// スタンアニメーションを再生する
-			m_pEffect[2]->SetPlay(true);
-		
-		}
-		else
-		{
-			if (!m_pEffect[2]->IsPlay())
-			{
-				m_name = CharacterName::NONE;
-				m_pEffect[2]->SetPlay(false);
-			}
-		}
-	}
 
 	{
 		// 血のエフェクトを更新
@@ -210,7 +168,7 @@ SceneBase* SceneMain::Update()
 	}
 	
 	{
-		if (Pad::isTrigger(PAD_INPUT_1))
+		if (Pad::IsTrigger(PAD_INPUT_1))
 		{
 			clsDx();
 			return new SceneDebug();
@@ -241,11 +199,6 @@ void SceneMain::Draw()
 	for (auto& character : m_pCharacter)
 	{
 		character->Draw();
-	}
-
-	for (auto& effect : m_pEffect)
-	{
-		effect->Draw();
 	}
 	
 	for (auto& blood : m_pBlood)
@@ -350,21 +303,29 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				// ジャストガードが成功したかどうか
 				chara1->SetJustGuard(true);
 
-				m_pEffect[1]->SetPlay(true);
-				m_pEffect[1]->SetAngle(chara1->GetAngle());
-				m_pEffect[1]->SetPos(VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z));
-
+		
+				EffekseerDrawer::GetInstance().Play(
+					handle, Id::JustGuard,
+					EffectPlayType::NORMAL,
+					VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z),
+					VGet(0, 0, 0),
+					VGet(0, 0, 0));
 
 				// ターゲットをスタン状態にする
 				chara2->SetStun(true);
 
-				// スタンしたキャラクターの名前を一時保存
-				m_name = chara2->GetMyId();
+				//// スタンしたキャラクターの名前を一時保存
+				//m_name = chara2->GetMyId();
 
-				m_pEffect[2]->SetPlay(true);
-				m_pEffect[2]->SetAngle(chara2->GetAngle());
-				m_pEffect[2]->SetPos(VGet(chara2->GetPos().x, chara2->GetPos().y + 300.0f, chara2->GetPos().z));
 
+				EffekseerDrawer::GetInstance().Play(
+					handle, Id::Stun,
+					EffectPlayType::NORMAL,
+					VGet(chara2->GetPos().x, chara2->GetPos().y + 300.0f, chara2->GetPos().z),
+					VGet(0, 0, 0),
+					VGet(0, 0, 0),
+					60 * 2);
+	
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
 			}
@@ -389,10 +350,13 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				// スタミナを減らす
 				chara1->SetSubStamina(10.0f);
 
-				m_pEffect[0]->SetPlay(true);
-				m_pEffect[0]->SetAngle(chara1->GetAngle());
-				m_pEffect[0]->SetPos(chara1->GetSieldPos());
 
+				EffekseerDrawer::GetInstance().Play(
+					handle, Id::Guard,
+					EffectPlayType::NORMAL,
+					chara1->GetSieldPos(),
+					VGet(0, 0, 0),
+					VGet(0, chara1->GetAngle(), 0));
 			}
 		}
 		else
@@ -400,6 +364,7 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 			// 攻撃が当たったかどうか
 			if (CheckWeaponAndBodyHit(chara1, chara2))
 			{
+
 				// ダメージを与える
 				chara1->SetDamage(true);
 
@@ -412,6 +377,8 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
 			}
 		}
+
+		int* a = new int[30];
 	}
 }
 

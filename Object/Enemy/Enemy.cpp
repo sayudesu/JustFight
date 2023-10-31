@@ -15,6 +15,7 @@ Enemy::Enemy(VECTOR pos) :
 	m_isAttack = false;
 	m_isGuard = false;
 
+	// 自身がエネミーであると決める
 	m_myId = CharacterName::ENEMY;
 }
 
@@ -30,11 +31,9 @@ void Enemy::Input()
 
 	const VECTOR direction = VSub(m_targetPos, m_pos);
 
-
 	const float angle = atan2f(-direction.x, -direction.z);
 
 	m_delayFrameAngle.push_front(angle);
-
 	if (m_delayFrameAngle.size() > kDelayFrameAngle)
 	{
 		m_delayFrameAngle.pop_back();
@@ -49,9 +48,42 @@ void Enemy::Input()
 
 	if (!IsStun())
 	{
-		if (IsAttackRange())
+		// 一定距離近づくとランダムで左右移動を始める
+		if (m_targetRange.x + m_targetRange.z < 1000.0f)
 		{
-			if (GetStamina() > 20.0f)
+			int moveType = 0;
+			static bool isLeft = false;
+			static bool isRight = false;
+			if (GetRand(100) == 0)
+			{
+				isRight = true;
+				isLeft = false;
+			}
+			if (GetRand(100) == 1)
+			{
+				isLeft = true;
+				isRight = false;
+			}
+			if (GetRand(100) == 2)
+			{
+				isLeft = false;
+				isRight = false;
+			}
+			if (isLeft)
+			{
+				moveType = 1;
+			}
+			if (isRight)
+			{
+				moveType = -1;
+			}
+			const VECTOR move = VTransform(VGet(moveType * 10, 0, 0), rotMtx);
+			m_pos = VAdd(m_pos, move);
+		}
+
+		if (GetStamina() > 20.0f)
+		{
+			if (IsAttackRange())
 			{
 				static bool isAttack = false;
 				static bool isAttackResult = false;
@@ -66,7 +98,10 @@ void Enemy::Input()
 				const int guardFrame = 60;
 
 				// 乱数で攻撃するかを決める
-				if (!isAttack)
+				if (!isAttack &&
+					!m_isAttack &&
+					!m_isStrongAttack &&
+					!m_isGuard)
 				{
 					if (GetRand(30) == 0)
 					{
@@ -76,7 +111,10 @@ void Enemy::Input()
 				}
 
 				// 乱数で強攻撃するかを決める
-				if (!isStrongAttack)
+				if (!isStrongAttack &&
+					!m_isAttack &&
+					!m_isStrongAttack &&
+					!m_isGuard)
 				{
 					if (GetRand(90) == 0)
 					{
@@ -86,7 +124,9 @@ void Enemy::Input()
 				}
 
 				// 乱数で防御するかを決める
-				if (!isGuard)
+				if (!isGuard &&
+					!m_isAttack &&
+					!m_isStrongAttack)
 				{
 					if (GetRand(30) == 0)
 					{
@@ -96,7 +136,7 @@ void Enemy::Input()
 				}
 
 				// 攻撃かどうか
-				if (isAttackResult && !m_isGuard)
+				if (isAttackResult)
 				{
 					isAttackResult = false;
 					m_isAttack = true;
@@ -138,12 +178,16 @@ void Enemy::Input()
 					m_pFunc = &Enemy::Guard;
 				}
 			}
+			else
+			{
+				TargetMove();
+			}
 		}
 		else
 		{
 			m_isGuard = false;
-			TargetMove();
 		}
+
 	}
 }
 

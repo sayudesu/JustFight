@@ -14,7 +14,6 @@ namespace
 class Camera;
 class CharacterBase;
 class Collision3D;
-class Effekseer3DDrawer;
 class BloodDrawer;
 class FIeldDrawer;
 
@@ -49,12 +48,13 @@ private:
 	std::unique_ptr<CharacterBase> m_pCharacter[kCharacterNum];
 	// 判定クラス
 	std::unique_ptr<Collision3D>  m_pColl;
-	// エフェクトクラス
-	std::unique_ptr<Effekseer3DDrawer> m_pEffect[kEffectNum];
 	// 血描画クラス
 	std::vector<BloodDrawer*>m_pBlood;
 	// フィールドクラス
 	std::unique_ptr<FIeldDrawer>m_pField;
 
+	// オブジェクトの名前を確認する
 	CharacterName m_name;
+
+	int handle;
 };

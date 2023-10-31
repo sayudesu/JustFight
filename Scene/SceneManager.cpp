@@ -35,7 +35,7 @@ void SceneManager::Update()
 	assert(m_pScene);
 	if (!m_pScene)return;
 
-	Pad::update();
+	Pad::Update();
 	SceneBase* pScene = m_pScene->Update();
 	if (pScene != m_pScene.get())
 	{

@@ -172,6 +172,7 @@ AttackData CharacterBase::GetMyAttackId()
 void CharacterBase::Idle()
 {
 	SetAddStamina(0.2f);
+
 	m_attackId = AttackData::NONE;
 
 	// 武器を元の位置に戻す
@@ -282,7 +283,6 @@ void CharacterBase::Attack()
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
-		printfDx("スタン中\n");
 	}
 
 
@@ -331,7 +331,6 @@ void CharacterBase::StrongAttack()
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
-		printfDx("スタン中\n");
 	}
 
 
@@ -391,7 +390,6 @@ void CharacterBase::Guard()
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
-		printfDx("スタン中\n");
 	}
 
 	// 位置情報の更新
@@ -430,7 +428,6 @@ void CharacterBase::Stun()
 
 	if (60 * 3 < m_stunFrame)
 	{
-		printfDx("StunEnd\n");
 		m_stunFrame = 0;
 		m_isStun = false;
 		m_pFunc = &CharacterBase::Idle;
@@ -665,7 +662,7 @@ void CharacterBase::SetAddStamina(const float addStamina)
 
 void CharacterBase::SetSubStamina(const float subStamina)
 {
-	if (m_stamina > 0.0f)
+	if (m_stamina >= 0.0f)
 	{
 		m_stamina -= subStamina;
 	}

@@ -4,6 +4,8 @@
 #include "Util/Game.h"
 #include "Scene/SceneManager.h"
 
+#include "EffekseerDrawer.h"
+
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -124,6 +126,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	pScene->Init();
 
+	// 読み込み
+	EffekseerDrawer::GetInstance().Load();
+
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG  time = GetNowHiPerformanceCount();
@@ -132,14 +137,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 
 		pScene->Update();
+		EffekseerDrawer::GetInstance().Update();
 
 		pScene->Draw();
+		EffekseerDrawer::GetInstance().Draw();
 		
+#if _DEBUG
 		DrawSphere3D(lightPosUp, 30, 30, 0xaaaa11, 0xaaaa11, true);
 		DrawSphere3D(lightPosLeft, 30, 30, 0xaaaa11, 0xaaaa11, true);
 		DrawSphere3D(lightPosRight, 30, 30, 0xaaaa11, 0xaaaa11, true);
 		DrawSphere3D(lightPosNear, 30, 30, 0xaaaa11, 0xaaaa11, true);
 		DrawSphere3D(lightPosFar, 30, 30, 0xaaaa11, 0xaaaa11, true);
+#endif
 		// 裏画面を表画面を入れ替える
 		ScreenFlip();
 
@@ -151,6 +160,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 		}
 	}
+
+	
+	EffekseerDrawer::GetInstance().Destroy();
+	EffekseerDrawer::GetInstance().Unload();
 
 	// ライトハンドルの削除
 	DeleteLightHandle(lightHandleUp);

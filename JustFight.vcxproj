@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BloodDrawer.cpp" />
+    <ClCompile Include="EffekseerDrawer.cpp" />
     <ClCompile Include="FIeldDrawer.cpp" />
     <ClCompile Include="LoadingDrawer.cpp" />
     <ClCompile Include="Scene\SceneResult.cpp" />
@@ -168,6 +169,8 @@
     <ClInclude Include="AttackData.h" />
     <ClInclude Include="BloodDrawer.h" />
     <ClInclude Include="CharacterName.h" />
+    <ClInclude Include="EffectId.h" />
+    <ClInclude Include="EffekseerDrawer.h" />
     <ClInclude Include="FIeldDrawer.h" />
     <ClInclude Include="LoadingDrawer.h" />
     <ClInclude Include="Scene\SceneResult.h" />
