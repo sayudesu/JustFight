@@ -1,7 +1,6 @@
 #pragma once
 #include <DxLib.h>
 #include "../Util/CharacterName.h"
-#include "../Util/AttackData.h"
 #include "../Util/BattleState.h"
 
 // キャラクター専用基底クラス
@@ -37,7 +36,9 @@ protected:
 	virtual void Losers();
 private:
 	// 位置情報の更新
-	virtual void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
+	void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
+	// 攻撃が弾かれば場合
+	void Recoil();
 protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
@@ -48,7 +49,6 @@ protected:
 public:
 	// 自身が誰をを返す
 	CharacterName GetMyId();
-	AttackData GetMyAttackId();
 
 	// 現在の行動の情報を渡す
 	BattleState GetBattleState();
@@ -99,7 +99,8 @@ public:
 	void SetBattleState(BattleState state);
 
 	// 相手の角度
-	void SetTargetRota(const MATRIX rot);
+	void SetTargetMtxRota(const MATRIX rot);
+	void SetTargetRota(const float rot);
 
 	// 攻撃範囲に入っているかどうか
 	void SetAttackRange(const bool isRange);
@@ -121,14 +122,23 @@ public:
 
 	// ターゲットの位置を取得する
 	void SetTargetPos(const VECTOR pos);
+
+	// エフェクトを呼び出す
+	void SetCollGuardEffect    ();// 通常防御
+	void SetCollJustGuardEffect();// ジャストガード
 private:
 	// 3Dモデルハンドル
 	int m_weaponHandle;
 	int m_shieldHandle;
 
+	// エフェクトハンドル
+	int m_effectHandle;
+
 	// 角度
 	MATRIX m_rotMtx;
 	MATRIX m_enemyRotMtx;
+
+	float m_targetAngle;
 
 	// 装備
 	VECTOR m_vecWeapon;
@@ -144,11 +154,12 @@ private:
 	float m_fightingMeter;
 
 	// フレーム関連
-	int m_attackGapFrame;
-	int m_attackFrame;
-	int m_guardFrame;
-	int m_justGuardFrame;
-	int m_stunFrame;
+	int m_attackGapFrame;// 攻撃時の遊びのフレーム
+	int m_attackFrame;   // 遊びから攻撃のフレーム
+	int m_guardFrame;    // 防御するまでのフレーム
+	int m_justGuardFrame;// ジャストガードのフレーム
+	int m_stunFrame;     // スタン状態のフレーム
+	int m_recoilFrame;   // 攻撃を弾かれば場合のフレーム
 
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
@@ -187,7 +198,6 @@ protected:
 	VECTOR m_targetRange;
 
 	CharacterName m_myId;
-	AttackData m_attackId;
 
 	// ターゲットの行動を記録
 	BattleState m_targetBattleState;

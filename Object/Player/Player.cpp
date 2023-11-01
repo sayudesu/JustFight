@@ -150,7 +150,6 @@ void Player::Input()
 				!m_isGuard)
 			{
 				m_isAttack = true;
-				m_attackId = AttackData::NORMAL;
 				m_pFunc = &Player::Attack;
 			}
 
@@ -161,7 +160,6 @@ void Player::Input()
 				!m_isGuard)
 			{
 				m_isStrongAttack = true;
-				m_attackId = AttackData::STRONG;
 				m_pFunc = &Player::StrongAttack;
 			}
 

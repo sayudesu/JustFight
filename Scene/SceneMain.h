@@ -31,29 +31,25 @@ public:
 private:
 	// 当たり判定
 	// 武器と体の判定
-	bool CheckWeaponAndBodyHit(CharacterBase* chara1, CharacterBase* chara2);
+	bool CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// 武器と盾の判定
-	bool CheckWeaponAndSieldHIt(CharacterBase* chara1, CharacterBase* chara2);
+	bool CheckWeaponAndSieldHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// 武器と体範囲の判定
-	bool CheckWeaponAndModelAboutHIt(CharacterBase* chara1, CharacterBase* chara2);
+	bool CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// 体範囲と体範囲の判定
-	bool CheckModelAboutHIt(CharacterBase* chara1, CharacterBase* chara2);
+	bool CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 
 	// キャラクターの更新処理
-	void UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2);
+	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 private:
 	// カメラクラス
 	std::unique_ptr<Camera> m_pCamera;
 	// キャラクタークラス
-	std::unique_ptr<CharacterBase> m_pCharacter[kCharacterNum];
+	std::shared_ptr<CharacterBase> m_pCharacter[kCharacterNum];
 	// 判定クラス
 	std::unique_ptr<Collision3D>  m_pColl;
 	// 血描画クラス
 	std::vector<BloodDrawer*>m_pBlood;
 	// フィールドクラス
 	std::unique_ptr<FIeldDrawer>m_pField;
-
-	// この処理関係は今後CharacterBaseでします。//
-	int handle;
-	// この処理関係は今後CharacterBaseでします。//
 };

@@ -90,59 +90,20 @@ void Enemy::Input()
 		if (IsAttackRange())
 		{
 			static int guardFrameCount = 0;
-			const int guardFrame = 60;
+			const int guardFrame = 60;			
 
-			//// 乱数で強攻撃するかを決める
-			//if (!m_isCheckStrongAttack &&
-			//	!m_isAttack &&
-			//	!m_isCheckStrongAttack &&
-			//	!m_isGuard)
-			//{
-			//	if (GetRand(90) == 0)
-			//	{
-			//		m_isCheckStrongAttack = true;
-			//		m_isStrongAttackResult = true;
-			//	}
-			//}
-
-			//// 乱数で防御するかを決める
-			//if (!m_isCheckGuard &&
-			//	!m_isAttack &&
-			//	!m_isCheckStrongAttack)
-			//{
-			//	if (GetRand(30) == 0)
-			//	{
-			//		m_isCheckGuard = true;
-			//		m_isResultGuard = true;
-			//	}
-			//}
-
-			//// 乱数で攻撃するかを決める
-			//if (!m_isCheckAttack &&
-			//	!m_isAttack &&
-			//	!m_isCheckStrongAttack &&
-			//	!m_isGuard)
-			//{
-			//	if (GetRand(10) == 0)
-			//	{
-			//		m_isCheckAttack = true;
-			//		m_isAttackResult = true;
-			//	}
-			//}
-
+			// 攻撃or防御していなかったら次の行動を決める
 			if (!m_isAttack && !m_isGuard && !m_isStrongAttack)
 			{
-				// 攻撃or防御を決める
+				// ターゲットの状態で動作を変更する
 				BattleType();
 			}
-
 
 			// 攻撃かどうか
 			if (m_isAttackResult)
 			{
 				m_isAttackResult = false;
 				m_isAttack = true;
-				m_attackId = AttackData::NORMAL;
 				m_pFunc = &Enemy::Attack;
 			}
 			// 攻撃をしていない場合
@@ -156,7 +117,6 @@ void Enemy::Input()
 			{
 				m_isStrongAttackResult = false;
 				m_isCheckStrongAttack = true;
-				m_attackId = AttackData::STRONG;
 				m_pFunc = &Enemy::StrongAttack;
 			}
 			// 強攻撃をしていない場合
@@ -185,16 +145,11 @@ void Enemy::Input()
 			TargetMove();
 		}
 	}
-	else
-	{
-		printfDx("aaaaaaaaaaaaa");
-	}
 }
 
 void Enemy::BattleType()
 {
 	// ターゲットの状態で動作を変更する
-
 	// ターゲットが攻撃している場合
 	if (m_targetBattleState == BattleState::ATTACK)
 	{
@@ -204,18 +159,23 @@ void Enemy::BattleType()
 			m_isResultGuard = true;
 		}
 	}
-
 	// ターゲットがスタンしている場合
 	if (m_targetBattleState == BattleState::STUN)
 	{
 		m_isCheckStrongAttack = true;
 		m_isStrongAttackResult = true;
 	}
-
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-	//	printfDx("ガードだよ\n");
+		m_isCheckAttack = true;
+		m_isAttackResult = true;
+	}
+	// アイドル状態の場合
+	if (m_targetBattleState == BattleState::IDLE)
+	{
+		m_isCheckAttack = true;
+		m_isAttackResult = true;
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "CharacterBase.h"
 #include "../Util/MyLoadModel.h"
 #include <cmath>
+#include "../Util/EffekseerDrawer.h"
 
 namespace
 {
@@ -17,8 +18,8 @@ namespace
 	constexpr int kStunFrameMax = 60 * 3;// スタン状態の最大フレーム
 
 	// ガード関係
-	constexpr int kGuardFrameMax     = 12;   // ガード最大フレーム
-	constexpr int kJustGuardFrameMax = 7;// ジャストガード最大フレーム
+	constexpr int kGuardFrameMax     = 20;// ガード最大フレーム
+	constexpr int kJustGuardFrameMax = 15;// ジャストガード最大フレーム
 
 	// ゲージ関係
 	constexpr int kHpMax              = 6;     // 最大体力
@@ -45,8 +46,10 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_pFunc(nullptr),
 	m_weaponHandle(-1),
 	m_shieldHandle(-1),
+	m_effectHandle(-1),
 	m_rotMtx({}),
 	m_enemyRotMtx({}),
+	m_targetAngle(0.0f),
 	m_pos(pos),
 	m_vec(kKnockBackPos),
 	m_targetPos(VGet(0,0,0)),
@@ -55,29 +58,28 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_tempWeaponPos(VGet(0, 0, 0)),
 	m_hp(kHpMax),
 	m_tempFightingMeter(0),
-	m_fightingMeter(kFightingMeterMax),
-	m_angle(0.0f),
-	m_isAttack(false),
+	m_fightingMeter (kFightingMeterMax),
+	m_angle         (0.0f),
+	m_isAttack      (false),
 	m_isStrongAttack(false),
-	m_isGuard(false),
-	m_isJustGuard(false),
-	m_isAway(false),
-	m_isResultGuard(false),
+	m_isGuard       (false),
+	m_isJustGuard   (false),
+	m_isAway	    (false),
+	m_isResultGuard (false),
 	m_isResultDamage(false),
-	m_isStun(false),
-	m_attackFrame(0),
+	m_isStun        (false),
+	m_attackFrame   (0),
 	m_attackGapFrame(0),
-	m_guardFrame(0),
+	m_guardFrame    (0),
 	m_justGuardFrame(0),
-	m_stunFrame(0)
+	m_stunFrame     (0),
+	m_recoilFrame   (0)
 {
 	// メンバ関数の初期
 	m_pFunc = &CharacterBase::Idle;
 
 	// 自身の判別用IDを初期化
 	m_myId = CharacterName::NONE;
-	// 攻撃判別を初期化
-	m_attackId = AttackData::NONE;
 
 	// 現在の行動を記録
 	m_battleState       = BattleState::NONE;// 自身
@@ -161,11 +163,6 @@ CharacterName CharacterBase::GetMyId()
 	return m_myId;
 }
 
-AttackData CharacterBase::GetMyAttackId()
-{
-	return m_attackId;
-}
-
 BattleState CharacterBase::GetBattleState()
 {
 	return m_battleState;
@@ -173,12 +170,10 @@ BattleState CharacterBase::GetBattleState()
 
 void CharacterBase::Idle()
 {
-	m_attackId = AttackData::NONE;
-
 	// 現在の行動を記録
 	m_battleState = BattleState::IDLE;
 
-	SetFightingMeter(0.01f);
+	SetFightingMeter(0.03f);
 
 	// 武器を元の位置に戻す
 	{
@@ -203,6 +198,7 @@ void CharacterBase::Idle()
 			isEndZ = true;
 			m_vecWeapon.z = kWeaponPos.z;
 		}
+
 		if (isEndX && isEndZ)
 		{
 			m_isAttack = false;
@@ -268,7 +264,7 @@ void CharacterBase::Attack()
 	// 始めに隙ようの後ろに動かす動作
 	if (m_attackGapFrame < kAttackGapFrameMax)
 	{
-		m_vecWeapon.z = kWeaponPos.z + (100.0f - kWeaponPos.z) * (m_attackGapFrame) / kAttackGapFrameMax;
+		m_vecWeapon.z = kWeaponPos.z + (150.0f - kWeaponPos.z) * (m_attackGapFrame) / kAttackGapFrameMax;
 		m_attackGapFrame++;
 		m_tempWeaponPos = m_vecWeapon;
 	}
@@ -288,6 +284,11 @@ void CharacterBase::Attack()
 		m_attackFrame = 0;
 		m_attackGapFrame = 0;
 		m_pFunc = &CharacterBase::Idle;
+
+		if (m_targetBattleState == BattleState::GUARD)
+		{
+		//	m_pFunc = &CharacterBase::Recoil;
+		}
 	}
 
 	if (m_isStun)
@@ -498,6 +499,39 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 	}
 }
 
+void CharacterBase::Recoil()
+{
+	printfDx("停止");
+	m_recoilFrame++;
+
+	if (m_recoilFrame < 30)
+	{
+		m_vecWeapon.z = kWeaponPos.z + (50.0f - kWeaponPos.z) * (float(m_recoilFrame) / 30);
+	}
+
+	if (m_recoilFrame < (15))
+	{
+		m_vecWeapon.x = kWeaponPos.x + (-1.0f + kWeaponPos.x) * (float(m_recoilFrame) / 15);
+	}
+
+	if (m_recoilFrame > 30 &&
+		m_recoilFrame < 60)
+	{
+		m_vecWeapon.z = kWeaponPos.z  + (kWeaponPos.z - kWeaponPos.z) * (float(m_recoilFrame - 30) / (60));
+		m_vecWeapon.x = kWeaponPos.x  + (kWeaponPos.x - kWeaponPos.x) * (float(m_recoilFrame - 30) / (60));
+	}
+
+
+	if (m_recoilFrame > 60)
+	{
+		m_recoilFrame = 0;
+		m_pFunc = &CharacterBase::Idle;
+	}
+
+	// 位置情報の更新
+	UpdatePos();
+}
+
 void CharacterBase::SetAngle(float angle)
 {
 	m_angle = angle;
@@ -565,6 +599,28 @@ VECTOR CharacterBase::GetSieldRelative() const
 void CharacterBase::SetTargetPos(VECTOR pos)
 {
 	m_targetPos = pos;
+}
+
+void CharacterBase::SetCollGuardEffect()
+{
+	// ガード際のエフェクト再生
+	EffekseerDrawer::GetInstance().Play(
+		m_effectHandle, Id::Guard,
+		EffectPlayType::NORMAL,
+		GetSieldPos(),
+		VGet(1, 1, 1),
+		VGet(0, m_angle, 0));
+}
+
+void CharacterBase::SetCollJustGuardEffect()
+{
+	// ジャストガードした際のエフェクト再生
+	EffekseerDrawer::GetInstance().Play(
+		m_effectHandle, Id::JustGuard,
+		EffectPlayType::NORMAL,
+		VGet(GetSieldPos().x, GetSieldPos().y + 100.0f, GetSieldPos().z),
+		VGet(1, 1, 1),
+		VGet(0, 0, 0));
 }
 
 int CharacterBase::GetAttackFrame()const
@@ -643,9 +699,14 @@ void CharacterBase::SetBattleState(BattleState state)
 	m_targetBattleState = state;
 }
 
-void CharacterBase::SetTargetRota(MATRIX rot)
+void CharacterBase::SetTargetMtxRota(MATRIX rot)
 {
 	m_enemyRotMtx = rot;
+}
+
+void CharacterBase::SetTargetRota(const float rot)
+{
+	m_targetAngle = rot;
 }
 
 void CharacterBase::SetAttackRange(const bool isRange)
