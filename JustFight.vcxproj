@@ -143,15 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BloodDrawer.cpp" />
-    <ClCompile Include="EffekseerDrawer.cpp" />
+    <ClCompile Include="Util\BloodDrawer.cpp" />
+    <ClCompile Include="Util\EffekseerDrawer.cpp" />
     <ClCompile Include="FIeldDrawer.cpp" />
     <ClCompile Include="LoadingDrawer.cpp" />
     <ClCompile Include="Scene\SceneResult.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
     <ClCompile Include="DEBUG.cpp" />
-    <ClCompile Include="Util\Effekseer3DDrawer.cpp" />
     <ClCompile Include="Util\MyLoadModel.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\CharacterBase.cpp" />
@@ -167,17 +166,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttackData.h" />
-    <ClInclude Include="BloodDrawer.h" />
-    <ClInclude Include="CharacterName.h" />
-    <ClInclude Include="EffectId.h" />
-    <ClInclude Include="EffekseerDrawer.h" />
+    <ClInclude Include="Util\BloodDrawer.h" />
+    <ClInclude Include="Util\CharacterName.h" />
+    <ClInclude Include="Util\EffectId.h" />
+    <ClInclude Include="Util\EffekseerDrawer.h" />
     <ClInclude Include="FIeldDrawer.h" />
     <ClInclude Include="LoadingDrawer.h" />
     <ClInclude Include="Scene\SceneResult.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />
     <ClInclude Include="DEBUG.h" />
-    <ClInclude Include="Util\Effekseer3DDrawer.h" />
     <ClInclude Include="Util\MyLoadModel.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\CharacterBase.h" />

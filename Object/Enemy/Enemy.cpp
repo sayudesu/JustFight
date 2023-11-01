@@ -81,113 +81,106 @@ void Enemy::Input()
 			m_pos = VAdd(m_pos, move);
 		}
 
-		if (GetStamina() > 20.0f)
+
+		if (IsAttackRange())
 		{
-			if (IsAttackRange())
+			static bool isAttack = false;
+			static bool isAttackResult = false;
+
+			static bool isStrongAttack = false;
+			static bool isStrongAttackResult = false;
+
+			static bool isGuard  = false;
+			static bool isGuardResult = false;
+
+			static int guardFrameCount = 0;
+			const int guardFrame = 60;
+
+			// —”‚ÅUŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
+			if (!isAttack &&
+				!m_isAttack &&
+				!m_isStrongAttack &&
+				!m_isGuard)
 			{
-				static bool isAttack = false;
-				static bool isAttackResult = false;
-
-				static bool isStrongAttack = false;
-				static bool isStrongAttackResult = false;
-
-				static bool isGuard  = false;
-				static bool isGuardResult = false;
-
-				static int guardFrameCount = 0;
-				const int guardFrame = 60;
-
-				// —”‚ÅUŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
-				if (!isAttack &&
-					!m_isAttack &&
-					!m_isStrongAttack &&
-					!m_isGuard)
+				if (GetRand(30) == 0)
 				{
-					if (GetRand(30) == 0)
-					{
-						isAttack = true;
-						isAttackResult = true;
-					}
-				}
-
-				// —”‚Å‹­UŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
-				if (!isStrongAttack &&
-					!m_isAttack &&
-					!m_isStrongAttack &&
-					!m_isGuard)
-				{
-					if (GetRand(90) == 0)
-					{
-						isStrongAttack = true;
-						isStrongAttackResult = true;
-					}
-				}
-
-				// —”‚Å–hŒä‚·‚é‚©‚ğŒˆ‚ß‚é
-				if (!isGuard &&
-					!m_isAttack &&
-					!m_isStrongAttack)
-				{
-					if (GetRand(30) == 0)
-					{
-						isGuard = true;
-						isGuardResult = true;
-					}
-				}
-
-				// UŒ‚‚©‚Ç‚¤‚©
-				if (isAttackResult)
-				{
-					isAttackResult = false;
-					m_isAttack = true;
-					m_attackId = AttackData::NORMAL;
-					m_pFunc = &Enemy::Attack;
-				}
-				// UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
-				if (!m_isAttack)
-				{
-					isAttack = false;
-				}
-
-				// ‹­UŒ‚‚©‚Ç‚¤‚©
-				if (isStrongAttackResult && !m_isGuard)
-				{
-					isStrongAttackResult = false;
-					m_isStrongAttack = true;
-					m_attackId = AttackData::STRONG;
-					m_pFunc = &Enemy::StrongAttack;
-				}
-				// ‹­UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
-				if (!m_isStrongAttack)
-				{
-					isStrongAttack = false;
-				}
-
-
-				if (guardFrameCount == guardFrame)
-				{
-					guardFrameCount = 0;
-					isGuard = false;
-					m_isGuard = false;
-					isGuardResult = false;
-				}
-				if (isGuardResult && !m_isAttack)
-				{
-					m_isGuard = true;
-					guardFrameCount++;
-					m_pFunc = &Enemy::Guard;
+					isAttack = true;
+					isAttackResult = true;
 				}
 			}
-			else
+
+			// —”‚Å‹­UŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
+			if (!isStrongAttack &&
+				!m_isAttack &&
+				!m_isStrongAttack &&
+				!m_isGuard)
 			{
-				TargetMove();
+				if (GetRand(90) == 0)
+				{
+					isStrongAttack = true;
+					isStrongAttackResult = true;
+				}
+			}
+
+			// —”‚Å–hŒä‚·‚é‚©‚ğŒˆ‚ß‚é
+			if (!isGuard &&
+				!m_isAttack &&
+				!m_isStrongAttack)
+			{
+				if (GetRand(30) == 0)
+				{
+					isGuard = true;
+					isGuardResult = true;
+				}
+			}
+
+			// UŒ‚‚©‚Ç‚¤‚©
+			if (isAttackResult)
+			{
+				isAttackResult = false;
+				m_isAttack = true;
+				m_attackId = AttackData::NORMAL;
+				m_pFunc = &Enemy::Attack;
+			}
+			// UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
+			if (!m_isAttack)
+			{
+				isAttack = false;
+			}
+
+			// ‹­UŒ‚‚©‚Ç‚¤‚©
+			if (isStrongAttackResult && !m_isGuard)
+			{
+				isStrongAttackResult = false;
+				m_isStrongAttack = true;
+				m_attackId = AttackData::STRONG;
+				m_pFunc = &Enemy::StrongAttack;
+			}
+			// ‹­UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
+			if (!m_isStrongAttack)
+			{
+				isStrongAttack = false;
+			}
+
+
+			if (guardFrameCount == guardFrame)
+			{
+				guardFrameCount = 0;
+				isGuard = false;
+				m_isGuard = false;
+				isGuardResult = false;
+			}
+			if (isGuardResult && !m_isAttack)
+			{
+				m_isGuard = true;
+				guardFrameCount++;
+				m_pFunc = &Enemy::Guard;
 			}
 		}
 		else
 		{
-			m_isGuard = false;
+			TargetMove();
 		}
-
 	}
 }
 

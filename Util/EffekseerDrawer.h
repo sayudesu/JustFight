@@ -11,7 +11,7 @@ private:
 	EffekseerDrawer() = default;
 	static EffekseerDrawer* m_pInstance;
 public:
-	virtual~EffekseerDrawer() = default;
+	virtual~EffekseerDrawer() = default; 
 	// コピーコンストラクタの禁止
 	EffekseerDrawer(const EffekseerDrawer&) = delete;
 	EffekseerDrawer& operator=(const EffekseerDrawer&) = delete;
@@ -45,9 +45,7 @@ public:
 	void Draw();
 
 	// エフェクシアの再生
-	void Play(int& playingEffectHandle,Id id,EffectPlayType type, VECTOR pos,VECTOR size, VECTOR angle,int playFrame = 1);
-private:
-	void PlayLoop();
+	void Play(int& playingEffectHandle,Id id,EffectPlayType type, VECTOR pos,VECTOR size, VECTOR angle,int playFrame = -1);
 private:
 	std::array<int,Id::Max> m_handle;
 
@@ -55,7 +53,5 @@ private:
 	int m_playingEffectHandle;
 
 	std::vector<EffectData> m_effectData;
-
-	
 };
 

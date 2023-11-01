@@ -5,48 +5,41 @@
 namespace
 {
 	// フレーム管理
-	// 攻撃最大フレーム
-	constexpr int kAttackFrameMax = 5;
-	constexpr int kAttackGapFrameMax = 10;
-	constexpr int kAttackTotalFrame = kAttackFrameMax + kAttackGapFrameMax;
+	constexpr int kAttackFrameMax    = 5;								    // 攻撃最大フレーム
+	constexpr int kAttackGapFrameMax = 10;								    // 攻撃予兆の最大フレーム
+	constexpr int kAttackTotalFrame  = kAttackFrameMax + kAttackGapFrameMax;// 攻撃フレームの合計
 
 	// 強攻撃
-	constexpr int kStrongAttackFrameMax = 5;
-	constexpr int kStrongAttackGapFrameMax = 60;
-	constexpr int kStrongAttackTotalFrame = kStrongAttackFrameMax + kStrongAttackGapFrameMax;
+	constexpr int kStrongAttackFrameMax    = 5;												  // 攻撃最大フレーム
+	constexpr int kStrongAttackGapFrameMax = 60;											  // 攻撃予兆の最大フレーム
+	constexpr int kStrongAttackTotalFrame  = kStrongAttackFrameMax + kStrongAttackGapFrameMax;// 攻撃フレームの合計
 
-	// ガード最大フレーム
-	constexpr int kGuardFrameMax  = 12;
-	// ジャストガード最大フレーム
-	constexpr int kJustGuardFrameMax = 7;
 
-	// 最大体力
-	constexpr int kHpMax = 6;
-	// 最大スタミナ
-	constexpr float kStaminaMax = 100.0f;
+	constexpr int kStunFrameMax = 60 * 2;// スタン状態の最大フレーム
+
+	// ガード関係
+	constexpr int kGuardFrameMax     = 12;   // ガード最大フレーム
+	constexpr int kJustGuardFrameMax = 7;// ジャストガード最大フレーム
+
+	// ゲージ関係
+	constexpr int kHpMax              = 6;     // 最大体力
+	constexpr float kFightingMeterMax = 100.0f;// 最大戦闘に必要なメーターの最大値
 
 	// 装備の相対位置
-	const VECTOR kWeaponPos = { -80.0f, 100.0f, 0.0f };
-	const VECTOR kSieldPos  = { 100.0f, 100.0f, -50.0f };
+	const VECTOR kWeaponPos = { -80.0f, 100.0f, 0.0f   };// 武器
+	const VECTOR kSieldPos  = { 100.0f, 100.0f, -50.0f };// 盾
 
-	// モデルの当たり判定用範囲
-	constexpr float kModelRadus = 180.0f;
+	// 判定関係
+	constexpr float kWeaponAttackRadius = 100.0f;// 武器の半径
+	constexpr float kSieldRadius        = 50.0f; // 盾の半径
+	constexpr float kModelRadus         = 180.0f;// モデルの当たり判定用範囲
 
-	// 攻撃時の当たり判定
-	// 武器の半径
-	constexpr float kWeaponAttackRadius = 100.0f;
-	// 武器の攻撃時の判定の相対位置
-	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -210.0f };
-	// 盾の半径
-	constexpr float kSieldRadius = 50.0f;
+	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -210.0f };// 武器の攻撃時の判定の相対位置
+	const VECTOR kKnockBackPos    = { 0.0f,0.0f ,-25.0f   };// ガードしている時に攻撃を受けた場合のノックバックで移動する相対位置
 
-	// ガードしている時に攻撃を受けた場合のノックバックで移動する相対位置
-	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-20.0f };
-
-	// 剣が元の位置に戻る速度
-	constexpr float kWeaponBackSpeed = 30.0f;
-	// 盾が元の位置に戻る速度
-	constexpr float kSieldBackSpeed  = 30.0f;
+	// その他
+	constexpr float kWeaponBackSpeed = 30.0f;// 剣が元の位置に戻る速度
+	constexpr float kSieldBackSpeed  = 30.0f;// 盾が元の位置に戻る速度
 }
 
 CharacterBase::CharacterBase(VECTOR pos):
@@ -62,7 +55,8 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_vecSield(VGet(0, 0, 0)),
 	m_tempWeaponPos(VGet(0, 0, 0)),
 	m_hp(kHpMax),
-	m_stamina(kStaminaMax),
+	m_tempFightingMeter(0),
+	m_fightingMeter(kFightingMeterMax),
 	m_angle(0.0f),
 	m_isAttack(false),
 	m_isStrongAttack(false),
@@ -171,9 +165,9 @@ AttackData CharacterBase::GetMyAttackId()
 
 void CharacterBase::Idle()
 {
-	SetAddStamina(0.2f);
-
 	m_attackId = AttackData::NONE;
+
+	SetFightingMeter(0.01f);
 
 	// 武器を元の位置に戻す
 	{
@@ -252,8 +246,6 @@ void CharacterBase::Idle()
 
 void CharacterBase::Attack()
 {
-	SetSubStamina(1.0f);
-
 	// 最大フレーム内に目標地点まで移動する
 	// 始めに隙ようの後ろに動かす動作
 	if (m_attackGapFrame < kAttackGapFrameMax)
@@ -292,7 +284,6 @@ void CharacterBase::Attack()
 
 void CharacterBase::StrongAttack()
 {
-	SetSubStamina(0.4f);
 	int slideX = 0;
 	int slideY = 0;
 	int slideZ = 0;
@@ -340,8 +331,6 @@ void CharacterBase::StrongAttack()
 
 void CharacterBase::Guard()
 {
-	SetAddStamina(0.05f);
-
 	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < kGuardFrameMax)
 	{
@@ -426,7 +415,7 @@ void CharacterBase::Stun()
 	m_guardFrame = 0;
 	m_justGuardFrame = 0;
 
-	if (60 * 3 < m_stunFrame)
+	if (kStunFrameMax < m_stunFrame)
 	{
 		m_stunFrame = 0;
 		m_isStun = false;
@@ -592,14 +581,19 @@ int CharacterBase::GetJustGuardFrameMax()const
 	return kJustGuardFrameMax;
 }
 
+int CharacterBase::GetStunFrameMax() const
+{
+	return kStunFrameMax;
+}
+
 int CharacterBase::GetHp()const
 {
 	return m_hp;
 }
 
-int CharacterBase::GetStamina()const
+float CharacterBase::GetFightingMeter()const
 {
-	return m_stamina;
+	return m_fightingMeter;
 }
 
 bool CharacterBase::IsJustGuard() const
@@ -647,27 +641,26 @@ void CharacterBase::SetStun(bool isStun)
 	m_isStun = isStun;
 }
 
-void CharacterBase::SetAddStamina(const float addStamina)
+void CharacterBase::SetFightingMeter(const float fightingMeter)
 {
-	// 最大値と最小値を超えないように制御
-	if (m_stamina < kStaminaMax)
-	{
-		m_stamina += addStamina;
-	}
-	else
-	{
-		m_stamina = kStaminaMax;
-	}
+	m_tempFightingMeter = fightingMeter;
+
+	FightingMeter();
 }
 
-void CharacterBase::SetSubStamina(const float subStamina)
+void CharacterBase::FightingMeter()
 {
-	if (m_stamina >= 0.0f)
+	m_fightingMeter += m_tempFightingMeter;
+
+	// 戦いに必要なメーターが最大値になると最大値で固定
+	if (m_fightingMeter > kFightingMeterMax)
 	{
-		m_stamina -= subStamina;
+		m_fightingMeter = kFightingMeterMax;
 	}
-	else
+	// 戦いに必要なメーターが最小値になると最小値で固定
+	if (m_fightingMeter < 0.0f)
 	{
-		m_stamina = 0.0f;
+		m_isStun = true;
+		m_fightingMeter = 0.0f;
 	}
 }

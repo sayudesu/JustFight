@@ -1,6 +1,6 @@
 #pragma once
 #include <DxLib.h>
-#include "../CharacterName.h"
+#include "../Util/CharacterName.h"
 #include "../AttackData.h"
 
 // キャラクター専用基底クラス
@@ -82,10 +82,13 @@ public:
 	// 最大ジャストガードフレーム
 	int GetJustGuardFrameMax()const;
 
+	// 最大スタンのフレーム数
+	int GetStunFrameMax()const;
+
 	// 現在のヒットポイント
 	int GetHp()const;
 	// 現在のスタミナ
-	int GetStamina()const;
+	float GetFightingMeter()const;
 	
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
@@ -111,9 +114,11 @@ public:
 	// スタンをするかどうか
 	void SetStun(const bool isStun);
 
-	// スタミナの管理
-	void SetAddStamina(const float addStamina);
-	void SetSubStamina(const float subStamina);
+	// 戦いに必要な特殊なメーターを変更する
+	void SetFightingMeter(const float fightingMeter);
+
+	// 戦いに必要な特殊なメーターを管理する
+	void FightingMeter();
 
 	// ターゲットの位置を取得する
 	void SetTargetPos(const VECTOR pos);
@@ -134,9 +139,10 @@ private:
 	VECTOR m_tempWeaponPos;
 
 	// 体力
-	// スタミナ
+	// 戦いに必要な特殊なメーター
 	int m_hp;
-	float m_stamina;
+	float m_tempFightingMeter;
+	float m_fightingMeter;
 
 	// フレーム関連
 	int m_attackGapFrame;

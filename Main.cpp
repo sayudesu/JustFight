@@ -4,7 +4,7 @@
 #include "Util/Game.h"
 #include "Scene/SceneManager.h"
 
-#include "EffekseerDrawer.h"
+#include "Util/EffekseerDrawer.h"
 
 // ƒvƒƒOƒ‰ƒ€‚ÍWinMain‚©‚çn‚Ü‚è‚Ü‚·
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)

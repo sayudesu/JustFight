@@ -28,8 +28,8 @@ bool Collision3D::IsCheckHit(VECTOR pos1, VECTOR pos2, float radius1, float radi
 		return true;
 	}
 #if _DEBUG
-	DrawSphere3D(TempPos1, radius1, 20, 0x000000, 0x000000, false);
-	DrawSphere3D(TempPos2, radius2, 20, 0xffffff, 0x000000, false);
+	//DrawSphere3D(TempPos1, radius1, 20, 0x000000, 0x000000, false);
+	//DrawSphere3D(TempPos2, radius2, 20, 0xffffff, 0x000000, false);
 #endif	
 	return false;
 }

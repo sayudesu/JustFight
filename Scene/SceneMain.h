@@ -2,7 +2,7 @@
 #include "SceneBase.h"
 #include <memory>
 #include <vector>
-#include "../CharacterName.h"
+#include "../Util/CharacterName.h"
 
 namespace
 {
@@ -53,8 +53,7 @@ private:
 	// フィールドクラス
 	std::unique_ptr<FIeldDrawer>m_pField;
 
-	// オブジェクトの名前を確認する
-	CharacterName m_name;
-
+	// この処理関係は今後CharacterBaseでします。//
 	int handle;
+	// この処理関係は今後CharacterBaseでします。//
 };

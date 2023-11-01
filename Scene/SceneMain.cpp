@@ -4,7 +4,7 @@
 #include "../Object/Player/Player.h"
 #include "../Object/Enemy/Enemy.h"
 #include "../Util/Collision3D.h"
-#include "../EffekseerDrawer.h"
+#include "../Util/EffekseerDrawer.h"
 #include "../Util/Game.h"
 #include "../DEBUG.h"
 
@@ -13,13 +13,13 @@
 #include "../Util/Pad.h"
 #include "SceneDebug.h"
 #include "SceneResult.h"
-#include "../BloodDrawer.h"
+#include "../Util/BloodDrawer.h"
 
 #include "../FIeldDrawer.h"
 
 #include "../AttackData.h"
 
-#include "../EffectId.h"
+#include "../Util/EffectId.h"
 
 namespace
 {
@@ -42,25 +42,17 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {	
-	// カメラクラス
-	m_pCamera       = std::make_unique<Camera>();
-	// キャラクタークラス
-	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 260.0f, 0.0f));
-	m_pCharacter[kEnemyNo] = std::make_unique<Enemy>(VGet(300.0f, 260.0f, 0.0f)); 
-	// 当たり判定クラス
-	m_pColl         = std::make_unique<Collision3D>();
-	// フィールド描画クラス
-	m_pField = std::make_unique<FIeldDrawer>();
+	m_pCamera               = std::make_unique<Camera>();							// カメラクラス
+	m_pCharacter[kPlayerNo] = std::make_unique<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
+	m_pCharacter[kEnemyNo]  = std::make_unique<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
+	m_pColl                 = std::make_unique<Collision3D>();						// 当たり判定クラス
+	m_pField                = std::make_unique<FIeldDrawer>();			            // フィールド描画クラス
 
 	// 初期化
 	m_pCamera->Init();
-
 	m_pCharacter[kPlayerNo]->Init();
 	m_pCharacter[kEnemyNo]->Init();
-
 	m_pField->Init();
-
-	m_name = CharacterName::NONE;
 }
 
 void SceneMain::End()
@@ -100,25 +92,6 @@ SceneBase* SceneMain::Update()
 	{
 		m_pCharacter[kEnemyNo]->SetAttackRange(false);
 	}
-
-	//m_pEffect[2]->Update();
-	//if (m_name != CharacterName::NONE)
-	//{
-	//	if (m_pCharacter[static_cast<int>(m_name)]->IsStun())
-	//	{
-	//		// スタンアニメーションを再生する
-	//		m_pEffect[2]->SetPlay(true);
-	//	
-	//	}
-	//	else
-	//	{
-	//		if (!m_pEffect[2]->IsPlay())
-	//		{
-	//			m_name = CharacterName::NONE;
-	//			m_pEffect[2]->SetPlay(false);
-	//		}
-	//	}
-	//}
 
 	{
 		// 血のエフェクトを更新
@@ -192,8 +165,6 @@ SceneBase* SceneMain::Update()
 
 void SceneMain::Draw()
 {
-//	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xAAAAAA,true);
-
 	m_pField->Draw();
 
 	for (auto& character : m_pCharacter)
@@ -210,8 +181,8 @@ void SceneMain::Draw()
 #if _DEBUG
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
-	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pCharacter[0]->GetStamina(), 100, 15, 0xffff00);
-	DEBUG::FrameMeter("Eスタミナ", 100, 200, m_pCharacter[1]->GetStamina(),  100, 15, 0xffff00);
+	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pCharacter[0]->GetFightingMeter(), 100, 15, 0xffff00);
+	DEBUG::FrameMeter("Eスタミナ", 100, 200, m_pCharacter[1]->GetFightingMeter(),  100, 15, 0xffff00);
 
 	DEBUG::FrameMeter("P攻撃フレーム", 100, 250, m_pCharacter[0]->GetAttackFrameMax(), m_pCharacter[0]->GetAttackFrame(), 20,0xffff00);
 	DEBUG::FrameMeter("P防御フレーム", 100, 300, m_pCharacter[0]->GetGuardFrameMax(), m_pCharacter[0]->GetGuardFrame(), 30, 0xffff00);
@@ -298,12 +269,10 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 			// 無敵判定になる
 			if ((CheckWeaponAndSieldHIt(chara1, chara2)) || (CheckWeaponAndBodyHit(chara1, chara2)))
 			{
-				// スタミナを減らす
-				chara1->SetAddStamina(30.0f);
 				// ジャストガードが成功したかどうか
 				chara1->SetJustGuard(true);
 
-		
+				// ジャストガードした際のエフェクト再生
 				EffekseerDrawer::GetInstance().Play(
 					handle, Id::JustGuard,
 					EffectPlayType::NORMAL,
@@ -311,20 +280,13 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 					VGet(0, 0, 0),
 					VGet(0, 0, 0));
 
-				// ターゲットをスタン状態にする
-				chara2->SetStun(true);
+				// ジャストガードされた側は
+				// 戦いに必要な特殊なメーターを減らす
+				chara2->SetFightingMeter(-10.0f);
 
-				//// スタンしたキャラクターの名前を一時保存
-				//m_name = chara2->GetMyId();
-
-
-				EffekseerDrawer::GetInstance().Play(
-					handle, Id::Stun,
-					EffectPlayType::NORMAL,
-					VGet(chara2->GetPos().x, chara2->GetPos().y + 300.0f, chara2->GetPos().z),
-					VGet(0, 0, 0),
-					VGet(0, 0, 0),
-					60 * 2);
+				// ジャストガードに成功した側は
+				// 戦いに必要な特殊なメーターを増やす
+				chara1->SetFightingMeter(30.0f);
 	
 				// 振動開始
 				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
@@ -343,20 +305,19 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				{
 					// ターゲットをスタン状態にする
 					chara1->SetStun(true);
-
-					// スタミナを減らす
-					chara1->SetSubStamina(100.0f);
 				}
-				// スタミナを減らす
-				chara1->SetSubStamina(10.0f);
 
-
+				// ガード際のエフェクト再生
 				EffekseerDrawer::GetInstance().Play(
 					handle, Id::Guard,
 					EffectPlayType::NORMAL,
 					chara1->GetSieldPos(),
 					VGet(0, 0, 0),
 					VGet(0, chara1->GetAngle(), 0));
+
+				// 戦いに必要な特殊なメーターを減らす
+				chara1->SetFightingMeter(-10.0f);
+
 			}
 		}
 		else
@@ -364,9 +325,11 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 			// 攻撃が当たったかどうか
 			if (CheckWeaponAndBodyHit(chara1, chara2))
 			{
-
 				// ダメージを与える
 				chara1->SetDamage(true);
+
+				// 戦いに必要な特殊なメーターを減らす
+				chara1->SetFightingMeter(-10.0f);
 
 				for (int i = 0; i < 30; i++)
 				{
@@ -377,8 +340,6 @@ void SceneMain::UpdateCharacter(CharacterBase* chara1, CharacterBase* chara2)
 				StartJoypadVibration(DX_INPUT_PAD1, 1000/3, 1000/2, -1);
 			}
 		}
-
-		int* a = new int[30];
 	}
 }
 

@@ -20,7 +20,7 @@ enum EffectPlayType
 struct EffectData
 {
 	// 再生用ハンドル
-	int playingHandle;
+	int *playingHandle;
 	//
 	Id id;
 	// 再生タイプ

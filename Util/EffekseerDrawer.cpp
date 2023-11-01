@@ -60,31 +60,34 @@ void EffekseerDrawer::Update()
 		effect.playFrameCount++;
 		if (effect.playFrameCount < effect.playFrameMax)
 		{
-			if (IsEffekseer3DEffectPlaying(effect.playingHandle) == -1)
+			// 再生されていない状態だったらもう一度再生開始
+			if (IsEffekseer3DEffectPlaying(*effect.playingHandle) == -1)
 			{
-				effect.playingHandle = PlayEffekseer3DEffect(m_handle[effect.id]);
+				printfDx("再生中\n");
+				*effect.playingHandle = PlayEffekseer3DEffect(m_handle[effect.id]);
 			}
 		}
-
-		// 再生中のエフェクトを移動する。
-		SetPosPlayingEffekseer3DEffect(effect.playingHandle, effect.pos.x, effect.pos.y, effect.pos.z);
-		SetRotationPlayingEffekseer3DEffect(effect.playingHandle, effect.angle.x, effect.angle.y, effect.angle.z);
-
 		// Effekseerにより再生中のエフェクトを更新する。
 		UpdateEffekseer3D();
 	}
 
-	//if (m_effectData.size() != 0)
-	//{
-	//	for (int i = 0; i < m_effectData.size(); i++)
-	//	{
-	//		if (m_effectData[i].playFrameCount >= m_effectData[i].playFrameMax)
-	//		{
-	//			m_effectData.erase(m_effectData.begin() + i);
-	//			printfDx("erase\n");
-	//		}
-	//	}
-	//}
+	// 仕様しないエフェクトを配列から削除
+	// データが存在する場合
+	if (m_effectData.size() != 0)
+	{
+		for (int i = 0; i < m_effectData.size(); i++)
+		{
+			// 再生が終わってる場合
+			if (IsEffekseer3DEffectPlaying(*m_effectData[i].playingHandle) == -1)
+			{
+				// 再生フレームが最大数を超えている場合
+				if (m_effectData[i].playFrameCount >= m_effectData[i].playFrameMax)
+				{
+					m_effectData.erase(m_effectData.begin() + i);
+				}
+			}
+		}
+	}
 }
 
 void EffekseerDrawer::Draw()
@@ -99,7 +102,12 @@ void EffekseerDrawer::Play(int& playingEffectHandle, Id id, EffectPlayType type,
 
 	playingEffectHandle = PlayEffekseer3DEffect(m_handle[id]);
 
-	data.playingHandle = playingEffectHandle;
+	// 位置を調整
+	SetPosPlayingEffekseer3DEffect(playingEffectHandle, pos.x, pos.y, pos.z);
+	// 角度を調整
+	SetRotationPlayingEffekseer3DEffect(playingEffectHandle, angle.x, angle.y, angle.z);
+
+	data.playingHandle = &playingEffectHandle;
 	data.id    = id;
 	data.type  = type;
 	data.pos   = pos;
@@ -107,10 +115,6 @@ void EffekseerDrawer::Play(int& playingEffectHandle, Id id, EffectPlayType type,
 	data.angle = angle;
 	data.playFrameMax   = playFrame;
 	data.playFrameCount = 0;
-	m_effectData.push_back(data);
-}
 
-void EffekseerDrawer::PlayLoop()
-{
-//	PlayEffekseer3DEffect(m_handle[effect.id]);
+	m_effectData.push_back(data);
 }
