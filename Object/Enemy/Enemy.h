@@ -10,6 +10,18 @@ public:
 	virtual ~Enemy();
 	void Input()override;
 private:
+	void BattleType();
+private:
 	std::deque<float> m_delayFrameAngle;
+
+	// –hŒä
+	bool m_isCheckGuard;
+	bool m_isResultGuard;
+	// ’ÊíUŒ‚
+	bool m_isCheckAttack;
+	bool m_isAttackResult;
+	// ‹­UŒ‚
+	bool m_isCheckStrongAttack;
+	bool m_isStrongAttackResult;
 };
 

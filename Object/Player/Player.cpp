@@ -196,6 +196,13 @@ void Player::Input()
 			frameCount = 0;
 		}
 	}
+
+
+	if (Pad::IsTrigger(PAD_INPUT_4))
+	{
+		//SetStun(true);
+		SetFightingMeter(-10000.0f);
+	}
 }
 
 VECTOR Player::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)

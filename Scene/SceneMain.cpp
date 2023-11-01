@@ -17,7 +17,7 @@
 
 #include "../FIeldDrawer.h"
 
-#include "../AttackData.h"
+#include "../Util/AttackData.h"
 
 #include "../Util/EffectId.h"
 
@@ -114,11 +114,14 @@ SceneBase* SceneMain::Update()
 
 	// カメラにプレイヤーとエネミーの位置を渡す
 	m_pCamera->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
-
 	// カメラにプレイヤーの角度と位置を渡す
 	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
 
-	// お互いに位置を渡す
+	// ターゲットの戦闘の状態を受け取る
+	m_pCharacter[kPlayerNo]->SetBattleState(m_pCharacter[kEnemyNo ]->GetBattleState());
+	m_pCharacter[kEnemyNo ]->SetBattleState(m_pCharacter[kPlayerNo]->GetBattleState());
+
+	// ターゲットの位置を受け取る
 	m_pCharacter[kPlayerNo]->SetTargetPos(m_pCharacter[kEnemyNo]->GetPos());
 	m_pCharacter[kEnemyNo]->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
 
@@ -148,16 +151,18 @@ SceneBase* SceneMain::Update()
 		}
 	}
 	
-	if (m_pCharacter[kPlayerNo]->GetHp() == 0 || m_pCharacter[kEnemyNo]->GetHp() == 0)
 	{
-		static int count = 0;
-		count++;
-		if (count == 60 * 2)
-		{
-			count = 0;
-			clsDx();
-			return new SceneResult();
-		}
+		//if (m_pCharacter[kPlayerNo]->GetHp() == 0 || m_pCharacter[kEnemyNo]->GetHp() == 0)
+		//{
+		//	static int count = 0;
+		//	count++;
+		//	if (count == 60 * 2)
+		//	{
+		//		count = 0;
+		//		clsDx();
+		//		return new SceneResult();
+		//	}
+		//}
 	}
 
 	return this;

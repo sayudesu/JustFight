@@ -1,7 +1,8 @@
 #pragma once
 #include <DxLib.h>
 #include "../Util/CharacterName.h"
-#include "../AttackData.h"
+#include "../Util/AttackData.h"
+#include "../Util/BattleState.h"
 
 // キャラクター専用基底クラス
 class CharacterBase
@@ -49,14 +50,17 @@ public:
 	CharacterName GetMyId();
 	AttackData GetMyAttackId();
 
+	// 現在の行動の情報を渡す
+	BattleState GetBattleState();
+
 	// 位置
-	VECTOR GetPos()const;
-	VECTOR GetWeaponPos()const;
-	VECTOR GetSieldPos()const;
+	VECTOR GetPos      ()const;// 自身
+	VECTOR GetWeaponPos()const;// 武器
+	VECTOR GetSieldPos ()const;// 盾
 
 	// 角度
-	MATRIX GetRot()const;
-	float GetAngle()const;
+	MATRIX GetRot ()const;// 行列
+	float GetAngle()const;// ラジアン
 
 	// モデルの当たり判定用半径
 	float GetModelRadius()const;
@@ -69,26 +73,18 @@ public:
 	VECTOR GetWeaponAttackRelative()const;
 	VECTOR GetSieldRelative()const;
 
-	// 現在の攻撃フレーム
-	int GetAttackFrame()const;
-	// 現在の防御フレーム
-	int GetGuardFrame()const;
-	// 現在のジャストガードフレーム
-	int GetJustGuardFrame()const;
-	// 最大攻撃フレーム
-	int GetAttackFrameMax()const;
-	// 最大防御フレーム
-	int GetGuardFrameMax()const;
-	// 最大ジャストガードフレーム
-	int GetJustGuardFrameMax()const;
+	// フレーム関係
+	int GetAttackFrame      ()const;// 現在の攻撃フレーム
+	int GetGuardFrame       ()const;// 現在の防御フレーム
+	int GetJustGuardFrame   ()const;// 現在のジャストガードフレーム
+	int GetAttackFrameMax   ()const;// 最大攻撃フレーム
+	int GetGuardFrameMax    ()const;// 最大防御フレーム
+	int GetJustGuardFrameMax()const;// 最大ジャストガードフレーム
+	int GetStunFrameMax     ()const;// 最大スタンのフレーム数
 
-	// 最大スタンのフレーム数
-	int GetStunFrameMax()const;
-
-	// 現在のヒットポイント
-	int GetHp()const;
-	// 現在のスタミナ
-	float GetFightingMeter()const;
+	// ゲージ関係
+	int GetHp             ()const;// 現在のヒットポイント
+	float GetFightingMeter()const;// 戦闘に必要なメーター
 	
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
@@ -98,6 +94,9 @@ public:
 
 	// 攻撃範囲に入っているかどうか
 	bool IsAttackRange()const;
+
+	// 現在の行動の情報を渡す
+	void SetBattleState(BattleState state);
 
 	// 相手の角度
 	void SetTargetRota(const MATRIX rot);
@@ -160,6 +159,9 @@ private:
 
 	// 攻撃範囲にいるかどうか
 	bool m_isAttackRange;
+
+	// 現在の行動を記録
+	BattleState m_battleState;
 protected:
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
@@ -186,5 +188,8 @@ protected:
 
 	CharacterName m_myId;
 	AttackData m_attackId;
+
+	// ターゲットの行動を記録
+	BattleState m_targetBattleState;
 };
 

@@ -8,7 +8,13 @@ namespace
 }
 
 Enemy::Enemy(VECTOR pos) :
-	CharacterBase(pos)
+	CharacterBase(pos),
+	m_isCheckGuard(false),
+	m_isResultGuard(false),
+	m_isCheckAttack(false),
+	m_isAttackResult(false),
+	m_isCheckStrongAttack(false),
+	m_isStrongAttackResult(false)
 {
 	m_pFunc = &Enemy::Idle;
 
@@ -45,7 +51,7 @@ void Enemy::Input()
 	MATRIX rotMtx = MGetRotY(m_delayFrameAngle.back());
 
 	SetRotMtx(rotMtx);
-
+	printfDx("%d\n", m_targetBattleState);
 	if (!IsStun())
 	{
 		// ˆê’è‹——£‹ß‚Ã‚­‚Æƒ‰ƒ“ƒ_ƒ€‚Å¶‰EˆÚ“®‚ğn‚ß‚é
@@ -81,63 +87,60 @@ void Enemy::Input()
 			m_pos = VAdd(m_pos, move);
 		}
 
-
 		if (IsAttackRange())
 		{
-			static bool isAttack = false;
-			static bool isAttackResult = false;
-
-			static bool isStrongAttack = false;
-			static bool isStrongAttackResult = false;
-
-			static bool isGuard  = false;
-			static bool isGuardResult = false;
-
 			static int guardFrameCount = 0;
 			const int guardFrame = 60;
 
-			// —”‚ÅUŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
-			if (!isAttack &&
-				!m_isAttack &&
-				!m_isStrongAttack &&
-				!m_isGuard)
+			//// —”‚Å‹­UŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
+			//if (!m_isCheckStrongAttack &&
+			//	!m_isAttack &&
+			//	!m_isCheckStrongAttack &&
+			//	!m_isGuard)
+			//{
+			//	if (GetRand(90) == 0)
+			//	{
+			//		m_isCheckStrongAttack = true;
+			//		m_isStrongAttackResult = true;
+			//	}
+			//}
+
+			//// —”‚Å–hŒä‚·‚é‚©‚ğŒˆ‚ß‚é
+			//if (!m_isCheckGuard &&
+			//	!m_isAttack &&
+			//	!m_isCheckStrongAttack)
+			//{
+			//	if (GetRand(30) == 0)
+			//	{
+			//		m_isCheckGuard = true;
+			//		m_isResultGuard = true;
+			//	}
+			//}
+
+			//// —”‚ÅUŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
+			//if (!m_isCheckAttack &&
+			//	!m_isAttack &&
+			//	!m_isCheckStrongAttack &&
+			//	!m_isGuard)
+			//{
+			//	if (GetRand(10) == 0)
+			//	{
+			//		m_isCheckAttack = true;
+			//		m_isAttackResult = true;
+			//	}
+			//}
+
+			if (!m_isAttack && !m_isGuard && !m_isStrongAttack)
 			{
-				if (GetRand(30) == 0)
-				{
-					isAttack = true;
-					isAttackResult = true;
-				}
+				// UŒ‚or–hŒä‚ğŒˆ‚ß‚é
+				BattleType();
 			}
 
-			// —”‚Å‹­UŒ‚‚·‚é‚©‚ğŒˆ‚ß‚é
-			if (!isStrongAttack &&
-				!m_isAttack &&
-				!m_isStrongAttack &&
-				!m_isGuard)
-			{
-				if (GetRand(90) == 0)
-				{
-					isStrongAttack = true;
-					isStrongAttackResult = true;
-				}
-			}
-
-			// —”‚Å–hŒä‚·‚é‚©‚ğŒˆ‚ß‚é
-			if (!isGuard &&
-				!m_isAttack &&
-				!m_isStrongAttack)
-			{
-				if (GetRand(30) == 0)
-				{
-					isGuard = true;
-					isGuardResult = true;
-				}
-			}
 
 			// UŒ‚‚©‚Ç‚¤‚©
-			if (isAttackResult)
+			if (m_isAttackResult)
 			{
-				isAttackResult = false;
+				m_isAttackResult = false;
 				m_isAttack = true;
 				m_attackId = AttackData::NORMAL;
 				m_pFunc = &Enemy::Attack;
@@ -145,32 +148,32 @@ void Enemy::Input()
 			// UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
 			if (!m_isAttack)
 			{
-				isAttack = false;
+				m_isAttack = false;
 			}
 
 			// ‹­UŒ‚‚©‚Ç‚¤‚©
-			if (isStrongAttackResult && !m_isGuard)
+			if (m_isStrongAttackResult && !m_isGuard)
 			{
-				isStrongAttackResult = false;
-				m_isStrongAttack = true;
+				m_isStrongAttackResult = false;
+				m_isCheckStrongAttack = true;
 				m_attackId = AttackData::STRONG;
 				m_pFunc = &Enemy::StrongAttack;
 			}
 			// ‹­UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
-			if (!m_isStrongAttack)
+			if (!m_isCheckStrongAttack)
 			{
-				isStrongAttack = false;
+				m_isCheckStrongAttack = false;
 			}
 
 
 			if (guardFrameCount == guardFrame)
 			{
 				guardFrameCount = 0;
-				isGuard = false;
+				m_isCheckGuard = false;
 				m_isGuard = false;
-				isGuardResult = false;
+				m_isResultGuard = false;
 			}
-			if (isGuardResult && !m_isAttack)
+			if (m_isResultGuard && !m_isAttack)
 			{
 				m_isGuard = true;
 				guardFrameCount++;
@@ -181,6 +184,38 @@ void Enemy::Input()
 		{
 			TargetMove();
 		}
+	}
+	else
+	{
+		printfDx("aaaaaaaaaaaaa");
+	}
+}
+
+void Enemy::BattleType()
+{
+	// ƒ^[ƒQƒbƒg‚Ìó‘Ô‚Å“®ì‚ğ•ÏX‚·‚é
+
+	// ƒ^[ƒQƒbƒg‚ªUŒ‚‚µ‚Ä‚¢‚éê‡
+	if (m_targetBattleState == BattleState::ATTACK)
+	{
+		if (GetRand(2) == 0)
+		{
+			m_isCheckGuard = true;
+			m_isResultGuard = true;
+		}
+	}
+
+	// ƒ^[ƒQƒbƒg‚ªƒXƒ^ƒ“‚µ‚Ä‚¢‚éê‡
+	if (m_targetBattleState == BattleState::STUN)
+	{
+		m_isCheckStrongAttack = true;
+		m_isStrongAttackResult = true;
+	}
+
+	// ƒ^[ƒQƒbƒg‚ª–hŒä‚µ‚Ä‚¢‚éê‡
+	if (m_targetBattleState == BattleState::GUARD)
+	{
+	//	printfDx("ƒK[ƒh‚¾‚æ\n");
 	}
 }
 

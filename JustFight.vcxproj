@@ -165,7 +165,8 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttackData.h" />
+    <ClInclude Include="Util\AttackData.h" />
+    <ClInclude Include="Util\BattleState.h" />
     <ClInclude Include="Util\BloodDrawer.h" />
     <ClInclude Include="Util\CharacterName.h" />
     <ClInclude Include="Util\EffectId.h" />

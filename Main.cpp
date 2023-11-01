@@ -1,9 +1,7 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h> 
-
 #include "Util/Game.h"
 #include "Scene/SceneManager.h"
-
 #include "Util/EffekseerDrawer.h"
 
 // ƒvƒƒOƒ‰ƒ€‚ÍWinMain‚©‚çn‚Ü‚è‚Ü‚·

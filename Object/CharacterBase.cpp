@@ -14,8 +14,7 @@ namespace
 	constexpr int kStrongAttackGapFrameMax = 60;											  // 攻撃予兆の最大フレーム
 	constexpr int kStrongAttackTotalFrame  = kStrongAttackFrameMax + kStrongAttackGapFrameMax;// 攻撃フレームの合計
 
-
-	constexpr int kStunFrameMax = 60 * 2;// スタン状態の最大フレーム
+	constexpr int kStunFrameMax = 60 * 3;// スタン状態の最大フレーム
 
 	// ガード関係
 	constexpr int kGuardFrameMax     = 12;   // ガード最大フレーム
@@ -79,6 +78,10 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_myId = CharacterName::NONE;
 	// 攻撃判別を初期化
 	m_attackId = AttackData::NONE;
+
+	// 現在の行動を記録
+	m_battleState       = BattleState::NONE;// 自身
+	m_targetBattleState = BattleState::NONE;// ターゲット
 
 }
 
@@ -163,9 +166,17 @@ AttackData CharacterBase::GetMyAttackId()
 	return m_attackId;
 }
 
+BattleState CharacterBase::GetBattleState()
+{
+	return m_battleState;
+}
+
 void CharacterBase::Idle()
 {
 	m_attackId = AttackData::NONE;
+
+	// 現在の行動を記録
+	m_battleState = BattleState::IDLE;
 
 	SetFightingMeter(0.01f);
 
@@ -239,6 +250,10 @@ void CharacterBase::Idle()
 		m_hp--;
 	}
 
+	if (m_isStun)
+	{
+		m_pFunc = &CharacterBase::Stun;
+	}
 
 	// 位置情報の更新
 	UpdatePos();
@@ -246,6 +261,9 @@ void CharacterBase::Idle()
 
 void CharacterBase::Attack()
 {
+	// 現在の行動を記録
+	m_battleState = BattleState::ATTACK;
+
 	// 最大フレーム内に目標地点まで移動する
 	// 始めに隙ようの後ろに動かす動作
 	if (m_attackGapFrame < kAttackGapFrameMax)
@@ -284,6 +302,9 @@ void CharacterBase::Attack()
 
 void CharacterBase::StrongAttack()
 {
+	// 現在の行動を記録
+	m_battleState = BattleState::STRONGATTACK;
+
 	int slideX = 0;
 	int slideY = 0;
 	int slideZ = 0;
@@ -331,6 +352,9 @@ void CharacterBase::StrongAttack()
 
 void CharacterBase::Guard()
 {
+	// 現在の行動を記録
+	m_battleState = BattleState::GUARD;
+
 	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < kGuardFrameMax)
 	{
@@ -398,6 +422,9 @@ void CharacterBase::JustGuard()
 
 void CharacterBase::Stun()
 {
+	// 現在の行動を記録
+	m_battleState = BattleState::STUN;
+	// スタン状態のフレームをカウント
 	m_stunFrame++;
 
 	if (m_vecWeapon.y < kWeaponPos.y + 60.0f)
@@ -410,9 +437,9 @@ void CharacterBase::Stun()
 	}
 
 	// フレームのリセット
-	m_attackFrame = 0;
+	m_attackFrame    = 0;
 	m_attackGapFrame = 0;
-	m_guardFrame = 0;
+	m_guardFrame     = 0;
 	m_justGuardFrame = 0;
 
 	if (kStunFrameMax < m_stunFrame)
@@ -609,6 +636,11 @@ bool CharacterBase::IsStun() const
 bool CharacterBase::IsAttackRange() const
 {
 	return m_isAttackRange;
+}
+
+void CharacterBase::SetBattleState(BattleState state)
+{	
+	m_targetBattleState = state;
 }
 
 void CharacterBase::SetTargetRota(MATRIX rot)
