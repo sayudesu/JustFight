@@ -14,7 +14,9 @@ Enemy::Enemy(VECTOR pos) :
 	m_isCheckAttack(false),
 	m_isAttackResult(false),
 	m_isCheckStrongAttack(false),
-	m_isStrongAttackResult(false)
+	m_isStrongAttackResult(false),
+	m_isMoveLeft(false),
+	m_isMoveRight(false)
 {
 	m_pFunc = &Enemy::Idle;
 
@@ -23,6 +25,36 @@ Enemy::Enemy(VECTOR pos) :
 
 	// 自身がエネミーであると決める
 	m_myId = CharacterName::ENEMY;
+
+	// パラメーター調整
+	m_parameter.attackFrameMax = 5;
+	m_parameter.attackFrameGapMax = 30;
+	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
+
+	m_parameter.strongAttackFrameMax = 5;
+	m_parameter.strongAttackFrameGapMax = 60;
+	m_parameter.strongAttackRotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
+
+	m_parameter.guardFrameMax = 20;
+	m_parameter.justGuardFrameMax = 15;
+
+	m_parameter.stunFrameMax = 60 * 3;
+
+	m_parameter.hpMax = 6;
+	m_parameter.fightingMeterMax = 100.0f;
+
+	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
+	m_parameter.sieldRelativePos = { 100.0f, 100.0f, -50.0f };
+
+	m_parameter.weaponAttackRadius = 100.0f;
+	m_parameter.sieldRadius = 50.0f;
+	m_parameter.modelRadius = 180.0f;
+
+	m_parameter.weaponAttackPos = { 0.0f, 0.0f, -210.0f };
+	m_parameter.knockBackPos = { 0.0f,0.0f ,-20.0f };
+
+	m_parameter.weaponBackSpeed = 30.0f;
+	m_parameter.sieldBackSpeed = 30.0f;
 }
 
 Enemy::~Enemy()
@@ -51,42 +83,17 @@ void Enemy::Input()
 	MATRIX rotMtx = MGetRotY(m_delayFrameAngle.back());
 
 	SetRotMtx(rotMtx);
-	printfDx("%d\n", m_targetBattleState);
+
 	if (!IsStun())
 	{
 		// 一定距離近づくとランダムで左右移動を始める
 		if (m_targetRange.x + m_targetRange.z < 1000.0f)
 		{
-			int moveType = 0;
-			static bool isLeft = false;
-			static bool isRight = false;
-			if (GetRand(100) == 0)
-			{
-				isRight = true;
-				isLeft = false;
-			}
-			if (GetRand(100) == 1)
-			{
-				isLeft = true;
-				isRight = false;
-			}
-			if (GetRand(100) == 2)
-			{
-				isLeft = false;
-				isRight = false;
-			}
-			if (isLeft)
-			{
-				moveType = 1;
-			}
-			if (isRight)
-			{
-				moveType = -1;
-			}
-			const VECTOR move = VTransform(VGet(moveType * 10, 0, 0), rotMtx);
-			m_pos = VAdd(m_pos, move);
+			MoveLeftAndRight(rotMtx);
+			//m_isGuard = false;
 		}
 
+		// 攻撃可能範囲に入っているかどうか
 		if (IsAttackRange())
 		{
 			static int guardFrameCount = 0;
@@ -145,6 +152,40 @@ void Enemy::Input()
 			TargetMove();
 		}
 	}
+	else
+	{
+		m_isGuard = false;
+	}
+}
+
+void Enemy::MoveLeftAndRight(MATRIX mtxRot)
+{
+	if (GetRand(100) == 0)
+	{
+		m_isMoveRight = true;
+		m_isMoveLeft = false;
+	}
+	if (GetRand(100) == 1)
+	{
+		m_isMoveLeft = true;
+		m_isMoveRight = false;
+	}
+	if (GetRand(100) == 2)
+	{
+		m_isMoveLeft = false;
+		m_isMoveRight = false;
+	}
+	int moveType = 0;
+	if (m_isMoveLeft)
+	{
+		moveType = 1;
+	}
+	if (m_isMoveRight)
+	{
+		moveType = -1;
+	}
+	const VECTOR move = VTransform(VGet(moveType * 10, 0, 0), mtxRot);
+	m_pos = VAdd(m_pos, move);
 }
 
 void Enemy::BattleType()
@@ -153,11 +194,8 @@ void Enemy::BattleType()
 	// ターゲットが攻撃している場合
 	if (m_targetBattleState == BattleState::ATTACK)
 	{
-		if (GetRand(2) == 0)
-		{
-			m_isCheckGuard = true;
-			m_isResultGuard = true;
-		}
+		m_isCheckGuard = true;
+		m_isResultGuard = true;
 	}
 	// ターゲットがスタンしている場合
 	if (m_targetBattleState == BattleState::STUN)

@@ -13,6 +13,11 @@
 #include "../Util/BloodDrawer.h"
 #include "../FIeldDrawer.h"
 
+#include "SceneGameOver.h"
+#include "SceneClear.h"
+
+#include "../FIeldDrawer.h"
+
 #include "../DEBUG.h"
 
 namespace
@@ -66,13 +71,9 @@ void SceneMain::End()
 
 SceneBase* SceneMain::Update()
 {
-	// キャラクター更新処理
-	m_pCharacter[kPlayerNo]->Input();
-	m_pCharacter[kPlayerNo]->Update();
-
-	// キャラクターの操作処理
-	m_pCharacter[kEnemyNo]->Input();
-	m_pCharacter[kEnemyNo]->Update();
+	// キャラクター攻撃判定処理
+	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]);
+	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo]);
 
 	// カメラの更新処理
 	m_pCamera->Update();
@@ -111,23 +112,6 @@ SceneBase* SceneMain::Update()
 	// カメラにプレイヤーの角度と位置を渡す
 	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
 
-	// ターゲットの戦闘の状態を受け取る
-	m_pCharacter[kPlayerNo]->SetBattleState(m_pCharacter[kEnemyNo ]->GetBattleState());
-	m_pCharacter[kEnemyNo ]->SetBattleState(m_pCharacter[kPlayerNo]->GetBattleState());
-
-	// ターゲットの角度を受け取る
-	m_pCharacter[kPlayerNo]->SetTargetRota(m_pCharacter[kEnemyNo ]->GetAngle());
-	m_pCharacter[kEnemyNo ]->SetTargetRota(m_pCharacter[kPlayerNo]->GetAngle());
-
-	// ターゲットの位置を受け取る
-	m_pCharacter[kPlayerNo]->SetTargetPos(m_pCharacter[kEnemyNo ]->GetPos());
-	m_pCharacter[kEnemyNo ]->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
-
-	// キャラクター攻撃判定処理
-	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo ]);
-	UpdateCharacter(m_pCharacter[kEnemyNo ], m_pCharacter[kPlayerNo]);
-
-
 	{
 #if _DEBUG
 		CheckWeaponAndModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]);
@@ -150,17 +134,28 @@ SceneBase* SceneMain::Update()
 	}
 	
 	{
-		//if (m_pCharacter[kPlayerNo]->GetHp() == 0 || m_pCharacter[kEnemyNo]->GetHp() == 0)
-		//{
-		//	static int count = 0;
-		//	count++;
-		//	if (count == 60 * 2)
-		//	{
-		//		count = 0;
-		//		clsDx();
-		//		return new SceneResult();
-		//	}
-		//}
+		if (m_pCharacter[kPlayerNo]->GetHp() == 0)
+		{
+			static int count = 0;
+			count++;
+			if (count == 60 * 2)
+			{
+				count = 0;
+				clsDx();
+				return new SceneGameOver();
+			}
+		}
+		else if(m_pCharacter[kEnemyNo]->GetHp() == 0)
+		{
+			static int count = 0;
+			count++;
+			if (count == 60 * 2)
+			{
+				count = 0;
+				clsDx();
+				return new SceneClear();
+			}
+		}
 	}
 
 	return this;
@@ -255,11 +250,32 @@ bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::s
 
 void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
 {
+	if (chara1->GetHp() != 0)
+	{
+		chara1->Input(); // キャラクターの操作処理
+	}
+	chara1->Update();// キャラクター更新処理
+
 	// ジャストガードが成功したかどうか
-	chara1->SetJustGuard(false);
+	chara2->SetJustGuard(false);
 
 	// 回転角度を取得
-	chara1->SetTargetMtxRota(chara2->GetRot());
+	chara2->SetTargetMtxRota(chara1->GetRot());
+
+	// ターゲットのHPを取得
+	chara2->SetTargetHp(chara1->GetHp());
+
+	// ターゲットの回転行列を受け取る
+	chara2->SetTargetMtxRota(chara1->GetRot());
+
+	// ターゲットの戦闘の状態を受け取る
+	chara2->SetBattleState(chara1->GetBattleState());
+
+	// ターゲットの角度を受け取る
+	chara2->SetTargetRota(chara1->GetAngle());
+
+	// ターゲットの位置を受け取る
+	chara2->SetTargetPos(chara1->GetPos());
 
 	// 攻撃フレームが最大数かどうか
 	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
@@ -301,6 +317,8 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shar
 				chara1->SetFightingMeter(-10.0f);
 
 				chara1->SetCollGuardEffect();
+
+				chara2->SetWeaponAttacksShield(true);
 			}
 		}
 		else

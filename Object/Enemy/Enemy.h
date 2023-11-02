@@ -10,6 +10,9 @@ public:
 	virtual ~Enemy();
 	void Input()override;
 private:
+	// ターゲットに近づいた場合左右移動をする
+	void MoveLeftAndRight(MATRIX mtxRot);
+	// 戦闘態勢を決める
 	void BattleType();
 private:
 	std::deque<float> m_delayFrameAngle;
@@ -23,5 +26,9 @@ private:
 	// 強攻撃
 	bool m_isCheckStrongAttack;
 	bool m_isStrongAttackResult;
+
+	// 左右移動用
+	bool m_isMoveLeft;
+	bool m_isMoveRight;
 };
 

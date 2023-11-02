@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include "../Util/CharacterName.h"
 #include "../Util/BattleState.h"
+#include "../Util/CharacterParameter.h"
 
 // キャラクター専用基底クラス
 class CharacterBase
@@ -26,6 +27,14 @@ protected:
 	virtual void StrongAttack();
 	// 防御
 	virtual void Guard();
+private:
+	// 位置情報の更新
+	void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
+	// 盾に攻撃が当たって弾く場合
+	void WeaponAttacksShield();
+	// フレームで向かいたい座標まで動かす
+	float MoveByFrame(const float relativePos, const float EndPos, const int nowFrame, const int maxFrame);
+
 	// ジャストガード
 	virtual void JustGuard();
 	// ジャストガードをされた場合
@@ -34,11 +43,6 @@ protected:
 	virtual void Winner();
 	// 敗北した場合
 	virtual void Losers();
-private:
-	// 位置情報の更新
-	void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
-	// 攻撃が弾かれば場合
-	void Recoil();
 protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
@@ -95,6 +99,9 @@ public:
 	// 攻撃範囲に入っているかどうか
 	bool IsAttackRange()const;
 
+	// 攻撃が盾に当たったかどうか
+	void SetWeaponAttacksShield(const bool isShieldHit);
+
 	// 現在の行動の情報を渡す
 	void SetBattleState(BattleState state);
 
@@ -123,6 +130,9 @@ public:
 	// ターゲットの位置を取得する
 	void SetTargetPos(const VECTOR pos);
 
+	// ターゲットの体力を取得
+	void SetTargetHp(const int hp);
+
 	// エフェクトを呼び出す
 	void SetCollGuardEffect    ();// 通常防御
 	void SetCollJustGuardEffect();// ジャストガード
@@ -136,7 +146,7 @@ private:
 
 	// 角度
 	MATRIX m_rotMtx;
-	MATRIX m_enemyRotMtx;
+	MATRIX m_targetRotMtx;
 
 	float m_targetAngle;
 
@@ -165,11 +175,17 @@ private:
 	bool m_isResultGuard;
 	bool m_isResultDamage;
 
+	// 盾を攻撃したかどうか
+	bool m_isWeaponAttacksShield;
+
 	// スタン状態かどうか
 	bool m_isStun;
 
 	// 攻撃範囲にいるかどうか
 	bool m_isAttackRange;
+
+	// ターゲットの体力
+	int m_targetHp;
 
 	// 現在の行動を記録
 	BattleState m_battleState;
@@ -201,5 +217,8 @@ protected:
 
 	// ターゲットの行動を記録
 	BattleState m_targetBattleState;
+
+	// キャラクター全てのパラメーター
+	CharacterParameter m_parameter;
 };
 

@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scene\SceneClear.cpp" />
+    <ClCompile Include="Scene\SceneGameOver.cpp" />
     <ClCompile Include="Util\BloodDrawer.cpp" />
     <ClCompile Include="Util\EffekseerDrawer.cpp" />
     <ClCompile Include="FIeldDrawer.cpp" />
@@ -165,6 +167,9 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Util\CharacterParameter.h" />
+    <ClInclude Include="Scene\SceneClear.h" />
+    <ClInclude Include="Scene\SceneGameOver.h" />
     <ClInclude Include="Util\BattleState.h" />
     <ClInclude Include="Util\BloodDrawer.h" />
     <ClInclude Include="Util\CharacterName.h" />

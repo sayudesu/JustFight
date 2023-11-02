@@ -1,4 +1,5 @@
 #include "Collision3D.h"
+#include <cmath>
 
 Collision3D::Collision3D()
 {
@@ -21,7 +22,9 @@ bool Collision3D::IsCheckHit(VECTOR pos1, VECTOR pos2, float radius1, float radi
 	// ベクトルの減算
 	const VECTOR vec = VSub(TempPos1, TempPos2);
 	// ベクトルのサイズ
-	const float del = VSquareSize(vec);
+//  const float del = sqrt(VSquareSize(vec));
+	const float del = VSize(vec);
+//	const float del = VSquareSize(vec);
 
 	if (del < radius1 + radius2)
 	{
