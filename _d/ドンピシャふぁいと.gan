@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-17" view-index="0" gantt-divider-location="264" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
+<?xml version="1.0" encoding="UTF-8"?><project name="ドンピシャふぁいと(仮)" company="" webLink="http://" view-date="2023-10-17" view-index="0" gantt-divider-location="250" resource-divider-location="300" version="3.2.3247" locale="ja_JP">
     <description>
         <![CDATA[2.5Dアクション]]>
     </description>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="名前" width="140" order="0"/>
-        <field id="tpd4" name="開始日" width="54" order="1"/>
-        <field id="tpd5" name="終了日" width="54" order="2"/>
+        <field id="tpd3" name="名前" width="132" order="0"/>
+        <field id="tpd4" name="開始日" width="51" order="1"/>
+        <field id="tpd5" name="終了日" width="51" order="2"/>
         <option id="filter.completedTasks" value="false"/>
         <timeline>
-            <![CDATA[2,0,3,1]]>
+            <![CDATA[2,1,0,3]]>
         </timeline>
         <option id="color.recent">
             <![CDATA[#ff6666 #ff0066 #ff3333 #ffcccc #ffff00 #cccccc #ccccff #ff9999 #ffffcc]]>
