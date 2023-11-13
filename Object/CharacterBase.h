@@ -220,5 +220,16 @@ protected:
 
 	// キャラクター全てのパラメーター
 	CharacterParameter m_parameter;
+
+
+	// ここは使わない
+
+	float test1 = 0.0f;
+	float test2 = 0.0f;
+	float test3 = 0.0f;
+
+	VECTOR testV1 = VGet(0, 0, 0);
+	VECTOR testV2 = VGet(0, 0, 0);
+	VECTOR testV3 = VGet(0, 0, 0);
 };
 
