@@ -24,15 +24,14 @@ namespace
 {
 	// キャラクターベースの配列番号
 	constexpr int kPlayerNo = 0;
-	constexpr int kEnemyNo = 1;
+	constexpr int kEnemyNo  = 1;
 }
 
 SceneMain::SceneMain():
-	m_pCamera(nullptr),
-	m_pColl(nullptr)
+	m_pCamera(nullptr)
 {
 	m_pCharacter[kPlayerNo] = nullptr;
-	m_pCharacter[kEnemyNo] = nullptr;
+	m_pCharacter[kEnemyNo]  = nullptr;
 }
 
 SceneMain::~SceneMain()
@@ -44,7 +43,6 @@ void SceneMain::Init()
 	m_pCamera               = std::make_unique<Camera>();							// カメラクラス
 	m_pCharacter[kPlayerNo] = std::make_shared<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
 	m_pCharacter[kEnemyNo]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
-	m_pColl                 = std::make_unique<Collision3D>();						// 当たり判定クラス
 	m_pField                = std::make_unique<FIeldDrawer>();			            // フィールド描画クラス
 
 	// 初期化
@@ -198,7 +196,7 @@ void SceneMain::Draw()
 
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
 {
-	if (m_pColl->IsCheckHit(
+	if (Coll::IsCheckHit(
 		chara1->GetWeaponPos(), chara2->GetPos(),
 		chara1->GetWeaponAttackRadius(), chara2->GetWeaponAttackRadius(),
 		chara1->GetRot(), chara2->GetRot(),
@@ -211,7 +209,7 @@ bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std
 
 bool SceneMain::CheckWeaponAndSieldHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
 {
-	if (m_pColl->IsCheckHit(
+	if (Coll::IsCheckHit(
 		chara1->GetWeaponPos(), chara2->GetSieldPos(),
 		chara1->GetWeaponAttackRadius(), chara2->GetSieldRadius(),
 		chara1->GetRot(), chara2->GetRot(),
@@ -224,7 +222,7 @@ bool SceneMain::CheckWeaponAndSieldHIt(std::shared_ptr<CharacterBase> chara1, st
 
 bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
 {
-	if (m_pColl->IsCheckHit(
+	if (Coll::IsCheckHit(
 		chara1->GetWeaponPos(), chara2->GetPos(),
 		chara1->GetWeaponAttackRadius(), chara2->GetModelRadius(),
 		chara1->GetRot(), chara2->GetRot(),
@@ -237,7 +235,7 @@ bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara
 
 bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
 {
-	if (m_pColl->IsCheckHit(
+	if (Coll::IsCheckHit(
 		chara1->GetPos(), chara2->GetPos(),
 		chara1->GetModelRadius(), chara2->GetModelRadius(),
 		chara1->GetRot(), chara2->GetRot(),

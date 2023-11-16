@@ -1,12 +1,8 @@
 #pragma once
 #include <DxLib.h>
 
-class Collision3D
+namespace Coll
 {
-public:
-	Collision3D();
-	~Collision3D();
-
 	/// <summary>
 	/// ‹…‚Æ‹…‚Ì“–‚½‚è”»’è
 	/// </summary>

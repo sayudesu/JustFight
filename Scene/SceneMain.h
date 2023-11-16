@@ -13,7 +13,6 @@ namespace
 
 class Camera;
 class CharacterBase;
-class Collision3D;
 class BloodDrawer;
 class FIeldDrawer;
 
@@ -46,8 +45,6 @@ private:
 	std::unique_ptr<Camera> m_pCamera;
 	// キャラクタークラス
 	std::shared_ptr<CharacterBase> m_pCharacter[kCharacterNum];
-	// 判定クラス
-	std::unique_ptr<Collision3D>  m_pColl;
 	// 血描画クラス
 	std::vector<BloodDrawer*>m_pBlood;
 	// フィールドクラス
