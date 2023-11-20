@@ -24,7 +24,7 @@ Enemy::Enemy(VECTOR pos) :
 	m_isGuard = false;
 
 	// 自身がエネミーであると決める
-	m_myId = CharacterName::ENEMY;
+	m_myId = CharacterName::ENEMYNORMAL;
 
 	// パラメーター調整
 	m_parameter.attackFrameMax = 5;

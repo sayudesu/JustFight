@@ -11,5 +11,7 @@ public:
 
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
+private:
+	int m_hTitle;
 };
 

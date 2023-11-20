@@ -15,4 +15,6 @@ public:
 	virtual void Draw() override;
 private:
 	std::vector<int>m_handle;
+	int m_selectScene;
+	int m_resultSelectScene;
 };

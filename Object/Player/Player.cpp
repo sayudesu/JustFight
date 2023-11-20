@@ -100,7 +100,6 @@ void Player::Input()
 	MATRIX rotMtx = MGetRotY(m_angle);
 	// ‰ñ“]s—ñ‚ğŠî’êƒNƒ‰ƒX‚É“n‚·
 	SetRotMtx(rotMtx);
-
 	if (!IsStun())
 	{
 		// ˆÚ“®or‰ñ”ğ
@@ -180,7 +179,16 @@ void Player::Input()
 				!m_isGuard)
 			{
 				m_isAttack = true;
-				m_pFunc = &Player::Attack;
+				m_comboAttack++;
+				if (m_comboAttack == 1)
+				{
+					m_pFunc = &Player::Attack;
+				}
+				else if (m_comboAttack == 2)
+				{
+					m_pFunc = &Player::AttackTwo;
+					m_comboAttack = 0;
+				}
 			}
 
 			// ‹­UŒ‚

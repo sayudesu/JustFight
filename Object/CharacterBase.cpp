@@ -34,7 +34,8 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_guardFrame    (0),
 	m_justGuardFrame(0),
 	m_stunFrame     (0),
-	m_recoilFrame   (0)
+	m_recoilFrame   (0),
+	m_comboAttack   (0)
 {
 	// メンバ関数の初期
 	m_pFunc = &CharacterBase::Idle;
@@ -45,8 +46,8 @@ CharacterBase::CharacterBase(VECTOR pos):
 	// 現在の行動を記録
 	m_battleState       = BattleState::NONE;// 自身
 	m_targetBattleState = BattleState::NONE;// ターゲット
-
-
+	
+	// 自身のパラーメーター
 	m_parameter = {};
 }
 
@@ -253,8 +254,6 @@ void CharacterBase::Idle()
 		MV1SetPosition(m_shieldHandle, move);
 		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
 	}
-
-
 	// 位置情報の更新
 //	UpdatePos();
 }
@@ -263,28 +262,31 @@ void CharacterBase::Attack()
 {
 	// 現在の行動を記録
 	m_battleState = BattleState::ATTACK;
-#if false
-	// 最大フレーム内に目標地点まで移動する
-	// 始めに隙ようの後ろに動かす動作
-	if (m_attackGapFrame < m_parameter.attackFrameGapMax)
+
+	// 武器の角度を変える
+	if (test2 < (180 + 90) * DX_PI / 180.0f)
 	{
-		m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z, 150.0f, m_attackGapFrame, m_parameter.attackFrameGapMax);
-		m_attackGapFrame++;
-		m_tempWeaponPos = m_vecWeapon;
+		test2 += 00.2f;
 	}
-	// 攻撃をする動作
-	if (m_attackGapFrame == m_parameter.attackFrameGapMax)
+	else
 	{
-		if (m_attackFrame < m_parameter.attackFrameMax)
-		{
-			m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -200.0f, m_attackFrame, m_parameter.attackFrameMax);
-			m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
-			m_attackFrame++;
-		}
+		m_isAttack = false;
+	}
+	
+
+	if (m_attackFrame < m_parameter.attackFrameMax)
+	{
+		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
+		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+		m_attackFrame++;
 	}
 
-	if (m_attackFrame + m_attackGapFrame == m_parameter.attackRotalFrame)
-	{
+	test1++;
+	if ((test1 > 60 * 1) && (m_attackFrame == m_parameter.attackFrameMax))
+	{	
+		m_comboAttack = 0;
+		test1 = 0.0f;
+//		test2 = 0.0f;
 		m_pFunc = &CharacterBase::Idle;
 		m_attackFrame = 0;
 		m_attackGapFrame = 0;
@@ -299,41 +301,6 @@ void CharacterBase::Attack()
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
-	}
-#endif
-
-
-//	test1 += 0.01;
-//	// Y軸回転行列を作成
-//	MATRIX rotZ= MGetRotZ(test1);
-//	MATRIX rotY = MGetRotY(m_angle);
-////	MATRIX rot = MGetRotZ(test1);
-//
-//	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-//	move = VAdd(m_pos, move);
-//	MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
-////	MV1SetRotationXYZ(m_weaponHandle, VGet(testV1.x, m_angle, testV1.z));
-////	MV1SetRotationMatrix(m_weaponHandle, rotZ);
-	test1++;
-	if (test1 > 60 * 2)
-	{
-		test1 = 0.0f;
-//		test2 = 0.0f;
-		m_pFunc = &CharacterBase::Idle;
-		m_attackFrame = 0;
-		m_attackGapFrame = 0;
-
-		if (m_isWeaponAttacksShield)
-		{
-			m_isWeaponAttacksShield = false;
-			m_pFunc = &CharacterBase::WeaponAttacksShield;
-		}
-	}
-	
-	// 武器の角度を変える
-	if (test2 < (180 + 40) * DX_PI / 180.0f)
-	{
-		test2 += 00.2f;
 	}
 
 	{
@@ -352,7 +319,69 @@ void CharacterBase::Attack()
 
 	// 位置情報の更新
 //	UpdatePos();
+	if ((int)m_myId == 0)
+	{
+		printfDx("攻撃①\n");
+	}
+}
 
+void CharacterBase::AttackTwo()
+{
+	// 現在の行動を記録
+	m_battleState = BattleState::ATTACK;
+
+	// 武器の角度を変える
+	if (test2 > 90 * DX_PI / 180.0f)
+	{
+		test2 -= 00.2f;
+	}
+
+	if (m_attackFrame < m_parameter.attackFrameMax)
+	{
+		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -50.0f, m_attackFrame, m_parameter.attackFrameMax);
+		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+		m_attackFrame++;
+	}
+
+	test1++;
+	if ((test1 > 60 * 1) && (m_attackFrame == m_parameter.attackFrameMax))
+	{
+		test1 = 0.0f;
+//		test2 = 0.0f;
+		m_pFunc = &CharacterBase::Idle;
+		m_attackFrame = 0;
+		m_attackGapFrame = 0;
+
+		if (m_isWeaponAttacksShield)
+		{
+			m_isWeaponAttacksShield = false;
+			m_pFunc = &CharacterBase::WeaponAttacksShield;
+		}
+	}
+
+	if (m_isStun)
+	{
+		m_pFunc = &CharacterBase::Stun;
+	}
+
+	{
+		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+		move = VAdd(m_pos, move);
+		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
+		MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
+	}
+
+	{
+		VECTOR move = VTransform(m_vecSield, m_rotMtx);
+		move = VAdd(m_pos, move);
+		MV1SetPosition(m_shieldHandle, move);
+		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
+	}
+
+	if ((int)m_myId == 0)
+	{
+		printfDx("攻撃②\n");
+	}
 }
 
 void CharacterBase::StrongAttack()

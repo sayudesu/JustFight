@@ -1,5 +1,7 @@
 #pragma once
 #include <DxLib.h>
+
+// キャラクターのパラメーター
 const struct CharacterParameter
 {
 	int attackFrameMax;   // 攻撃最大フレーム

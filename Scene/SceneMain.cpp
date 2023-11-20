@@ -1,37 +1,30 @@
 #include "SceneMain.h"
 #include <DxLib.h>
-#include "../Object/Camera/Camera.h"
-#include "../Object/Player/Player.h"
-#include "../Object/Enemy/Enemy.h"
-#include "../Util/Collision3D.h"
-#include "../Util/EffekseerDrawer.h"
-#include "../Util/Game.h"
-#include "../Object/CharacterBase.h"
-#include "../Util/Pad.h"
-#include "SceneDebug.h"
-#include "SceneResult.h"
-#include "../Util/BloodDrawer.h"
-#include "../FIeldDrawer.h"
+#include "../Object/Camera/Camera.h"// カメラ
+#include "../Object/Player/Player.h"// プレイヤー
+#include "../Object/Enemy/Enemy.h"// エネミー
+#include "../Util/Collision3D.h"// 当たり判定
+#include "../Util/EffekseerDrawer.h"// 3Dエフェクト
+#include "../Util/Game.h"// ゲーム基本設定
+#include "../Object/CharacterBase.h"// キャラクター
+#include "../Util/Pad.h"// パッド
+#include "SceneDebug.h"// デバッグシーン
+#include "SceneResult.h"// リザルトシーン
+#include "../Util/BloodDrawer.h"// 血のエフェクト
+#include "../FIeldDrawer.h"// マップ描画
 
-#include "SceneGameOver.h"
-#include "SceneClear.h"
+#include "SceneGameOver.h"// ゲームオーバーシーン
+#include "SceneClear.h"// ゲームクリアシーン
 
-#include "../FIeldDrawer.h"
+#include "../Util/CharacterName.h"// キャラクターの名前
 
-#include "../DEBUG.h"
-
-namespace
-{
-	// キャラクターベースの配列番号
-	constexpr int kPlayerNo = 0;
-	constexpr int kEnemyNo  = 1;
-}
+#include "../DEBUG.h"// デバッグ用
 
 SceneMain::SceneMain():
 	m_pCamera(nullptr)
 {
-	m_pCharacter[kPlayerNo] = nullptr;
-	m_pCharacter[kEnemyNo]  = nullptr;
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = nullptr;
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = nullptr;
 }
 
 SceneMain::~SceneMain()
@@ -41,22 +34,22 @@ SceneMain::~SceneMain()
 void SceneMain::Init()
 {	
 	m_pCamera               = std::make_unique<Camera>();							// カメラクラス
-	m_pCharacter[kPlayerNo] = std::make_shared<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
-	m_pCharacter[kEnemyNo]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
 	m_pField                = std::make_unique<FIeldDrawer>();			            // フィールド描画クラス
 
 	// 初期化
 	m_pCamera->Init();
-	m_pCharacter[kPlayerNo]->Init();
-	m_pCharacter[kEnemyNo]->Init();
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Init();
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Init();
 	m_pField->Init();
 }
 
 void SceneMain::End()
 {
 	// 解放処理
-	m_pCharacter[kPlayerNo]->End();
-	m_pCharacter[kEnemyNo]->End();
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->End();
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->End();
 	m_pField->End();
 
 	for (int i = 0; i < m_pBlood.size(); i++)
@@ -70,20 +63,20 @@ void SceneMain::End()
 SceneBase* SceneMain::Update()
 {
 	// キャラクター攻撃判定処理
-	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]);
-	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo]);
+	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 
 	// カメラの更新処理
 	m_pCamera->Update();
 
 	// 敵の攻撃可能範囲にいるかどうか
-	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[1]))
+	if (CheckModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
 	{
-		m_pCharacter[kEnemyNo]->SetAttackRange(true);
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetAttackRange(true);
 	}
 	else
 	{
-		m_pCharacter[kEnemyNo]->SetAttackRange(false);
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetAttackRange(false);
 	}
 
 	{
@@ -106,20 +99,20 @@ SceneBase* SceneMain::Update()
 	}
 
 	// カメラにプレイヤーとエネミーの位置を渡す
-	m_pCamera->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
+	m_pCamera->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
 	// カメラにプレイヤーの角度と位置を渡す
-	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
+	m_pCamera->SetPlayerAngle(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetAngle());
 
 	{
 #if _DEBUG
-		CheckWeaponAndModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]);
-		CheckWeaponAndModelAboutHIt(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo]);
+		CheckWeaponAndModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+		CheckWeaponAndModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 
-		CheckWeaponAndSieldHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]);
-		CheckWeaponAndSieldHIt(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo]);
+		CheckWeaponAndSieldHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+		CheckWeaponAndSieldHIt(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 
-		CheckWeaponAndBodyHit(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]);
-		CheckWeaponAndBodyHit(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo]);
+		CheckWeaponAndBodyHit(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+		CheckWeaponAndBodyHit(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 #endif
 	}
 	
@@ -132,7 +125,7 @@ SceneBase* SceneMain::Update()
 	}
 	
 	{
-		if (m_pCharacter[kPlayerNo]->GetHp() == 0)
+		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp() == 0)
 		{
 			static int count = 0;
 			count++;
@@ -143,7 +136,7 @@ SceneBase* SceneMain::Update()
 				return new SceneGameOver();
 			}
 		}
-		else if(m_pCharacter[kEnemyNo]->GetHp() == 0)
+		else if(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp() == 0)
 		{
 			static int count = 0;
 			count++;

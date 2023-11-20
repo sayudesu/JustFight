@@ -10,7 +10,9 @@ namespace
 	constexpr int kTest = 100;
 }
 
-SceneDebug::SceneDebug()
+SceneDebug::SceneDebug():
+	m_selectScene(-1),
+	m_resultSelectScene(-1)
 {
 }
 
@@ -53,18 +55,43 @@ SceneBase* SceneDebug::Update()
 		}
 	}
 
+	if (Pad::IsTrigger(PAD_INPUT_UP))
+	{
+		m_selectScene--;
+		if (m_selectScene < 0)
+		{
+			m_selectScene = 2;
+		}
+	}
+	if (Pad::IsTrigger(PAD_INPUT_DOWN))
+	{
+		m_selectScene++;
+		if (m_selectScene > 2)
+		{
+			m_selectScene = 0;
+		}
+	}
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
-		return new SceneMain();
+		m_resultSelectScene = m_selectScene;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_2))
+
+	if (m_resultSelectScene != -1)
 	{
-		return new SceneResult();
+		if (m_resultSelectScene == 0)
+		{
+			return new SceneMain();
+		}
+		else if (m_resultSelectScene == 1)
+		{
+			return new SceneTitle();
+		}
+		else if (m_resultSelectScene == 2)
+		{
+			return new SceneDebug();
+		}
 	}
-	if (Pad::IsTrigger(PAD_INPUT_3))
-	{
-		return new SceneTitle();
-	}
+
 
 	return this;
 }
@@ -106,6 +133,21 @@ void SceneDebug::Draw()
 	//}
 
 //	DrawExtendGraph(1000,100,300,300,m_handle.back(), false);
+
+	DrawFormatString(100, 100, 0xff0000, "%d", m_selectScene);
+
+	if (m_selectScene == 0)
+	{
+		DrawFormatString(100, 120, 0xff0000, "new SceneMain()");
+	}
+	if (m_selectScene == 1)
+	{
+		DrawFormatString(100, 120, 0xff0000, "new SceneTitle()");
+	}
+	if (m_selectScene == 2)
+	{
+		DrawFormatString(100, 120, 0xff0000, "new SceneDebug()");
+	}
 
 #if _DEBUG
 	DrawString(0, 0, "SceneDebug", 0xffffff);

@@ -23,6 +23,7 @@ protected:
 	virtual void Idle();
 	// 攻撃
 	virtual void Attack();
+	virtual void AttackTwo();
 	// 強攻撃
 	virtual void StrongAttack();
 	// 防御
@@ -220,6 +221,9 @@ protected:
 
 	// キャラクター全てのパラメーター
 	CharacterParameter m_parameter;
+
+	// コンボ技用
+	int m_comboAttack;
 
 
 	// ここは使わない
