@@ -264,7 +264,7 @@ void CharacterBase::Attack()
 	m_battleState = BattleState::ATTACK;
 
 	// •Ší‚ÌŠp“x‚ğ•Ï‚¦‚é
-	if (test2 < (180 + 90) * DX_PI / 180.0f)
+	if (test2 < (90 * 3) * DX_PI / 180.0f)
 	{
 		test2 += 00.2f;
 	}
@@ -321,8 +321,11 @@ void CharacterBase::Attack()
 //	UpdatePos();
 	if ((int)m_myId == 0)
 	{
-		printfDx("UŒ‚‡@\n");
+	//	printfDx("UŒ‚‡@\n");
+		printfDx("%f\n", test2);
 	}
+	
+
 }
 
 void CharacterBase::AttackTwo()
@@ -331,10 +334,11 @@ void CharacterBase::AttackTwo()
 	m_battleState = BattleState::ATTACK;
 
 	// •Ší‚ÌŠp“x‚ğ•Ï‚¦‚é
-	if (test2 > 90 * DX_PI / 180.0f)
+	if (test2 < 90 * DX_PI / 180.0f)
 	{
-		test2 -= 00.2f;
+		test2 += 00.2f;
 	}
+	
 
 	if (m_attackFrame < m_parameter.attackFrameMax)
 	{
@@ -347,7 +351,7 @@ void CharacterBase::AttackTwo()
 	if ((test1 > 60 * 1) && (m_attackFrame == m_parameter.attackFrameMax))
 	{
 		test1 = 0.0f;
-//		test2 = 0.0f;
+		test2 = (90 * 3) * DX_PI / 180.0f;
 		m_pFunc = &CharacterBase::Idle;
 		m_attackFrame = 0;
 		m_attackGapFrame = 0;
@@ -368,7 +372,7 @@ void CharacterBase::AttackTwo()
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
 		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
-		MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
+		MV1SetRotationXYZ(m_weaponHandle, VGet((90 * 3) * DX_PI / 180.0f, m_angle + test2, 0));
 	}
 
 	{
@@ -380,7 +384,8 @@ void CharacterBase::AttackTwo()
 
 	if ((int)m_myId == 0)
 	{
-		printfDx("UŒ‚‡A\n");
+		//printfDx("UŒ‚‡A\n");
+		printfDx("%f\n", test2);
 	}
 }
 
