@@ -27,9 +27,11 @@ Enemy::Enemy(VECTOR pos) :
 	m_myId = CharacterName::ENEMYNORMAL;
 
 	// パラメーター調整
-	m_parameter.attackFrameMax = 5;
+	m_parameter.attackFrameMax = 5 * 9;
 	m_parameter.attackFrameGapMax = 30;
 	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
+
+	m_parameter.attackAfterStopFrameMax = 60;
 
 	m_parameter.strongAttackFrameMax = 5;
 	m_parameter.strongAttackFrameGapMax = 60;

@@ -172,6 +172,8 @@ private:
 	int m_stunFrame;     // スタン状態のフレーム
 	int m_recoilFrame;   // 攻撃を弾かれば場合のフレーム
 
+	int m_attackAfterStopFrame;// 攻撃後の硬直フレーム
+
 	// 攻撃用シーン繊維の移動が可能かどうか
 	int m_isSceneChange;
 
@@ -228,7 +230,7 @@ protected:
 	// コンボ技用
 	int m_comboAttack;
 
-
+public:
 	// ここは使わない
 
 	float test1 = 0.0f;
