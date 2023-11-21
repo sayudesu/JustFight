@@ -172,6 +172,9 @@ private:
 	int m_stunFrame;     // スタン状態のフレーム
 	int m_recoilFrame;   // 攻撃を弾かれば場合のフレーム
 
+	// 攻撃用シーン繊維の移動が可能かどうか
+	int m_isSceneChange;
+
 	// 敵からの攻撃をガードできたかどうか
 	bool m_isResultGuard;
 	bool m_isResultDamage;

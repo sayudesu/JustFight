@@ -35,6 +35,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_justGuardFrame(0),
 	m_stunFrame     (0),
 	m_recoilFrame   (0),
+	m_isSceneChange(false),
 	m_comboAttack   (0)
 {
 	// ƒƒ“ƒoŠÖ”‚Ì‰Šú
@@ -151,6 +152,8 @@ void CharacterBase::Idle()
 
 	SetFightingMeter(0.03f);
 
+	m_comboAttack = 0;
+
 	// •Ší‚ğŒ³‚ÌˆÊ’u‚É–ß‚·
 	{
 		bool isEndX = false;
@@ -237,7 +240,11 @@ void CharacterBase::Idle()
 	// •Ší‚ÌŠp“x‚ğ•Ï‚¦‚é
 	if (test2 > 0.0f)
 	{
-		test2 -= 00.2f * 2;
+		test2 -= 00.2f;
+	}
+	else
+	{
+		test2 = 0.0f;
 	}
 
 	
@@ -250,7 +257,7 @@ void CharacterBase::Idle()
 
 	{
 		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
+		move = VAdd(m_pos, move);	
 		MV1SetPosition(m_shieldHandle, move);
 		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
 	}
@@ -260,36 +267,60 @@ void CharacterBase::Idle()
 
 void CharacterBase::Attack()
 {
+	static int framecount = 0;
+	if ((int)m_myId == 0)
+	{
+		framecount++;
+		printfDx("%d", framecount);
+		printfDx("UŒ‚‡@ = %f\n", test2);
+	}
+
 	// Œ»İ‚Ìs“®‚ğ‹L˜^
 	m_battleState = BattleState::ATTACK;
 
 	// •Ší‚ÌŠp“x‚ğ•Ï‚¦‚é
 	if (test2 < (90 * 3) * DX_PI / 180.0f)
 	{
-		test2 += 00.2f;
+	//	test2 += 00.2f;
 	}
 	else
 	{
-		m_isAttack = false;
+		
 	}
+
 	
 
-	if (m_attackFrame < m_parameter.attackFrameMax)
+
+	if(!m_isSceneChange)
 	{
+		test2 = MoveByFrame(m_tempWeaponPos.z, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
-		m_attackFrame++;
+		if (m_attackFrame < m_parameter.attackFrameMax)
+		{
+			m_attackFrame++;
+		}
+		else
+		{
+			m_isSceneChange = true;
+			//	m_attackFrame = 0;
+		}		
 	}
-
-	test1++;
-	if ((test1 > 60 * 1) && (m_attackFrame == m_parameter.attackFrameMax))
+	
+	if (m_isSceneChange)
 	{	
-		m_comboAttack = 0;
-		test1 = 0.0f;
-//		test2 = 0.0f;
-		m_pFunc = &CharacterBase::Idle;
+		m_isAttack = false;
 		m_attackFrame = 0;
-		m_attackGapFrame = 0;
+		framecount = 0;
+		test1++;
+		if (test1 == 30)
+		{
+			test1 = 0;
+			m_isSceneChange = false;
+			m_attackGapFrame = 0;			
+			m_pFunc = &CharacterBase::Idle;
+		}
+//		test2 = 0.0f;
 
 		if (m_isWeaponAttacksShield)
 		{
@@ -319,42 +350,54 @@ void CharacterBase::Attack()
 
 	// ˆÊ’uî•ñ‚ÌXV
 //	UpdatePos();
-	if ((int)m_myId == 0)
-	{
-	//	printfDx("UŒ‚‡@\n");
-		printfDx("%f\n", test2);
-	}
-	
-
 }
 
 void CharacterBase::AttackTwo()
 {
+	static int framecount = 0;
+	if ((int)m_myId == 0)
+	{
+		framecount++;
+		printfDx("%d", framecount);
+		printfDx("UŒ‚‡A = %f\n", test2);
+	}
 	// Œ»İ‚Ìs“®‚ğ‹L˜^
 	m_battleState = BattleState::ATTACK;
 
 	// •Ší‚ÌŠp“x‚ğ•Ï‚¦‚é
 	if (test2 < 90 * DX_PI / 180.0f)
 	{
-		test2 += 00.2f;
+	//	test2 += 00.2f;
 	}
 	
-
-	if (m_attackFrame < m_parameter.attackFrameMax)
+	if (!m_isSceneChange)
 	{
+		test2 = MoveByFrame(m_tempWeaponPos.z, -(90) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -50.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
-		m_attackFrame++;
+		if (m_attackFrame < m_parameter.attackFrameMax)
+		{
+			m_attackFrame++;
+		}
+		else
+		{
+			m_isSceneChange = true;
+		}
 	}
 
-	test1++;
-	if ((test1 > 60 * 1) && (m_attackFrame == m_parameter.attackFrameMax))
+	if (m_isSceneChange)
 	{
-		test1 = 0.0f;
-		test2 = (90 * 3) * DX_PI / 180.0f;
-		m_pFunc = &CharacterBase::Idle;
+		framecount = 0;
+		test1++;
 		m_attackFrame = 0;
-		m_attackGapFrame = 0;
+		if (test1 == 30)
+		{
+			test1 = 0;
+			m_isAttack = false;
+			m_isSceneChange = false;
+			m_attackGapFrame = 0;
+			m_pFunc = &CharacterBase::Idle;
+		}
 
 		if (m_isWeaponAttacksShield)
 		{
@@ -381,19 +424,13 @@ void CharacterBase::AttackTwo()
 		MV1SetPosition(m_shieldHandle, move);
 		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
 	}
-
-	if ((int)m_myId == 0)
-	{
-		//printfDx("UŒ‚‡A\n");
-		printfDx("%f\n", test2);
-	}
 }
 
 void CharacterBase::StrongAttack()
 {
 	// Œ»İ‚Ìs“®‚ğ‹L˜^
 	m_battleState = BattleState::STRONGATTACK;
-
+#if false
 	int slideX = 0;
 	int slideY = 0;
 	int slideZ = 0;
@@ -433,10 +470,11 @@ void CharacterBase::StrongAttack()
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
-
+#endif	
+	m_pFunc = &CharacterBase::Idle;
 
 	// ˆÊ’uî•ñ‚ÌXV
-	UpdatePos(slideX, slideY, slideZ);
+//	UpdatePos(slideX, slideY, slideZ);
 }
 
 void CharacterBase::Guard()

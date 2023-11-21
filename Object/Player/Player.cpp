@@ -183,10 +183,12 @@ void Player::Input()
 				if (m_comboAttack == 1)
 				{
 					m_pFunc = &Player::Attack;
+					printfDx("11111\n");
 				}
 				else if (m_comboAttack == 2)
 				{
 					m_pFunc = &Player::AttackTwo;
+					printfDx("22222\n");
 					m_comboAttack = 0;
 				}
 			}
