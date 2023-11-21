@@ -35,6 +35,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_justGuardFrame(0),
 	m_stunFrame     (0),
 	m_recoilFrame   (0),
+	m_attackAfterStopFrame(0),
 	m_isSceneChange(false),
 	m_comboAttack   (0)
 {
@@ -240,14 +241,16 @@ void CharacterBase::Idle()
 	// 武器の角度を変える
 	if (test2 > 0.0f)
 	{
+		m_isAttack = true;
 		test2 -= 00.2f;
 	}
 	else
 	{
+		m_isAttack = false;
 		test2 = 0.0f;
 	}
 
-	
+	test3 = test2;
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
@@ -267,162 +270,142 @@ void CharacterBase::Idle()
 
 void CharacterBase::Attack()
 {
-	static int framecount = 0;
-	if ((int)m_myId == 0)
-	{
-		framecount++;
-		printfDx("%d", framecount);
-		printfDx("攻撃① = %f\n", test2);
-	}
-
 	// 現在の行動を記録
 	m_battleState = BattleState::ATTACK;
 
-	// 武器の角度を変える
-	if (test2 < (90 * 3) * DX_PI / 180.0f)
+	// 次のコンボ攻撃に切り替える
+	if (m_comboAttack == 2)
 	{
-	//	test2 += 00.2f;
+		test2 = -(90 * 3) * DX_PI / 180.0f;
+		test3 = test2;
+		// 攻撃を開始する
+		m_isAttack = true;
+		// 硬直状態用フレームをリセット
+		m_attackAfterStopFrame = 0;
+		// 攻撃フレームをリセット
+		m_attackFrame = 0;
+		// シーン遷移用
+		m_isSceneChange = false;
+		// 次の攻撃に移行する
+		m_pFunc = &CharacterBase::AttackTwo;
+		return;
 	}
-	else
+
+	// 武器動かす
+	if (!m_isSceneChange)
 	{
-		
-	}
-
-	
-
-
-	if(!m_isSceneChange)
-	{
-		test2 = MoveByFrame(m_tempWeaponPos.z, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
+		test2 = MoveByFrame(test3, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
-		if (m_attackFrame < m_parameter.attackFrameMax)
-		{
-			m_attackFrame++;
-		}
-		else
-		{
-			m_isSceneChange = true;
-			//	m_attackFrame = 0;
-		}		
+	}
+
+	// 攻撃時のフレームを乗算
+	m_attackFrame++;
+
+	// 最大フレームに到達したら
+	if (m_attackFrame == m_parameter.attackFrameMax)
+	{
+		m_isSceneChange = true;
 	}
 	
+	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
 	{	
+		// 攻撃していない
 		m_isAttack = false;
-		m_attackFrame = 0;
-		framecount = 0;
-		test1++;
-		if (test1 == 30)
+
+		// 攻撃後の硬直状態
+		m_attackAfterStopFrame++;
+		if (m_attackAfterStopFrame == m_parameter.attackAfterStopFrameMax)
 		{
-			test1 = 0;
+			// 硬直状態用フレームをリセット
+			m_attackAfterStopFrame = 0;			
+			// 攻撃フレームをリセット
+			m_attackFrame = 0;
+			// コンボ終了
+			m_comboAttack = 0;
+			// シーン遷移用
 			m_isSceneChange = false;
-			m_attackGapFrame = 0;			
+			// シーン繊維
 			m_pFunc = &CharacterBase::Idle;
 		}
-//		test2 = 0.0f;
 
-		if (m_isWeaponAttacksShield)
-		{
-			m_isWeaponAttacksShield = false;
-			m_pFunc = &CharacterBase::WeaponAttacksShield;
-		}
 	}
 
+	// スタン状態
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
 
+	// オブジェクトの状態
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
 		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
 		MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
 	}
-	
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
-	}
-
-	// 位置情報の更新
-//	UpdatePos();
 }
 
 void CharacterBase::AttackTwo()
 {
-	static int framecount = 0;
-	if ((int)m_myId == 0)
-	{
-		framecount++;
-		printfDx("%d", framecount);
-		printfDx("攻撃② = %f\n", test2);
-	}
 	// 現在の行動を記録
 	m_battleState = BattleState::ATTACK;
 
-	// 武器の角度を変える
-	if (test2 < 90 * DX_PI / 180.0f)
-	{
-	//	test2 += 00.2f;
-	}
-	
+	// 武器動かす
 	if (!m_isSceneChange)
 	{
-		test2 = MoveByFrame(m_tempWeaponPos.z, -(90) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
-		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -50.0f, m_attackFrame, m_parameter.attackFrameMax);
+		test2 = MoveByFrame(test3, -((90 * 5) * DX_PI / 180.0f), m_attackFrame, m_parameter.attackFrameMax);
+		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
-		if (m_attackFrame < m_parameter.attackFrameMax)
-		{
-			m_attackFrame++;
-		}
-		else
-		{
-			m_isSceneChange = true;
-		}
 	}
 
+	// 攻撃時のフレームを乗算
+	m_attackFrame++;
+
+	// 最大フレームに到達したら
+	if (m_attackFrame == m_parameter.attackFrameMax)
+	{
+		m_isSceneChange = true;
+	}
+
+	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
 	{
-		framecount = 0;
-		test1++;
-		m_attackFrame = 0;
-		if (test1 == 30)
+		// 攻撃後の硬直状態
+		m_attackAfterStopFrame++;
+		if (m_attackAfterStopFrame == m_parameter.attackAfterStopFrameMax)
 		{
-			test1 = 0;
+			test3 = 0;
+			// 攻撃終了
 			m_isAttack = false;
+			// 硬直状態用フレームをリセット
+			m_attackAfterStopFrame = 0;
+			// 攻撃フレームをリセット
+			m_attackFrame = 0;
+			// コンボ終了
+			m_comboAttack = 0;
+			// シーン遷移用
 			m_isSceneChange = false;
-			m_attackGapFrame = 0;
+			// シーン繊維
 			m_pFunc = &CharacterBase::Idle;
-		}
-
-		if (m_isWeaponAttacksShield)
-		{
-			m_isWeaponAttacksShield = false;
-			m_pFunc = &CharacterBase::WeaponAttacksShield;
 		}
 	}
 
+
+	// スタン状態
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
 
+	// オブジェクトの状態
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
 		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
-		MV1SetRotationXYZ(m_weaponHandle, VGet((90 * 3) * DX_PI / 180.0f, m_angle + test2, 0));
-	}
-
-	{
-		VECTOR move = VTransform(m_vecSield, m_rotMtx);
-		move = VAdd(m_pos, move);
-		MV1SetPosition(m_shieldHandle, move);
-		MV1SetRotationXYZ(m_shieldHandle, VGet(0, m_angle, 0));
+		MV1SetRotationXYZ(m_weaponHandle, VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
+	//	MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
 	}
 }
 
@@ -668,7 +651,7 @@ void CharacterBase::WeaponAttacksShield()
 
 float CharacterBase::MoveByFrame(const float relativePos, const float EndPos, const int nowFrame, const int maxFrame)
 {
-	// 位置 = 相対位置 + 向かいたい座標 - 相対位置 * 現在のフレーム / 最大フレーム　　
+	// 位置 = 相対位置 + (向かいたい座標 - 相対位置) * (現在のフレーム / 最大フレーム)　　
 	const float resultPos = relativePos + (EndPos - relativePos) * (float(nowFrame) / maxFrame);
 	return resultPos;
 }

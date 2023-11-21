@@ -8,6 +8,8 @@ const struct CharacterParameter
 	int attackFrameGapMax;// 攻撃予兆の最大フレーム
 	int attackRotalFrame; // 攻撃フレームの合計
 
+	int attackAfterStopFrameMax;// 攻撃後の硬直フレーム
+
 	int strongAttackFrameMax;   // 強攻撃最大フレーム
 	int strongAttackFrameGapMax;// 強攻撃予兆の最大フレーム
 	int strongAttackRotalFrame; // 強攻撃フレームの合計

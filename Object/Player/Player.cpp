@@ -36,9 +36,11 @@ Player::Player(VECTOR pos):
 	m_myId = CharacterName::PLAYER;
 
 	// パラメーター調整
-	m_parameter.attackFrameMax = 5;
+	m_parameter.attackFrameMax = 30;
 	m_parameter.attackFrameGapMax = 10;
 	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
+
+	m_parameter.attackAfterStopFrameMax = 60;
 
 	m_parameter.strongAttackFrameMax = 5;
 	m_parameter.strongAttackFrameGapMax = 60;
@@ -72,6 +74,15 @@ Player::~Player()
 
 void Player::Input()
 {
+	if (CheckHitKey(KEY_INPUT_N))
+	{
+		test2 += 0.1f;
+	}
+	if (CheckHitKey(KEY_INPUT_M))
+	{
+		test2 -= 0.1f;
+	}
+
 	DINPUT_JOYSTATE input;
 	// 入力状態を取得
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
@@ -93,7 +104,7 @@ void Player::Input()
 		const VECTOR direction = VSub(m_targetPos, m_pos);
 		m_angle = atan2f(-direction.x, -direction.z);
 	}
-
+	printfDx("%f\n", test2);
 	// angleを基底クラスに渡す
 	SetAngle(m_angle);
 	// プレイヤーの進行方向
@@ -183,13 +194,6 @@ void Player::Input()
 				if (m_comboAttack == 1)
 				{
 					m_pFunc = &Player::Attack;
-					printfDx("11111\n");
-				}
-				else if (m_comboAttack == 2)
-				{
-					m_pFunc = &Player::AttackTwo;
-					printfDx("22222\n");
-					m_comboAttack = 0;
 				}
 			}
 
