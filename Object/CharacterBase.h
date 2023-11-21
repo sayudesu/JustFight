@@ -140,7 +140,6 @@ public:
 private:
 	// 3Dモデルハンドル
 	int m_weaponHandle;
-	int m_shieldHandle;
 
 	// エフェクトハンドル
 	int m_effectHandle;
@@ -153,7 +152,6 @@ private:
 
 	// 装備
 	VECTOR m_vecWeapon;
-	VECTOR m_vecSield;
 
 	// 一時的な武器の位置
 	VECTOR m_tempWeaponPos;

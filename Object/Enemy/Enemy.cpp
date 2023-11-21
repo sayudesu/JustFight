@@ -85,7 +85,7 @@ void Enemy::Input()
 	MATRIX rotMtx = MGetRotY(m_delayFrameAngle.back());
 
 	SetRotMtx(rotMtx);
-
+#if false
 	if (!IsStun())
 	{
 		// ˆê’è‹——£‹ß‚Ã‚­‚Æƒ‰ƒ“ƒ_ƒ€‚Å¶‰EˆÚ“®‚ğn‚ß‚é
@@ -158,6 +158,7 @@ void Enemy::Input()
 	{
 		m_isGuard = false;
 	}
+#endif
 }
 
 void Enemy::MoveLeftAndRight(MATRIX mtxRot)

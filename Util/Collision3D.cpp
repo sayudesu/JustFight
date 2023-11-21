@@ -19,15 +19,17 @@ namespace Coll
 	//  const float del = sqrt(VSquareSize(vec));
 		const float del = VSize(vec);
 	//	const float del = VSquareSize(vec);
-
-	#if _DEBUG
-	//	DrawSphere3D(TempPos1, radius1, 20, 0x000000, 0x000000, false);
-	//	DrawSphere3D(TempPos2, radius2, 20, 0xffffff, 0x000000, false);
-	#endif	
+	
 		if (del < radius1 + radius2)
 		{
 			return true;
 		}
+
+#if _DEBUG
+	//	DrawSphere3D(TempPos1, radius1, 20, 0x000000, 0x000000, false);
+	//	DrawSphere3D(TempPos2, radius2, 20, 0xffffff, 0x000000, false);
+#endif	
+
 		return false;
 	}
 }
