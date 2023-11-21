@@ -267,7 +267,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shar
 
 	// ターゲットの位置を受け取る
 	chara2->SetTargetPos(chara1->GetPos());
-#if false
+#if true
 	// 攻撃フレームが最大数かどうか
 	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
 	{

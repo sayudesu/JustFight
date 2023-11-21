@@ -36,8 +36,8 @@ Player::Player(VECTOR pos):
 	m_myId = CharacterName::PLAYER;
 
 	// パラメーター調整
-	m_parameter.attackFrameMax = 30;
-	m_parameter.attackFrameGapMax = 10;
+	m_parameter.attackFrameMax = 20;
+	m_parameter.attackFrameGapMax = 0;
 	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
 
 	m_parameter.attackAfterStopFrameMax = 60;
@@ -104,7 +104,7 @@ void Player::Input()
 		const VECTOR direction = VSub(m_targetPos, m_pos);
 		m_angle = atan2f(-direction.x, -direction.z);
 	}
-	printfDx("%f\n", test2);
+
 	// angleを基底クラスに渡す
 	SetAngle(m_angle);
 	// プレイヤーの進行方向

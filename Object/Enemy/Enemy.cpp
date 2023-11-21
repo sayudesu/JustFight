@@ -28,7 +28,7 @@ Enemy::Enemy(VECTOR pos) :
 
 	// パラメーター調整
 	m_parameter.attackFrameMax = 5 * 9;
-	m_parameter.attackFrameGapMax = 30;
+	m_parameter.attackFrameGapMax = 0;
 	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
 
 	m_parameter.attackAfterStopFrameMax = 60;
@@ -142,12 +142,12 @@ void Enemy::Input()
 				m_isGuard = false;
 				m_isResultGuard = false;
 			}
-			if (m_isResultGuard && !m_isAttack)
-			{
-				m_isGuard = true;
-				guardFrameCount++;
-				m_pFunc = &Enemy::Guard;
-			}
+			//if (m_isResultGuard && !m_isAttack)
+			//{
+			//	m_isGuard = true;
+			//	guardFrameCount++;
+			//	m_pFunc = &Enemy::Guard;
+			//}
 		}
 		else
 		{
@@ -208,8 +208,8 @@ void Enemy::BattleType()
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-		m_isCheckAttack = true;
-		m_isAttackResult = true;
+	//	m_isCheckAttack = true;
+	//	m_isAttackResult = true;
 	}
 	// アイドル状態の場合
 	if (m_targetBattleState == BattleState::IDLE)

@@ -226,13 +226,6 @@ void CharacterBase::Idle()
 		m_pFunc = &CharacterBase::Winner;
 	}
 
-
-	if (m_isResultDamage)
-	{
-		m_isResultDamage = false;
-		m_hp--;
-	}
-
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
@@ -297,10 +290,9 @@ void CharacterBase::Attack()
 		test2 = MoveByFrame(test3, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+		// 攻撃時のフレームを乗算
+		m_attackFrame++;
 	}
-
-	// 攻撃時のフレームを乗算
-	m_attackFrame++;
 
 	// 最大フレームに到達したら
 	if (m_attackFrame == m_parameter.attackFrameMax)
@@ -358,10 +350,9 @@ void CharacterBase::AttackTwo()
 		test2 = MoveByFrame(test3, -((90 * 5) * DX_PI / 180.0f), m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+		// 攻撃時のフレームを乗算
+		m_attackFrame++;
 	}
-
-	// 攻撃時のフレームを乗算
-	m_attackFrame++;
 
 	// 最大フレームに到達したら
 	if (m_attackFrame == m_parameter.attackFrameMax)
@@ -851,6 +842,13 @@ void CharacterBase::SetAttackRange(const bool isRange)
 void CharacterBase::SetDamage(bool isDamage)
 {
 	m_isResultDamage = isDamage;
+
+	// ここは修正します
+	if (m_isResultDamage)
+	{
+		m_isResultDamage = false;
+		m_hp--;
+	}
 }
 
 void CharacterBase::SetGuard(bool isGuard)
