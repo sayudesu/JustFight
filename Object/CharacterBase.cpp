@@ -68,14 +68,34 @@ void CharacterBase::Init()
 	m_fightingMeter = m_parameter.fightingMeterMax;
 
 	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-	move = VAdd(m_pos, move);
+	m_weaponPos = VAdd(m_pos, move);
+
+
+	// オブジェクトの生成
+	m_my = new GameObject(
+		"Data/Model/Shield.mv1",
+		m_pos,
+		VGet(testV1.x, m_angle, testV1.z),
+		VGet(3.0f, 3.0f, 3.0f));
 
 	// 武器オブジェクトの生成
 	m_weapon = new GameObject(
 		"Data/Model/Sword.mv1",
-		move,
+		m_weaponPos,
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(3.0f, 3.0f, 3.0f));
+
+	// 
+	test = new GameObject(
+		"Data/Model/Shield.mv1",
+		VGet(100, m_weaponPos.y,100),
+		VGet(testV1.x, m_angle, testV1.z),
+		VGet(2.0f, 2.0f, 2.0f),
+		m_weapon);
+
+//	m_weapon->SetParentEscape(false);
+//	m_weapon->Update();
+//	m_weapon->Move(m_weaponPos);
 
 	// 位置情報の更新
 	UpdatePos();
@@ -84,8 +104,13 @@ void CharacterBase::Init()
 void CharacterBase::End()
 {
 	// 解放処理
+	delete m_my;
+	m_my = nullptr;
 	delete m_weapon;
 	m_weapon = nullptr;
+
+	delete test;
+	test = nullptr;
 }
 
 void CharacterBase::Update()
@@ -97,8 +122,11 @@ void CharacterBase::Draw()
 {
 	// 体
 	DrawCapsule3D(m_pos, VGet(m_pos.x, m_pos.y + 200.0f, m_pos.z), 40.0f, 8, 0x00ff00, 0xffffff, true);
+
 	// 武器
 	m_weapon->Draw();
+	m_my->Draw();
+	test->Draw();
 }
 
 void CharacterBase::TargetMove()
@@ -219,12 +247,19 @@ void CharacterBase::Idle()
 	test3 = test2;
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		m_weapon->Move(move);
-		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
+		m_weaponPos = VAdd(m_pos, move);
+		m_weapon->Move(m_weaponPos);
+		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
 	}
-	// 位置情報の更新
-//	UpdatePos();
+
+	m_my->Move(m_pos);
+	m_my->Rotate(VGet(0.0f, m_angle, 0.0f));
+
+	m_weapon->Update();
+	m_my->Update();
+
+	test->Rotate(VGet(0.0f, m_angle, 0.0f));
+	test->Update();
 }
 
 void CharacterBase::Attack()
@@ -299,10 +334,19 @@ void CharacterBase::Attack()
 	// オブジェクトの状態
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		m_weapon->Move(move);
+		m_weaponPos = VAdd(m_pos, move);
+		m_weapon->Move(m_weaponPos);
 		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
 	}
+
+	m_my->Move(m_pos);
+	m_my->Rotate(VGet(0.0f, m_angle, 0.0f));
+
+	m_weapon->Update();
+	m_my->Update();
+
+	test->Rotate(VGet(0.0f, m_angle, 0.0f));
+	test->Update();
 }
 
 void CharacterBase::AttackTwo()
@@ -358,10 +402,19 @@ void CharacterBase::AttackTwo()
 	// オブジェクトの状態
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		m_weapon->Move(move);
+		m_weaponPos = VAdd(m_pos, move);
+		m_weapon->Move(m_weaponPos);
 		m_weapon->Rotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
 	}
+
+	m_my->Move(m_pos);
+	m_my->Rotate(VGet(0.0f, m_angle, 0.0f));
+
+	m_weapon->Update();
+	m_my->Update();
+
+	test->Rotate(VGet(0.0f, m_angle, 0.0f));
+	test->Update();
 }
 
 void CharacterBase::StrongAttack()
@@ -435,32 +488,43 @@ void CharacterBase::StrongAttack()
 	}
 
 	// 最大フレームに到達したら
-	if (m_attackFrame == m_parameter.strongAttackFrameMax)
+	if (m_attackFrame == m_parameter.strongAttackFrameMax + 60 * 3)
 	{
 		m_isSceneChange = true;
+	}
+
+	// オブジェクトの状態
+	{
+		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+		m_weaponPos = VAdd(m_pos, move);
+		m_weapon->Move(m_weaponPos);
+
+		m_weapon->Rotate(VGet(m_angle - test1, m_angle, 0.0f));
+		m_weapon->Update();
 	}
 
 	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
 	{
+		test1 = 0.0f;
 		// 攻撃フレームをリセット
 		m_attackFrame = 0;
+		m_attackGapFrame = 0;
 		// シーン遷移用
 		m_isSceneChange = false;
 		// シーン繊維
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	// オブジェクトの状態
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		m_weapon->Move(move);
-		m_weapon->Rotate(VGet(
-			((0) * DX_PI / 180.0f),
-			(m_angle + (90 * 3) * DX_PI_F / 180.0f),
-			0.0f));
-	}
+	
+
+
+	m_my->Move(m_pos);
+	m_my->Rotate(VGet(0.0f,m_angle,0.0f));
+	m_my->Update();
+
+	test->Rotate(VGet(0.0f, m_angle, 0.0f));
+	test->Update();
 }
 
 void CharacterBase::Guard()

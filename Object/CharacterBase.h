@@ -152,6 +152,7 @@ private:
 
 	// 装備
 	VECTOR m_vecWeapon;
+	VECTOR m_weaponPos;
 
 	// 一時的な武器の位置
 	VECTOR m_tempWeaponPos;
@@ -195,6 +196,8 @@ private:
 	BattleState m_battleState;
 
 	GameObject* m_weapon;
+	GameObject* m_my;
+	GameObject* test;
 protected:
 	
 	// メンバ関数ポインタ
@@ -213,6 +216,8 @@ protected:
 	bool m_isStrongAttack;
 	bool m_isGuard;
 	bool m_isJustGuard;
+
+	float pitchAngle = 0.0f;
 
 	// 回避
 	bool m_isAway;
