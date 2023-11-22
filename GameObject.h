@@ -1,56 +1,107 @@
 #pragma once
 #include <DxLib.h>
 #include <string>
+#include <cmath>
+
 #include "Util/MyLoadModel.h";
 
 class GameObject
 {
 public:
     /// <summary>
-    /// オブジェクトを作る為に初期情報を指定します
+    /// 
     /// </summary>
     /// <param name="name"></param>
     /// <param name="pos"></param>
     /// <param name="angle"></param>
     /// <param name="size"></param>
-    GameObject(std::string name, VECTOR pos, VECTOR angle, VECTOR size) :
-        name(name), m_pos(pos), m_angle(angle), m_size(size)
+    /// <param name="parent"></param>
+    GameObject(const TCHAR* name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
+        m_pos(pos), m_angle(angle), parent(parent)
     {
-        m_handle = MyModel3D::Load(name.c_str());
+        m_handle = MV1LoadModel(name);
         MV1SetScale(m_handle, size);
     }
     ~GameObject()
     {
-        MyModel3D::End(m_handle);
+        MV1DeleteModel(m_handle);
     }
 
-    void Move(VECTOR pos) 
+    void Update()
+    {
+        VECTOR relativePos = m_pos;
+        if (parent != nullptr && (!m_isParentEscape))
+        {
+            // 親オブジェクトが存在する場合、親の座標と角度に基づいて相対的な位置を計算
+            MATRIX rotationMatrixX = MGetRotX(m_angle.x);
+            MATRIX rotationMatrixY = MGetRotY(m_angle.y);
+            MATRIX rotationMatrixZ = MGetRotZ(m_angle.z);
+
+            // 回転行列を順番に掛けて相対的な位置を計算
+            MATRIX combinedRotationMatrix = MMult(MMult(rotationMatrixX, rotationMatrixY), rotationMatrixZ);
+            relativePos = VTransform(relativePos, combinedRotationMatrix);
+
+            relativePos = VAdd(relativePos, parent->GetPos());
+
+            // 親オブジェクトが存在する場合、親の座標に基づいて相対的な位置を計算
+            relativePos = VSub(m_pos, parent->GetPos());
+            relativePos = VTransform(m_pos, MMult(MMult(MGetRotX(parent->GetAngle().x), MGetRotY(parent->GetAngle().y)), MGetRotZ(parent->GetAngle().z)));
+            m_childPos = VAdd(relativePos, parent->GetPos());
+
+        }
+
+        MV1SetPosition(m_handle, m_pos);
+        MV1SetRotationXYZ(m_handle, m_angle);
+        m_tempPos = m_pos;
+        if (parent != nullptr && (!m_isParentEscape))
+        {
+            MV1SetPosition(m_handle, m_childPos);
+            m_tempPos = m_childPos;
+        }
+    }
+
+    void Draw()
+    {
+        MV1SetRotationXYZ(m_handle, m_angle);
+        DrawSphere3D(m_tempPos, 32.0f, 16, GetColor(255, 0, 0), GetColor(128, 0, 0), TRUE);
+        MV1DrawModel(m_handle);
+    }
+
+    void Move(VECTOR pos)
     {
         m_pos = pos;
-        MV1SetPosition(m_handle, m_pos);
     }
 
     void Rotate(VECTOR angle)
     {
         m_angle = angle;
-        MV1SetRotationXYZ(m_handle, m_angle);
     }
 
-    void Draw()
+    VECTOR GetPos()
     {
+        return m_pos;
+    }
 
-        DrawFormatString(10, 10, GetColor(255, 255, 255),
-            "%s: X=%.2f, Y=%.2f, Z=%.2f, AngleX=%.2f, AngleY=%.2f, AngleZ=%.2f",
-            name.c_str(), m_pos.x, m_pos.y, m_pos.z, m_angle.x, m_angle.y, m_angle.z);
+    VECTOR GetAngle()
+    {
+        return m_angle;
+    }
 
-        MV1DrawModel(m_handle);
+    void SetParentEscape(bool isEscape)
+    {
+        m_isParentEscape = isEscape;
     }
 
 private:
-    std::string name;
-    int m_handle;
-    VECTOR m_pos;
-    VECTOR m_angle;
-    VECTOR m_size;
+    std::string name = {};
+    int m_handle = -1;
+    VECTOR m_pos = { 0,0,0 };
+    VECTOR m_childPos = { 0,0,0 };
+    VECTOR m_tempPos = { 0,0,0 };
+    VECTOR angle = { 0,0,0 };
+    VECTOR m_angle = { 0,0,0 };
+    VECTOR m_size = {0,0,0};
+    GameObject* parent = nullptr;
+    bool m_isParentEscape = false;
 };
 
