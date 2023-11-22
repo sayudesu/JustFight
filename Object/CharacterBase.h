@@ -4,6 +4,9 @@
 #include "../Util/BattleState.h"
 #include "../Util/CharacterParameter.h"
 
+// ゲームオブジェクト
+class GameObject;
+
 // キャラクター専用基底クラス
 class CharacterBase
 {
@@ -138,9 +141,6 @@ public:
 	void SetCollGuardEffect    ();// 通常防御
 	void SetCollJustGuardEffect();// ジャストガード
 private:
-	// 3Dモデルハンドル
-	int m_weaponHandle;
-
 	// エフェクトハンドル
 	int m_effectHandle;
 
@@ -193,7 +193,10 @@ private:
 
 	// 現在の行動を記録
 	BattleState m_battleState;
+
+	GameObject* m_weapon;
 protected:
+	
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
 

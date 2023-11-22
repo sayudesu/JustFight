@@ -2,10 +2,10 @@
 #include "../Util/MyLoadModel.h"
 #include <cmath>
 #include "../Util/EffekseerDrawer.h"
+#include "../GameObject.h"
 
 CharacterBase::CharacterBase(VECTOR pos):
 	m_pFunc(nullptr),
-	m_weaponHandle(-1),
 	m_effectHandle(-1),
 	m_rotMtx({}),
 	m_targetRotMtx({}),
@@ -57,33 +57,35 @@ CharacterBase::~CharacterBase()
 
 void CharacterBase::Init()
 {
-	// モデルのロード
-//	m_weaponHandle  = MyModel3D::Load("Data/Model/Lance2.mv1");
-	m_weaponHandle  = MyModel3D::Load("Data/Model/Sword.mv1");
-
 	// モデルの相対位置
 	m_vecWeapon = m_parameter.weaponRelativePos;
-
-	// 位置情報の更新
-	UpdatePos();
-
-	// モデルのサイズ調整
-	MV1SetScale(m_weaponHandle, VGet(3.0f, 3.0f, 3.0f));
 
 	// モデルの角度
 	testV1.z = 90 * DX_PI_F / 180.0f;
 
-	MV1SetRotationXYZ(m_weaponHandle, VGet(testV1.x, m_angle, testV1.z));
-
 	m_hp = m_parameter.hpMax;
 	m_vec = m_parameter.knockBackPos;
 	m_fightingMeter = m_parameter.fightingMeterMax;
+
+	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+	move = VAdd(m_pos, move);
+
+	// 武器オブジェクトの生成
+	m_weapon = new GameObject(
+		"Data/Model/Sword.mv1",
+		move,
+		VGet(testV1.x, m_angle, testV1.z),
+		VGet(3.0f, 3.0f, 3.0f));
+
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::End()
 {
 	// 解放処理
-	MyModel3D::End(m_weaponHandle);
+	delete m_weapon;
+	m_weapon = nullptr;
 }
 
 void CharacterBase::Update()
@@ -96,7 +98,7 @@ void CharacterBase::Draw()
 	// 体
 	DrawCapsule3D(m_pos, VGet(m_pos.x, m_pos.y + 200.0f, m_pos.z), 40.0f, 8, 0x00ff00, 0xffffff, true);
 	// 武器
-	MV1DrawModel(m_weaponHandle);
+	m_weapon->Draw();
 }
 
 void CharacterBase::TargetMove()
@@ -218,8 +220,8 @@ void CharacterBase::Idle()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
-		MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
+		m_weapon->Move(move);
+		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
 	}
 	// 位置情報の更新
 //	UpdatePos();
@@ -298,8 +300,8 @@ void CharacterBase::Attack()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
-		MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
+		m_weapon->Move(move);
+		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
 	}
 }
 
@@ -357,8 +359,8 @@ void CharacterBase::AttackTwo()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, VGet(move.x, move.y, move.z));
-		MV1SetRotationXYZ(m_weaponHandle, VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
+		m_weapon->Move(move);
+		m_weapon->Rotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
 	}
 }
 
@@ -453,8 +455,8 @@ void CharacterBase::StrongAttack()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, VGet(move.x + GetRand(6), move.y + GetRand(6), move.z + GetRand(6)));
-		MV1SetRotationXYZ(m_weaponHandle, VGet(
+		m_weapon->Move(move);
+		m_weapon->Rotate(VGet(
 			((0) * DX_PI / 180.0f),
 			(m_angle + (90 * 3) * DX_PI_F / 180.0f),
 			0.0f));
@@ -563,7 +565,7 @@ void CharacterBase::Winner()
 	// 位置情報の更新
 	UpdatePos();
 
-	MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
+	m_weapon->Move(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
 }
 
 void CharacterBase::Losers()
@@ -582,7 +584,7 @@ void CharacterBase::Losers()
 		}
 		Wpos.y += m_jumpAcc;
 
-		MV1SetPosition(m_weaponHandle, Wpos);
+		m_weapon->Move(Wpos);
 	}
 }
 
@@ -591,8 +593,8 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		move = VAdd(m_pos, move);
-		MV1SetPosition(m_weaponHandle, VGet(move.x + shiftX, move.y + shiftY, move.z + shiftZ));
-		MV1SetRotationXYZ(m_weaponHandle, VGet(90 * DX_PI / 180.0f, m_angle , 0));
+		m_weapon->Move(move);
+		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle, 0));
 	}
 }
 

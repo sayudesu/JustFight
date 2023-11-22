@@ -65,7 +65,7 @@ SceneBase* SceneMain::Update()
 	// キャラクター攻撃判定処理
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
-
+	
 	// カメラの更新処理
 	m_pCamera->Update();
 
