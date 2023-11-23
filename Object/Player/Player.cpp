@@ -35,16 +35,17 @@ Player::Player(VECTOR pos):
 	// 自身がプレイヤーであると決める
 	m_myId = CharacterName::PLAYER;
 
+	m_parameter.fileName = "Data/Model/Knight_W.mv1";
 	// パラメーター調整
 	m_parameter.attackFrameMax = 20;
 	m_parameter.attackFrameGapMax = 0;
-	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
+	m_parameter.attackTotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
 
 	m_parameter.attackAfterStopFrameMax = 60;
 
 	m_parameter.strongAttackFrameMax = 5;
 	m_parameter.strongAttackFrameGapMax = 60;
-	m_parameter.strongAttackRotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
+	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
 
 	m_parameter.guardFrameMax = 20;
 	m_parameter.justGuardFrameMax = 15;
@@ -55,17 +56,17 @@ Player::Player(VECTOR pos):
 	m_parameter.fightingMeterMax = 100.0f;
 
 	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
-	m_parameter.sieldRelativePos = { 100.0f, 100.0f, -50.0f };
+	m_parameter.shieldRelativePos = { 100.0f, 100.0f, -50.0f };
 
 	m_parameter.weaponAttackRadius = 100.0f;
-	m_parameter.sieldRadius = 50.0f;
+	m_parameter.shieldRadius = 50.0f;
 	m_parameter.modelRadius = 180.0f;
 
 	m_parameter.weaponAttackPos = { 0.0f, 0.0f, -210.0f };
 	m_parameter.knockBackPos = { 0.0f,0.0f ,-20.0f };
 
 	m_parameter.weaponBackSpeed = 30.0f;
-	m_parameter.sieldBackSpeed = 30.0f;
+	m_parameter.shieldBackSpeed = 30.0f;
 }
 
 Player::~Player()

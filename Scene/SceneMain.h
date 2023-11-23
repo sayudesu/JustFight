@@ -32,7 +32,7 @@ private:
 	// •Ší‚Æ‘Ì‚Ì”»’è
 	bool CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// •Ší‚Æ‚‚Ì”»’è
-	bool CheckWeaponAndSieldHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
+	bool CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// •Ší‚Æ‘Ì”ÍˆÍ‚Ì”»’è
 	bool CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// ‘Ì”ÍˆÍ‚Æ‘Ì”ÍˆÍ‚Ì”»’è

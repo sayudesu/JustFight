@@ -13,6 +13,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_pos(pos),
 	m_targetPos    (VGet(0,0,0)),
 	m_vecWeapon    (VGet(0, 0, 0)),
+	m_vecShield    (VGet(0, 0, 0)),
 	m_tempWeaponPos(VGet(0, 0, 0)),
 	m_tempFightingMeter(0),
 	m_angle         (0.0f),
@@ -46,6 +47,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	// 現在の行動を記録
 	m_battleState       = BattleState::NONE;// 自身
 	m_targetBattleState = BattleState::NONE;// ターゲット
+	m_tempTargetBattleState = BattleState::NONE;// ターゲット
 	
 	// 自身のパラーメーター
 	m_parameter = {};
@@ -59,7 +61,7 @@ void CharacterBase::Init()
 {
 	// モデルの相対位置
 	m_vecWeapon = m_parameter.weaponRelativePos;
-
+	m_vecShield = m_parameter.shieldRelativePos;
 	// モデルの角度
 	testV1.z = 90 * DX_PI_F / 180.0f;
 
@@ -70,18 +72,24 @@ void CharacterBase::Init()
 	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 	m_weaponPos = VAdd(m_pos, move);
 
-
 	// オブジェクトの生成
 	m_my = new GameObject(
-		"Data/Model/Shield.mv1",
+		m_parameter.fileName.c_str(),
 		m_pos,
 		VGet(testV1.x, m_angle, testV1.z),
-		VGet(3.0f, 3.0f, 3.0f));
+		VGet(40.0f, 40.0f, 40.0f));
 
 	// 武器オブジェクトの生成
 	m_weapon = new GameObject(
-		"Data/Model/Sword.mv1",
+		"Data/Model/SwordCollTest.mv1",
 		m_weaponPos,
+		VGet(testV1.x, m_angle, testV1.z),
+		VGet(3.0f, 3.0f, 3.0f));
+
+	// 盾オブジェクトの生成
+	m_shield = new GameObject(
+		"Data/Model/Shield.mv1",
+		VGet(100, m_weaponPos.y, 100),
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(3.0f, 3.0f, 3.0f));
 
@@ -97,6 +105,7 @@ void CharacterBase::Init()
 //	m_weapon->Update();
 //	m_weapon->Move(m_weaponPos);
 
+
 	// 位置情報の更新
 	UpdatePos();
 }
@@ -108,6 +117,8 @@ void CharacterBase::End()
 	m_my = nullptr;
 	delete m_weapon;
 	m_weapon = nullptr;
+	delete m_shield;
+	m_shield = nullptr;
 
 	delete test;
 	test = nullptr;
@@ -120,12 +131,12 @@ void CharacterBase::Update()
 
 void CharacterBase::Draw()
 {
-	// 体
-	DrawCapsule3D(m_pos, VGet(m_pos.x, m_pos.y + 200.0f, m_pos.z), 40.0f, 8, 0x00ff00, 0xffffff, true);
-
-	// 武器
-	m_weapon->Draw();
+	// キャラクターモデル
 	m_my->Draw();
+	// 武器モデル
+	m_weapon->Draw();
+	// 盾モデル
+	m_shield->Draw();
 	test->Draw();
 }
 
@@ -216,6 +227,27 @@ void CharacterBase::Idle()
 		}
 	}
 
+	// 盾を元の位置に戻す
+	{
+		if (m_vecShield.x < m_parameter.shieldRelativePos.x)
+		{
+			m_vecShield.x += 30.0f;
+		}
+		else
+		{
+			m_vecShield.x = m_parameter.shieldRelativePos.x;
+		}
+
+		if (m_vecShield.y < m_parameter.shieldRelativePos.y)
+		{
+			m_vecShield.y -= 30.0f;
+		}
+		else
+		{
+			m_vecShield.y = m_parameter.shieldRelativePos.y;
+		}
+	}
+
 	if (m_hp == 0)
 	{
 		m_pFunc = &CharacterBase::Losers;
@@ -236,7 +268,7 @@ void CharacterBase::Idle()
 	if (test2 > 0.0f)
 	{
 		m_isAttack = true;
-		test2 -= 00.2f;
+		test2 -= 00.5f;
 	}
 	else
 	{
@@ -245,21 +277,19 @@ void CharacterBase::Idle()
 	}
 
 	test3 = test2;
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->Move(m_weaponPos);
-		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
-	}
 
 	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle, 0.0f));
-
-	m_weapon->Update();
+	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	test->Rotate(VGet(0.0f, m_angle, 0.0f));
 	test->Update();
+
+	// 現在のHPを調整
+	HitPoint();
+
+	// 位置情報の更新
+	UpdatePos();
 }
 
 void CharacterBase::Attack()
@@ -331,18 +361,13 @@ void CharacterBase::Attack()
 		m_pFunc = &CharacterBase::Stun;
 	}
 
-	// オブジェクトの状態
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->Move(m_weaponPos);
-		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0));
-	}
+	// 現在のHPを調整
+	HitPoint();
+	// 位置情報の更新
+	UpdatePos();
 
 	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle, 0.0f));
-
-	m_weapon->Update();
+	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	test->Rotate(VGet(0.0f, m_angle, 0.0f));
@@ -352,7 +377,7 @@ void CharacterBase::Attack()
 void CharacterBase::AttackTwo()
 {
 	// 現在の行動を記録
-	m_battleState = BattleState::ATTACK;
+	m_battleState = BattleState::ATTACKTWO;
 
 	// 武器動かす
 	if (!m_isSceneChange)
@@ -393,24 +418,33 @@ void CharacterBase::AttackTwo()
 		}
 	}
 
+	// 現在のHPを調整
+	HitPoint();
 	// スタン状態
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
 
-	// オブジェクトの状態
+	// 武器
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
 		m_weapon->Move(m_weaponPos);
 		m_weapon->Rotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
+		m_weapon->Update();
+	}
+	// 盾
+	{
+		VECTOR move = VTransform(m_vecShield, m_rotMtx);
+		move = VAdd(m_pos, move);
+		m_shield->Move(move);
+		m_shield->Rotate(VGet(0, m_angle, 0));
+		m_shield->Update();
 	}
 
 	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle, 0.0f));
-
-	m_weapon->Update();
+	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	test->Rotate(VGet(0.0f, m_angle, 0.0f));
@@ -493,15 +527,16 @@ void CharacterBase::StrongAttack()
 		m_isSceneChange = true;
 	}
 
-	// オブジェクトの状態
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->Move(m_weaponPos);
+	//// オブジェクトの状態
+	//{
+	//	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+	//	m_weaponPos = VAdd(m_pos, move);
+	//	m_weapon->Move(m_weaponPos);
 
-		m_weapon->Rotate(VGet(m_angle - test1, m_angle, 0.0f));
-		m_weapon->Update();
-	}
+	//	m_weapon->Rotate(VGet(m_angle - test1, m_angle, 0.0f));
+	//	m_weapon->Update();
+	//}
+
 
 	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
@@ -516,11 +551,12 @@ void CharacterBase::StrongAttack()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	
-
+	// 現在のHPを調整
+	HitPoint();
+	UpdatePos();
 
 	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f,m_angle,0.0f));
+	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	test->Rotate(VGet(0.0f, m_angle, 0.0f));
@@ -535,7 +571,7 @@ void CharacterBase::Guard()
 	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < m_parameter.guardFrameMax )
 	{
-		
+		m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 0.0f, m_guardFrame, m_parameter.guardFrameMax);
 		m_guardFrame++;
 
 		// ジャストガードのフレーム
@@ -549,7 +585,7 @@ void CharacterBase::Guard()
 	else
 	{
 		m_guardFrame = m_parameter.guardFrameMax ;
-
+		m_vecShield.x = 0.0f;
 	}
 
 	// ガードが成功したら
@@ -564,7 +600,7 @@ void CharacterBase::Guard()
 		}
 		else
 		{
-			m_vec = m_parameter.knockBackPos;
+			m_vec.z = m_vecKnockBack;
 			m_isResultGuard = false;
 		}
 	}
@@ -581,9 +617,14 @@ void CharacterBase::Guard()
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
-
+	// 現在のHPを調整
+	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
+
+	m_my->Move(m_pos);
+	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_my->Update();
 }
 
 void CharacterBase::JustGuard()
@@ -613,7 +654,7 @@ void CharacterBase::Stun()
 	m_guardFrame     = 0;
 	m_justGuardFrame = 0;
 
-	if (m_parameter.stunFrameMax < m_stunFrame)
+	if (/*m_parameter.stunFrameMax*/1 < m_stunFrame)
 	{
 		m_stunFrame = 0;
 		m_isStun = false;
@@ -652,14 +693,44 @@ void CharacterBase::Losers()
 	}
 }
 
+void CharacterBase::HitPoint()
+{
+	// 攻撃を受けたら
+	if (m_isResultDamage)
+	{
+		// 現在の攻撃と前回の攻撃が違う場合
+		if (m_targetBattleState != m_tempTargetBattleState)
+		{
+			// 体力を減らす
+			m_hp--;
+		}
+
+		// 一時的に最後の攻撃の種類を取得
+		m_tempTargetBattleState = m_targetBattleState;
+
+		// 攻撃を無効化
+		m_isResultDamage = false;
+	}
+}
+
 void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
+	// 武器
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		m_weapon->Move(move);
-		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle, 0));
+		m_weaponPos = VAdd(m_pos, move);
+		m_weapon->Move(m_weaponPos);
+		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
+		m_weapon->Update();
 	}
+	// 盾
+	{
+		VECTOR move = VTransform(m_vecShield, m_rotMtx);
+		move = VAdd(m_pos, move);
+		m_shield->Move(move);
+		m_shield->Rotate(VGet(0, m_angle, 0));
+		m_shield->Update();
+	}	
 }
 
 void CharacterBase::WeaponAttacksShield()
@@ -707,19 +778,21 @@ VECTOR CharacterBase::GetPos()const
 	return m_pos;
 }
 
-VECTOR CharacterBase::GetWeaponPos() const
+VECTOR CharacterBase::GetCollPos() const
 {
-	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-	move = VAdd(m_pos, move);
-	return move;
+	return VGet(m_pos.x, m_pos.y + 100.0f, m_pos.z);
 }
 
-VECTOR CharacterBase::GetSieldPos() const
+VECTOR CharacterBase::GetCollWeaponPos() const
 {
-	/*VECTOR move = VTransform(m_vecSield, m_rotMtx);
+	return m_weapon->GetCollPos(3);
+}
+
+VECTOR CharacterBase::GetShieldPos() const
+{
+	VECTOR move = VTransform(m_vecShield, m_rotMtx);
 	move = VAdd(m_pos, move);
-	return move;*/
-	return VECTOR();
+	return move;
 }
 
 MATRIX CharacterBase::GetRot()const
@@ -747,14 +820,14 @@ VECTOR CharacterBase::GetWeaponAttackRelative() const
 	return m_parameter.weaponAttackPos;
 }
 
-float CharacterBase::GetSieldRadius() const
+float CharacterBase::GetShieldRadius() const
 {
-	return m_parameter.sieldRadius;
+	return m_parameter.shieldRadius;
 }
 
-VECTOR CharacterBase::GetSieldRelative() const
+VECTOR CharacterBase::GetShieldRelative() const
 {
-	return m_parameter.sieldRelativePos;
+	return m_parameter.shieldRelativePos;
 }
 
 void CharacterBase::SetTargetPos(VECTOR pos)
@@ -773,7 +846,7 @@ void CharacterBase::SetCollGuardEffect()
 	EffekseerDrawer::GetInstance().Play(
 		m_effectHandle, Id::Guard,
 		EffectPlayType::NORMAL,
-		GetSieldPos(),
+		GetShieldPos(),
 		VGet(1, 1, 1),
 		VGet(0, m_angle, 0));
 }
@@ -784,7 +857,7 @@ void CharacterBase::SetCollJustGuardEffect()
 	EffekseerDrawer::GetInstance().Play(
 		m_effectHandle, Id::JustGuard,
 		EffectPlayType::NORMAL,
-		VGet(GetSieldPos().x, GetSieldPos().y + 100.0f, GetSieldPos().z),
+		VGet(GetShieldPos().x, GetShieldPos().y + 100.0f, GetShieldPos().z),
 		VGet(1, 1, 1),
 		VGet(0, 0, 0));
 }
@@ -809,12 +882,12 @@ int CharacterBase::GetAttackFrameMax()const
 {
 	if (m_isAttack)
 	{
-		return m_parameter.attackRotalFrame;
+		return m_parameter.attackTotalFrame;
 	}
 
 	if (m_isStrongAttack)
 	{
-		return m_parameter.strongAttackRotalFrame ;
+		return m_parameter.strongAttackTotalFrame ;
 	}
 
 	return -1;
@@ -888,18 +961,12 @@ void CharacterBase::SetAttackRange(const bool isRange)
 void CharacterBase::SetDamage(bool isDamage)
 {
 	m_isResultDamage = isDamage;
-
-	// ここは修正します
-	if (m_isResultDamage)
-	{
-		m_isResultDamage = false;
-		m_hp--;
-	}
 }
 
-void CharacterBase::SetGuard(bool isGuard)
+void CharacterBase::SetGuardKnockBack(bool isGuard,float vec)
 {
 	m_isResultGuard = isGuard;
+	m_vecKnockBack = vec;
 }
 
 void CharacterBase::SetJustGuard(bool isJustGuard)

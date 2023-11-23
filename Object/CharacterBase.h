@@ -47,6 +47,9 @@ private:
 	virtual void Winner();
 	// 敗北した場合
 	virtual void Losers();
+
+	// 体力の調整
+	virtual void HitPoint();
 protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
@@ -63,8 +66,9 @@ public:
 
 	// 位置
 	VECTOR GetPos      ()const;// 自身
-	VECTOR GetWeaponPos()const;// 武器
-	VECTOR GetSieldPos ()const;// 盾
+	VECTOR GetCollPos      ()const;// 自身
+	VECTOR GetCollWeaponPos() const;
+	VECTOR GetShieldPos ()const;// 盾
 
 	// 角度
 	MATRIX GetRot ()const;// 行列
@@ -75,11 +79,11 @@ public:
 	
 	// 装備の判定用半径
 	float GetWeaponAttackRadius()const;
-	float GetSieldRadius()const;
+	float GetShieldRadius()const;
 
 	// 装備の相対位置
 	VECTOR GetWeaponAttackRelative()const;
-	VECTOR GetSieldRelative()const;
+	VECTOR GetShieldRelative()const;
 
 	// フレーム関係
 	int GetAttackFrame      ()const;// 現在の攻撃フレーム
@@ -106,7 +110,7 @@ public:
 	// 攻撃が盾に当たったかどうか
 	void SetWeaponAttacksShield(const bool isShieldHit);
 
-	// 現在の行動の情報を渡す
+	// 現在の行動の情報を受け取る
 	void SetBattleState(BattleState state);
 
 	// 相手の角度
@@ -119,7 +123,7 @@ public:
 	// 攻撃を受けたかどうか
 	void SetDamage(const bool isDamage);
 	// ガードが成功しかたどうか
-	void SetGuard(const bool isGuard);
+	void SetGuardKnockBack(bool isGuard, float vec);
 	// ジャストガードが成功したかどうか
 	void SetJustGuard(const bool isJustGuard);
 	// スタンをするかどうか
@@ -144,6 +148,9 @@ private:
 	// エフェクトハンドル
 	int m_effectHandle;
 
+	// ノックバック用ベクトル
+	float m_vecKnockBack;
+
 	// 角度
 	MATRIX m_rotMtx;
 	MATRIX m_targetRotMtx;
@@ -152,6 +159,7 @@ private:
 
 	// 装備
 	VECTOR m_vecWeapon;
+	VECTOR m_vecShield;
 	VECTOR m_weaponPos;
 
 	// 一時的な武器の位置
@@ -195,8 +203,9 @@ private:
 	// 現在の行動を記録
 	BattleState m_battleState;
 
-	GameObject* m_weapon;
 	GameObject* m_my;
+	GameObject* m_weapon;
+	GameObject* m_shield;
 	GameObject* test;
 protected:
 	
@@ -229,6 +238,7 @@ protected:
 
 	// ターゲットの行動を記録
 	BattleState m_targetBattleState;
+	BattleState m_tempTargetBattleState;
 
 	// キャラクター全てのパラメーター
 	CharacterParameter m_parameter;

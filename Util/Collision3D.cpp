@@ -3,18 +3,10 @@
 
 namespace Coll
 {
-	bool Coll::IsCheckHit(VECTOR pos1, VECTOR pos2, float radius1, float radius2,MATRIX rot1, MATRIX rot2, VECTOR relativePos1, VECTOR relativePos2)
+	bool Coll::IsCheckHit(VECTOR pos1, VECTOR pos2, float radius1, float radius2)
 	{
-		// 行列を使った座標変換
-		VECTOR TempPos1 = VTransform(relativePos1, rot1);
-		TempPos1 = VAdd(pos1, TempPos1);
-
-		// 行列を使った座標変換
-		VECTOR TempPos2 = VTransform(relativePos2, rot2);
-		TempPos2 = VAdd(pos2, TempPos2);
-
 		// ベクトルの減算
-		const VECTOR vec = VSub(TempPos1, TempPos2);
+		const VECTOR vec = VSub(pos1, pos2);
 		// ベクトルのサイズ
 	//  const float del = sqrt(VSquareSize(vec));
 		const float del = VSize(vec);
@@ -24,12 +16,10 @@ namespace Coll
 		{
 			return true;
 		}
-
 #if _DEBUG
-	//	DrawSphere3D(TempPos1, radius1, 20, 0x000000, 0x000000, false);
-	//	DrawSphere3D(TempPos2, radius2, 20, 0xffffff, 0x000000, false);
+		DrawSphere3D(pos1, radius1, 20, 0xffffff, 0xffffff, false);
+		DrawSphere3D(pos2, radius2, 20, 0xffffff, 0xffffff, false);
 #endif	
-
 		return false;
 	}
 }

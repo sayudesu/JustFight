@@ -61,39 +61,59 @@ public:
     }
 
     void Draw()
-    {
-        MV1SetRotationXYZ(m_handle, m_angle);
-        DrawSphere3D(m_tempPos, 32.0f, 16, GetColor(255, 0, 0), GetColor(128, 0, 0), TRUE);
-        MV1DrawModel(m_handle);
+    {       
+#if false
+       // メイン位置
+       DrawSphere3D(m_tempPos, 32.0f, 16, GetColor(0, 0, 255), GetColor(128, 0, 0), false);
+       DrawSphere3D(MV1GetFramePosition(m_handle, 3), 32.0f, 16, GetColor(255, 0, 0), GetColor(128, 0, 0), false);
+#endif
+       // 描画
+       MV1DrawModel(m_handle);  
+       
     }
 
+    // 位置を受け取る
     void Move(VECTOR pos)
     {
         m_pos = pos;
     }
 
+    // 角度を受け取る
     void Rotate(VECTOR angle)
     {
         m_angle = angle;
     }
 
+    // 位置を渡す
     VECTOR GetPos()
     {
         return m_pos;
     }
 
+    // 角度を渡す
     VECTOR GetAngle()
     {
         return m_angle;
     }
 
+    // モデルのフレームインデックスを受け取りその位置を返す
+    VECTOR GetCollPos(int modelFrameIndex)
+    {
+        return MV1GetFramePosition(m_handle, modelFrameIndex);
+    }
+
+    // 親クラスから抜け出す
     void SetParentEscape(bool isEscape)
     {
-        m_isParentEscape = isEscape;
+        if (parent != nullptr)
+        {
+            m_isParentEscape = isEscape;
+            return;
+        }
+        return;
     }
 
 private:
-    std::string name = {};
     int m_handle = -1;
     VECTOR m_pos = { 0,0,0 };
     VECTOR m_childPos = { 0,0,0 };

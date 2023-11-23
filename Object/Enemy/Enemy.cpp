@@ -26,16 +26,17 @@ Enemy::Enemy(VECTOR pos) :
 	// 自身がエネミーであると決める
 	m_myId = CharacterName::ENEMYNORMAL;
 
+	m_parameter.fileName = "Data/Model/Knight_B.mv1";
 	// パラメーター調整
-	m_parameter.attackFrameMax = 5 * 9;
+	m_parameter.attackFrameMax = 30;
 	m_parameter.attackFrameGapMax = 0;
-	m_parameter.attackRotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
+	m_parameter.attackTotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
 
 	m_parameter.attackAfterStopFrameMax = 60;
 
 	m_parameter.strongAttackFrameMax = 5;
 	m_parameter.strongAttackFrameGapMax = 60;
-	m_parameter.strongAttackRotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
+	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
 
 	m_parameter.guardFrameMax = 20;
 	m_parameter.justGuardFrameMax = 15;
@@ -46,17 +47,17 @@ Enemy::Enemy(VECTOR pos) :
 	m_parameter.fightingMeterMax = 100.0f;
 
 	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
-	m_parameter.sieldRelativePos = { 100.0f, 100.0f, -50.0f };
+	m_parameter.shieldRelativePos = { 100.0f, 100.0f, -50.0f };
 
 	m_parameter.weaponAttackRadius = 100.0f;
-	m_parameter.sieldRadius = 50.0f;
+	m_parameter.shieldRadius = 50.0f;
 	m_parameter.modelRadius = 180.0f;
 
 	m_parameter.weaponAttackPos = { 0.0f, 0.0f, -210.0f };
 	m_parameter.knockBackPos = { 0.0f,0.0f ,-20.0f };
 
 	m_parameter.weaponBackSpeed = 30.0f;
-	m_parameter.sieldBackSpeed = 30.0f;
+	m_parameter.shieldBackSpeed = 30.0f;
 }
 
 Enemy::~Enemy()
@@ -85,7 +86,7 @@ void Enemy::Input()
 	MATRIX rotMtx = MGetRotY(m_delayFrameAngle.back());
 
 	SetRotMtx(rotMtx);
-#if false
+#if true	
 	if (!IsStun())
 	{
 		// 一定距離近づくとランダムで左右移動を始める
@@ -142,12 +143,12 @@ void Enemy::Input()
 				m_isGuard = false;
 				m_isResultGuard = false;
 			}
-			//if (m_isResultGuard && !m_isAttack)
-			//{
-			//	m_isGuard = true;
-			//	guardFrameCount++;
-			//	m_pFunc = &Enemy::Guard;
-			//}
+			if (m_isResultGuard && !m_isAttack)
+			{
+				m_isGuard = true;
+				guardFrameCount++;
+				m_pFunc = &Enemy::Guard;
+			}
 		}
 		else
 		{
@@ -187,6 +188,7 @@ void Enemy::MoveLeftAndRight(MATRIX mtxRot)
 	{
 		moveType = -1;
 	}
+
 	const VECTOR move = VTransform(VGet(moveType * 10, 0, 0), mtxRot);
 	m_pos = VAdd(m_pos, move);
 }
@@ -209,8 +211,8 @@ void Enemy::BattleType()
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-	//	m_isCheckAttack = true;
-	//	m_isAttackResult = true;
+		m_isCheckAttack = true;
+		m_isAttackResult = true;
 	}
 	// アイドル状態の場合
 	if (m_targetBattleState == BattleState::IDLE)
