@@ -180,12 +180,13 @@ BattleState CharacterBase::GetBattleState()
 
 void CharacterBase::Idle()
 {
-	// 現在の行動を記録
-	m_battleState = BattleState::IDLE;
 
+	// 
 	SetFightingMeter(0.03f);
 
+	// コンボ初期化
 	m_comboAttack = 0;
+
 
 	// 武器を元の位置に戻す
 	{
@@ -248,21 +249,21 @@ void CharacterBase::Idle()
 		}
 	}
 
-	if (m_hp == 0)
-	{
-		m_pFunc = &CharacterBase::Losers;
-		m_vecWeapon.y = 100.0f;
-	}
+	//if (m_hp == 0)
+	//{
+	//	m_pFunc = &CharacterBase::Losers;
+	//	m_vecWeapon.y = 100.0f;
+	//}
 
-	if (m_targetHp == 0)
-	{
-		m_pFunc = &CharacterBase::Winner;
-	}
+	//if (m_targetHp == 0)
+	//{
+	//	m_pFunc = &CharacterBase::Winner;
+	//}
 
-	if (m_isStun)
-	{
-		m_pFunc = &CharacterBase::Stun;
-	}
+	//if (m_isStun)
+	//{
+	//	m_pFunc = &CharacterBase::Stun;
+	//}
 
 	// 武器の角度を変える
 	if (test2 > 0.0f)
@@ -273,7 +274,14 @@ void CharacterBase::Idle()
 	else
 	{
 		m_isAttack = false;
+		// 現在の行動を記録
+		m_battleState = BattleState::IDLE;
 		test2 = 0.0f;
+	}
+
+	if (m_targetBattleState == BattleState::IDLE)
+	{
+		m_tempTargetBattleState = BattleState::NONE;
 	}
 
 	test3 = test2;
@@ -420,6 +428,7 @@ void CharacterBase::AttackTwo()
 
 	// 現在のHPを調整
 	HitPoint();
+
 	// スタン状態
 	if (m_isStun)
 	{
@@ -592,15 +601,15 @@ void CharacterBase::Guard()
 	// 後ろにノックバック
 	if (m_isResultGuard)
 	{
-		if (m_vec.z < 0.0f)
+		if (m_vecKnockBack < 0.0f)
 		{			
-			m_vec.z += 1.0f;
-			VECTOR move = VTransform(m_vec, m_targetRotMtx);
+			m_vecKnockBack += 1.0f;
+			VECTOR move = VTransform(VGet(0, 0, m_vecKnockBack), m_targetRotMtx);
 			m_pos = VAdd(m_pos, move);
+			printfDx("%f\n", m_pos.z);
 		}
 		else
-		{
-			m_vec.z = m_vecKnockBack;
+		{			
 			m_isResultGuard = false;
 		}
 	}
@@ -621,10 +630,6 @@ void CharacterBase::Guard()
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
-
-	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
-	m_my->Update();
 }
 
 void CharacterBase::JustGuard()
@@ -703,10 +708,10 @@ void CharacterBase::HitPoint()
 		{
 			// 体力を減らす
 			m_hp--;
-		}
 
-		// 一時的に最後の攻撃の種類を取得
-		m_tempTargetBattleState = m_targetBattleState;
+			// 一時的に最後の攻撃の種類を取得
+			m_tempTargetBattleState = m_targetBattleState;
+		}
 
 		// 攻撃を無効化
 		m_isResultDamage = false;
@@ -731,29 +736,33 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 		m_shield->Rotate(VGet(0, m_angle, 0));
 		m_shield->Update();
 	}	
+
+	m_my->Move(m_pos);
+	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_my->Update();
 }
 
 void CharacterBase::WeaponAttacksShield()
 {
-	// 位置  =  相対位置　+ 向かいたい座標 - 相対位置　*　　現在のフレーム　/　最大フレーム　　
-//	m_vecSield.x = m_parameter.sieldRelativePos.x + (0.0f - m_parameter.sieldRelativePos.x) * (float(m_guardFrame) / m_parameter.guardFrameMax );
-	m_recoilFrame++;
-
-	if (m_recoilFrame < 30)
-	{
-		m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z,100.0f, m_recoilFrame, 30);
-		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.z,-100.0f, m_recoilFrame, 30);
-	}
-
-
-	if (m_recoilFrame > 30)
-	{
-		m_recoilFrame = 0;
-		m_pFunc = &CharacterBase::Idle;
-	}
-
-	// 位置情報の更新
-	UpdatePos();
+//	// 位置  =  相対位置　+ 向かいたい座標 - 相対位置　*　　現在のフレーム　/　最大フレーム　　
+////	m_vecSield.x = m_parameter.sieldRelativePos.x + (0.0f - m_parameter.sieldRelativePos.x) * (float(m_guardFrame) / m_parameter.guardFrameMax );
+//	m_recoilFrame++;
+//
+//	if (m_recoilFrame < 30)
+//	{
+//		m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z,100.0f, m_recoilFrame, 30);
+//		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.z,-100.0f, m_recoilFrame, 30);
+//	}
+//
+//
+//	if (m_recoilFrame > 30)
+//	{
+//		m_recoilFrame = 0;
+//		m_pFunc = &CharacterBase::Idle;
+//	}
+//
+//	// 位置情報の更新
+//	UpdatePos();
 }
 
 float CharacterBase::MoveByFrame(const float relativePos, const float EndPos, const int nowFrame, const int maxFrame)

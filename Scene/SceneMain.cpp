@@ -68,43 +68,53 @@ SceneBase* SceneMain::Update()
 		// プレイヤー更新処理
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Update();
 
-		// キャラクター攻撃判定処理
-		// プレイヤーが攻撃した場合
-		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState() == BattleState::ATTACK ||
-			m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState() == BattleState::ATTACKTWO)
-		{
-			UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
-				m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
-		}
+		//if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState() == BattleState::ATTACK ||
+		//	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState() == BattleState::ATTACKTWO)
+		//{
+		//}
+		UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
+			m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
 		// ターゲットのHPを取得
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->SetTargetHp(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp());
+		// ターゲットの位置を受け取る
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetPos());
 	}
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetBattleState(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState());
+	// ジャストガードOFF
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->SetJustGuard(false);
+
+
 	{
 		// プレイヤーの入力情報
 		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Input();
 		// プレイヤー更新処理
 		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Update();
 		// キャラクター攻撃判定処理
-	// プレイヤーが攻撃した場合
-		if (m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetBattleState() == BattleState::ATTACK ||
-			m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetBattleState() == BattleState::ATTACKTWO)
-		{
-			UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
-				m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
-		}
+		//if (m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetBattleState() == BattleState::ATTACK ||
+		//	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetBattleState() == BattleState::ATTACKTWO)
+		//{
+		//}
+		UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
+			m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 		// ターゲットのHPを取得
 		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetTargetHp(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp());
+		// ターゲットの位置を受け取る
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
 	}
+	// ターゲットの戦闘の状態を受け取る
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->SetBattleState(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetBattleState());
+	// ジャストガードOFF
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetJustGuard(false);
+
 
 	{
+#if false
 		static int frame = 0;
 		frame++;
 		printfDx("state = %d frame = %d\n",m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState(), frame);
+#endif
 	}
 	
-	// ターゲットの戦闘の状態を受け取る
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetBattleState(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetBattleState());
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->SetBattleState(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetBattleState());
 
 	// カメラの更新処理
 	m_pCamera->Update();
@@ -145,14 +155,14 @@ SceneBase* SceneMain::Update()
 
 	{
 #if true
-		CheckWeaponAndModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
-		CheckWeaponAndModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
+	//	CheckWeaponAndModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+	//	CheckWeaponAndModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 
-		CheckWeaponAndShieldHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
-		CheckWeaponAndShieldHIt(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
+	//	CheckWeaponAndShieldHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+	//	CheckWeaponAndShieldHIt(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 
-		CheckWeaponAndBodyHit(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
-		CheckWeaponAndBodyHit(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
+	//	CheckWeaponAndBodyHit(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+	//	CheckWeaponAndBodyHit(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
 #endif
 	}
 	
@@ -275,21 +285,17 @@ bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::s
 // 2が攻撃を受ける側
 void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
 {
-	// ジャストガードが成功したかどうか
-	chara2->SetJustGuard(false);
-
 	// 回転角度を取得
 	chara2->SetTargetMtxRota(chara1->GetRot());
 
-	// ターゲットの回転行列を受け取る
-	chara2->SetTargetMtxRota(chara1->GetRot());
+	//// ターゲットの回転行列を受け取る
+	//chara2->SetTargetMtxRota(chara1->GetRot());
 
 
-	// ターゲットの角度を受け取る
-	chara2->SetTargetRota(chara1->GetAngle());
+	//// ターゲットの角度を受け取る
+	//chara2->SetTargetRota(chara1->GetAngle());
 
-	// ターゲットの位置を受け取る
-	chara2->SetTargetPos(chara1->GetPos());
+
 #if true
 	// 攻撃フレームが最大数かどうか
 	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
@@ -321,19 +327,19 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shar
 	//	}
 	//}  
 
-	// 攻撃状態だったら
 
 	// 通常ガードが出来るかどうか
 	if (chara1->GetGuardFrame() == chara1->GetGuardFrameMax()) 
 	{
+		// 攻撃状態だったら
 		//攻撃が盾に当たったかどうか
-		if (CheckWeaponAndShieldHIt(chara1, chara2))
+		if (CheckWeaponAndShieldHIt(chara2, chara1))
 		{
 			// ガード成功したかどうか
-			chara1->SetGuardKnockBack(true,-20);
+			chara1->SetGuardKnockBack(true, -20);
 
 			// 戦いに必要な特殊なメーターを減らす
-			chara1->SetFightingMeter(-10.0f);
+		//	chara1->SetFightingMeter(-10.0f);
 
 			chara1->SetCollGuardEffect();
 
@@ -341,22 +347,24 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shar
 		}
 		return;
 	}
-	else
+	else if (chara1->GetBattleState() == BattleState::ATTACK ||
+		chara1->GetBattleState() == BattleState::ATTACKTWO)
 	{
 		// 攻撃が当たったかどうか
 		if (CheckWeaponAndBodyHit(chara1, chara2))
 		{
 			// ダメージを与える
-			chara1->SetDamage(true);
+			chara2->SetDamage(true);
 
 			// 戦いに必要な特殊なメーターを減らす
-			chara1->SetFightingMeter(-10.0f);
+		//	chara1->SetFightingMeter(-10.0f);
 
-			for (int i = 0; i < 30; i++)
+			for (int i = 0; i < 10; i++)
 			{
-				m_pBlood.push_back(new BloodDrawer(VGet(chara1->GetPos().x, chara1->GetPos().y + 100.0f, chara1->GetPos().z)));
+				m_pBlood.push_back(new BloodDrawer(VGet(chara2->GetPos().x, chara2->GetPos().y + 100.0f, chara2->GetPos().z)));
 				m_pBlood.back()->Init(i);
 			}
+
 			// 振動開始
 			StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
 		}
