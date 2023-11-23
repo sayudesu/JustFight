@@ -597,22 +597,6 @@ void CharacterBase::Guard()
 		m_vecShield.x = 0.0f;
 	}
 
-	// ガードが成功したら
-	// 後ろにノックバック
-	if (m_isResultGuard)
-	{
-		if (m_vecKnockBack < 0.0f)
-		{			
-			m_vecKnockBack += 1.0f;
-			VECTOR move = VTransform(VGet(0, 0, m_vecKnockBack), m_targetRotMtx);
-			m_pos = VAdd(m_pos, move);
-			printfDx("%f\n", m_pos.z);
-		}
-		else
-		{			
-			m_isResultGuard = false;
-		}
-	}
 
 	// ガードをやめた場合
 	if (!m_isGuard)
@@ -718,6 +702,26 @@ void CharacterBase::HitPoint()
 	}
 }
 
+void CharacterBase::KnockBack()
+{
+	// ガードが成功したら
+// 後ろにノックバック
+	if (m_isResultGuard)
+	{
+		if (m_vecKnockBack < 0.0f)
+		{
+			m_vecKnockBack += 1.0f;
+			VECTOR move = VTransform(VGet(0, 0, m_vecKnockBack), m_targetRotMtx);
+			m_pos = VAdd(m_pos, move);
+			printfDx("%f\n", m_pos.z);
+		}
+		else
+		{
+			m_isResultGuard = false;
+		}
+	}
+}
+
 void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
 	// 武器
@@ -740,6 +744,8 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 	m_my->Move(m_pos);
 	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
+
+	KnockBack();
 }
 
 void CharacterBase::WeaponAttacksShield()

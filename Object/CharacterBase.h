@@ -50,6 +50,9 @@ private:
 
 	// 体力の調整
 	virtual void HitPoint();
+	// ノックバック
+	virtual void KnockBack();
+
 protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
