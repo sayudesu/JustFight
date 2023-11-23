@@ -36,7 +36,7 @@ void SceneMain::Init()
 	m_pCamera               = std::make_unique<Camera>();							// カメラクラス
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
-	m_pField                = std::make_unique<FIeldDrawer>();			            // フィールド描画クラス
+	m_pField                = std::make_unique<FieldDrawer>();			            // フィールド描画クラス
 
 	// 初期化
 	m_pCamera->Init();
@@ -62,6 +62,8 @@ void SceneMain::End()
 
 SceneBase* SceneMain::Update()
 {
+	CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);
+	CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
 	{
 		// プレイヤーの入力情報
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Input();
@@ -237,90 +239,123 @@ void SceneMain::Draw()
 
 }
 
-bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
+bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
-		chara1->GetCollWeaponPos(), chara2->GetCollPos(),
-		chara1->GetWeaponAttackRadius(), chara2->GetWeaponAttackRadius()))
+		character1->GetCollWeaponPos(), character2->GetCollPos(),
+		character1->GetWeaponAttackRadius(), character2->GetWeaponAttackRadius()))
 	{
 		return true;
 	}
 	return false;
 }
 
-bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
+bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
-		chara1->GetCollWeaponPos(), chara2->GetShieldPos(),
-		chara1->GetWeaponAttackRadius(), chara2->GetShieldRadius()))
+		character1->GetCollWeaponPos(), character2->GetShieldPos(),
+		character1->GetWeaponAttackRadius(), character2->GetShieldRadius()))
 	{
 		return true;
 	}
 	return false;
 }
 
-bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
+bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
-		chara1->GetCollWeaponPos(), chara2->GetCollPos(),
-		chara1->GetWeaponAttackRadius(), chara2->GetModelRadius()))
+		character1->GetCollWeaponPos(), character2->GetCollPos(),
+		character1->GetWeaponAttackRadius(), character2->GetModelRadius()))
 	{
 		return true;
 	}
 	return false;
 }
 
-bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
+bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
-		chara1->GetPos(), chara2->GetCollPos(),
-		chara1->GetModelRadius(), chara2->GetModelRadius()))
+		character1->GetPos(), character2->GetCollPos(),
+		character1->GetModelRadius(), character2->GetModelRadius()))
 	{
 		return true;
 	}
 	return false;
+}
+
+void SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
+{
+	MV1_COLL_RESULT_POLY_DIM HitPolyDim;
+
+	// モデルとカプセルとの当たり判定
+	HitPolyDim = MV1CollCheck_Capsule(
+		m_pField->GetHandle(),
+		-1,
+		character->GetCapsulePosDown(),
+		character->GetCapsulePosUp(),
+		character->GetCapsuleRadius());
+
+	// 当たったかどうかで処理を分岐
+	if (HitPolyDim.HitNum >= 1)
+	{
+		character->SetFieldHit();
+	}
+
+	//// 当たり判定情報の後始末
+	//MV1CollResultPolyDimTerminate(HitPolyDim);
+
+	//MV1_COLL_RESULT_POLY_DIM HitPolyDim;
+
+	// モデルとカプセルとの当たり判定
+	HitPolyDim = MV1CollCheck_Capsule(
+		m_pField->GetHandle2(),
+		-1,
+		character->GetCapsulePosDown(),
+		character->GetCapsulePosUp(),
+		character->GetCapsuleRadius());
+
+	// 当たったかどうかで処理を分岐
+	if (HitPolyDim.HitNum >= 1)
+	{
+		character->SetFieldHit();
+	}
+
+	// 当たり判定情報の後始末
+	MV1CollResultPolyDimTerminate(HitPolyDim);
 }
 
 // 1が攻撃をする側
 // 2が攻撃を受ける側
-void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2)
+void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	// 回転角度を取得
-	chara2->SetTargetMtxRota(chara1->GetRot());
-
-	//// ターゲットの回転行列を受け取る
-	//chara2->SetTargetMtxRota(chara1->GetRot());
-
-
-	//// ターゲットの角度を受け取る
-	//chara2->SetTargetRota(chara1->GetAngle());
-
+	character2->SetTargetMtxRota(character1->GetRot());
 
 #if true
 	// 攻撃フレームが最大数かどうか
-	if (chara2->GetAttackFrame() == chara2->GetAttackFrameMax() - 1)
+	if (character2->GetAttackFrame() == character2->GetAttackFrameMax() - 1)
 	{
 	
 	}
 	//// ジャストガード
-	//if (chara1->GetJustGuardFrame() > 0 &&
-	//	chara1->GetJustGuardFrame() < chara1->GetJustGuardFrameMax())
+	//if (character1->GetJustGuardFrame() > 0 &&
+	//	character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
 	//{
 	//	// ジャストガードが成功しているので盾に当たっていても体に当たっていても
 	//	// 無敵判定になる
-	//	if ((CheckWeaponAndShieldHIt(chara1, chara2)) || (CheckWeaponAndBodyHit(chara1, chara2)))
+	//	if ((CheckWeaponAndShieldHIt(character1, character2)) || (CheckWeaponAndBodyHit(character1, character2)))
 	//	{
 	//		// ジャストガードが成功したかどうか
-	//		chara1->SetJustGuard(true);
+	//		character1->SetJustGuard(true);
 
 	//		// ジャストガードされた側は
 	//		// 戦いに必要な特殊なメーターを減らす
-	//		chara2->SetFightingMeter(-8.0f);
+	//		character2->SetFightingMeter(-8.0f);
 	//		// ジャストガードに成功した側は
 	//		// 戦いに必要な特殊なメーターを増やす
-	//		chara1->SetFightingMeter(8.0f);
+	//		character1->SetFightingMeter(8.0f);
 
-	//		chara1->SetCollJustGuardEffect();
+	//		character1->SetCollJustGuardEffect();
 
 	//		// 振動開始
 	//		StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
@@ -329,39 +364,38 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shar
 
 
 	// 通常ガードが出来るかどうか
-	if (chara1->GetGuardFrame() == chara1->GetGuardFrameMax()) 
+	if (character1->GetGuardFrame() == character1->GetGuardFrameMax())
 	{
 		// 攻撃状態だったら
 		//攻撃が盾に当たったかどうか
-		if (CheckWeaponAndShieldHIt(chara2, chara1))
+		if (CheckWeaponAndShieldHIt(character2, character1))
 		{
 			// ガード成功したかどうか
-			chara1->SetGuardKnockBack(true, -20);
+			character1->SetGuardKnockBack(true, -20);
 
 			// 戦いに必要な特殊なメーターを減らす
-		//	chara1->SetFightingMeter(-10.0f);
+			character1->SetFightingMeter(-0.1f);
 
-			chara1->SetCollGuardEffect();
+			character1->SetCollGuardEffect();
 
-			chara2->SetWeaponAttacksShield(true);
+			character2->SetWeaponAttacksShield(true);
 		}
 		return;
 	}
-	else if (chara1->GetBattleState() == BattleState::ATTACK ||
-		chara1->GetBattleState() == BattleState::ATTACKTWO)
+	else if (character1->GetBattleState() == BattleState::ATTACK || character1->GetBattleState() == BattleState::ATTACKTWO)
 	{
 		// 攻撃が当たったかどうか
-		if (CheckWeaponAndBodyHit(chara1, chara2))
+		if (CheckWeaponAndBodyHit(character1, character2))
 		{
 			// ダメージを与える
-			chara2->SetDamage(true);
+			character2->SetDamage(true);
 
 			// 戦いに必要な特殊なメーターを減らす
-		//	chara1->SetFightingMeter(-10.0f);
+			character1->SetFightingMeter(-0.1f);
 
 			for (int i = 0; i < 10; i++)
 			{
-				m_pBlood.push_back(new BloodDrawer(VGet(chara2->GetPos().x, chara2->GetPos().y + 100.0f, chara2->GetPos().z)));
+				m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z)));
 				m_pBlood.back()->Init(i);
 			}
 

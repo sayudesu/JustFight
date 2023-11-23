@@ -14,7 +14,7 @@ namespace
 class Camera;
 class CharacterBase;
 class BloodDrawer;
-class FIeldDrawer;
+class FieldDrawer;
 
 class SceneMain : public SceneBase
 {
@@ -38,6 +38,9 @@ private:
 	// 体範囲と体範囲の判定
 	bool CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 
+	// 地面のモデルとプレイヤーの判定
+	void CheckCollMap(std::shared_ptr<CharacterBase> character);
+
 	// キャラクターの更新処理
 	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 private:
@@ -48,5 +51,5 @@ private:
 	// 血描画クラス
 	std::vector<BloodDrawer*>m_pBlood;
 	// フィールドクラス
-	std::unique_ptr<FIeldDrawer>m_pField;
+	std::unique_ptr<FieldDrawer>m_pField; 
 };

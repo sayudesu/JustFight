@@ -5,11 +5,11 @@
 namespace
 {
 	// 視野角
-	constexpr float kFov = 70.0f * DX_PI_F / 180.0f;
+	constexpr float kFov = 80.0f * DX_PI_F / 180.0f;
 
 	// カメラの初期位置
-	constexpr VECTOR kCameraPos{ -50.0f, 700.0f, 350.0f };
-	constexpr VECTOR kCameraTarget{ 0.0f, 350.0f, -280.0f };
+	constexpr VECTOR kCameraPos{ -50.0f, 500.0f, 350.0f };
+	constexpr VECTOR kCameraTarget{ 0.0f, 150.0f, -280.0f };
 
 	// カメラの追跡処理にディレイを入れるフレーム数
 	constexpr int kCameraDelayFrame = 6;
@@ -30,7 +30,7 @@ Camera::~Camera()
 void Camera::Init()
 {
 	// どこから、どこまで見えるか
-	SetCameraNearFar(100.0f, 6000.0f);
+	SetCameraNearFar(100.0f, 30000.0f);
 	// どこを居てどこをみるか
 	SetCameraPositionAndTarget_UpVecY(m_pos, m_targetPos);
 	// FOV
@@ -56,7 +56,7 @@ void Camera::Update()
 	// ジャンプ時は単純にプレイヤーに服従するのではなく
 	//プレイヤーの立っていた位置を見るようにする
 	VECTOR cameraTrans = m_delayFrameTargetPos.back();
-	cameraTrans.y = m_delayFrameTargetPos.back().y * 0.0f;
+	cameraTrans.y = m_delayFrameTargetPos.back().y * 1.0f;
 	const MATRIX playerTransMtx = MGetTranslate(cameraTrans);
 
 	// プレイヤーの回転に合わせてカメラ位置、注視点を回転させる

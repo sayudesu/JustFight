@@ -73,6 +73,11 @@ public:
 	VECTOR GetCollWeaponPos() const;
 	VECTOR GetShieldPos ()const;// 盾
 
+	// カプセル型判定用の位置を渡す
+	VECTOR GetCapsulePosDown();
+	VECTOR GetCapsulePosUp();
+	float GetCapsuleRadius();
+
 	// 角度
 	MATRIX GetRot ()const;// 行列
 	float GetAngle()const;// ラジアン
@@ -110,6 +115,9 @@ public:
 	// 攻撃範囲に入っているかどうか
 	bool IsAttackRange()const;
 
+	// 地面に当たっているかどうか、当たっている場合呼び出してください
+	void SetFieldHit();
+
 	// 攻撃が盾に当たったかどうか
 	void SetWeaponAttacksShield(const bool isShieldHit);
 
@@ -118,7 +126,6 @@ public:
 
 	// 相手の角度
 	void SetTargetMtxRota(const MATRIX rot);
-	void SetTargetRota(const float rot);
 
 	// 攻撃範囲に入っているかどうか
 	void SetAttackRange(const bool isRange);
@@ -154,16 +161,18 @@ private:
 	// ノックバック用ベクトル
 	float m_vecKnockBack;
 
+	bool m_isGravity;
+
 	// 角度
 	MATRIX m_rotMtx;
 	MATRIX m_targetRotMtx;
-
-	float m_targetAngle;
-
 	// 装備
 	VECTOR m_vecWeapon;
 	VECTOR m_vecShield;
 	VECTOR m_weaponPos;
+	// カプセルの上の位置
+	VECTOR m_capsuleUpPos;
+	VECTOR m_capsuleUpDown;
 
 	// 一時的な武器の位置
 	VECTOR m_tempWeaponPos;
@@ -209,7 +218,6 @@ private:
 	GameObject* m_my;
 	GameObject* m_weapon;
 	GameObject* m_shield;
-	GameObject* test;
 protected:
 	
 	// メンバ関数ポインタ

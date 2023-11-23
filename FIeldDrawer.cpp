@@ -1,36 +1,58 @@
 #include "FIeldDrawer.h"
+#include "GameObject.h"
 
-FIeldDrawer::FIeldDrawer():
-	m_handle(-1),
+namespace
+{
+	// オブジェクトのサイズ
+	constexpr float kChessSize = 0.6;
+	constexpr float kMapSize = 40.0f;
+}
+
+FieldDrawer::FieldDrawer():
+	m_chessModel(nullptr),
+	m_mapModel(nullptr),
 	m_pos(VGet(0,0,0))
 {
 }
 
-FIeldDrawer::~FIeldDrawer()
+FieldDrawer::~FieldDrawer()
 {
 }
 
-void FIeldDrawer::Init()
+void FieldDrawer::Init()
 {
-	// モデルの読み込み
-	m_handle = MV1LoadModel("Data/Model/Arena.mv1");
+	m_chessModel = new GameObject(
+		"Data/Model/Stage.mv1",
+		m_pos,
+		VGet(0, 0, 0),
+		VGet(kChessSize, kChessSize, kChessSize));
 
-	// 位置を設定
-	MV1SetPosition(m_handle, m_pos);
-	// サイズの変更
-	MV1SetScale(m_handle, VGet(2.0f, 2.0f, 2.0f));
+	m_mapModel = new GameObject(
+		"Data/Model/Map.mv1",
+		VGet(m_pos.x, m_pos.y - 550.0f, m_pos.z),
+		VGet(0, 0, 0),
+		VGet(kMapSize, kMapSize, kMapSize));
+
+	m_chessModel->Update();
+	m_mapModel->Update();
 }
 
-void FIeldDrawer::End()
+void FieldDrawer::End()
 {
 	// 解放
-	MV1DeleteModel(m_handle);
+	delete m_chessModel;
+	m_chessModel = nullptr;
+
+	delete m_mapModel;
+	m_mapModel = nullptr;
 }
 
-void FIeldDrawer::Draw()
+void FieldDrawer::Draw()
 {
 	// 描画
-	MV1DrawModel(m_handle);
+	m_chessModel->Draw();
+	m_mapModel->Draw();
+
 
 #if _DEBUG
 	VECTOR start = VGet(1200, 300, 1200);
@@ -60,4 +82,14 @@ void FIeldDrawer::Draw()
 	DrawString(Zp.x, Zp.y, "Z+", 0xffffff);
 	DrawString(Zm.x, Zm.y, "Z-", 0xffffff);
 #endif
+}
+
+int FieldDrawer::GetHandle()
+{
+	return m_chessModel->GetHandle();
+}
+
+int FieldDrawer::GetHandle2()
+{
+	return m_mapModel->GetHandle();
 }

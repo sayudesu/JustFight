@@ -16,10 +16,10 @@ public:
     /// <param name="angle"></param>
     /// <param name="size"></param>
     /// <param name="parent"></param>
-    GameObject(const TCHAR* name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
+    GameObject(std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
         m_pos(pos), m_angle(angle), parent(parent)
     {
-        m_handle = MV1LoadModel(name);
+        m_handle = MV1LoadModel(name.c_str());
         MV1SetScale(m_handle, size);
     }
     ~GameObject()
@@ -82,6 +82,12 @@ public:
     void Rotate(VECTOR angle)
     {
         m_angle = angle;
+    }
+
+    // ハンドルデータを渡す
+    int GetHandle()
+    {
+        return m_handle;
     }
 
     // 位置を渡す

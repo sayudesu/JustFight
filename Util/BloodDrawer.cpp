@@ -45,7 +45,7 @@ void BloodDrawer::Update()
 void BloodDrawer::Draw()
 {
 	// ‚R‚c‹óŠÔã‚É‹…‚ğ•`‰æ‚·‚é
-	DrawSphere3D(m_pos, 5, 4, 0xff0000, 0xff0000, true);
+	DrawSphere3D(m_pos, 2, 3, 0xff0000, 0xff0000, true);
 
 }
 

@@ -4,12 +4,20 @@
 #include "../Util/EffekseerDrawer.h"
 #include "../GameObject.h"
 
+namespace
+{
+	// カプセル形状の半径
+	float kCapsuleRadius = 64.0f;
+
+	// 重力
+	float kGravity = 32.0f;
+}
+
 CharacterBase::CharacterBase(VECTOR pos):
 	m_pFunc(nullptr),
 	m_effectHandle(-1),
 	m_rotMtx({}),
 	m_targetRotMtx({}),
-	m_targetAngle(0.0f),
 	m_pos(pos),
 	m_targetPos    (VGet(0,0,0)),
 	m_vecWeapon    (VGet(0, 0, 0)),
@@ -93,19 +101,6 @@ void CharacterBase::Init()
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(3.0f, 3.0f, 3.0f));
 
-	// 
-	test = new GameObject(
-		"Data/Model/Shield.mv1",
-		VGet(100, m_weaponPos.y,100),
-		VGet(testV1.x, m_angle, testV1.z),
-		VGet(2.0f, 2.0f, 2.0f),
-		m_weapon);
-
-//	m_weapon->SetParentEscape(false);
-//	m_weapon->Update();
-//	m_weapon->Move(m_weaponPos);
-
-
 	// 位置情報の更新
 	UpdatePos();
 }
@@ -119,9 +114,6 @@ void CharacterBase::End()
 	m_weapon = nullptr;
 	delete m_shield;
 	m_shield = nullptr;
-
-	delete test;
-	test = nullptr;
 }
 
 void CharacterBase::Update()
@@ -137,11 +129,16 @@ void CharacterBase::Draw()
 	m_weapon->Draw();
 	// 盾モデル
 	m_shield->Draw();
-	test->Draw();
+
+#if _DEBUG
+	// カプセルの描画
+	DrawCapsule3D(m_capsuleUpDown, m_capsuleUpPos, kCapsuleRadius, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), FALSE);
+#endif
 }
 
 void CharacterBase::TargetMove()
 {
+	float tempPosY = m_pos.y;
 	// 向きを算出
 	VECTOR m_dir = VSub(m_targetPos, m_pos);
 
@@ -163,6 +160,8 @@ void CharacterBase::TargetMove()
 	// 位置を変える
 	m_pos = VAdd(m_pos, velecity);
 
+	m_pos.y = tempPosY;
+
 	// 距離を測る
 	m_targetRange.x = sqrt(pow(m_pos.x - m_targetPos.x, 2.0f) + pow(m_pos.x - m_targetPos.x, 2.0f));
 	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
@@ -180,7 +179,6 @@ BattleState CharacterBase::GetBattleState()
 
 void CharacterBase::Idle()
 {
-
 	// 
 	SetFightingMeter(0.03f);
 
@@ -249,21 +247,21 @@ void CharacterBase::Idle()
 		}
 	}
 
-	//if (m_hp == 0)
-	//{
-	//	m_pFunc = &CharacterBase::Losers;
-	//	m_vecWeapon.y = 100.0f;
-	//}
+	if (m_hp == 0)
+	{
+		m_pFunc = &CharacterBase::Losers;
+		m_vecWeapon.y = 100.0f;
+	}
 
-	//if (m_targetHp == 0)
-	//{
-	//	m_pFunc = &CharacterBase::Winner;
-	//}
+	if (m_targetHp == 0)
+	{
+		m_pFunc = &CharacterBase::Winner;
+	}
 
-	//if (m_isStun)
-	//{
-	//	m_pFunc = &CharacterBase::Stun;
-	//}
+	if (m_isStun)
+	{
+		m_pFunc = &CharacterBase::Stun;
+	}
 
 	// 武器の角度を変える
 	if (test2 > 0.0f)
@@ -286,13 +284,6 @@ void CharacterBase::Idle()
 
 	test3 = test2;
 
-	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
-	m_my->Update();
-
-	test->Rotate(VGet(0.0f, m_angle, 0.0f));
-	test->Update();
-
 	// 現在のHPを調整
 	HitPoint();
 
@@ -300,6 +291,7 @@ void CharacterBase::Idle()
 	UpdatePos();
 }
 
+// 攻撃した場合
 void CharacterBase::Attack()
 {
 	// 現在の行動を記録
@@ -377,11 +369,9 @@ void CharacterBase::Attack()
 	m_my->Move(m_pos);
 	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
-
-	test->Rotate(VGet(0.0f, m_angle, 0.0f));
-	test->Update();
 }
 
+// 攻撃コンボ2
 void CharacterBase::AttackTwo()
 {
 	// 現在の行動を記録
@@ -456,10 +446,17 @@ void CharacterBase::AttackTwo()
 	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
-	test->Rotate(VGet(0.0f, m_angle, 0.0f));
-	test->Update();
+	m_capsuleUpDown = m_pos;
+	m_capsuleUpDown.y = m_pos.y + 50.0f;
+
+	m_capsuleUpPos = m_capsuleUpDown;
+	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
+
+	// ノックバックされた場合
+	KnockBack();
 }
 
+// 強攻撃した場合
 void CharacterBase::StrongAttack()
 {
 	// 現在の行動を記録
@@ -567,11 +564,9 @@ void CharacterBase::StrongAttack()
 	m_my->Move(m_pos);
 	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
-
-	test->Rotate(VGet(0.0f, m_angle, 0.0f));
-	test->Update();
 }
 
+// ガードした場合
 void CharacterBase::Guard()
 {
 	// 現在の行動を記録
@@ -616,6 +611,7 @@ void CharacterBase::Guard()
 	UpdatePos();
 }
 
+// ジャストガードした場合
 void CharacterBase::JustGuard()
 {
 	m_vecWeapon = m_parameter.weaponRelativePos;
@@ -625,6 +621,7 @@ void CharacterBase::JustGuard()
 	UpdatePos();
 }
 
+// スタンした場合
 void CharacterBase::Stun()
 {
 	// 現在の行動を記録
@@ -705,15 +702,15 @@ void CharacterBase::HitPoint()
 void CharacterBase::KnockBack()
 {
 	// ガードが成功したら
-// 後ろにノックバック
+	// 後ろにノックバック
 	if (m_isResultGuard)
 	{
+		// ノックバック用のベクトルは相対位置から見てZマイナス方向なので0.0fになるまで足していく
 		if (m_vecKnockBack < 0.0f)
 		{
 			m_vecKnockBack += 1.0f;
 			VECTOR move = VTransform(VGet(0, 0, m_vecKnockBack), m_targetRotMtx);
 			m_pos = VAdd(m_pos, move);
-			printfDx("%f\n", m_pos.z);
 		}
 		else
 		{
@@ -724,6 +721,13 @@ void CharacterBase::KnockBack()
 
 void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
+	// 重力後で処理の位置を変えます
+	if (m_isGravity)
+	{
+		m_pos.y -= kGravity;
+	}
+	m_isGravity = true;
+
 	// 武器
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
@@ -741,10 +745,18 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 		m_shield->Update();
 	}	
 
+	// キャラクターの位置
 	m_my->Move(m_pos);
 	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
+	m_capsuleUpDown = m_pos;
+	m_capsuleUpDown.y = m_pos.y + 50.0f;
+
+	m_capsuleUpPos = m_capsuleUpDown;
+	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
+
+	// ノックバックされた場合
 	KnockBack();
 }
 
@@ -808,6 +820,21 @@ VECTOR CharacterBase::GetShieldPos() const
 	VECTOR move = VTransform(m_vecShield, m_rotMtx);
 	move = VAdd(m_pos, move);
 	return move;
+}
+
+VECTOR CharacterBase::GetCapsulePosDown()
+{
+	return m_capsuleUpDown;
+}
+
+VECTOR CharacterBase::GetCapsulePosUp()
+{	
+	return m_capsuleUpPos;
+}
+
+float CharacterBase::GetCapsuleRadius()
+{
+	return kCapsuleRadius;
 }
 
 MATRIX CharacterBase::GetRot()const
@@ -948,6 +975,11 @@ bool CharacterBase::IsAttackRange() const
 	return m_isAttackRange;
 }
 
+void CharacterBase::SetFieldHit()
+{
+	m_isGravity = false;	
+}
+
 void CharacterBase::SetWeaponAttacksShield(const bool isShieldHit)
 {
 	m_isWeaponAttacksShield = isShieldHit;
@@ -961,11 +993,6 @@ void CharacterBase::SetBattleState(BattleState state)
 void CharacterBase::SetTargetMtxRota(MATRIX rot)
 {
 	m_targetRotMtx = rot;
-}
-
-void CharacterBase::SetTargetRota(const float rot)
-{
-	m_targetAngle = rot;
 }
 
 void CharacterBase::SetAttackRange(const bool isRange)

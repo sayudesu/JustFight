@@ -47,7 +47,7 @@ Player::Player(VECTOR pos):
 	m_parameter.strongAttackFrameGapMax = 60;
 	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
 
-	m_parameter.guardFrameMax = 20;
+	m_parameter.guardFrameMax = 5;
 	m_parameter.justGuardFrameMax = 15;
 
 	m_parameter.stunFrameMax = 60 * 3;

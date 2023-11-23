@@ -1,18 +1,25 @@
 #pragma once
 #include <DxLib.h>
 
-class FIeldDrawer
+class GameObject;
+class FieldDrawer
 {
 public:
-	FIeldDrawer();
-	~FIeldDrawer();
+	FieldDrawer();
+	~FieldDrawer();
 
 	void Init();
 	void End();
 	void Draw();
+
+	// ハンドルデータを渡す
+	int GetHandle();
+	int GetHandle2();
+
 private:
 	// マップ用のハンドル
-	int m_handle;
+	GameObject* m_chessModel;
+	GameObject* m_mapModel;
 	// 位置
 	VECTOR m_pos;	
 };
