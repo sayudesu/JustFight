@@ -926,10 +926,9 @@ int CharacterBase::GetAttackFrameMax()const
 	{
 		return m_parameter.attackTotalFrame;
 	}
-
-	if (m_isStrongAttack)
+	else if (m_isStrongAttack)
 	{
-		return m_parameter.strongAttackTotalFrame ;
+		return m_parameter.strongAttackTotalFrame;
 	}
 
 	return -1;
