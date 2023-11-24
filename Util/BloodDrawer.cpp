@@ -7,14 +7,15 @@ namespace
 	constexpr float kGravity = 0.4f;
 }
 
-BloodDrawer::BloodDrawer(VECTOR pos)
+BloodDrawer::BloodDrawer(VECTOR pos, int color)
 {
 	// パーティクルの初期位置
 	m_pos = pos;
 	m_vec = VGet(0, 0, 0);
+	m_isErase = false;
+	m_color = color;
 	m_pFunc = &BloodDrawer::FirstMove;
 
-	m_isErase = false;
 }
 
 BloodDrawer::~BloodDrawer()
@@ -45,7 +46,7 @@ void BloodDrawer::Update()
 void BloodDrawer::Draw()
 {
 	// ３Ｄ空間上に球を描画する
-	DrawSphere3D(m_pos, 2, 3, 0xff0000, 0xff0000, true);
+	DrawSphere3D(m_pos, 2, 3, m_color, m_color, true);
 
 }
 

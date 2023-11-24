@@ -16,6 +16,7 @@ namespace
 CharacterBase::CharacterBase(VECTOR pos):
 	m_pFunc(nullptr),
 	m_effectHandle(-1),
+	m_strongAttackPower(0),
 	m_rotMtx({}),
 	m_targetRotMtx({}),
 	m_pos(pos),
@@ -550,6 +551,9 @@ void CharacterBase::StrongAttack()
 // ガードした場合
 void CharacterBase::Guard()
 {
+	m_vecWeapon.x = -80.0f;
+	test1 = 0;
+	test2 = 0;
 	// 現在の行動を記録
 	m_battleState = BattleState::GUARD;
 
@@ -576,7 +580,7 @@ void CharacterBase::Guard()
 
 	// ガードをやめた場合
 	if (!m_isGuard)
-	{
+	{		
 		m_guardFrame = 0;
 		m_justGuardFrame = 0;
 		m_pFunc = &CharacterBase::Idle;
@@ -887,6 +891,16 @@ void CharacterBase::SetCollJustGuardEffect()
 		VGet(0, 0, 0));
 }
 
+void CharacterBase::SetStrongPower(float power)
+{
+	m_strongAttackPower += power;
+}
+
+void CharacterBase::SetStrongPowerReset()
+{
+	m_strongAttackPower = 0.0f;
+}
+
 int CharacterBase::GetAttackFrame()const
 {
 	const int totalFrame = m_attackFrame + m_attackGapFrame;
@@ -940,6 +954,11 @@ int CharacterBase::GetHp()const
 float CharacterBase::GetFightingMeter()const
 {
 	return m_fightingMeter;
+}
+
+float CharacterBase::GetStrongPower()
+{
+	return m_strongAttackPower;
 }
 
 bool CharacterBase::IsJustGuard() const

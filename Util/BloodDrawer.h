@@ -5,7 +5,7 @@
 class BloodDrawer
 {
 public:
-	BloodDrawer(VECTOR pos);
+	BloodDrawer(VECTOR pos, int color);
 	virtual ~BloodDrawer();
 	// 初期化
 	virtual void Init(int no);
@@ -25,6 +25,8 @@ private:
 	VECTOR m_vec;
 	// 消すかどうか
 	bool m_isErase;
+	// 色
+	int m_color;
 	// メンバ関数ポインタ
 	void(BloodDrawer::* m_pFunc)();
 };

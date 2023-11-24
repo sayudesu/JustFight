@@ -49,7 +49,7 @@ private:
 	bool CheckCollMap(std::shared_ptr<CharacterBase> character);
 
 	// キャラクターの更新処理
-	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
+	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2,bool isPlayer);
 private:
 	// メンバー関数ポインタ
 	SceneBase* (SceneMain::* m_pUpdateFunc)() = &SceneMain::UpdateGamePlay;

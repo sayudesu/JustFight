@@ -72,6 +72,7 @@ SceneBase* SceneMain::Update()
 
 SceneBase* SceneMain::UpdateGamePlay()
 {
+	//
 	if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]))
 	{
 		m_pUpdateFunc = &SceneMain::UpdateGameOver;
@@ -81,10 +82,11 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_pUpdateFunc = &SceneMain::UpdateGameOver;
 	}
 
+	// 
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],true);
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]);	
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)], false);
 
 	// カメラの更新処理
 	m_pCamera->Update();
@@ -122,7 +124,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 	m_pCamera->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
 	// カメラにプレイヤーの角度と位置を渡す
 	m_pCamera->SetPlayerAngle(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetAngle());
-
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
@@ -296,7 +297,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 
 // 1が攻撃をする側
 // 2が攻撃を受ける側
-void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
+void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer)
 {
 
 
@@ -343,6 +344,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// ターゲットの戦闘の状態を受け取る
 	character1->SetBattleState(character2->GetBattleState());
+
 	// ジャストガードOFF
 	character1->SetJustGuard(false);
 
@@ -356,8 +358,11 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		//攻撃が盾に当たったかどうか
 		if (CheckWeaponAndShieldHIt(character2, character1))
 		{
-			// ガード成功したかどうか
+			// ノックバック
 			character1->SetGuardKnockBack(true, -20);
+
+			// 強攻撃するための力を溜める
+			character1->SetStrongPower(20.0f);
 
 			// 戦いに必要な特殊なメーターを減らす
 			character1->SetFightingMeter(-0.1f);
@@ -368,7 +373,14 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		}
 		return;
 	}
-	else if (character1->GetBattleState() == BattleState::ATTACK || character1->GetBattleState() == BattleState::ATTACKTWO || character1->GetBattleState() == BattleState::STRONGATTACK)
+
+	bool a = character1->GetBattleState() == BattleState::ATTACK;
+	bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
+	bool c = character1->GetBattleState() == BattleState::STRONGATTACK;
+
+	bool d =  character2->GetBattleState() != BattleState::GUARD;
+
+	if (a || b || c)
 	{
 		// 攻撃が当たったかどうか
 		if (CheckWeaponAndBodyHit(character1, character2))
@@ -379,16 +391,33 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			// 戦いに必要な特殊なメーターを減らす
 			character1->SetFightingMeter(-0.1f);
 
+			// ノックバック
 			if (character1->GetBattleState() == BattleState::STRONGATTACK)
 			{
-				// ガード成功したかどうか
 				character2->SetGuardKnockBack(true, -30);
 			}
-
-			for (int i = 0; i < 10; i++)
+			else
 			{
-				m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z)));
-				m_pBlood.back()->Init(i);
+				character2->SetGuardKnockBack(true, -10);
+			}
+
+			int color = 0xffffff;
+			if (isPlayer)
+			{
+				color = 0x000000;
+			}
+			else
+			{
+				color = 0xffffff;
+			}
+
+			if (d)
+			{
+				for (int i = 0; i < 10; i++)
+				{
+					m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
+					m_pBlood.back()->Init(i);
+				}
 			}
 
 			// 振動開始

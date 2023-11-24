@@ -75,15 +75,6 @@ Player::~Player()
 
 void Player::Input()
 {
-	if (CheckHitKey(KEY_INPUT_N))
-	{
-		test2 += 0.1f;
-	}
-	if (CheckHitKey(KEY_INPUT_M))
-	{
-		test2 -= 0.1f;
-	}
-
 	DINPUT_JOYSTATE input;
 	// 入力状態を取得
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
@@ -105,7 +96,7 @@ void Player::Input()
 		const VECTOR direction = VSub(m_targetPos, m_pos);
 		m_angle = atan2f(-direction.x, -direction.z);
 	}
-
+	printfDx("%f\n", GetStrongPower());
 	// angleを基底クラスに渡す
 	SetAngle(m_angle);
 	// プレイヤーの進行方向
@@ -202,7 +193,8 @@ void Player::Input()
 			if (input.Z < -100 &&
 				!m_isAttack &&
 				!m_isStrongAttack &&
-				!m_isGuard)
+				!m_isGuard &&
+				(GetStrongPower() > 100.0f))
 			{
 				m_isStrongAttack = true;
 				m_pFunc = &Player::StrongAttack;
@@ -213,6 +205,8 @@ void Player::Input()
 				!m_isAttack               &&
 				!m_isStrongAttack)
 			{
+				// 
+				//SetStrongPowerReset();
 				m_isGuard = true;
 				m_pFunc = &Player::Guard;
 			}

@@ -60,6 +60,9 @@ protected:
 
 	// ターゲット位置追跡移動
 	virtual void TargetMove();
+
+	// 強攻撃の為に溜めた力をリセットする
+	void SetStrongPowerReset();
 public:
 	// 自身が誰をを返す
 	CharacterName GetMyId();
@@ -105,6 +108,9 @@ public:
 	// ゲージ関係
 	int GetHp             ()const;// 現在のヒットポイント
 	float GetFightingMeter()const;// 戦闘に必要なメーター
+
+	// 強攻撃をするための力を確認
+	float GetStrongPower();
 	
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
@@ -154,9 +160,15 @@ public:
 	// エフェクトを呼び出す
 	void SetCollGuardEffect    ();// 通常防御
 	void SetCollJustGuardEffect();// ジャストガード
+
+	// 強攻撃を出すための力を溜める
+	void SetStrongPower(float power);
 private:
 	// エフェクトハンドル
 	int m_effectHandle;
+
+	// 強攻撃を出すための力を溜める
+	float m_strongAttackPower;
 
 	// ノックバック用ベクトル
 	float m_vecKnockBack;

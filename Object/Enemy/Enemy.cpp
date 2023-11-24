@@ -8,6 +8,16 @@ namespace
 	constexpr int kGuardFrameCountMax = 60 * 2;
 }
 
+namespace
+{
+	// ƒvƒŒƒCƒ„[‚ÌˆÚ“®—Ê
+	constexpr VECTOR kVecZ{ 0.0f,0.0f,-10.0f };
+	constexpr VECTOR kVecX{ -10.0f,0.0f,0.0f };
+
+	// ‰ñ”ð
+	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
+}
+
 
 Enemy::Enemy(VECTOR pos) :
 	CharacterBase(pos),
@@ -65,6 +75,202 @@ Enemy::Enemy(VECTOR pos) :
 Enemy::~Enemy()
 {
 }
+
+//void Enemy::Input()
+//{
+//	DINPUT_JOYSTATE input;
+//	// “ü—Íó‘Ô‚ðŽæ“¾
+//	GetJoypadDirectInputState(DX_INPUT_PAD2, &input);
+//
+//	if (m_isCameraLockon)
+//	{
+//		// ƒJƒƒ‰‚Ì‰ñ“]Šp“x‚ð’²®
+//		if (input.Rx > 30)
+//		{
+//			m_angle += 0.05f;
+//		}
+//		if (input.Rx < -30)
+//		{
+//			m_angle -= 0.05f;
+//		}
+//	}
+//	else
+//	{
+//		const VECTOR direction = VSub(m_targetPos, m_pos);
+//		m_angle = atan2f(-direction.x, -direction.z);
+//	}
+//
+//	// angle‚ðŠî’êƒNƒ‰ƒX‚É“n‚·
+//	SetAngle(m_angle);
+//	// ƒvƒŒƒCƒ„[‚Ìis•ûŒü
+//	MATRIX rotMtx = MGetRotY(m_angle);
+//	// ‰ñ“]s—ñ‚ðŠî’êƒNƒ‰ƒX‚É“n‚·
+//	SetRotMtx(rotMtx);
+//	if (!IsStun())
+//	{
+//		// ˆÚ“®or‰ñ”ð
+//		if (m_isAway)
+//		{
+//			static VECTOR away = kVecAwayZ;
+//			static int frameCount = 0;
+//			int frameCountMax = 10;
+//
+//			if (frameCount < frameCountMax)
+//			{
+//				m_awayVec.x = (m_awayRelativePos.x) * (float(frameCount) / frameCountMax);
+//				m_awayVec.z = (m_awayRelativePos.z) * (float(frameCount) / frameCountMax);
+//				frameCount++;
+//				VECTOR move = VTransform(m_awayVec, rotMtx);
+//				m_pos = VAdd(m_pos, move);
+//			}
+//			else
+//			{
+//
+//				m_isAway = false;
+//				frameCount = 0;
+//			}
+//		}
+//		else
+//		{
+//			m_isUp = false;
+//			m_isDown = false;
+//			m_isRight = false;
+//			m_isLeft = false;
+//
+//			if (Pad::IsPress(PAD_INPUT_UP,1))
+//			{
+//				m_isUp = true;
+//
+//				m_pos = AddMoving(kVecZ, rotMtx, m_pos);
+//
+//				MoveAway(0.0f, -60.0f, rotMtx);
+//			}
+//			else if (Pad::IsPress(PAD_INPUT_DOWN, 1))
+//			{
+//				m_isDown = true;
+//
+//				m_pos = SubMoving(kVecZ, rotMtx, m_pos);
+//
+//				MoveAway(0.0f, 60.0f, rotMtx);
+//			}
+//			if (Pad::IsPress(PAD_INPUT_RIGHT, 1))
+//			{
+//				m_isRight = true;
+//
+//				m_pos = AddMoving(kVecX, rotMtx, m_pos);
+//
+//				MoveAway(-60.0f, 0.0f, rotMtx);
+//			}
+//			else if (Pad::IsPress(PAD_INPUT_LEFT, 1))
+//			{
+//				m_isLeft = true;
+//
+//				m_pos = SubMoving(kVecX, rotMtx, m_pos);
+//
+//				MoveAway(60.0f, 0.0f, rotMtx);
+//			}
+//
+//			if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
+//			{
+//				MoveAway(0.0f, 60.0f, rotMtx);
+//			}
+//		}
+//
+//		// UŒ‚or–hŒä
+//		{
+//			// ’ÊíUŒ‚
+//			if (Pad::IsTrigger(PAD_INPUT_6, 1) &&
+//				!m_isAttack &&
+//				!m_isStrongAttack &&
+//				!m_isGuard)
+//			{
+//				m_isAttack = true;
+//				m_comboAttack++;
+//				if (m_comboAttack == 1)
+//				{
+//					m_pFunc = &Enemy::Attack;
+//				}
+//			}
+//
+//			// ‹­UŒ‚
+//			if (input.Z < -100 &&
+//				!m_isAttack &&
+//				!m_isStrongAttack &&
+//				!m_isGuard)
+//			{
+//				m_isStrongAttack = true;
+//				m_pFunc = &Enemy::StrongAttack;
+//			}
+//
+//			// –hŒä
+//			if (Pad::IsPress(PAD_INPUT_5, 1) &&
+//				!m_isAttack &&
+//				!m_isStrongAttack)
+//			{
+//				m_isGuard = true;
+//				m_pFunc = &Enemy::Guard;
+//			}
+//			else
+//			{
+//				m_isGuard = false;
+//			}
+//		}
+//	}
+//
+//	{
+//		// ƒJƒƒ‰‚Ì‘€ì•ÏX
+//		static int frameCount = 0;
+//		if (input.Buttons[9] == 128)
+//		{
+//			frameCount++;
+//			if (frameCount == 1)
+//			{
+//				m_isCameraLockon = (!m_isCameraLockon);
+//			}
+//		}
+//		else
+//		{
+//			frameCount = 0;
+//		}
+//	}
+//
+//
+//	if (Pad::IsTrigger(PAD_INPUT_4, 1))
+//	{
+//		//SetStun(true);
+//		SetFightingMeter(-10000.0f);
+//	}
+//}
+//
+//VECTOR Enemy::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
+//{
+//	VECTOR move = VTransform(RelativePos, rotMtx);
+//	move = VAdd(pos, move);
+//	return move;
+//}
+//
+//VECTOR Enemy::SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
+//{
+//	VECTOR move = VTransform(RelativePos, rotMtx);
+//	move = VSub(m_pos, move);
+//	return move;
+//}
+//
+//void Enemy::MoveAway(float x, float z, MATRIX rotMtx)
+//{
+//	// ‰ñ”ð‚Ì‰¼ŽÀ‘•
+//	{
+//		if (Pad::IsTrigger(PAD_INPUT_3, 1))
+//		{
+//			m_isAway = true;
+//			m_awayRelativePos.x = x;
+//			m_awayRelativePos.z = z;
+//			m_awayVec.x = 0.0f;
+//			m_awayVec.y = 0.0f;
+//			m_awayVec.z = 0.0f;
+//		}
+//	}
+//}
 
 void Enemy::Input()
 {
