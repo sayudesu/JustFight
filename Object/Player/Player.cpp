@@ -48,7 +48,7 @@ Player::Player(VECTOR pos):
 	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
 
 	m_parameter.guardFrameMax = 5;
-	m_parameter.justGuardFrameMax = 15;
+	m_parameter.justGuardFrameMax = 5;
 
 	m_parameter.stunFrameMax = 60 * 3;
 
@@ -96,7 +96,7 @@ void Player::Input()
 		const VECTOR direction = VSub(m_targetPos, m_pos);
 		m_angle = atan2f(-direction.x, -direction.z);
 	}
-	printfDx("%f\n", GetStrongPower());
+
 	// angleを基底クラスに渡す
 	SetAngle(m_angle);
 	// プレイヤーの進行方向
@@ -203,7 +203,8 @@ void Player::Input()
 			// 防御
 			if (Pad::IsPress(PAD_INPUT_5) &&
 				!m_isAttack               &&
-				!m_isStrongAttack)
+				!m_isStrongAttack &&
+				!m_isJustGuardCounter)
 			{
 				// 
 				//SetStrongPowerReset();

@@ -6,6 +6,10 @@ namespace
 	// オブジェクトのサイズ
 	constexpr float kChessSize = 0.6;
 	constexpr float kMapSize = 40.0f;
+
+	const char* const kFileName1 = "Data/Model/Stage.mv1";
+//	const char* const kFileName2 = "Data/Model/Map.mv1";
+	const char* const kFileName2 = "Data/Model/Map/model/Map.mv1";
 }
 
 FieldDrawer::FieldDrawer():
@@ -22,13 +26,13 @@ FieldDrawer::~FieldDrawer()
 void FieldDrawer::Init()
 {
 	m_chessModel = new GameObject(
-		"Data/Model/Stage.mv1",
+		kFileName1,
 		m_pos,
 		VGet(0, 0, 0),
 		VGet(kChessSize, kChessSize, kChessSize));
 
 	m_mapModel = new GameObject(
-		"Data/Model/Map.mv1",
+		kFileName2,
 		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(0, 0, 0),
 		VGet(kMapSize, kMapSize, kMapSize));

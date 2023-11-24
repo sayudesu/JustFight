@@ -299,40 +299,9 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 // 2が攻撃を受ける側
 void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer)
 {
-
-
 #if true
-	// 攻撃フレームが最大数かどうか
-	if (character2->GetAttackFrame() == character2->GetAttackFrameMax() - 1)
-	{
-	
-	}
-	//// ジャストガード
-	//if (character1->GetJustGuardFrame() > 0 &&
-	//	character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
-	//{
-	//	// ジャストガードが成功しているので盾に当たっていても体に当たっていても
-	//	// 無敵判定になる
-	//	if ((CheckWeaponAndShieldHIt(character1, character2)) || (CheckWeaponAndBodyHit(character1, character2)))
-	//	{
-	//		// ジャストガードが成功したかどうか
-	//		character1->SetJustGuard(true);
 
-	//		// ジャストガードされた側は
-	//		// 戦いに必要な特殊なメーターを減らす
-	//		character2->SetFightingMeter(-8.0f);
-	//		// ジャストガードに成功した側は
-	//		// 戦いに必要な特殊なメーターを増やす
-	//		character1->SetFightingMeter(8.0f);
-
-	//		character1->SetCollJustGuardEffect();
-
-	//		// 振動開始
-	//		StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
-	//	}
-	//}  
-
-			// プレイヤーの入力情報
+	// プレイヤーの入力情報
 	character1->Input();
 	// プレイヤー更新処理
 	character1->Update();
@@ -351,6 +320,31 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	// 回転角度を取得
 	character2->SetTargetMtxRota(character1->GetRot());
 
+	// ジャストガード処理
+	// 攻撃が当たっていた場合
+	if ((CheckWeaponAndShieldHIt(character2, character1)))
+	{
+		// ジャストガードフレーム
+		if (character1->GetJustGuardFrame() > 0 &&
+			character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
+		{
+			// ジャストガードが成功したかどうか
+			character1->SetJustGuard(true);
+
+			// エフェクトを再生
+			character1->SetCollJustGuardEffect();
+
+			// 戦いに必要な特殊なメーターを減らす
+			character2->SetFightingMeter(-30.0f);
+
+			// 振動開始
+			StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
+
+			return;
+		}
+	}
+
+	// 通常ガード処理
 	// 通常ガードが出来るかどうか
 	if (character1->GetGuardFrame() == character1->GetGuardFrameMax())
 	{
@@ -365,14 +359,16 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			character1->SetStrongPower(20.0f);
 
 			// 戦いに必要な特殊なメーターを減らす
-			character1->SetFightingMeter(-0.1f);
+			character1->SetFightingMeter(-3.0f);
 
 			character1->SetCollGuardEffect();
 
 			character2->SetWeaponAttacksShield(true);
-		}
-		return;
+
+			return;
+		}		
 	}
+
 
 	bool a = character1->GetBattleState() == BattleState::ATTACK;
 	bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
@@ -380,6 +376,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	bool d =  character2->GetBattleState() != BattleState::GUARD;
 
+	// 攻撃を与える処理
 	if (a || b || c)
 	{
 		// 攻撃が当たったかどうか
@@ -422,8 +419,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 			// 振動開始
 			StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
-		}
-		return;
+
+			return;
+		}		
 	}
 #endif
 }

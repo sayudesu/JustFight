@@ -9,5 +9,6 @@ enum class BattleState
 	ATTACKTWO,// コンボ攻撃
 	STRONGATTACK,// 強い攻撃
 	GUARD,// 防御
+	JUSTGUARD,// 防御
 	STUN,// スタン
 };

@@ -109,7 +109,7 @@ public:
         return MV1GetFramePosition(m_handle, modelFrameIndex);
     }
 
-    // 親クラスから抜け出す
+    // 親オブジェクトから抜け出す
     void SetParentEscape(bool isEscape)
     {
         if (parent != nullptr)

@@ -30,6 +30,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isStrongAttack(false),
 	m_isGuard       (false),
 	m_isJustGuard   (false),
+	m_isJustGuardCounter(false),
 	m_isAway	    (false),
 	m_isResultGuard (false),
 	m_isResultDamage(false),
@@ -41,6 +42,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_attackGapFrame(0),
 	m_guardFrame    (0),
 	m_justGuardFrame(0),
+	m_justGuardCounterFrame(0),
 	m_stunFrame     (0),
 	m_recoilFrame   (0),
 	m_attackAfterStopFrame(0),
@@ -180,6 +182,7 @@ BattleState CharacterBase::GetBattleState()
 
 void CharacterBase::Idle()
 {
+	m_isSceneChange = false;
 	// 
 	SetFightingMeter(0.03f);
 
@@ -552,8 +555,8 @@ void CharacterBase::StrongAttack()
 void CharacterBase::Guard()
 {
 	m_vecWeapon.x = -80.0f;
-	test1 = 0;
 	test2 = 0;
+
 	// 現在の行動を記録
 	m_battleState = BattleState::GUARD;
 
@@ -586,10 +589,20 @@ void CharacterBase::Guard()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
+	if (m_isJustGuard)
+	{
+		m_isJustGuardCounter = true;
+		m_isSceneChange = false;
+		m_guardFrame = 0;
+		m_justGuardFrame = 0;
+		m_pFunc = &CharacterBase::JustGuard;
+	}
+
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
+
 	// 現在のHPを調整
 	HitPoint();
 	// 位置情報の更新
@@ -599,9 +612,41 @@ void CharacterBase::Guard()
 // ジャストガードした場合
 void CharacterBase::JustGuard()
 {
-	m_vecWeapon = m_parameter.weaponRelativePos;
-	m_pFunc = &CharacterBase::Idle;
+	// 現在の行動を記録
+	m_battleState = BattleState::JUSTGUARD;
 
+	// 最大フレーム内に目標地点まで移動する
+	if (!m_isSceneChange)
+	{
+		if (m_justGuardCounterFrame > 10 && m_justGuardCounterFrame < 20)
+		{
+			test1 = MoveByFrame(0.0f, (static_cast<float>(90) / 2.0f) * DX_PI_F / 180.0f, m_justGuardCounterFrame, 10);
+		}
+		if (m_justGuardCounterFrame < 15)m_vecShield.z = MoveByFrame(0.0f,  -50.0f, m_justGuardCounterFrame, 15);
+		if (m_justGuardCounterFrame < 15)m_vecShield.x = MoveByFrame(0.0f, 100.0f, m_justGuardCounterFrame, 15);
+		if (m_justGuardCounterFrame < 15)m_vecShield.y = MoveByFrame(0.0f, 150.0f, m_justGuardCounterFrame, 15);
+		m_justGuardCounterFrame++;
+	}
+
+	// 最大フレームに到達したら
+	if (m_justGuardCounterFrame == 60)
+	{
+		m_isSceneChange = true;
+	}
+
+	// シーンを切り替える事ができるなら
+	if (m_isSceneChange)
+	{
+		m_isJustGuardCounter = false;
+		m_justGuardCounterFrame = 0;
+		m_vecShield = m_parameter.shieldRelativePos;
+		test1 = 0.0f;
+		m_isSceneChange = false;	
+		m_pFunc = &CharacterBase::Idle;
+	}
+
+	// ヒットポイント
+	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
 }
@@ -625,7 +670,7 @@ void CharacterBase::Stun()
 	m_guardFrame     = 0;
 	m_justGuardFrame = 0;
 
-	if (/*m_parameter.stunFrameMax*/1 < m_stunFrame)
+	if (m_parameter.stunFrameMax < m_stunFrame)
 	{
 		m_stunFrame = 0;
 		m_isStun = false;
@@ -684,6 +729,12 @@ void CharacterBase::HitPoint()
 		// 攻撃を無効化
 		m_isResultDamage = false;
 	}
+
+	// スタン状態にする
+	if (m_fightingMeter <= 0.0f)
+	{
+		m_isStun = true;
+	}
 }
 
 void CharacterBase::KnockBack()
@@ -728,7 +779,7 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
 		m_shield->Move(move);
-		m_shield->Rotate(VGet(0, m_angle, 0));
+		m_shield->Rotate(VGet(0, m_angle - test1, 0));
 		m_shield->Update();
 	}	
 

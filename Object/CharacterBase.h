@@ -205,6 +205,8 @@ private:
 
 	int m_attackAfterStopFrame;// 攻撃後の硬直フレーム
 
+	int m_justGuardCounterFrame;// ジャストガードを成功させた後のカウント
+
 	// 攻撃用シーン繊維の移動が可能かどうか
 	int m_isSceneChange;
 
@@ -248,6 +250,7 @@ protected:
 	bool m_isStrongAttack;
 	bool m_isGuard;
 	bool m_isJustGuard;
+	bool m_isJustGuardCounter;
 
 	float pitchAngle = 0.0f;
 
