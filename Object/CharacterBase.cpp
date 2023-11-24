@@ -184,7 +184,7 @@ void CharacterBase::Idle()
 {
 	m_isSceneChange = false;
 	// 
-	SetFightingMeter(0.03f);
+	SetFightingMeter(0.09f);
 
 	// コンボ初期化
 	m_comboAttack = 0;
@@ -498,6 +498,8 @@ void CharacterBase::StrongAttack()
 	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
 	{
+		// 強攻撃の力をなくす
+		SetStrongPowerReset();
 		test1 = 0.0f;
 		// 攻撃フレームをリセット
 		m_attackFrame = 0;
@@ -672,6 +674,7 @@ void CharacterBase::Stun()
 
 	if (m_parameter.stunFrameMax < m_stunFrame)
 	{
+		m_fightingMeter = 30.0f;
 		m_stunFrame = 0;
 		m_isStun = false;
 		m_pFunc = &CharacterBase::Idle;

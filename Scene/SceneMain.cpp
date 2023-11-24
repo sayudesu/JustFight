@@ -134,11 +134,11 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp() == 0)
 		{						
-			m_pUpdateFunc = &SceneMain::UpdateGameOver;
+			//	m_pUpdateFunc = &SceneMain::UpdateGameOver;
 		}
 		else if (m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp() == 0)
 		{			
-			m_pUpdateFunc = &SceneMain::UpdateGameClear;
+		//	m_pUpdateFunc = &SceneMain::UpdateGameClear;
 		}
 	}
 
@@ -286,7 +286,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	{
 		character->SetFieldHit();
 		// ゲームオーバー
-		return true;
+	//	return true;
 	}
 
 	// 当たり判定情報の後始末
