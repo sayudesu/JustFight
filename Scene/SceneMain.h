@@ -28,6 +28,14 @@ public:
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
 private:
+	// シーン遷移
+	// ゲームメイン
+	SceneBase* UpdateGamePlay();
+	// ゲームオーバー
+	SceneBase* UpdateGameOver();
+	// ゲームクリア
+	SceneBase* UpdateGameClear();
+private:
 	// 当たり判定
 	// 武器と体の判定
 	bool CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
@@ -37,13 +45,14 @@ private:
 	bool CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 	// 体範囲と体範囲の判定
 	bool CheckModelAboutHIt(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
-
 	// 地面のモデルとプレイヤーの判定
-	void CheckCollMap(std::shared_ptr<CharacterBase> character);
+	bool CheckCollMap(std::shared_ptr<CharacterBase> character);
 
 	// キャラクターの更新処理
 	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
 private:
+	// メンバー関数ポインタ
+	SceneBase* (SceneMain::* m_pUpdateFunc)() = &SceneMain::UpdateGamePlay;
 	// カメラクラス
 	std::unique_ptr<Camera> m_pCamera;
 	// キャラクタークラス

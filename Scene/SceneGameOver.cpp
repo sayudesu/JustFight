@@ -2,6 +2,7 @@
 #include "../Util/Pad.h"
 #include <DxLib.h>
 #include "SceneTitle.h"
+#include "SceneDebug.h"
 
 SceneGameOver::SceneGameOver()
 {
@@ -23,7 +24,7 @@ SceneBase* SceneGameOver::Update()
 {
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
-		return new SceneTitle();
+		return new SceneDebug();
 	}
 
 	return this;

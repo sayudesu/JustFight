@@ -29,7 +29,7 @@ void FieldDrawer::Init()
 
 	m_mapModel = new GameObject(
 		"Data/Model/Map.mv1",
-		VGet(m_pos.x, m_pos.y - 550.0f, m_pos.z),
+		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(0, 0, 0),
 		VGet(kMapSize, kMapSize, kMapSize));
 

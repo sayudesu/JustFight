@@ -22,6 +22,7 @@ public:
         m_handle = MV1LoadModel(name.c_str());
         MV1SetScale(m_handle, size);
     }
+
     ~GameObject()
     {
         MV1DeleteModel(m_handle);

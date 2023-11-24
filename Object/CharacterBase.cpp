@@ -130,7 +130,7 @@ void CharacterBase::Draw()
 	// 盾モデル
 	m_shield->Draw();
 
-#if _DEBUG
+#if false
 	// カプセルの描画
 	DrawCapsule3D(m_capsuleUpDown, m_capsuleUpPos, kCapsuleRadius, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), FALSE);
 #endif
@@ -138,7 +138,7 @@ void CharacterBase::Draw()
 
 void CharacterBase::TargetMove()
 {
-	float tempPosY = m_pos.y;
+	const float tempPosY = m_pos.y;
 	// 向きを算出
 	VECTOR m_dir = VSub(m_targetPos, m_pos);
 
@@ -462,48 +462,6 @@ void CharacterBase::StrongAttack()
 	// 現在の行動を記録
 	m_battleState = BattleState::STRONGATTACK;
 
-#if false
-	int slideX = 0;
-	int slideY = 0;
-	int slideZ = 0;
-	// 最大フレーム内に目標地点まで移動する
-	// 始めに隙ようの後ろに動かす動作
-	if (m_attackGapFrame < m_parameter.strongAttackFrameGapMax  )
-	{
-		m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z, 100.0f, m_attackGapFrame, m_parameter.strongAttackFrameGapMax  );
-		m_attackGapFrame++;
-		m_tempWeaponPos = m_vecWeapon;
-		slideX = GetRand(6);
-		slideY = GetRand(6);
-		slideZ = GetRand(6);
-	}
-	// 攻撃をする動作
-	if (m_attackGapFrame == m_parameter.strongAttackFrameGapMax  )
-	{
-		slideX = 0;
-		slideY = 0;
-		slideZ = 0;
-		if (m_attackFrame < m_parameter.attackFrameMax)
-		{
-			m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -200.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
-			m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
-			m_attackFrame++;
-		}
-	}
-
-	if (m_attackFrame + m_attackGapFrame == m_parameter.strongAttackRotalFrame )
-	{
-		m_attackFrame = 0;
-		m_attackGapFrame = 0;
-		m_pFunc = &CharacterBase::Idle;
-	}
-
-	if (m_isStun)
-	{
-		m_pFunc = &CharacterBase::Stun;
-	}
-#endif	
-
 	// 武器動かす
 	if (!m_isSceneChange)
 	{
@@ -518,9 +476,9 @@ void CharacterBase::StrongAttack()
 		}
 		if (m_attackGapFrame == m_parameter.strongAttackFrameGapMax)
 		{
-			test1 = MoveByFrame(0.0f, (90) * DX_PI_F / 180.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
+			test1 += 30.0f * DX_PI_F / 180.0f;
 			//m_vecWeapon.y = MoveByFrame(m_parameter.weaponRelativePos.y, 500.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
-			//m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z, -300.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
+			m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z, -500.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
 
 			//// 攻撃時のフレームを乗算
 			m_attackFrame++;
@@ -528,21 +486,10 @@ void CharacterBase::StrongAttack()
 	}
 
 	// 最大フレームに到達したら
-	if (m_attackFrame == m_parameter.strongAttackFrameMax + 60 * 3)
+	if (m_attackFrame == m_parameter.strongAttackFrameMax)
 	{
 		m_isSceneChange = true;
 	}
-
-	//// オブジェクトの状態
-	//{
-	//	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-	//	m_weaponPos = VAdd(m_pos, move);
-	//	m_weapon->Move(m_weaponPos);
-
-	//	m_weapon->Rotate(VGet(m_angle - test1, m_angle, 0.0f));
-	//	m_weapon->Update();
-	//}
-
 
 	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
@@ -559,11 +506,45 @@ void CharacterBase::StrongAttack()
 
 	// 現在のHPを調整
 	HitPoint();
-	UpdatePos();
 
+	// 重力後で処理の位置を変えます
+	if (m_isGravity)
+	{
+		m_pos.y -= kGravity;
+	}
+	m_isGravity = true;
+
+	// 武器
+	{
+		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+		m_weaponPos = VAdd(m_pos, move);
+		m_weapon->Move(m_weaponPos);
+		m_weapon->Rotate(VGet(test1, m_angle - test2 + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
+		m_weapon->Update();
+	}
+	// 盾
+	{
+		VECTOR move = VTransform(m_vecShield, m_rotMtx);
+		move = VAdd(m_pos, move);
+		m_shield->Move(move);
+		m_shield->Rotate(VGet(0, m_angle, 0));
+		m_shield->Update();
+	}
+
+	// キャラクターの位置
 	m_my->Move(m_pos);
 	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
+
+	m_capsuleUpDown = m_pos;
+	m_capsuleUpDown.y = m_pos.y + 50.0f;
+
+	m_capsuleUpPos = m_capsuleUpDown;
+	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
+
+	// ノックバックされた場合
+	KnockBack();
+
 }
 
 // ガードした場合
@@ -684,8 +665,10 @@ void CharacterBase::HitPoint()
 	// 攻撃を受けたら
 	if (m_isResultDamage)
 	{
-		// 現在の攻撃と前回の攻撃が違う場合
-		if (m_targetBattleState != m_tempTargetBattleState)
+		// 現在の攻撃と前回の攻撃が違う場合かつ
+		// 自身がガードしていない場合
+		if (m_targetBattleState != m_tempTargetBattleState &&
+			m_battleState != BattleState::GUARD)
 		{
 			// 体力を減らす
 			m_hp--;

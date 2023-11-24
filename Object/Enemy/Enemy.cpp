@@ -5,7 +5,9 @@ namespace
 {
 	// Šp“xî•ñ‚ğƒtƒŒ[ƒ€’PˆÊ‚Å’x‚ç‚¹‚é
 	constexpr int kDelayFrameAngle = 18;
+	constexpr int kGuardFrameCountMax = 60 * 2;
 }
+
 
 Enemy::Enemy(VECTOR pos) :
 	CharacterBase(pos),
@@ -99,8 +101,7 @@ void Enemy::Input()
 		// UŒ‚‰Â”\”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©
 		if (IsAttackRange())
 		{
-			static int guardFrameCount = 0;
-			const int guardFrame = 60;			
+			static int guardFrameCount = 0;		
 
 			// UŒ‚or–hŒä‚µ‚Ä‚¢‚È‚©‚Á‚½‚çŸ‚Ìs“®‚ğŒˆ‚ß‚é
 			if (!m_isAttack && !m_isGuard && !m_isStrongAttack)
@@ -135,20 +136,20 @@ void Enemy::Input()
 				m_isCheckStrongAttack = false;
 			}
 
-
-			if (guardFrameCount == guardFrame)
+			if (m_isResultGuard && !m_isAttack)
+			{
+				m_isGuard = true;
+				guardFrameCount++;
+				m_pFunc = &Enemy::Guard;		
+			}
+			if (guardFrameCount == kGuardFrameCountMax)
 			{
 				guardFrameCount = 0;
 				m_isCheckGuard = false;
 				m_isGuard = false;
 				m_isResultGuard = false;
 			}
-			if (m_isResultGuard && !m_isAttack)
-			{
-				m_isGuard = true;
-				guardFrameCount++;
-				m_pFunc = &Enemy::Guard;
-			}
+
 		}
 		else
 		{

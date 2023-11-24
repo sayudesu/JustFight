@@ -43,8 +43,8 @@ Player::Player(VECTOR pos):
 
 	m_parameter.attackAfterStopFrameMax = 60;
 
-	m_parameter.strongAttackFrameMax = 5;
-	m_parameter.strongAttackFrameGapMax = 60;
+	m_parameter.strongAttackFrameMax = 60;
+	m_parameter.strongAttackFrameGapMax = 25;
 	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
 
 	m_parameter.guardFrameMax = 5;
