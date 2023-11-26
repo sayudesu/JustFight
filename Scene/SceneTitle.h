@@ -1,5 +1,8 @@
 #pragma once
 #include "SceneBase.h"
+#include <memory>
+
+class SlideSelect;
 class SceneTitle : public SceneBase
 {
 public:
@@ -13,5 +16,7 @@ public:
 	virtual void Draw() override;
 private:
 	int m_hTitle;
+
+	std::unique_ptr<SlideSelect> m_select;
 };
 
