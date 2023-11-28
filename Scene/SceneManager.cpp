@@ -78,7 +78,7 @@ void SceneManager::Draw()
 
 	float rate = static_cast<float>(m_updateTime + m_drawTime) / 16666.6f;
 	int width = static_cast<int>(Game::kScreenWidth * rate);
-	DrawBox(0, Game::kScreenHeight - 16, width, Game::kScreenHeight, 0xff0000,true);
+	DrawBox(0, Game::kScreenHeight - 16, width, Game::kScreenHeight, 0x0000ff,true);
 
 	rate = static_cast<float>(m_updateTime) / 16666.6f;
 	width = static_cast<int>(Game::kScreenWidth * rate);

@@ -61,4 +61,8 @@ private:
 	std::vector<BloodDrawer*>m_pBlood;
 	// フィールドクラス
 	std::unique_ptr<FieldDrawer>m_pField; 
+
+	int m_quakeTimer = 0;//画面揺れタイマー
+	float m_quakeX = 0.0f;//横揺れパラメータ
+	int m_tempScreen;
 };

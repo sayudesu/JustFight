@@ -179,7 +179,8 @@ void Player::Input()
 			if (Pad::IsTrigger(PAD_INPUT_6) &&
 				!m_isAttack                 &&
 				!m_isStrongAttack           &&
-				!m_isGuard)
+				!m_isGuard &&
+				!m_isJustGuard)
 			{
 				m_isAttack = true;
 				m_comboAttack++;
@@ -194,6 +195,7 @@ void Player::Input()
 				!m_isAttack &&
 				!m_isStrongAttack &&
 				!m_isGuard &&
+				!m_isJustGuard &&
 				(GetStrongPower() > 100.0f))
 			{
 				m_isStrongAttack = true;
@@ -203,7 +205,7 @@ void Player::Input()
 			// ñhå‰
 			if (Pad::IsPress(PAD_INPUT_5))
 			{
-				if (!m_isAttack && !m_isStrongAttack && !m_isJustGuardCounter)
+				if (!m_isAttack && !m_isStrongAttack && !m_isJustGuard && !m_isJustGuard)
 				{
 					// 
 					//SetStrongPowerReset();

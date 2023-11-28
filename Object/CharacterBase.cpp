@@ -183,6 +183,9 @@ BattleState CharacterBase::GetBattleState()
 void CharacterBase::Idle()
 {
 	m_isSceneChange = false;
+
+	m_isJustGuardCounter = false;
+
 	// 
 	SetFightingMeter(0.09f);
 
@@ -419,7 +422,7 @@ void CharacterBase::AttackTwo()
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
 		m_shield->Move(move);
-		m_shield->Rotate(VGet(0, m_angle, 0));
+		m_shield->Rotate(VGet(0, m_angle - test1, 0));
 		m_shield->Update();
 	}
 
@@ -435,6 +438,8 @@ void CharacterBase::AttackTwo()
 
 	// ノックバックされた場合
 	KnockBack();
+
+	test1 = (90) * DX_PI_F / 180.0f;
 }
 
 // 強攻撃した場合
@@ -575,7 +580,6 @@ void CharacterBase::Guard()
 
 	if (m_isJustGuard)
 	{
-		m_isJustGuardCounter = true;
 		m_isSceneChange = false;
 		m_guardFrame = 0;
 		m_justGuardFrame = 0;
@@ -599,6 +603,8 @@ void CharacterBase::JustGuard()
 	// 現在の行動を記録
 	m_battleState = BattleState::JUSTGUARD;
 
+	m_isJustGuardCounter = true;
+
 	// 最大フレーム内に目標地点まで移動する
 	if (!m_isSceneChange)
 	{
@@ -606,9 +612,9 @@ void CharacterBase::JustGuard()
 		{
 			test1 = MoveByFrame(0.0f, (static_cast<float>(90) / 2.0f) * DX_PI_F / 180.0f, m_justGuardCounterFrame, 10);
 		}
-		if (m_justGuardCounterFrame < 15)m_vecShield.z = MoveByFrame(0.0f,  -50.0f, m_justGuardCounterFrame, 15);
-		if (m_justGuardCounterFrame < 15)m_vecShield.x = MoveByFrame(0.0f, 100.0f, m_justGuardCounterFrame, 15);
-		if (m_justGuardCounterFrame < 15)m_vecShield.y = MoveByFrame(0.0f, 150.0f, m_justGuardCounterFrame, 15);
+		if (m_justGuardCounterFrame < 15)m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 100.0f, m_justGuardCounterFrame, 15);
+		if (m_justGuardCounterFrame < 15)m_vecShield.y = MoveByFrame(m_parameter.shieldRelativePos.y, 150.0f, m_justGuardCounterFrame, 15);
+		if (m_justGuardCounterFrame < 15)m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z,  -50.0f, m_justGuardCounterFrame, 15);
 		m_justGuardCounterFrame++;
 	}
 
@@ -621,6 +627,7 @@ void CharacterBase::JustGuard()
 	// シーンを切り替える事ができるなら
 	if (m_isSceneChange)
 	{
+		m_isJustGuard = false;
 		m_isJustGuardCounter = false;
 		m_justGuardCounterFrame = 0;
 		m_vecShield = m_parameter.shieldRelativePos;

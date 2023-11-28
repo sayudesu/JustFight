@@ -47,6 +47,13 @@ void SceneMain::Init()
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Init();
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Init();
 	m_pField->Init();
+
+	//++++++++++++++++++++++++
+	//    加工画面作成用
+	//++++++++++++++++++++++++
+	int sw, sh, bit;//画面幅＆画面高＆ビット数
+	GetScreenState(&sw, &sh, &bit);//幅と高さを取得しておく
+	m_tempScreen = MakeScreen(sw, sh);//加工用画面を用意する
 }
 
 void SceneMain::End()
@@ -55,6 +62,8 @@ void SceneMain::End()
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->End();
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->End();
 	m_pField->End();
+
+	DeleteGraph(m_tempScreen);
 
 	for (int i = 0; i < m_pBlood.size(); i++)
 	{
@@ -72,6 +81,12 @@ SceneBase* SceneMain::Update()
 
 SceneBase* SceneMain::UpdateGamePlay()
 {
+	// キャラクターの更新処理
+	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], true);
+	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)], false);
+
 	// プレイヤーが場外に出たら　敗北
 	// 敵が場外に出たら　　　　　勝利
 	if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]))
@@ -83,15 +98,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_pUpdateFunc = &SceneMain::UpdateGameClear;
 	}
 
-	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],true);
-	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)], false);
-
-	// カメラの更新処理
-	m_pCamera->Update();
-
 	// 敵の攻撃可能範囲にいるかどうか
 	if (CheckModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
 	{
@@ -102,6 +108,13 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetAttackRange(false);
 	}
 
+	// カメラにプレイヤーとエネミーの位置を渡す
+	m_pCamera->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
+	// カメラにプレイヤーの角度と位置を渡す
+	m_pCamera->SetPlayerAngle(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetAngle());
+
+	// カメラの更新処理
+	m_pCamera->Update();
 	{
 		// 血のエフェクトを更新
 		for (auto& blood : m_pBlood)
@@ -121,17 +134,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 	}
 
-	// カメラにプレイヤーとエネミーの位置を渡す
-	m_pCamera->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
-	// カメラにプレイヤーの角度と位置を渡す
-	m_pCamera->SetPlayerAngle(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetAngle());
-
-	if (Pad::IsTrigger(PAD_INPUT_1))
-	{
-		clsDx();
-		return new SceneDebug();
-	}
-
 	{
 		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp() == 0)
 		{						
@@ -141,6 +143,25 @@ SceneBase* SceneMain::UpdateGamePlay()
 		{			
 		//	m_pUpdateFunc = &SceneMain::UpdateGameClear;
 		}
+	}
+
+	if (Pad::IsTrigger(PAD_INPUT_1))
+	{
+		clsDx();
+		m_quakeX = 20.0f;
+		m_quakeTimer = 144;
+	//	return new SceneDebug();
+	}
+
+	if (--m_quakeTimer > 0) 
+	{
+		m_quakeX = -m_quakeX;
+		m_quakeX *= 0.95f;
+		--m_quakeTimer;
+	}
+	else
+	{
+		m_quakeX = 0.0f;
 	}
 
 	return this;
@@ -173,6 +194,10 @@ SceneBase* SceneMain::UpdateGameClear()
 
 void SceneMain::Draw()
 {
+	//加工用スクリーンハンドルをセット
+//  SetDrawScreen(m_tempScreen);
+	
+//	ClearDrawScreen();
 	// マップの描画
 	m_pField->Draw();
 
@@ -186,6 +211,22 @@ void SceneMain::Draw()
 	for (auto& blood : m_pBlood)
 	{
 		blood->Draw();
+	}
+
+//	SetDrawScreen(DX_SCREEN_BACK);
+	
+//	DrawGraph(static_cast<int>(m_quakeX), 0, m_tempScreen, false);
+	
+	if (m_quakeTimer > 0)
+	{
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_INVERT);
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_MONO, 128, 0);
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 16, 1400);
+		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
+		DrawGraph(m_quakeX, 0, m_tempScreen, false);
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 32, 1400);
+		DrawGraph(m_quakeX, 0, m_tempScreen, false);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);
 	}
 
 #if _DEBUG
@@ -318,7 +359,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	character1->SetBattleState(character2->GetBattleState());
 
 	// ジャストガードOFF
-	character1->SetJustGuard(false);
+//	character1->SetJustGuard(false);
 
 	// 回転角度を取得
 	character2->SetTargetMtxRota(character1->GetRot());

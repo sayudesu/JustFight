@@ -40,6 +40,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;
 	}
 
+	//ゲーム中にウィンドウモードを切り替えてもグラフィックスハンドルを
+	//リセットしない
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
@@ -121,7 +123,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//SetLightDirectionHandle(lightHandleNear, VGet(0.0f, -1.0f, 1.0f));
 	//SetLightDirectionHandle(lightHandleFar, VGet(0.0f, -1.0f, -1.0f));
-
+	
 	SceneManager* pScene = new SceneManager();
 
 	pScene->Init();
@@ -132,15 +134,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG  time = GetNowHiPerformanceCount();
-
 		// 画面のクリア
 		ClearDrawScreen();
 
+	
 		pScene->Update();
 		EffekseerDrawer::GetInstance().Update();
 
 		pScene->Draw();
 		EffekseerDrawer::GetInstance().Draw();
+
+	
+
 		
 #if true
 		//DrawSphere3D(lightPosUp, 30, 30, 0xaaaa11, 0xaaaa11, true);
