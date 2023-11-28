@@ -56,7 +56,7 @@ Player::Player(VECTOR pos):
 	m_parameter.fightingMeterMax = 100.0f;
 
 	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
-	m_parameter.shieldRelativePos = { 100.0f, 100.0f, -50.0f };
+	m_parameter.shieldRelativePos = { 100.0f, 100.0f, 10.0f };
 
 	m_parameter.weaponAttackRadius = 100.0f;
 	m_parameter.shieldRadius = 50.0f;
@@ -201,20 +201,21 @@ void Player::Input()
 			}
 
 			// ñhå‰
-			if (Pad::IsPress(PAD_INPUT_5) &&
-				!m_isAttack               &&
-				!m_isStrongAttack &&
-				!m_isJustGuardCounter)
+			if (Pad::IsPress(PAD_INPUT_5))
 			{
-				// 
-				//SetStrongPowerReset();
-				m_isGuard = true;
-				m_pFunc = &Player::Guard;
+				if (!m_isAttack && !m_isStrongAttack && !m_isJustGuardCounter)
+				{
+					// 
+					//SetStrongPowerReset();
+					m_isGuard = true;
+					m_pFunc = &Player::Guard;
+				}
 			}
 			else
 			{
 				m_isGuard = false;
 			}
+
 		}
 	}
 
@@ -238,7 +239,6 @@ void Player::Input()
 
 	if (Pad::IsTrigger(PAD_INPUT_4))
 	{
-		//SetStun(true);
 		SetFightingMeter(-10000.0f);
 	}
 }

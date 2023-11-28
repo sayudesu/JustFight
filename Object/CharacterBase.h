@@ -53,6 +53,10 @@ private:
 	// ノックバック
 	virtual void KnockBack();
 
+
+	// 装備を元の位置に戻す処理
+	virtual void WeaponDefaultPos();
+
 protected:
 	// 角度を取得
 	virtual void SetAngle(float angle);
@@ -142,8 +146,6 @@ public:
 	void SetGuardKnockBack(bool isGuard, float vec);
 	// ジャストガードが成功したかどうか
 	void SetJustGuard(const bool isJustGuard);
-	// スタンをするかどうか
-	void SetStun(const bool isStun);
 
 	// 戦いに必要な特殊なメーターを変更する
 	void SetFightingMeter(const float fightingMeter);
@@ -202,9 +204,7 @@ private:
 	int m_justGuardFrame;// ジャストガードのフレーム
 	int m_stunFrame;     // スタン状態のフレーム
 	int m_recoilFrame;   // 攻撃を弾かれば場合のフレーム
-
-	int m_attackAfterStopFrame;// 攻撃後の硬直フレーム
-
+	int m_attackAfterStopFrame; // 攻撃後の硬直フレーム
 	int m_justGuardCounterFrame;// ジャストガードを成功させた後のカウント
 
 	// 攻撃用シーン繊維の移動が可能かどうか

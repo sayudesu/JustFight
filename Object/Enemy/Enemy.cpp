@@ -360,11 +360,25 @@ void Enemy::Input()
 		else
 		{
 			TargetMove();
+
+			m_isGuard = false;
+			m_isCheckGuard = false;
+			m_isResultGuard = false;
+
+			m_isAttack = false;
+			m_isCheckAttack = false;
+			m_isAttackResult = false;
 		}
 	}
 	else
 	{
 		m_isGuard = false;
+		m_isCheckGuard = false;
+		m_isResultGuard = false;
+
+		m_isAttack = false;
+		m_isCheckAttack = false;
+		m_isAttackResult = false;
 	}
 #endif
 }

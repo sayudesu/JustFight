@@ -189,49 +189,16 @@ void CharacterBase::Idle()
 	// コンボ初期化
 	m_comboAttack = 0;
 
+	// 攻撃カウントの初期化
+	m_attackFrame = 0;
 
 	// 武器を元の位置に戻す
-	{
-		bool isEndX = false;
-		bool isEndZ = false;
-		if (m_vecWeapon.x > m_parameter.weaponRelativePos.x)
-		{
-			m_vecWeapon.x -= 10.0f;
-		}
-		else
-		{
-			isEndX = true;
-			m_vecWeapon.x = m_parameter.weaponRelativePos.x;
-		}
-
-		if (m_vecWeapon.z < m_parameter.weaponRelativePos.z)
-		{
-			m_vecWeapon.z += 30.0f;
-		}
-		else
-		{
-			isEndZ = true;
-			m_vecWeapon.z = m_parameter.weaponRelativePos.z;
-		}
-
-		if (isEndX && isEndZ)
-		{
-			m_isAttack = false;
-			m_isStrongAttack = false;
-		}
-
-		if (m_vecWeapon.y < m_parameter.weaponRelativePos.y)
-		{
-			m_vecWeapon.y -= 10.0f;
-		}
-		else
-		{
-			m_vecWeapon.y = m_parameter.weaponRelativePos.y;
-		}
-	}
+	WeaponDefaultPos();
 
 	// 盾を元の位置に戻す
 	{
+		bool isEndX = false;
+		bool isEndY = false;
 		if (m_vecShield.x < m_parameter.shieldRelativePos.x)
 		{
 			m_vecShield.x += 30.0f;
@@ -239,6 +206,7 @@ void CharacterBase::Idle()
 		else
 		{
 			m_vecShield.x = m_parameter.shieldRelativePos.x;
+			isEndX = true;
 		}
 
 		if (m_vecShield.y < m_parameter.shieldRelativePos.y)
@@ -248,6 +216,11 @@ void CharacterBase::Idle()
 		else
 		{
 			m_vecShield.y = m_parameter.shieldRelativePos.y;
+			isEndY = true;
+		}
+		if (isEndX && isEndY)
+		{
+			m_isGuard = false;
 		}
 	}
 
@@ -293,6 +266,10 @@ void CharacterBase::Idle()
 
 	// 位置情報の更新
 	UpdatePos();
+
+	test1 = (90) * DX_PI_F / 180.0f;
+
+	m_vecShield.z = 10.0f;
 }
 
 // 攻撃した場合
@@ -555,7 +532,8 @@ void CharacterBase::StrongAttack()
 
 // ガードした場合
 void CharacterBase::Guard()
-{
+{	
+	m_attackFrame = 0;
 	m_vecWeapon.x = -80.0f;
 	test2 = 0;
 
@@ -566,6 +544,8 @@ void CharacterBase::Guard()
 	if (m_guardFrame < m_parameter.guardFrameMax )
 	{
 		m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 0.0f, m_guardFrame, m_parameter.guardFrameMax);
+		m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z, -50.0f, m_guardFrame, m_parameter.guardFrameMax);
+		test1 = MoveByFrame((90) * DX_PI_F / 180.0f, 0 , m_guardFrame, m_parameter.guardFrameMax);
 		m_guardFrame++;
 
 		// ジャストガードのフレーム
@@ -580,6 +560,8 @@ void CharacterBase::Guard()
 	{
 		m_guardFrame = m_parameter.guardFrameMax ;
 		m_vecShield.x = 0.0f;
+
+		test1 = (0) * DX_PI_F / 180.0f;
 	}
 
 
@@ -756,6 +738,50 @@ void CharacterBase::KnockBack()
 		else
 		{
 			m_isResultGuard = false;
+		}
+	}
+}
+
+void CharacterBase::WeaponDefaultPos()
+{
+
+	// 武器を元の位置に戻す
+	{
+		bool isEndX = false;
+		bool isEndZ = false;
+		if (m_vecWeapon.x > m_parameter.weaponRelativePos.x)
+		{
+			m_vecWeapon.x -= 10.0f;
+		}
+		else
+		{
+			isEndX = true;
+			m_vecWeapon.x = m_parameter.weaponRelativePos.x;
+		}
+
+		if (m_vecWeapon.z < m_parameter.weaponRelativePos.z)
+		{
+			m_vecWeapon.z += 30.0f;
+		}
+		else
+		{
+			isEndZ = true;
+			m_vecWeapon.z = m_parameter.weaponRelativePos.z;
+		}
+
+		if (isEndX && isEndZ)
+		{
+			m_isAttack = false;
+			m_isStrongAttack = false;
+		}
+
+		if (m_vecWeapon.y < m_parameter.weaponRelativePos.y)
+		{
+			m_vecWeapon.y -= 10.0f;
+		}
+		else
+		{
+			m_vecWeapon.y = m_parameter.weaponRelativePos.y;
 		}
 	}
 }
@@ -1069,11 +1095,6 @@ void CharacterBase::SetGuardKnockBack(bool isGuard,float vec)
 void CharacterBase::SetJustGuard(bool isJustGuard)
 {
 	m_isJustGuard = isJustGuard;
-}
-
-void CharacterBase::SetStun(bool isStun)
-{
-	m_isStun = isStun;
 }
 
 void CharacterBase::SetFightingMeter(const float fightingMeter)

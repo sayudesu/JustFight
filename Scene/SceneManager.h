@@ -16,4 +16,6 @@ public:
 	void Draw();
 private:
 	std::unique_ptr<SceneBase>	m_pScene;
+	int m_updateTime = 0;
+	int m_drawTime = 0;
 };

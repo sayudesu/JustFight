@@ -72,17 +72,18 @@ SceneBase* SceneMain::Update()
 
 SceneBase* SceneMain::UpdateGamePlay()
 {
-	//
+	// プレイヤーが場外に出たら　敗北
+	// 敵が場外に出たら　　　　　勝利
 	if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]))
 	{
 		m_pUpdateFunc = &SceneMain::UpdateGameOver;
 	}
-	if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
+	else if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
 	{
-		m_pUpdateFunc = &SceneMain::UpdateGameOver;
+		m_pUpdateFunc = &SceneMain::UpdateGameClear;
 	}
 
-	// 
+	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
 		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],true);
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
@@ -172,20 +173,23 @@ SceneBase* SceneMain::UpdateGameClear()
 
 void SceneMain::Draw()
 {
+	// マップの描画
 	m_pField->Draw();
 
+	// キャラクターの描画
 	for (auto& character : m_pCharacter)
 	{
 		character->Draw();
 	}
 	
+	// 血しぶきの描画(仮)
 	for (auto& blood : m_pBlood)
 	{
 		blood->Draw();
 	}
 
-	DEBUG::Field();
 #if _DEBUG
+	DEBUG::Field();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pCharacter[0]->GetFightingMeter(), 100, 15, 0xffff00);
@@ -202,7 +206,6 @@ void SceneMain::Draw()
 	
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
-
 }
 
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
@@ -370,12 +373,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	}
 
 
-	bool a = character1->GetBattleState() == BattleState::ATTACK;
-	bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
-	bool c = character1->GetBattleState() == BattleState::STRONGATTACK;
-
-	bool d =  character2->GetBattleState() != BattleState::GUARD;
-
+	const bool a = character1->GetBattleState() == BattleState::ATTACK;
+	const bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
+	const bool c = character1->GetBattleState() == BattleState::STRONGATTACK;
 	// 攻撃を与える処理
 	if (a || b || c)
 	{
@@ -408,9 +408,10 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 				color = 0xffffff;
 			}
 
+			const bool d = character2->GetBattleState() != BattleState::GUARD;
 			if (d)
 			{
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 100; i++)
 				{
 					m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
 					m_pBlood.back()->Init(i);
