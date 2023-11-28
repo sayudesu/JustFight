@@ -36,5 +36,8 @@ private:
 	
 	// 画面に画像を表示させるかどうか
 	int m_isImageDraw;
+
+	// 選択を変更する為のフレーム
+	int m_selectFrameMax[SelectButton::BUTTONMAX];
 };
 
