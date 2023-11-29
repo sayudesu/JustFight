@@ -15,6 +15,7 @@ class Camera;
 class CharacterBase;
 class BloodDrawer;
 class FieldDrawer;
+class UIDrawer;
 
 class SceneMain : public SceneBase
 {
@@ -61,6 +62,8 @@ private:
 	std::vector<BloodDrawer*>m_pBlood;
 	// フィールドクラス
 	std::unique_ptr<FieldDrawer>m_pField; 
+	// UIクラス
+	std::unique_ptr<UIDrawer> m_pUi;
 
 	int m_quakeTimer = 0;//画面揺れタイマー
 	float m_quakeX = 0.0f;//横揺れパラメータ

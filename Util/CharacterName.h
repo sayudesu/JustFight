@@ -8,4 +8,5 @@ enum class CharacterName
 	ENEMYNORMAL,
 	ENEMYSTRING,
 	ENEMYBOSS,
+	MAX,
 }; 

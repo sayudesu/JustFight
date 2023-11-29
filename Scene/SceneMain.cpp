@@ -12,6 +12,7 @@
 #include "SceneResult.h"// リザルトシーン
 #include "../Util/BloodDrawer.h"// 血のエフェクト
 #include "../FIeldDrawer.h"// マップ描画
+#include "../UI/UIDrawer.h";
 
 #include "SceneGameOver.h"// ゲームオーバーシーン
 #include "SceneClear.h"// ゲームクリアシーン
@@ -37,10 +38,11 @@ void SceneMain::Init()
 	// シーン遷移
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
-	m_pCamera               = std::make_unique<Camera>();							// カメラクラス
+	m_pCamera               = std::make_unique<Camera>();// カメラクラス
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
-	m_pField                = std::make_unique<FieldDrawer>();			            // フィールド描画クラス
+	m_pField                = std::make_unique<FieldDrawer>();// フィールド描画クラス
+	m_pUi                   = std::make_unique<UIDrawer>();   // UI描画クラス
 
 	// 初期化
 	m_pCamera->Init();
@@ -48,12 +50,11 @@ void SceneMain::Init()
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Init();
 	m_pField->Init();
 
-	//++++++++++++++++++++++++
-	//    加工画面作成用
-	//++++++++++++++++++++++++
-	int sw, sh, bit;//画面幅＆画面高＆ビット数
-	GetScreenState(&sw, &sh, &bit);//幅と高さを取得しておく
-	m_tempScreen = MakeScreen(sw, sh);//加工用画面を用意する
+
+	// 加工用の画面ハンドルを保存
+	int sw = 0, sh = 0, bit = 0;      // 画面幅＆画面高＆ビット数
+	GetScreenState(&sw, &sh, &bit);   // 幅と高さを取得しておく
+	m_tempScreen = MakeScreen(sw, sh);// 加工用画面を用意する
 }
 
 void SceneMain::End()
@@ -112,9 +113,9 @@ SceneBase* SceneMain::UpdateGamePlay()
 	m_pCamera->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
 	// カメラにプレイヤーの角度と位置を渡す
 	m_pCamera->SetPlayerAngle(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetAngle());
-
-	// カメラの更新処理
+		// カメラの更新処理
 	m_pCamera->Update();
+
 	{
 		// 血のエフェクトを更新
 		for (auto& blood : m_pBlood)
@@ -195,9 +196,14 @@ SceneBase* SceneMain::UpdateGameClear()
 void SceneMain::Draw()
 {
 	//加工用スクリーンハンドルをセット
-//  SetDrawScreen(m_tempScreen);
+    SetDrawScreen(m_tempScreen);
 	
-//	ClearDrawScreen();
+	ClearDrawScreen();
+	
+	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
+	// 初期化されるのでここで再指定
+	m_pCamera->Init();
+
 	// マップの描画
 	m_pField->Draw();
 
@@ -212,41 +218,43 @@ void SceneMain::Draw()
 	{
 		blood->Draw();
 	}
-
-//	SetDrawScreen(DX_SCREEN_BACK);
 	
-//	DrawGraph(static_cast<int>(m_quakeX), 0, m_tempScreen, false);
-	
-	if (m_quakeTimer > 0)
-	{
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_INVERT);
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_MONO, 128, 0);
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 16, 1400);
-		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
-		DrawGraph(m_quakeX, 0, m_tempScreen, false);
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 32, 1400);
-		DrawGraph(m_quakeX, 0, m_tempScreen, false);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);
-	}
-
 #if _DEBUG
 	DEBUG::Field();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pCharacter[0]->GetFightingMeter(), 100, 15, 0xffff00);
-	DEBUG::FrameMeter("Eスタミナ", 100, 200, m_pCharacter[1]->GetFightingMeter(),  100, 15, 0xffff00);
+	DEBUG::FrameMeter("Eスタミナ", 100, 200, m_pCharacter[1]->GetFightingMeter(), 100, 15, 0xffff00);
 
-	DEBUG::FrameMeter("P攻撃フレーム", 100, 250, m_pCharacter[0]->GetAttackFrameMax(), m_pCharacter[0]->GetAttackFrame(), 20,0xffff00);
+	DEBUG::FrameMeter("P攻撃フレーム", 100, 250, m_pCharacter[0]->GetAttackFrameMax(), m_pCharacter[0]->GetAttackFrame(), 20, 0xffff00);
 	DEBUG::FrameMeter("P防御フレーム", 100, 300, m_pCharacter[0]->GetGuardFrameMax(), m_pCharacter[0]->GetGuardFrame(), 30, 0xffff00);
 	DEBUG::FrameMeter("              + JustGuard", 100, 300, m_pCharacter[0]->GetJustGuardFrameMax(), m_pCharacter[0]->GetJustGuardFrame(), 30, 0xffffff);
 
 	DEBUG::FrameMeter("E攻撃フレーム", 100, 400, m_pCharacter[1]->GetAttackFrameMax(), m_pCharacter[1]->GetAttackFrame(), 20, 0xffff00);
 	DEBUG::FrameMeter("E防御フレーム", 100, 450, m_pCharacter[1]->GetGuardFrameMax(), m_pCharacter[1]->GetGuardFrame(), 30, 0xffff00);
 	DEBUG::FrameMeter("              + JustGuard", 100, 450, m_pCharacter[1]->GetJustGuardFrameMax(), m_pCharacter[1]->GetJustGuardFrame(), 30, 0xffffff);
-
-	
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
+
+	SetDrawScreen(DX_SCREEN_BACK);
+
+	if (m_quakeTimer > 0)
+	{
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_INVERT);         // 色を反転させる		
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
+		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);                   // 加算合成する		
+		DrawGraph(m_quakeX, m_quakeX, m_tempScreen, false);        // 画面を描画
+		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
+		DrawGraph(m_quakeX, m_quakeX, m_tempScreen, false);        // 画面を描画
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);               // ブレンドモードを初期状態に戻す
+	}
+	else
+	{		
+		DrawGraph(0, 0, m_tempScreen, false);// 通常画面描画
+	}
+
+	m_pUi->Draw();
 }
 
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)

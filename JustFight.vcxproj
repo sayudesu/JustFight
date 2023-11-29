@@ -147,6 +147,7 @@
     <ClCompile Include="Scene\SceneClear.cpp" />
     <ClCompile Include="Scene\SceneGameOver.cpp" />
     <ClCompile Include="SlideSelect.cpp" />
+    <ClCompile Include="UI\UIDrawer.cpp" />
     <ClCompile Include="Util\BloodDrawer.cpp" />
     <ClCompile Include="Util\EffekseerDrawer.cpp" />
     <ClCompile Include="FIeldDrawer.cpp" />
@@ -171,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="SlideSelect.h" />
+    <ClInclude Include="UI\UIDrawer.h" />
     <ClInclude Include="Util\CharacterParameter.h" />
     <ClInclude Include="Scene\SceneClear.h" />
     <ClInclude Include="Scene\SceneGameOver.h" />

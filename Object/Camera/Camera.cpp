@@ -31,7 +31,7 @@ void Camera::Init()
 {
 	// どこから、どこまで見えるか
 	SetCameraNearFar(100.0f, 30000.0f);
-	// どこを居てどこをみるか
+	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(m_pos, m_targetPos);
 	// FOV
 	SetupCamera_Perspective(kFov);
@@ -64,11 +64,12 @@ void Camera::Update()
 	const MATRIX cameraMtx = MMult(cameraRotMtx, playerTransMtx);
 
 	// 行列を使った座標変換
-	const VECTOR cameraPos = VTransform(kCameraPos, cameraMtx);
-	const VECTOR cameraTarget = VTransform(kCameraTarget, cameraMtx);
+	m_pos       = VTransform(kCameraPos, cameraMtx);
+	m_targetPos = VTransform(kCameraTarget, cameraMtx);
 
-	// カメラの位置、どこを見ているかを設定する
-	SetCameraPositionAndTarget_UpVecY(cameraPos, cameraTarget);
+	//// カメラの位置、どこを見ているかを設定する
+	//SetCameraPositionAndTarget_UpVecY(m_pos, m_targetPos);
+	//SetupCamera_Perspective(kFov);
 }
 
 void Camera::SetTargetPos(VECTOR pos)
