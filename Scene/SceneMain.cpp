@@ -88,6 +88,13 @@ SceneBase* SceneMain::UpdateGamePlay()
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)], false);
 
+	// UIにパラメーターの状態を渡す
+	m_pUi->SetParam(
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetMyId(),
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp(),
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetStrongPower(),
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetFightingMeter());
+
 	// プレイヤーが場外に出たら　敗北
 	// 敵が場外に出たら　　　　　勝利
 	if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]))
@@ -240,8 +247,8 @@ void SceneMain::Draw()
 
 	if (m_quakeTimer > 0)
 	{
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_INVERT);         // 色を反転させる		
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
+//		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_INVERT);         // 色を反転させる		
+//		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
 		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);                   // 加算合成する		
 		DrawGraph(m_quakeX, m_quakeX, m_tempScreen, false);        // 画面を描画

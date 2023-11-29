@@ -9,13 +9,17 @@ namespace
 
 UIDrawer::UIDrawer()
 {
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]          = LoadGraph("Data/Image/ステータスベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]   = LoadGraph("Data/Image/馬.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]          = LoadGraph("Data/Image/HPゲージ.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)]       = LoadGraph("Data/Image/HPゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]          = LoadGraph("Data/Image/必殺技ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)]       = LoadGraph("Data/Image/必殺技ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)] = LoadGraph("Data/Image/ゲージ枠.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]					= LoadGraph("Data/Image/UI/ステータスベース.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]		    = LoadGraph("Data/Image/UI/馬.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]					= LoadGraph("Data/Image/UI/HPゲージ.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)]				= LoadGraph("Data/Image/UI/HPゲージベース.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]					= LoadGraph("Data/Image/UI/必殺技ゲージ.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)]              = LoadGraph("Data/Image/UI/必殺技ゲージベース.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER)]        = LoadGraph("Data/Image/UI/体幹ゲージ.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/体幹ゲージ真ん中.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_BG)]     = LoadGraph("Data/Image/UI/体幹ゲージベース.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)]      = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]        = LoadGraph("Data/Image/UI/ゲージ枠.png");
 }
 
 UIDrawer::~UIDrawer()
@@ -29,6 +33,7 @@ void UIDrawer::Draw()
 	{
 		frameCount += 1.0f;
 	}
+
 	// 描画位置テスト
 	int x = 0;
 	int y = 0;
@@ -58,25 +63,19 @@ void UIDrawer::Draw()
 		0 + 106,
 		Game::kScreenHeight - y - 28,
 		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)],
-		true);
+		true);	    
 
-	SetDrawArea(
+	DrawAreaResult(
 		0 + 106,
 		Game::kScreenHeight - y - 28,
-		0 + 106 + x1 - frameCount,
+		0 + 106 + x1 * m_hpNum[static_cast<int>(CharacterName::PLAYER)] / 6,         //長さ* HP/ HPMAX
 		Game::kScreenHeight - y - 28 + y1);// 描画可能領域を指定
 
-	DrawGraph(
+	UpdateHp(
 		0 + 106,
-		Game::kScreenHeight - y - 28,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)],
-		true);
+		Game::kScreenHeight - y - 28);
 
-	SetDrawArea(
-		0,
-		0,
-		Game::kScreenWidth,
-		Game::kScreenHeight);// 描画可能領域を全体に戻す
+	DrawAreaALL();
 
 	DrawGraph(
 		0 + 106 - 3,
@@ -95,31 +94,104 @@ void UIDrawer::Draw()
 		&x1, 
 		&y1);
 
-	SetDrawArea(
+	DrawAreaResult(
 		0 + 106,
 		Game::kScreenHeight - y + 15,
-		0 + 106 + x1 - frameCount,
+		0 + 106 + x1 * m_skillNum[static_cast<int>(CharacterName::PLAYER)] / 100,		   //長さ* HP/ HPMAX
 		Game::kScreenHeight - y + 15 + y1);// 描画可能領域を指定
 
-	DrawGraph(
-		0 + 106, 
-		Game::kScreenHeight - y + 15,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)],
-		true);
+	UpdateSkill(
+		0 + 106,
+		Game::kScreenHeight - y + 15);
 
-	SetDrawArea(
-		0, 
-		0, Game::kScreenWidth,
-		Game::kScreenHeight);// 描画可能領域を全体に戻す
+	DrawAreaALL();
 
 	DrawGraph(
 		0 + 106 - 3,
 		Game::kScreenHeight - y + 15 - 3,
 		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)],
 		true);
+
+	// 体感ゲージの枠
+	DrawRotaGraph(
+		Game::kScreenWidth / 2,
+		Game::kScreenHeight - 100,
+		1,
+		0 * DX_PI_F / 180.0f,
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)],
+		false,
+		false);
+
+	// 体感背景
+	DrawRotaGraph(
+		Game::kScreenWidth / 2,
+		Game::kScreenHeight - 100,
+		1,
+		0 * DX_PI_F / 180.0f,
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_BG)],
+		false,
+		false);
+
+	// 体感
+	DrawRotaGraph(
+		Game::kScreenWidth / 2,
+		Game::kScreenHeight - 100,
+		1,
+		0 * DX_PI_F / 180.0f,
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER)],
+		false,
+		false);
+
+	// 体感ゲージの中心
+	DrawRotaGraph(
+		Game::kScreenWidth / 2 + 4,
+		Game::kScreenHeight - 100,
+		1,
+		0 * DX_PI_F / 180.0f,
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)],
+		false,
+		false);
 }
 
-void UIDrawer::SetParam(CharacterName name, CharacterParameter param)
+void UIDrawer::SetParam(CharacterName name,int hpNum,int skillNum,int fightMeterNum)
 {
+	m_hpNum[static_cast<int>(name)] = hpNum;
+	m_skillNum[static_cast<int>(name)] = skillNum;
+	m_fightMeterNum[static_cast<int>(name)] = fightMeterNum;
+}
 
+void UIDrawer::UpdateHp(int x, int y)
+{
+	DrawGraph(
+		x,
+		y,
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)],
+		true);
+}
+
+void UIDrawer::UpdateSkill(int x, int y)
+{
+	DrawGraph(
+		x,
+		y,
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)],
+		true);
+}
+
+void UIDrawer::DrawAreaResult(int x, int y, int x1, int y1)
+{
+	SetDrawArea(
+		x,
+		y,
+		x1,
+		y1);// 描画可能領域を全体に戻す
+}
+
+void UIDrawer::DrawAreaALL()
+{
+	SetDrawArea(
+		0,
+		0,
+		Game::kScreenWidth,
+		Game::kScreenHeight);// 描画可能領域を全体に戻す
 }
