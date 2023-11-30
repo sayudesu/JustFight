@@ -3,6 +3,7 @@
 #include <memory>
 
 class SlideSelect;
+class GameObject;
 class SceneTitle : public SceneBase
 {
 public:
@@ -18,5 +19,8 @@ private:
 	int m_hTitle;
 
 	std::unique_ptr<SlideSelect> m_select;
+
+	std::unique_ptr<GameObject>m_pStage;
+	
 };
 

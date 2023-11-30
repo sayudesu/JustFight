@@ -27,12 +27,12 @@ Camera::~Camera()
 {
 }
 
-void Camera::Init()
+void Camera::Setting()
 {
 	// どこから、どこまで見えるか
 	SetCameraNearFar(100.0f, 30000.0f);
 	// カメラの位置、どこを見ているかを設定する
-	SetCameraPositionAndTarget_UpVecY(m_pos, m_targetPos);
+	SetCameraPositionAndTarget_UpVecY(VGet(m_pos.x, m_pos.y, m_pos.z ), m_targetPos);
 	// FOV
 	SetupCamera_Perspective(kFov);
 }

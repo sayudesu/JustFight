@@ -21,6 +21,8 @@
 
 #include "../DEBUG.h"// デバッグ用
 
+#include "../BlurScreen.h";
+
 SceneMain::SceneMain():
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr)
@@ -43,18 +45,21 @@ void SceneMain::Init()
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
 	m_pField                = std::make_unique<FieldDrawer>();// フィールド描画クラス
 	m_pUi                   = std::make_unique<UIDrawer>();   // UI描画クラス
+	m_pBS = new EffectScreen();
 
 	// 初期化
-	m_pCamera->Init();
+	m_pCamera->Setting();
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Init();
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Init();
 	m_pField->Init();
 
 
-	// 加工用の画面ハンドルを保存
-	int sw = 0, sh = 0, bit = 0;      // 画面幅＆画面高＆ビット数
-	GetScreenState(&sw, &sh, &bit);   // 幅と高さを取得しておく
-	m_tempScreen = MakeScreen(sw, sh);// 加工用画面を用意する
+	//// 加工用の画面ハンドルを保存
+	//int sw = 0, sh = 0, bit = 0;      // 画面幅＆画面高＆ビット数
+	//GetScreenState(&sw, &sh, &bit);   // 幅と高さを取得しておく
+	//m_tempScreen = MakeScreen(sw, sh);// 加工用画面を用意する
+
+	m_pBS->Init();
 }
 
 void SceneMain::End()
@@ -156,21 +161,12 @@ SceneBase* SceneMain::UpdateGamePlay()
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 		clsDx();
-		m_quakeX = 20.0f;
-		m_quakeTimer = 144;
+		m_pBS->QuakeReplayInit();
+//		m_pBS->BlurIReplayInit(255/2);
 	//	return new SceneDebug();
 	}
+	m_pBS->QuakeUpdate();
 
-	if (--m_quakeTimer > 0) 
-	{
-		m_quakeX = -m_quakeX;
-		m_quakeX *= 0.95f;
-		--m_quakeTimer;
-	}
-	else
-	{
-		m_quakeX = 0.0f;
-	}
 
 	return this;
 }
@@ -202,14 +198,14 @@ SceneBase* SceneMain::UpdateGameClear()
 
 void SceneMain::Draw()
 {
-	//加工用スクリーンハンドルをセット
-    SetDrawScreen(m_tempScreen);
-	
-	ClearDrawScreen();
+	m_pBS->QuakePreRenderBlurScreen();
+//	m_pBS->BlurPreRenderBlurScreen();
+
+	m_pBS->ClearScreen();
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
-	m_pCamera->Init();
+	m_pCamera->Setting();
 
 	// マップの描画
 	m_pField->Draw();
@@ -243,23 +239,10 @@ void SceneMain::Draw()
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
 
-	SetDrawScreen(DX_SCREEN_BACK);
-
-	if (m_quakeTimer > 0)
-	{
-//		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_INVERT);         // 色を反転させる		
-//		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
-		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);                   // 加算合成する		
-		DrawGraph(m_quakeX, m_quakeX, m_tempScreen, false);        // 画面を描画
-		GraphFilter(m_tempScreen, DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
-		DrawGraph(m_quakeX, m_quakeX, m_tempScreen, false);        // 画面を描画
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);               // ブレンドモードを初期状態に戻す
-	}
-	else
-	{		
-		DrawGraph(0, 0, m_tempScreen, false);// 通常画面描画
-	}
+//	SetDrawScreen(DX_SCREEN_BACK);
+	m_pBS->ScreenBack();
+	m_pBS->QuakePostRenderBlurScreen();
+//	m_pBS->BlurPostRenderBlurScreen();
 
 	m_pUi->Draw();
 }

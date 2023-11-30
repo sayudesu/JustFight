@@ -85,6 +85,7 @@ void CharacterBase::Init()
 
 	// オブジェクトの生成
 	m_my = new GameObject(
+		GameObject::DataType::THREE,
 		m_parameter.fileName.c_str(),
 		m_pos,
 		VGet(testV1.x, m_angle, testV1.z),
@@ -92,6 +93,7 @@ void CharacterBase::Init()
 
 	// 武器オブジェクトの生成
 	m_weapon = new GameObject(
+		GameObject::DataType::THREE,
 		"Data/Model/SwordCollTest.mv1",
 		m_weaponPos,
 		VGet(testV1.x, m_angle, testV1.z),
@@ -99,6 +101,7 @@ void CharacterBase::Init()
 
 	// 盾オブジェクトの生成
 	m_shield = new GameObject(
+		GameObject::DataType::THREE,
 		"Data/Model/Shield.mv1",
 		VGet(100, m_weaponPos.y, 100),
 		VGet(testV1.x, m_angle, testV1.z),

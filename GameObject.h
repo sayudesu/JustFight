@@ -8,6 +8,12 @@
 class GameObject
 {
 public:
+    enum DataType
+    {
+        THREE,
+        TWO,
+    };
+public:
     /// <summary>
     /// 
     /// </summary>
@@ -16,16 +22,33 @@ public:
     /// <param name="angle"></param>
     /// <param name="size"></param>
     /// <param name="parent"></param>
-    GameObject(std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
+    GameObject(DataType type ,std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
         m_pos(pos), m_angle(angle), parent(parent)
     {
-        m_handle = MV1LoadModel(name.c_str());
-        MV1SetScale(m_handle, size);
+        // 3Dオブジェクトだったら
+        if (type == DataType::THREE)
+        {
+            m_handle = MV1LoadModel(name.c_str());
+            MV1SetScale(m_handle, size);
+        }
+        // 2Dオブジェクトだったら
+        else if (type == DataType::TWO)
+        {
+            m_handle = LoadGraph(name.c_str());
+        }
+        m_dataType = type;
     }
 
     ~GameObject()
     {
-        MV1DeleteModel(m_handle);
+        if (m_dataType == DataType::THREE)
+        {
+            MV1DeleteModel(m_handle);
+        }
+        else if (m_dataType == DataType::TWO)
+        {
+            DeleteGraph(m_handle);
+        }
     }
 
     void Update()
@@ -69,7 +92,14 @@ public:
        DrawSphere3D(MV1GetFramePosition(m_handle, 3), 32.0f, 16, GetColor(255, 0, 0), GetColor(128, 0, 0), false);
 #endif
        // 描画
-       MV1DrawModel(m_handle);  
+       if (m_dataType == DataType::THREE)
+       {
+           MV1DrawModel(m_handle);  
+       }
+       else if (m_dataType == DataType::TWO)
+       {
+           DrawGraph(m_tempPos.x, m_tempPos.y, m_handle, true);
+       }
        
     }
 
@@ -130,5 +160,7 @@ private:
     VECTOR m_size = {0,0,0};
     GameObject* parent = nullptr;
     bool m_isParentEscape = false;
+
+    DataType m_dataType;
 };
 

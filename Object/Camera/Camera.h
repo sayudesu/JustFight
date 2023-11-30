@@ -8,7 +8,7 @@ class Camera
 public:
 	Camera();
 	virtual ~Camera();
-	void Init();
+	void Setting();
 
 	void Update();
 public:

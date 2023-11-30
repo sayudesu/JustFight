@@ -1,6 +1,7 @@
 #include "UIDrawer.h"
 #include "../Util/Game.h"
 #include <DxLib.h>
+#include "../GameObject.h"
 
 namespace
 {
@@ -20,6 +21,38 @@ UIDrawer::UIDrawer()
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_BG)]     = LoadGraph("Data/Image/UI/体幹ゲージベース.png");
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)]      = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]        = LoadGraph("Data/Image/UI/ゲージ枠.png");
+
+
+	// 描画位置テスト
+	int x = 0;
+	int y = 0;
+	int x1 = 0;
+	int y1 = 0;
+	GetGraphSize(
+		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)],
+		&x, &y);
+
+	m_playerPos = VGet(0 + 50, Game::kScreenHeight - y - 50, 0);
+
+	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/ステータスベース.png",
+		m_playerPos,
+		VGet(0, 0, 0),
+		VGet(0, 0, 0)
+		);
+
+	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/馬.png",
+		VGet(1000, 0, 0),
+		VGet(0, 0, 0),
+		VGet(0, 0, 0),
+		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)].get()
+		);
+
+	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->Update();
+	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]->Update();
 }
 
 UIDrawer::~UIDrawer()
@@ -151,12 +184,25 @@ void UIDrawer::Draw()
 		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)],
 		false,
 		false);
+
+	DrawFormatString(Game::kScreenWidth / 2, Game::kScreenHeight - 100,0xffffff,"%d", m_fightMeterNum[static_cast<int>(CharacterName::PLAYER)]);
+
+
+//	m_playerPos.x++;
+//	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->Move(m_playerPos);
+
+	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->Update();
+	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]->Update();
+
+	//m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->Draw();
+	//m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]->Draw();
+
 }
 
-void UIDrawer::SetParam(CharacterName name,int hpNum,int skillNum,int fightMeterNum)
+void UIDrawer::SetParam(CharacterName name,int hpNum,float skillNum,int fightMeterNum)
 {
 	m_hpNum[static_cast<int>(name)] = hpNum;
-	m_skillNum[static_cast<int>(name)] = skillNum;
+	m_skillNum[static_cast<int>(name)] = static_cast<int>(skillNum);
 	m_fightMeterNum[static_cast<int>(name)] = fightMeterNum;
 }
 

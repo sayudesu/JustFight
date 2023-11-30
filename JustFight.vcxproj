@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlurScreen.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Scene\SceneClear.cpp" />
     <ClCompile Include="Scene\SceneGameOver.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlurScreen.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="SlideSelect.h" />
     <ClInclude Include="UI\UIDrawer.h" />

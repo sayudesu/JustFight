@@ -16,6 +16,7 @@ class CharacterBase;
 class BloodDrawer;
 class FieldDrawer;
 class UIDrawer;
+class EffectScreen;
 
 class SceneMain : public SceneBase
 {
@@ -64,6 +65,9 @@ private:
 	std::unique_ptr<FieldDrawer>m_pField; 
 	// UIクラス
 	std::unique_ptr<UIDrawer> m_pUi;
+
+	// テスト
+	EffectScreen* m_pBS = nullptr;
 
 	int m_quakeTimer = 0;//画面揺れタイマー
 	float m_quakeX = 0.0f;//横揺れパラメータ

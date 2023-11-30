@@ -2,7 +2,9 @@
 #include "../Util/CharacterParameter.h";
 #include "../Util/CharacterName.h";
 #include <vector>
+#include <memory>
 
+class GameObject;
 class UIDrawer
 {
 public:
@@ -16,7 +18,7 @@ public:
 	/// </summary>
 	/// <param name="name">名前を指定</param>
 	/// <param name="param">名前で指定したキャラのパラメーター</param>
-	void SetParam(CharacterName name, int hpNum, int skillNum, int fightMeterNum);
+	void SetParam(CharacterName name, int hpNum, float skillNum, int fightMeterNum);
 private:
 	void UpdateHp(int x,int y);
 	void UpdateSkill(int x, int y);
@@ -52,5 +54,9 @@ private:
 	int m_hpNum[static_cast<int>(CharacterName::MAX)];
 	int m_skillNum[static_cast<int>(CharacterName::MAX)];
 	int m_fightMeterNum[static_cast<int>(CharacterName::MAX)];
+
+	std::unique_ptr<GameObject> m_image[static_cast<int>(CharacterName::MAX)][static_cast<int>(HandleType::MAX)];
+
+	VECTOR m_playerPos;
 };
 
