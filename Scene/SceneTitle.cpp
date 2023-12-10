@@ -4,11 +4,12 @@
 #include "SceneDebug.h"
 #include "SceneMain.h"
 #include "../SlideSelect.h"
-
+#include "../Util/Game.h"
 #include "../GameObject.h"
 
 SceneTitle::SceneTitle():
-	m_hTitle(-1)
+	m_hTitle(-1),
+	m_isInputController(false)
 {
 }
 
@@ -47,6 +48,19 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
+
+	char deviceName[260];
+	char productName[260];
+	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0) 
+	{
+		m_isInputController = false;
+	}
+	else
+	{
+		m_isInputController = true;
+		return this;
+	}
+
 	m_select->Update();
 
 	static int z = 0;
@@ -129,4 +143,9 @@ void SceneTitle::Draw()
 #if _DEBUG
 	DrawString(0, 0, "SceneTitle", 0xffffff);
 #endif
+	if (m_isInputController)
+	{
+		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);
+		DrawFormatString((Game::kScreenWidth - ((17 * 32)/2)) / 2, Game::kScreenHeight/2 - 32, 0x000000, "コントローラーを接続してください。");
+	}
 }

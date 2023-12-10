@@ -22,5 +22,8 @@ private:
 
 	std::unique_ptr<GameObject>m_pStage;
 	
+	// コントローラーを接続してるかどうか
+	bool m_isInputController;
+	
 };
 
