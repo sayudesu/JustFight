@@ -353,8 +353,8 @@ void CharacterBase::Attack()
 	// 位置情報の更新
 	UpdatePos();
 
-	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_my->SetPos(m_pos);
+	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 }
 
@@ -416,21 +416,21 @@ void CharacterBase::AttackTwo()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->Move(m_weaponPos);
-		m_weapon->Rotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
+		m_weapon->SetPos(m_weaponPos);
+		m_weapon->SetRotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
 		m_weapon->Update();
 	}
 	// 盾
 	{
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
-		m_shield->Move(move);
-		m_shield->Rotate(VGet(0, m_angle - test1, 0));
+		m_shield->SetPos(move);
+		m_shield->SetRotate(VGet(0, m_angle - test1, 0));
 		m_shield->Update();
 	}
 
-	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_my->SetPos(m_pos);
+	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	m_capsuleUpDown = m_pos;
@@ -509,22 +509,22 @@ void CharacterBase::StrongAttack()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->Move(m_weaponPos);
-		m_weapon->Rotate(VGet(test1, m_angle - test2 + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
+		m_weapon->SetPos(m_weaponPos);
+		m_weapon->SetRotate(VGet(test1, m_angle - test2 + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
 		m_weapon->Update();
 	}
 	// 盾
 	{
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
-		m_shield->Move(move);
-		m_shield->Rotate(VGet(0, m_angle, 0));
+		m_shield->SetPos(move);
+		m_shield->SetRotate(VGet(0, m_angle, 0));
 		m_shield->Update();
 	}
 
 	// キャラクターの位置
-	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_my->SetPos(m_pos);
+	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	m_capsuleUpDown = m_pos;
@@ -681,7 +681,7 @@ void CharacterBase::Winner()
 	// 位置情報の更新
 	UpdatePos();
 
-	m_weapon->Move(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
+	m_weapon->SetPos(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
 }
 
 void CharacterBase::Losers()
@@ -700,7 +700,7 @@ void CharacterBase::Losers()
 		}
 		Wpos.y += m_jumpAcc;
 
-		m_weapon->Move(Wpos);
+		m_weapon->SetPos(Wpos);
 	}
 }
 
@@ -809,22 +809,22 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->Move(m_weaponPos);
-		m_weapon->Rotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
+		m_weapon->SetPos(m_weaponPos);
+		m_weapon->SetRotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
 		m_weapon->Update();
 	}
 	// 盾
 	{
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
-		m_shield->Move(move);
-		m_shield->Rotate(VGet(0, m_angle - test1, 0));
+		m_shield->SetPos(move);
+		m_shield->SetRotate(VGet(0, m_angle - test1, 0));
 		m_shield->Update();
 	}	
 
 	// キャラクターの位置
-	m_my->Move(m_pos);
-	m_my->Rotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_my->SetPos(m_pos);
+	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
 
 	m_capsuleUpDown = m_pos;

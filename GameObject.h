@@ -104,13 +104,13 @@ public:
     }
 
     // ˆÊ’u‚ðŽó‚¯Žæ‚é
-    void Move(VECTOR pos)
+    void SetPos(VECTOR pos)
     {
         m_pos = pos;
     }
 
     // Šp“x‚ðŽó‚¯Žæ‚é
-    void Rotate(VECTOR angle)
+    void SetRotate(VECTOR angle)
     {
         m_angle = angle;
     }

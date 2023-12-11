@@ -4,6 +4,8 @@
 
 class SlideSelect;
 class GameObject;
+class Camera;
+
 class SceneTitle : public SceneBase
 {
 public:
@@ -18,12 +20,22 @@ public:
 private:
 	int m_hTitle;
 
+	std::unique_ptr<Camera> m_camera;
+
 	std::unique_ptr<SlideSelect> m_select;
 
 	std::unique_ptr<GameObject>m_pStage;
 	
 	// コントローラーを接続してるかどうか
 	bool m_isInputController;
+
+	// 
+	float z = 0;
+	float y = 0;
+	float x = 0;
+
+	float rY = 0;
+	float rX = 0;
 	
 };
 

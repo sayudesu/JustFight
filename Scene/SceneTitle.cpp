@@ -6,6 +6,7 @@
 #include "../SlideSelect.h"
 #include "../Util/Game.h"
 #include "../GameObject.h"
+#include "../Object/Camera/Camera.h";
 
 SceneTitle::SceneTitle():
 	m_hTitle(-1),
@@ -19,10 +20,14 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
-	m_hTitle = LoadGraph("Data/Image/Title.png");
+	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
 	m_select = std::make_unique<SlideSelect>();
 	m_select->Init();
+
+	// カメラインスタンス
+	m_camera = std::make_unique<Camera>();
+
 
 	// どこから、どこまで見えるか
 	SetCameraNearFar(1.0f, 30000.0f);
@@ -38,6 +43,9 @@ void SceneTitle::Init()
 		VGet(0,0, 180 * DX_PI_F/ 180.0f),
 		VGet(1, 1, 1));
 
+	m_pStage->SetPos(VGet(0.0f, 0.0f, 0.0f));
+//	m_pStage->SetRotate(VGet(0.0f, 0.0f, 180 * DX_PI_F / 180.0f));
+	m_pStage->SetRotate(VGet(0.0f, 0.0f, 0.0f));
 	m_pStage->Update();
 }
 
@@ -48,9 +56,9 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
-
 	char deviceName[260];
 	char productName[260];
+	// コントローラーの接続を確認する
 	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0) 
 	{
 		m_isInputController = false;
@@ -63,58 +71,75 @@ SceneBase* SceneTitle::Update()
 
 	m_select->Update();
 
-	static int z = 0;
-	static int y = 0;
-	static int x = 0;
-
-	static float rY = 0;
-	static float rX = 0;
-
 	if (DxLib::CheckHitKey(KEY_INPUT_UP))
 	{
-		z--;
+		z -= 1.0f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_DOWN))
 	{
-		z++;
+		z += 1.0f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_LEFT))
 	{
-		x--;
+		x -= 1.0f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_RIGHT))
 	{
-		x++;
+		x += 1.0f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_SPACE))
 	{
-		y++;
+		y += 1.0f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_LCONTROL))
 	{
-		y--;
+		y -= 1.0f;
 	}
 
 	if (DxLib::CheckHitKey(KEY_INPUT_Q))
 	{
-		rY -= 0.1f;
+		rY -= 0.03f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_E))
 	{
-		rY += 0.1f;
+		rY += 0.03f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_RCONTROL))
 	{
-		rX += 0.1f;
+		rX += 0.03f;
 	}
 	if (DxLib::CheckHitKey(KEY_INPUT_RSHIFT))
 	{
-		rX -= 0.1f;
+		rX -= 0.03f;
 	}
 
-	m_pStage->Move(VGet(x, y, z));
-	m_pStage->Rotate(VGet(rX, rY, 180 * DX_PI_F / 180.0f));
-	m_pStage->Update();
+	m_camera->SetTargetPos(VGet(0.0f, 0.0f, 0.0f));
+
+//	m_camera->SetPos(VGet(-25.0f, 21.0f, -27.0f));
+	
+	static float x1 = -25.0f;
+	static float y1 =  21.0f;
+	static float z1 = -27.0f;
+
+	m_camera->SetPos(VGet(x1, y1, z1));
+
+	const float speed = 0.4f;
+	if (y1 > 10.0f)
+	{
+		y1 -= speed;
+	}
+	if (x1 < 0.0f)
+	{
+		x1 += speed;
+	}
+	if (z1 < -10.0f)
+	{
+		z1 += speed;
+	}
+
+
+
+	m_camera->Setting();
 
 	if (m_select->GetResult() == 0)
 	{
@@ -136,7 +161,10 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
+
+
 	m_pStage->Draw();
+	DrawRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, 1, 0.0f * DX_PI_F / 180.0f, m_hTitle, true);
 //	m_select->Draw();
 
 //	DrawGraph(0, 0, m_hTitle, true);
@@ -148,4 +176,8 @@ void SceneTitle::Draw()
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);
 		DrawFormatString((Game::kScreenWidth - ((17 * 32)/2)) / 2, Game::kScreenHeight/2 - 32, 0x000000, "コントローラーを接続してください。");
 	}
+
+	DrawFormatStringF(100, 100, 0xffffff, "x = %f y = %f z = %f", x, y, z);
+	DrawFormatStringF(100, 132, 0xffffff, "rX = %f rY = %f", rX, rY);
+	
 }

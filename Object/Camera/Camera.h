@@ -12,6 +12,9 @@ public:
 
 	void Update();
 public:
+	// カメラ位置を取得する
+	void SetPos(VECTOR pos);
+	// ターゲット位置を取得する
 	void SetTargetPos(VECTOR pos);
 
 	void SetPlayerAngle(float angle);
