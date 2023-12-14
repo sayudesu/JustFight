@@ -23,7 +23,7 @@ public:
     /// <param name="size"></param>
     /// <param name="parent"></param>
     GameObject(DataType type ,std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
-        m_pos(pos), m_angle(angle), parent(parent)
+        m_pos(pos), m_angle(angle), m_pParent(parent)
     {
         // 3Dオブジェクトだったら
         if (type == DataType::THREE)
@@ -36,6 +36,14 @@ public:
         {
             m_handle = LoadGraph(name.c_str());
         }
+        m_dataType = type;
+    }
+
+    GameObject(DataType type, std::string name, const VECTOR& pos, float angle, float size, GameObject* parent = nullptr) :
+        m_pos(pos), m_angle2D(angle), m_pParent(parent)
+    {
+        m_handle = LoadGraph(name.c_str());
+        m_size2D = size;
         m_dataType = type;
     }
 
@@ -54,7 +62,7 @@ public:
     void Update()
     {
         VECTOR relativePos = m_pos;
-        if (parent != nullptr && (!m_isParentEscape))
+        if (m_pParent != nullptr && (!m_isParentEscape))
         {
             // 親オブジェクトが存在する場合、親の座標と角度に基づいて相対的な位置を計算
             MATRIX rotationMatrixX = MGetRotX(m_angle.x);
@@ -65,19 +73,19 @@ public:
             MATRIX combinedRotationMatrix = MMult(MMult(rotationMatrixX, rotationMatrixY), rotationMatrixZ);
             relativePos = VTransform(relativePos, combinedRotationMatrix);
 
-            relativePos = VAdd(relativePos, parent->GetPos());
+            relativePos = VAdd(relativePos, m_pParent->GetPos());
 
             // 親オブジェクトが存在する場合、親の座標に基づいて相対的な位置を計算
-            relativePos = VSub(m_pos, parent->GetPos());
-            relativePos = VTransform(m_pos, MMult(MMult(MGetRotX(parent->GetAngle().x), MGetRotY(parent->GetAngle().y)), MGetRotZ(parent->GetAngle().z)));
-            m_childPos = VAdd(relativePos, parent->GetPos());
+            relativePos = VSub(m_pos, m_pParent->GetPos());
+            relativePos = VTransform(m_pos, MMult(MMult(MGetRotX(m_pParent->GetAngle().x), MGetRotY(m_pParent->GetAngle().y)), MGetRotZ(m_pParent->GetAngle().z)));
+            m_childPos = VAdd(relativePos, m_pParent->GetPos());
 
         }
 
         MV1SetPosition(m_handle, m_pos);
         MV1SetRotationXYZ(m_handle, m_angle);
         m_tempPos = m_pos;
-        if (parent != nullptr && (!m_isParentEscape))
+        if (m_pParent != nullptr && (!m_isParentEscape))
         {
             MV1SetPosition(m_handle, m_childPos);
             m_tempPos = m_childPos;
@@ -98,7 +106,8 @@ public:
        }
        else if (m_dataType == DataType::TWO)
        {
-           DrawGraph(m_tempPos.x, m_tempPos.y, m_handle, true);
+           DrawRotaGraphF(m_tempPos.x, m_tempPos.y, m_size2D, m_angle2D, m_handle, true);
+       //    DrawGraph(m_tempPos.x, m_tempPos.y, m_handle, true);
        }
        
     }
@@ -142,7 +151,7 @@ public:
     // 親オブジェクトから抜け出す
     void SetParentEscape(bool isEscape)
     {
-        if (parent != nullptr)
+        if (m_pParent != nullptr)
         {
             m_isParentEscape = isEscape;
             return;
@@ -155,11 +164,14 @@ private:
     VECTOR m_pos = { 0,0,0 };
     VECTOR m_childPos = { 0,0,0 };
     VECTOR m_tempPos = { 0,0,0 };
-    VECTOR angle = { 0,0,0 };
     VECTOR m_angle = { 0,0,0 };
     VECTOR m_size = {0,0,0};
-    GameObject* parent = nullptr;
+    GameObject* m_pParent = nullptr;
     bool m_isParentEscape = false;
+
+    // 2D用
+    float m_angle2D = 0;
+    float m_size2D = 0;
 
     DataType m_dataType;
 };

@@ -19,6 +19,8 @@ public:
 	virtual void Draw() override;
 private:
 	int m_hTitle;
+	// ”wŒi‰æ‘œ
+	std::shared_ptr<GameObject> m_hBg;
 
 	std::unique_ptr<Camera> m_camera;
 
@@ -36,6 +38,9 @@ private:
 
 	float rY = 0;
 	float rX = 0;
+
+	// ”wŒi‰æ‘œˆÊ’u
+	VECTOR m_bgPos
 	
 };
 

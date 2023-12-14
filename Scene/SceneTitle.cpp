@@ -10,7 +10,8 @@
 
 SceneTitle::SceneTitle():
 	m_hTitle(-1),
-	m_isInputController(false)
+	m_isInputController(false),
+	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), static_cast<float>(Game::kScreenHeight / 2), 0.0f))
 {
 }
 
@@ -27,14 +28,8 @@ void SceneTitle::Init()
 
 	// カメラインスタンス
 	m_camera = std::make_unique<Camera>();
-
-
-	// どこから、どこまで見えるか
-	SetCameraNearFar(1.0f, 30000.0f);
-	// カメラの位置、どこを見ているかを設定する
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 0, -100), VGet(0, 0, 0));
-	// FOV
-	SetupCamera_Perspective(80);
+	// カメラターゲット位置初期化
+	m_camera->SetTargetPos(VGet(0.0f, 0.0f, 0.0f));
 
 	m_pStage = std::make_unique<GameObject>(
 		GameObject::DataType::THREE,
@@ -43,8 +38,15 @@ void SceneTitle::Init()
 		VGet(0,0, 180 * DX_PI_F/ 180.0f),
 		VGet(1, 1, 1));
 
+	m_hBg = std::make_shared<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/ゲーム難易度選択ベース2.png",
+		m_bgPos,
+		3.0f * DX_PI_F / 180.0f,
+		0.95f
+	);
+
 	m_pStage->SetPos(VGet(0.0f, 0.0f, 0.0f));
-//	m_pStage->SetRotate(VGet(0.0f, 0.0f, 180 * DX_PI_F / 180.0f));
 	m_pStage->SetRotate(VGet(0.0f, 0.0f, 0.0f));
 	m_pStage->Update();
 }
@@ -113,10 +115,6 @@ SceneBase* SceneTitle::Update()
 		rX -= 0.03f;
 	}
 
-	m_camera->SetTargetPos(VGet(0.0f, 0.0f, 0.0f));
-
-//	m_camera->SetPos(VGet(-25.0f, 21.0f, -27.0f));
-	
 	static float x1 = -25.0f;
 	static float y1 =  21.0f;
 	static float z1 = -27.0f;
@@ -132,14 +130,16 @@ SceneBase* SceneTitle::Update()
 	{
 		x1 += speed;
 	}
-	if (z1 < -10.0f)
+	if (z1 < -5.0f)
 	{
 		z1 += speed;
 	}
 
-
-
 	m_camera->Setting();
+
+
+
+	m_hBg->Update();
 
 	if (m_select->GetResult() == 0)
 	{
@@ -161,13 +161,11 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-
-
 	m_pStage->Draw();
-	DrawRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, 1, 0.0f * DX_PI_F / 180.0f, m_hTitle, true);
-//	m_select->Draw();
 
-//	DrawGraph(0, 0, m_hTitle, true);
+	// 画像の背景を描画
+//	DrawRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, 0.95f, 3.0f * DX_PI_F / 180.0f, m_hTitle, true);
+	m_hBg->Draw();
 #if _DEBUG
 	DrawString(0, 0, "SceneTitle", 0xffffff);
 #endif
@@ -175,9 +173,5 @@ void SceneTitle::Draw()
 	{
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);
 		DrawFormatString((Game::kScreenWidth - ((17 * 32)/2)) / 2, Game::kScreenHeight/2 - 32, 0x000000, "コントローラーを接続してください。");
-	}
-
-	DrawFormatStringF(100, 100, 0xffffff, "x = %f y = %f z = %f", x, y, z);
-	DrawFormatStringF(100, 132, 0xffffff, "rX = %f rY = %f", rX, rY);
-	
+	}	
 }

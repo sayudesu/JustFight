@@ -134,14 +134,6 @@ void SlideSelect::Update()
 	printfDx("%d\n", m_selectNo);
 }
 
-void SlideSelect::Draw()
-{
-	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, GetColor(m_selectNo * 10, m_selectNo * 10, m_selectNo * 10), true);
-	if (m_isImageDraw)
-	{
-	}
-}
-
 int SlideSelect::GetResult()
 {
 	return m_selectNoResult;
