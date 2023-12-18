@@ -8,6 +8,13 @@
 #include "../GameObject.h"
 #include "../Object/Camera/Camera.h";
 
+namespace 
+{
+	constexpr float kImageAngle = 3.0f * DX_PI_F / 180.0f;
+	const float kImagePosX = -450.0f;
+	const float kImagePosY = 0.0f;
+}
+
 SceneTitle::SceneTitle():
 	m_hTitle(-1),
 	m_isInputController(false),
@@ -31,6 +38,7 @@ void SceneTitle::Init()
 	// カメラターゲット位置初期化
 	m_camera->SetTargetPos(VGet(0.0f, 0.0f, 0.0f));
 
+	// マップ
 	m_pStage = std::make_unique<GameObject>(
 		GameObject::DataType::THREE,
 		"Data/Model/洋館部屋1.mv1",
@@ -38,12 +46,63 @@ void SceneTitle::Init()
 		VGet(0,0, 180 * DX_PI_F/ 180.0f),
 		VGet(1, 1, 1));
 
+	// 背景
 	m_hBg = std::make_shared<GameObject>(
 		GameObject::DataType::TWO,
 		"Data/Image/UI/ゲーム難易度選択ベース2.png",
 		m_bgPos,
-		3.0f * DX_PI_F / 180.0f,
+		kImageAngle,
 		0.95f
+	);
+
+	// 選択文字
+	m_hSelect = std::make_shared<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/Select Difficulty.png",
+		VGet(kImagePosX,-300.0f,0),
+		kImageAngle,
+		0.95f,
+		m_hBg.get()
+	);
+
+	// 選択文字の下の飾り
+	m_hDecoration = std::make_shared<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/飾り.png",
+		VGet(kImagePosX,-250.0f, 0),
+		kImageAngle,
+		0.95f,
+		m_hBg.get()
+	);
+
+	// 難易度
+	m_hIntermediate = std::make_shared<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/Intermediate.png",
+		VGet(kImagePosX,0.0f, 0),
+		kImageAngle,
+		0.95f,
+		m_hBg.get()
+	);
+
+	// 矢印上向き
+	m_hArrow[0] = std::make_shared<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/矢印.png",
+		VGet(kImagePosX, -120.0f, 0),
+		kImageAngle + 180.0f * DX_PI_F / 180.0f,
+		0.95f,
+		m_hBg.get()
+	);
+
+	// 矢印下向き
+	m_hArrow[1] = std::make_shared<GameObject>(
+		GameObject::DataType::TWO,
+		"Data/Image/UI/矢印.png",
+		VGet(kImagePosX, 120.0f, 0),
+		kImageAngle,
+		0.95f,
+		m_hBg.get()
 	);
 
 	m_pStage->SetPos(VGet(0.0f, 0.0f, 0.0f));
@@ -73,6 +132,7 @@ SceneBase* SceneTitle::Update()
 
 	m_select->Update();
 
+#if _DEBUG
 	if (DxLib::CheckHitKey(KEY_INPUT_UP))
 	{
 		z -= 1.0f;
@@ -114,6 +174,7 @@ SceneBase* SceneTitle::Update()
 	{
 		rX -= 0.03f;
 	}
+#endif
 
 	static float x1 = -25.0f;
 	static float y1 =  21.0f;
@@ -140,6 +201,11 @@ SceneBase* SceneTitle::Update()
 
 
 	m_hBg->Update();
+	m_hSelect->Update();
+	m_hDecoration->Update();
+	m_hIntermediate->Update();
+	m_hArrow[0]->Update();
+	m_hArrow[1]->Update();
 
 	if (m_select->GetResult() == 0)
 	{
@@ -163,12 +229,13 @@ void SceneTitle::Draw()
 {
 	m_pStage->Draw();
 
-	// 画像の背景を描画
-//	DrawRotaGraph(Game::kScreenWidth/2, Game::kScreenHeight/2, 0.95f, 3.0f * DX_PI_F / 180.0f, m_hTitle, true);
 	m_hBg->Draw();
-#if _DEBUG
-	DrawString(0, 0, "SceneTitle", 0xffffff);
-#endif
+	m_hSelect->Draw();
+	m_hDecoration->Draw();
+	m_hIntermediate->Draw();
+	m_hArrow[0]->Draw();
+	m_hArrow[1]->Draw();
+
 	if (m_isInputController)
 	{
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);

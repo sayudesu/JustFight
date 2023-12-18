@@ -1,6 +1,7 @@
 #pragma once
-#include "SceneBase.h"
+#include <DxLib.h>
 #include <memory>
+#include "SceneBase.h"
 
 class SlideSelect;
 class GameObject;
@@ -21,6 +22,10 @@ private:
 	int m_hTitle;
 	// ”wŒi‰æ‘œ
 	std::shared_ptr<GameObject> m_hBg;
+	std::shared_ptr<GameObject> m_hSelect;
+	std::shared_ptr<GameObject> m_hDecoration;
+	std::shared_ptr<GameObject> m_hIntermediate;
+	std::shared_ptr<GameObject> m_hArrow[2];
 
 	std::unique_ptr<Camera> m_camera;
 
@@ -40,7 +45,6 @@ private:
 	float rX = 0;
 
 	// ”wŒi‰æ‘œˆÊ’u
-	VECTOR m_bgPos
-	
+	VECTOR m_bgPos;
 };
 

@@ -144,9 +144,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pScene->Draw();
 		EffekseerDrawer::GetInstance().Draw();
 
-	
-
-		
 #if true
 		//DrawSphere3D(lightPosUp, 30, 30, 0xaaaa11, 0xaaaa11, true);
 		//DrawSphere3D(lightPosLeft, 30, 30, 0xaaaa11, 0xaaaa11, true);
