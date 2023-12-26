@@ -124,6 +124,12 @@ public:
         m_angle = angle;
     }
 
+    // サイズを受け取る
+    void SetSize(float size)
+    {
+        m_size2D = size;
+    }
+
     // ハンドルデータを渡す
     int GetHandle()
     {

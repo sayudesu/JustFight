@@ -10,9 +10,12 @@
 
 namespace 
 {
-	constexpr float kImageAngle = 3.0f * DX_PI_F / 180.0f;
-	const float kImagePosX = -450.0f;
-	const float kImagePosY = 0.0f;
+	constexpr float kImageAngle = 0.0f * DX_PI_F / 180.0f;
+	constexpr float kImagePosX = -450.0f;
+	constexpr float kImagePosY = 0.0f;
+	constexpr float kImageSize = 0.95f;
+
+	constexpr float kImageArrowSizeChangeSpeed = 0.002f;
 }
 
 SceneTitle::SceneTitle():
@@ -28,6 +31,15 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
+	m_arrowSize[0] = kImageSize;
+	m_arrowSize[1] = kImageSize;
+
+	m_isArrowSizeChange[0] = true;
+	m_isArrowSizeChange[1] = false;
+
+	m_arrowAcce[0] = 0.1f;
+	m_arrowAcce[1] = 0.1f;
+
 	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
 	m_select = std::make_unique<SlideSelect>();
@@ -52,7 +64,7 @@ void SceneTitle::Init()
 		"Data/Image/UI/ゲーム難易度選択ベース2.png",
 		m_bgPos,
 		kImageAngle,
-		0.95f
+		kImageSize
 	);
 
 	// 選択文字
@@ -61,7 +73,7 @@ void SceneTitle::Init()
 		"Data/Image/UI/Select Difficulty.png",
 		VGet(kImagePosX,-300.0f,0),
 		kImageAngle,
-		0.95f,
+		kImageSize,
 		m_hBg.get()
 	);
 
@@ -71,7 +83,7 @@ void SceneTitle::Init()
 		"Data/Image/UI/飾り.png",
 		VGet(kImagePosX,-250.0f, 0),
 		kImageAngle,
-		0.95f,
+		kImageSize,
 		m_hBg.get()
 	);
 
@@ -79,9 +91,9 @@ void SceneTitle::Init()
 	m_hIntermediate = std::make_shared<GameObject>(
 		GameObject::DataType::TWO,
 		"Data/Image/UI/Intermediate.png",
-		VGet(kImagePosX,0.0f, 0),
+		VGet(kImagePosX,30.0f, 0),
 		kImageAngle,
-		0.95f,
+		kImageSize,
 		m_hBg.get()
 	);
 
@@ -91,7 +103,7 @@ void SceneTitle::Init()
 		"Data/Image/UI/矢印.png",
 		VGet(kImagePosX, -120.0f, 0),
 		kImageAngle + 180.0f * DX_PI_F / 180.0f,
-		0.95f,
+		m_arrowSize[0],
 		m_hBg.get()
 	);
 
@@ -99,9 +111,9 @@ void SceneTitle::Init()
 	m_hArrow[1] = std::make_shared<GameObject>(
 		GameObject::DataType::TWO,
 		"Data/Image/UI/矢印.png",
-		VGet(kImagePosX, 120.0f, 0),
+		VGet(kImagePosX, 180.0f, 0),
 		kImageAngle,
-		0.95f,
+		m_arrowSize[1],
 		m_hBg.get()
 	);
 
@@ -197,6 +209,39 @@ SceneBase* SceneTitle::Update()
 	}
 
 	m_camera->Setting();
+
+	//if (m_arrowAcce[0] >= 0.0f)
+	//{
+	//	m_arrowAcce[0] -= 0.01f;
+	//}
+	//else
+	//{
+	//	m_arrowAcce[0] = 0.0f;
+	//}
+
+	if (m_isArrowSizeChange[0])
+	{
+		m_arrowSize[0] -= kImageArrowSizeChangeSpeed + m_arrowAcce[0];
+		
+		if (m_arrowSize[0] < kImageSize / 2)
+		{
+			m_arrowAcce[0] = 0.1f;
+			m_isArrowSizeChange[0] = false;
+		}
+	}
+
+	if (!m_isArrowSizeChange[0])
+	{
+		m_arrowSize[0] += kImageArrowSizeChangeSpeed + m_arrowAcce[0];
+
+		if (m_arrowSize[0] >= kImageSize)
+		{
+			m_arrowAcce[0] = 0.1f;
+			m_isArrowSizeChange[0] = true;
+		}
+	}
+
+	m_hArrow[0]->SetSize(m_arrowSize[0]);
 
 
 

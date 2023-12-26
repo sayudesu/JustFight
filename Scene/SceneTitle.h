@@ -46,5 +46,9 @@ private:
 
 	// 背景画像位置
 	VECTOR m_bgPos;
+	// 矢印のサイズ
+	float m_arrowSize[2];
+	float m_arrowAcce[2];
+	bool m_isArrowSizeChange[2];
 };
 
