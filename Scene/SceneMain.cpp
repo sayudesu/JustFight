@@ -1,34 +1,40 @@
-#include "SceneMain.h"
 #include <DxLib.h>
-#include "../Object/Camera/Camera.h"// カメラ
-#include "../Object/Player/Player.h"// プレイヤー
-#include "../Object/Enemy/Enemy.h"// エネミー
-#include "../Util/Collision3D.h"// 当たり判定
-#include "../Util/EffekseerDrawer.h"// 3Dエフェクト
-#include "../Util/Game.h"// ゲーム基本設定
-#include "../Object/CharacterBase.h"// キャラクター
-#include "../Util/Pad.h"// パッド
+
+#include "SceneMain.h"
 #include "SceneDebug.h"// デバッグシーン
 #include "SceneResult.h"// リザルトシーン
-#include "../Util/BloodDrawer.h"// 血のエフェクト
-#include "../FIeldDrawer.h"// マップ描画
-#include "../UI/UIDrawer.h";
-
 #include "SceneGameOver.h"// ゲームオーバーシーン
 #include "SceneClear.h"// ゲームクリアシーン
 
+#include "../Object/Camera/Camera.h"// カメラ
+#include "../Object/Player/Player.h"// プレイヤー
+#include "../Object/Enemy/Enemy.h"// エネミー
+#include "../Object/CharacterBase.h"// キャラクター
+
+#include "../Util/Collision3D.h"// 当たり判定
+#include "../Util/EffekseerDrawer.h"// 3Dエフェクト
+#include "../Util/Game.h"// ゲーム基本設定
+#include "../Util/Pad.h"// パッド
+#include "../Util/BloodDrawer.h"// 血のエフェクト
 #include "../Util/CharacterName.h"// キャラクターの名前
+
+#include "../FIeldDrawer.h"// マップ描画
+
+#include "../UI/UIDrawer.h";
 
 #include "../DEBUG.h"// デバッグ用
 
 #include "../BlurScreen.h";
 
-SceneMain::SceneMain():
+SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr)
 {
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = nullptr;
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = nullptr;
+
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(data,VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)] = std::make_shared<Enemy>(data, VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
 }
 
 SceneMain::~SceneMain()
@@ -41,11 +47,8 @@ void SceneMain::Init()
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
 	m_pCamera               = std::make_unique<Camera>();// カメラクラス
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = std::make_shared<Enemy>(VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
 	m_pField                = std::make_unique<FieldDrawer>();// フィールド描画クラス
 	m_pUi                   = std::make_unique<UIDrawer>();   // UI描画クラス
-	m_pBS = new EffectScreen();
 
 	// 初期化
 	m_pCamera->Setting();
@@ -53,13 +56,9 @@ void SceneMain::Init()
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Init();
 	m_pField->Init();
 
+	m_hCheckmate = LoadGraph("Data/Image/UI/Checkmate.png");
 
-	//// 加工用の画面ハンドルを保存
-	//int sw = 0, sh = 0, bit = 0;      // 画面幅＆画面高＆ビット数
-	//GetScreenState(&sw, &sh, &bit);   // 幅と高さを取得しておく
-	//m_tempScreen = MakeScreen(sw, sh);// 加工用画面を用意する
-
-	m_pBS->Init();
+	m_resultData = GameResultData::NONE;
 }
 
 void SceneMain::End()
@@ -68,8 +67,6 @@ void SceneMain::End()
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->End();
 	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->End();
 	m_pField->End();
-
-	DeleteGraph(m_tempScreen);
 
 	for (int i = 0; i < m_pBlood.size(); i++)
 	{
@@ -93,23 +90,24 @@ SceneBase* SceneMain::UpdateGamePlay()
 	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)], false);
 
+
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetMyId(),
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp(),
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetMaxHp(),
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetStrongPower(),
+		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetkStrongAttackPowerMax(),
 		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetFightingMeter());
+	// UIにパラメーターの状態を渡す
+	m_pUi->SetParam(
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetMyId(),
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp(),
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetMaxHp(),
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetStrongPower(),
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetkStrongAttackPowerMax(),
+		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetFightingMeter());
 
-	// プレイヤーが場外に出たら　敗北
-	// 敵が場外に出たら　　　　　勝利
-	if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]))
-	{
-		m_pUpdateFunc = &SceneMain::UpdateGameOver;
-	}
-	else if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
-	{
-		m_pUpdateFunc = &SceneMain::UpdateGameClear;
-	}
 
 	// 敵の攻撃可能範囲にいるかどうか
 	if (CheckModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
@@ -147,65 +145,88 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 	}
 
+	// 勝敗条件処理
 	{
-		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp() == 0)
+		// HPが0になった場合
+		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp() == 0) // プレイヤー
 		{						
-			//	m_pUpdateFunc = &SceneMain::UpdateGameOver;
+			m_resultData = GameResultData::OVER;
 		}
-		else if (m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp() == 0)
+		else if (m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp() == 0) // エネミー
 		{			
-		//	m_pUpdateFunc = &SceneMain::UpdateGameClear;
+			m_resultData = GameResultData::CREAR;
+		}
+
+		// 場外に出た場合
+		if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)])) // プレイヤー
+		{
+			m_resultData = GameResultData::OVER;
+		}
+		else if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)])) // エネミー
+		{
+			m_resultData = GameResultData::CREAR;
+		}
+
+		// ゲームのクリア,オーバー条件の確認
+		if (m_resultData != GameResultData::NONE)
+		{
+			m_pUpdateFunc = &SceneMain::UpdateGameResult;
+			m_frameCount = 0;
 		}
 	}
 
-	if (Pad::IsTrigger(PAD_INPUT_1))
-	{
-		clsDx();
-		m_pBS->QuakeReplayInit();
-//		m_pBS->BlurIReplayInit(255/2);
-	//	return new SceneDebug();
-	}
-	m_pBS->QuakeUpdate();
-
+	// 画面振動更新処理
+	EffectScreen::GetInstance().QuakeUpdate();
 
 	return this;
 }
 
-SceneBase* SceneMain::UpdateGameOver()
+SceneBase* SceneMain::UpdateGameResult()
 {
+	// 指定フレームの後にリザルト画面に移動する
+	m_frameCount++;
+	if (m_frameCount == 60 * 3)
+	{
+		clsDx();
+		return new SceneResult(m_resultData);
+
+	}
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{	
 		clsDx();
-		return new SceneGameOver();
+		return new SceneResult(m_resultData);
 	}
 
-	printfDx("落ちた");
-	return this;
-}
-
-SceneBase* SceneMain::UpdateGameClear()
-{
-
-	if (Pad::IsTrigger(PAD_INPUT_1))
+#if _DEBUG
+	if (m_resultData == GameResultData::CREAR)
 	{
-		clsDx();
-		return new SceneClear();
+		printfDx("勝利\n");
 	}
+	else if (m_resultData == GameResultData::OVER)
+	{
+		printfDx("敗北\n");
+	}
+	else
+	{
+		printfDx("バグ");
+	}
+#endif
 
-	printfDx("勝利");
 	return this;
 }
+
 
 void SceneMain::Draw()
 {
-	m_pBS->QuakePreRenderBlurScreen();
-//	m_pBS->BlurPreRenderBlurScreen();
-
-	m_pBS->ClearScreen();
+	// 
+	EffectScreen::GetInstance().QuakePreRenderBlurScreen();
+	EffectScreen::GetInstance().ClearScreen();
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
 	m_pCamera->Setting();
+	// 上と同様初期化させるのでもう一度再設定する
+	EffekseerDrawer::GetInstance().EffekseerSync();
 
 	// マップの描画
 	m_pField->Draw();
@@ -239,12 +260,18 @@ void SceneMain::Draw()
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
 
-//	SetDrawScreen(DX_SCREEN_BACK);
-	m_pBS->ScreenBack();
-	m_pBS->QuakePostRenderBlurScreen();
-//	m_pBS->BlurPostRenderBlurScreen();
+	// 画面エフェクトの更新処理
+	EffectScreen::GetInstance().ScreenBack();
+	EffectScreen::GetInstance().QuakePostRenderBlurScreen();
 
+	// UIの描画
 	m_pUi->Draw();
+
+	// 勝敗がついた場合描画する
+	if (m_pUpdateFunc == &SceneMain::UpdateGameResult)
+	{
+		DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, 0.0f, m_hCheckmate, true);
+	}
 }
 
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
@@ -362,6 +389,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	// 回転角度を取得
 	character2->SetTargetMtxRota(character1->GetRot());
 
+	// ガード成功いない状態
+	character1->SetWeaponAttacksShield(false);
+
 	// ジャストガード処理
 	// 攻撃が当たっていた場合
 	if ((CheckWeaponAndShieldHIt(character2, character1)))
@@ -405,7 +435,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 			character1->SetCollGuardEffect();
 
-			character2->SetWeaponAttacksShield(true);
+			character1->SetWeaponAttacksShield(true);
 
 			return;
 		}		

@@ -1,8 +1,11 @@
 #pragma once
 #include <DxLib.h>
+
 #include "../Util/CharacterName.h"
 #include "../Util/BattleState.h"
 #include "../Util/CharacterParameter.h"
+
+#include "../DifficultyData.h"
 
 // ゲームオブジェクト
 class GameObject;
@@ -11,7 +14,7 @@ class GameObject;
 class CharacterBase
 {
 public:
-	CharacterBase(VECTOR pos);
+	CharacterBase(DifficultyData data,VECTOR pos);
 	virtual ~CharacterBase();
 
 	virtual void Init();
@@ -111,11 +114,14 @@ public:
 
 	// ゲージ関係
 	int GetHp             ()const;// 現在のヒットポイント
+	int GetMaxHp             ()const;// 現在のヒットポイント
 	float GetFightingMeter()const;// 戦闘に必要なメーター
 
 	// 強攻撃をするための力を確認
 	float GetStrongPower();
-	
+	// 強攻撃の最大値
+	float GetkStrongAttackPowerMax();
+
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
 
@@ -207,6 +213,9 @@ private:
 	int m_attackAfterStopFrame; // 攻撃後の硬直フレーム
 	int m_justGuardCounterFrame;// ジャストガードを成功させた後のカウント
 
+	// 防御した場合の1フレームだけ判定をとる用フレームカウント
+	int m_guardOneFrame;
+
 	// 攻撃用シーン繊維の移動が可能かどうか
 	int m_isSceneChange;
 
@@ -232,6 +241,11 @@ private:
 	GameObject* m_my;
 	GameObject* m_weapon;
 	GameObject* m_shield;
+
+#if _DEBUG
+	std::string Dname;
+#endif
+
 protected:
 	
 	// メンバ関数ポインタ

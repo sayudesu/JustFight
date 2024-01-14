@@ -6,7 +6,6 @@
 namespace 
 {
 	// ‘I‘ğ‚Å‚«‚éÅ‘å”
-	constexpr int kSelectMaxNum = 10;
 	constexpr int kSelectFrameMax = 30;
 	constexpr int kSelectFrameMin = 1;
 }
@@ -28,8 +27,9 @@ SlideSelect::~SlideSelect()
 {
 }
 
-void SlideSelect::Init()
+void SlideSelect::Init(int selectMaxNum)
 {
+	m_selectMaxNum = selectMaxNum;
 }
 
 void SlideSelect::End()
@@ -64,7 +64,7 @@ void SlideSelect::Update()
 			// Å¬”‚É‚È‚é‚ÆÅ‘å”‚É•ÏX‚·‚é
 			if (m_selectNo <= -1)
 			{
-				m_selectNo = kSelectMaxNum;
+				m_selectNo = m_selectMaxNum;
 			}
 		}
 	}
@@ -101,7 +101,7 @@ void SlideSelect::Update()
 			}
 
 			// Å‘å”‚É‚È‚é‚ÆÅ¬”‚É‚·‚é
-			if (m_selectNo > kSelectMaxNum)
+			if (m_selectNo > m_selectMaxNum)
 			{
 				m_selectNo = 0;
 			}
@@ -130,11 +130,14 @@ void SlideSelect::Update()
 	{
 		m_isImageDraw = false;
 	}
-
-	printfDx("%d\n", m_selectNo);
 }
 
 int SlideSelect::GetResult()
 {
 	return m_selectNoResult;
+}
+
+int SlideSelect::GetSelect()
+{
+	return m_selectNo;
 }

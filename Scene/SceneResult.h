@@ -1,9 +1,13 @@
 #pragma once
+
 #include "SceneBase.h"
+
+#include "../GameResultData.h"
+
 class SceneResult : public SceneBase
 {
 public:
-	SceneResult();
+	SceneResult(GameResultData data);
 	virtual ~SceneResult();
 
 	virtual void Init() override;
@@ -11,5 +15,14 @@ public:
 
 	virtual SceneBase* Update() override;
 	virtual void Draw() override;
+private:
+	// ゲームのリザルトデーターを取得する
+	GameResultData m_resultData;
+
+	// 画像の読み込み
+	int m_hImageResultBg;
+	int m_hImageResult;
+	// 画像の角度
+	float m_imageAngle;
 };
 

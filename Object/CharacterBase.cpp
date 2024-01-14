@@ -1,8 +1,13 @@
-#include "CharacterBase.h"
-#include "../Util/MyLoadModel.h"
 #include <cmath>
+#include "CharacterBase.h"
+
+#include "../Util/MyLoadModel.h"
 #include "../Util/EffekseerDrawer.h"
 #include "../GameObject.h"
+
+#include "../SoundManager.h"
+#include "../SoundName.h"
+#include "../BlurScreen.h"
 
 namespace
 {
@@ -11,9 +16,11 @@ namespace
 
 	// 重力
 	float kGravity = 32.0f;
+
+	constexpr float kStrongAttackPowerMax = 100.0f;
 }
 
-CharacterBase::CharacterBase(VECTOR pos):
+CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
 	m_pFunc(nullptr),
 	m_effectHandle(-1),
 	m_strongAttackPower(0),
@@ -37,7 +44,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_isWeaponAttacksShield(false),
 	m_isStun        (false),
 	m_isAttackRange (false),
-	m_targetHp      (0),
+	m_targetHp      (1),
 	m_attackFrame   (0),
 	m_attackGapFrame(0),
 	m_guardFrame    (0),
@@ -45,6 +52,7 @@ CharacterBase::CharacterBase(VECTOR pos):
 	m_justGuardCounterFrame(0),
 	m_stunFrame     (0),
 	m_recoilFrame   (0),
+	m_guardOneFrame (0),
 	m_attackAfterStopFrame(0),
 	m_isSceneChange(false),
 	m_comboAttack   (0)
@@ -139,6 +147,12 @@ void CharacterBase::Draw()
 #if false
 	// カプセルの描画
 	DrawCapsule3D(m_capsuleUpDown, m_capsuleUpPos, kCapsuleRadius, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), FALSE);
+#endif
+
+#if _DEBUG
+	VECTOR pos = ConvWorldPosToScreenPos(m_pos);
+	DrawCircle(pos.x, pos.y, 32, 0xffffff, true);
+	DrawFormatString(pos.x, pos.y, 0x000000, Dname.c_str());
 #endif
 }
 
@@ -276,13 +290,25 @@ void CharacterBase::Idle()
 	test1 = (90) * DX_PI_F / 180.0f;
 
 	m_vecShield.z = 10.0f;
+
+#if _DEBUG
+	Dname = "待機";
+#endif
+
 }
 
 // 攻撃した場合
 void CharacterBase::Attack()
 {
+	// 攻撃サウンドの再生
+	if (m_battleState != BattleState::ATTACK)
+	{
+		SoundManager::GetInstance().Play(SoundName::ATTACK);
+	}
+
 	// 現在の行動を記録
 	m_battleState = BattleState::ATTACK;
+
 
 	// 次のコンボ攻撃に切り替える
 	if (m_comboAttack == 2)
@@ -356,11 +382,20 @@ void CharacterBase::Attack()
 	m_my->SetPos(m_pos);
 	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_my->Update();
+
+#if _DEBUG
+	Dname = "攻撃１";
+#endif
 }
 
 // 攻撃コンボ2
 void CharacterBase::AttackTwo()
 {
+	// 攻撃サウンドの再生
+	if (m_battleState != BattleState::ATTACKTWO)
+	{
+		SoundManager::GetInstance().Play(SoundName::ATTACK);
+	}
 	// 現在の行動を記録
 	m_battleState = BattleState::ATTACKTWO;
 
@@ -443,6 +478,10 @@ void CharacterBase::AttackTwo()
 	KnockBack();
 
 	test1 = (90) * DX_PI_F / 180.0f;
+
+#if _DEBUG
+	Dname = "攻撃２";
+#endif
 }
 
 // 強攻撃した場合
@@ -536,6 +575,9 @@ void CharacterBase::StrongAttack()
 	// ノックバックされた場合
 	KnockBack();
 
+#if _DEBUG
+	Dname = "強攻撃";
+#endif
 }
 
 // ガードした場合
@@ -544,6 +586,12 @@ void CharacterBase::Guard()
 	m_attackFrame = 0;
 	m_vecWeapon.x = -80.0f;
 	test2 = 0;
+
+	// ガードサウンドの再生
+	if (m_battleState != BattleState::GUARD)
+	{
+		SoundManager::GetInstance().Play(SoundName::GUARD);
+	}
 
 	// 現在の行動を記録
 	m_battleState = BattleState::GUARD;
@@ -572,7 +620,6 @@ void CharacterBase::Guard()
 		test1 = (0) * DX_PI_F / 180.0f;
 	}
 
-
 	// ガードをやめた場合
 	if (!m_isGuard)
 	{		
@@ -594,15 +641,40 @@ void CharacterBase::Guard()
 		m_pFunc = &CharacterBase::Stun;
 	}
 
+	if (m_isWeaponAttacksShield)
+	{
+		m_guardOneFrame++;		
+	}
+	else
+	{
+		m_guardOneFrame = 0;
+	}
+
+	// ガード出来た場合のサウンドの再生
+	if (m_guardOneFrame == 1)
+	{
+		SoundManager::GetInstance().Play(SoundName::GUARDRESULT);
+	}
+
 	// 現在のHPを調整
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
+
+#if _DEBUG
+	Dname = "防御";
+#endif
 }
 
 // ジャストガードした場合
 void CharacterBase::JustGuard()
 {
+	// ジャストガードサウンドの再生
+	if (m_battleState != BattleState::JUSTGUARD)
+	{
+		SoundManager::GetInstance().Play(SoundName::JUSTGUARD);
+	}
+
 	// 現在の行動を記録
 	m_battleState = BattleState::JUSTGUARD;
 
@@ -643,13 +715,21 @@ void CharacterBase::JustGuard()
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
+
+#if _DEBUG
+	Dname = "ジャストガード";
+#endif
 }
 
 // スタンした場合
 void CharacterBase::Stun()
 {
+	// スタン状態のサウンド再生
+	SoundManager::GetInstance().Play(SoundName::STUN,true);
+
 	// 現在の行動を記録
 	m_battleState = BattleState::STUN;
+
 	// スタン状態のフレームをカウント
 	m_stunFrame++;
 
@@ -674,6 +754,10 @@ void CharacterBase::Stun()
 
 	// 位置情報の更新
 	UpdatePos();
+
+#if _DEBUG
+	Dname = "スタン";
+#endif
 }
 
 void CharacterBase::Winner()
@@ -682,6 +766,10 @@ void CharacterBase::Winner()
 	UpdatePos();
 
 	m_weapon->SetPos(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
+
+#if _DEBUG
+	Dname = "勝利";
+#endif
 }
 
 void CharacterBase::Losers()
@@ -702,6 +790,10 @@ void CharacterBase::Losers()
 
 		m_weapon->SetPos(Wpos);
 	}
+
+#if _DEBUG
+	Dname = "敗北";
+#endif
 }
 
 void CharacterBase::HitPoint()
@@ -711,9 +803,21 @@ void CharacterBase::HitPoint()
 	{
 		// 現在の攻撃と前回の攻撃が違う場合かつ
 		// 自身がガードしていない場合
+		// ジャストガードが成功していない場合
 		if (m_targetBattleState != m_tempTargetBattleState &&
-			m_battleState != BattleState::GUARD)
+			m_battleState != BattleState::GUARD && 
+			m_battleState != BattleState::JUSTGUARD)
 		{
+			// ダメージサウンドの再生
+			SoundManager::GetInstance().Play(SoundName::DAMAGE);
+
+			// プレイヤー特有の処理
+			if(m_myId == CharacterName::PLAYER)
+			{
+				// 画面に対してのエフェクト
+				EffectScreen::GetInstance().QuakeReplayInit();
+			}
+
 			// 体力を減らす
 			m_hp--;
 
@@ -746,7 +850,7 @@ void CharacterBase::KnockBack()
 			m_pos = VAdd(m_pos, move);
 		}
 		else
-		{
+		{			
 			m_isResultGuard = false;
 		}
 	}
@@ -1041,6 +1145,11 @@ int CharacterBase::GetHp()const
 	return m_hp;
 }
 
+int CharacterBase::GetMaxHp() const
+{
+	return m_parameter.hpMax;
+}
+
 float CharacterBase::GetFightingMeter()const
 {
 	return m_fightingMeter;
@@ -1049,6 +1158,11 @@ float CharacterBase::GetFightingMeter()const
 float CharacterBase::GetStrongPower()
 {
 	return m_strongAttackPower;
+}
+
+float CharacterBase::GetkStrongAttackPowerMax()
+{
+	return kStrongAttackPowerMax;
 }
 
 bool CharacterBase::IsJustGuard() const

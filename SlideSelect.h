@@ -7,14 +7,15 @@ public:
 	SlideSelect();
 	~SlideSelect();
 
-	void Init();
+	void Init(int selectMaxNum);
 	void End();
 	void Update();
-	void Draw();
 
 public:
 	// 選択したボタンの結果の番号を返します
 	int GetResult();
+	// 現在の選択している番号を返します
+	int GetSelect();
 private:
 	enum SelectButton
 	{
@@ -27,6 +28,9 @@ private:
 	int m_handle;
 	int m_selectNo;
 	int m_selectNoResult;
+
+	// 選択できる最大の数
+	int m_selectMaxNum;
 
 	// 選択用フレームカウント
 	int m_selectFramesPressCount[SelectButton::BUTTONMAX];

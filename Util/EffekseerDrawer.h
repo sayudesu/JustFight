@@ -1,9 +1,10 @@
 #pragma once
+#include <DxLib.h>
 #include <array>
 #include <map>
-#include <DxLib.h>
-#include "EffectId.h"
 #include <vector>
+
+#include "EffectId.h"
 
 class EffekseerDrawer
 {
@@ -43,6 +44,8 @@ public:
 
 	void Update();
 	void Draw();
+
+	void EffekseerSync();
 
 	// エフェクシアの再生
 	void Play(int& playingEffectHandle,Id id,EffectPlayType type, VECTOR pos,VECTOR size, VECTOR angle,int playFrame = -1);

@@ -20,7 +20,8 @@ SceneManager::~SceneManager()
 
 void SceneManager::Init()
 {
-	m_pScene.reset(new SceneDebug);
+//	m_pScene.reset(new SceneDebug);
+	m_pScene.reset(new SceneTitle);
 	m_pScene->Init();
 }
 

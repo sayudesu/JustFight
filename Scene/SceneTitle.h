@@ -24,7 +24,17 @@ private:
 	std::shared_ptr<GameObject> m_hBg;
 	std::shared_ptr<GameObject> m_hSelect;
 	std::shared_ptr<GameObject> m_hDecoration;
-	std::shared_ptr<GameObject> m_hIntermediate;
+	// 難易度
+	std::shared_ptr<GameObject> m_hNovice;       // 簡単
+	std::shared_ptr<GameObject> m_hIntermediate; // 中級
+	std::shared_ptr<GameObject> m_hExpert;       // 難しい
+	// 敵の画像
+	std::shared_ptr<GameObject> m_hImageNovice;       // 簡単
+	std::shared_ptr<GameObject> m_hImageIntermediate; // 中級
+	std::shared_ptr<GameObject> m_hImageExpert;       // 難しい
+
+	std::shared_ptr<GameObject> m_hImageDifficultyBg; // 敵の背景
+
 	std::shared_ptr<GameObject> m_hArrow[2];
 
 	std::unique_ptr<Camera> m_camera;
@@ -36,19 +46,14 @@ private:
 	// コントローラーを接続してるかどうか
 	bool m_isInputController;
 
-	// 
-	float z = 0;
-	float y = 0;
-	float x = 0;
 
-	float rY = 0;
-	float rX = 0;
+	// カメラが指定の位置に停止したかどうかx.y.zそれぞれが
+	bool m_isCameraStop[3];
 
 	// 背景画像位置
 	VECTOR m_bgPos;
+
 	// 矢印のサイズ
 	float m_arrowSize[2];
-	float m_arrowAcce[2];
-	bool m_isArrowSizeChange[2];
 };
 

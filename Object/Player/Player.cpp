@@ -1,6 +1,12 @@
-#include "Player.h"
-#include "../../Util/Pad.h"
 #include <corecrt_math.h>
+
+#include "Player.h"
+
+#include "../../Util/Pad.h"
+
+#include "../../SoundManager.h"
+#include "../../SoundName.h"
+
 
 namespace
 {
@@ -12,8 +18,8 @@ namespace
 	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
 }
 
-Player::Player(VECTOR pos):
-	CharacterBase(pos),
+Player::Player(DifficultyData data,VECTOR pos):
+	CharacterBase(data,pos),
 	m_awayVec(VGet(0,0,0)),
 	m_awayRelativePos(VGet(0,0,0)),
 	m_isUp(false),
@@ -237,12 +243,6 @@ void Player::Input()
 			frameCount = 0;
 		}
 	}
-
-
-	if (Pad::IsTrigger(PAD_INPUT_4))
-	{
-		SetFightingMeter(-10000.0f);
-	}
 }
 
 VECTOR Player::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
@@ -265,6 +265,7 @@ void Player::MoveAway(float x, float z, MATRIX rotMtx)
 	{
 		if (Pad::IsTrigger(PAD_INPUT_3))
 		{
+			SoundManager::GetInstance().Play(SoundName::SPEEDMOVE);
 			m_isAway = true;
 			m_awayRelativePos.x = x;
 			m_awayRelativePos.z = z;

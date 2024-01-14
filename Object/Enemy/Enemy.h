@@ -1,12 +1,15 @@
 #pragma once
-#include "../CharacterBase.h"
 #include <DxLib.h>
 #include <deque>
+
+#include "../CharacterBase.h"
+
+#include "../../DifficultyData.h"
 
 class Enemy : public CharacterBase
 {
 public:
-	Enemy(VECTOR pos);
+	Enemy(DifficultyData data,VECTOR pos);
 	virtual ~Enemy();
 	void Input()override;
 private:
@@ -43,14 +46,5 @@ private:
 	VECTOR m_awayVec;
 	// 回避の移動用相対位置
 	VECTOR m_awayRelativePos;
-
-
-	//bool m_isUp;
-	//bool m_isDown;
-	//bool m_isLeft;
-	//bool m_isRight;
-
-	//// カメラ操作操作の変更
-	//bool m_isCameraLockon;
 };
 

@@ -1,8 +1,13 @@
 #pragma once
-#include "SceneBase.h"
 #include <memory>
 #include <vector>
+
+#include "SceneBase.h"
+
 #include "../Util/CharacterName.h"
+
+#include "../DifficultyData.h"
+#include "../GameResultData.h"
 
 namespace
 {
@@ -21,7 +26,7 @@ class EffectScreen;
 class SceneMain : public SceneBase
 {
 public:
-	SceneMain();
+	SceneMain(DifficultyData data);
 	virtual ~SceneMain();
 
 	virtual void Init() override;
@@ -34,9 +39,7 @@ private:
 	// ゲームメイン
 	SceneBase* UpdateGamePlay();
 	// ゲームオーバー
-	SceneBase* UpdateGameOver();
-	// ゲームクリア
-	SceneBase* UpdateGameClear();
+	SceneBase* UpdateGameResult();
 private:
 	// 当たり判定
 	// 武器と体の判定
@@ -66,10 +69,11 @@ private:
 	// UIクラス
 	std::unique_ptr<UIDrawer> m_pUi;
 
-	// テスト
-	EffectScreen* m_pBS = nullptr;
+	// 勝敗はついた場合の画像
+	int m_hCheckmate;
 
-	int m_quakeTimer = 0;//画面揺れタイマー
-	float m_quakeX = 0.0f;//横揺れパラメータ
-	int m_tempScreen;
+	// 勝敗の結果
+	GameResultData m_resultData;
+	// クリア後カウント
+	int m_frameCount;
 };

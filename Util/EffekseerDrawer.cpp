@@ -33,7 +33,6 @@ namespace
 
 void EffekseerDrawer::Load()
 {
-
 	for (int i = 0; i < Id::Max; i++)
 	{
 		m_handle[i] = LoadEffekseerEffect(kEffectNo[i].fileName, kEffectNo[i].size);
@@ -63,7 +62,7 @@ void EffekseerDrawer::Update()
 			// 再生されていない状態だったらもう一度再生開始
 			if (IsEffekseer3DEffectPlaying(*effect.playingHandle) == -1)
 			{
-				printfDx("再生中\n");
+			//	printfDx("再生中\n");
 				*effect.playingHandle = PlayEffekseer3DEffect(m_handle[effect.id]);
 			}
 		}
@@ -94,6 +93,12 @@ void EffekseerDrawer::Draw()
 {
 	// Effekseerにより再生中のエフェクトを描画する。
 	DrawEffekseer3D();
+}
+
+void EffekseerDrawer::EffekseerSync()
+{
+	// DXライブラリのカメラとEffekseerのカメラを同期する。
+	Effekseer_Sync3DSetting();
 }
 
 void EffekseerDrawer::Play(int& playingEffectHandle, Id id, EffectPlayType type, VECTOR pos, VECTOR size, VECTOR angle, int playFrame)

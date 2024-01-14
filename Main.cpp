@@ -1,8 +1,13 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h> 
-#include "Util/Game.h"
+
 #include "Scene/SceneManager.h"
+
+#include "Util/Game.h"
 #include "Util/EffekseerDrawer.h"
+
+#include "SoundManager.h"
+#include "BlurScreen.h"
 
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -46,11 +51,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Effekseerを使用する場合は必ず設定する。
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 
-	// DXライブラリのデバイスロストした時のコールバックを設定する。
-	// ウインドウとフルスクリーンの切り替えが発生する場合は必ず実行する。
-	// ただし、DirectX11を使用する場合は実行する必要はない。
-//	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
-
 	// 3D関連の設定
 	// Zバッファを有効にする。
 	SetUseZBuffer3D(true);
@@ -60,69 +60,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ポリゴンの裏面を描画しない
 	SetUseBackCulling(true);
 
-	//// 効果がわかり易いように標準ライトを無効化
-	//SetLightEnable(true);
-
 	SetUseLighting(false);
 
 	float lightRange = 2100.0f;
 	float lightRangeMainUp = 700.0f;
 	float lightRangeUp = 800.0f;
 
-	//const VECTOR lightPosUp    = VGet(0.0f,        lightRangeMainUp, 0.0f);
-	//const VECTOR lightPosLeft  = VGet(lightRange,  lightRangeUp, 0.0f);
-	//const VECTOR lightPosRight = VGet(-lightRange, lightRangeUp, 0.0f);
-	//const VECTOR lightPosNear  = VGet(0.0f,        lightRangeUp, -lightRange);
-	//const VECTOR lightPosFar   = VGet(0.0f,        lightRangeUp, lightRange);
-
-	//// ポイントタイプのライトハンドルを作成
-	//const int lightHandleUp = CreatePointLightHandle(
-	//	lightPosUp,
-	//	2000.0f,
-	//	0.0f,
-	//	0.002f,
-	//	0.0f);
-
-	//// ポイントタイプのライトハンドルを作成
-	//const int lightHandleLeft = CreatePointLightHandle(
-	//	lightPosLeft,
-	//	2000.0f,
-	//	0.0f,
-	//	0.002f,
-	//	0.0f);
-
-	//// ポイントタイプのライトハンドルを作成
-	//const int lightHandleRight = CreatePointLightHandle(
-	//	lightPosRight,
-	//	2000.0f,
-	//	0.0f,
-	//	0.002f,
-	//	0.0f);
-
-	//// ポイントタイプのライトハンドルを作成
-	//const int lightHandleNear = CreatePointLightHandle(
-	//	lightPosNear,
-	//	2000.0f,
-	//	0.0f,
-	//	0.002f,
-	//	0.0f);
-
-	//// ポイントタイプのライトハンドルを作成
-	//const int lightHandleFar = CreatePointLightHandle(
-	//	lightPosFar,
-	//	2000.0f,
-	//	0.0f,
-	//	0.002f,
-	//	0.0f);
-
-	// ライトハンドルの方向をＸ軸のプラス方向にする
-	//SetLightDirectionHandle(lightHandleUp, VGet(0.0f, -1.0f, 0.0f));
-
-	//SetLightDirectionHandle(lightHandleLeft, VGet(1.0f, -1.0f, 0.0f));
-	//SetLightDirectionHandle(lightHandleRight, VGet(-1.0f, -1.0f, 0.0f));
-
-	//SetLightDirectionHandle(lightHandleNear, VGet(0.0f, -1.0f, 1.0f));
-	//SetLightDirectionHandle(lightHandleFar, VGet(0.0f, -1.0f, -1.0f));
 	
 	SceneManager* pScene = new SceneManager();
 
@@ -130,6 +73,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// 読み込み
 	EffekseerDrawer::GetInstance().Load();
+	SoundManager::GetInstance().Load();
+	EffectScreen::GetInstance().Init();
 
 	while (ProcessMessage() == 0)
 	{
@@ -137,20 +82,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 画面のクリア
 		ClearDrawScreen();
 
-	
 		pScene->Update();
 		EffekseerDrawer::GetInstance().Update();
 
 		pScene->Draw();
 		EffekseerDrawer::GetInstance().Draw();
 
-#if true
-		//DrawSphere3D(lightPosUp, 30, 30, 0xaaaa11, 0xaaaa11, true);
-		//DrawSphere3D(lightPosLeft, 30, 30, 0xaaaa11, 0xaaaa11, true);
-		//DrawSphere3D(lightPosRight, 30, 30, 0xaaaa11, 0xaaaa11, true);
-		//DrawSphere3D(lightPosNear, 30, 30, 0xaaaa11, 0xaaaa11, true);
-		//DrawSphere3D(lightPosFar, 30, 30, 0xaaaa11, 0xaaaa11, true);
-#endif
 		// 裏画面を表画面を入れ替える
 		ScreenFlip();
 
@@ -163,16 +100,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	
 	EffekseerDrawer::GetInstance().Destroy();
-	EffekseerDrawer::GetInstance().Unload();
+	SoundManager::GetInstance().Destroy();
+	EffectScreen::GetInstance().Destroy();
 
-	// ライトハンドルの削除
-	//DeleteLightHandle(lightHandleUp);
-	//DeleteLightHandle(lightHandleLeft);
-	//DeleteLightHandle(lightHandleRight);
-	//DeleteLightHandle(lightHandleNear);
-	//DeleteLightHandle(lightHandleFar);
+	EffekseerDrawer::GetInstance().Unload();
+	SoundManager::GetInstance().Unload();
+	EffectScreen::GetInstance().End();
+
 
 	pScene->End();
 

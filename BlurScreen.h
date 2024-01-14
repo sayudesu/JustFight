@@ -1,13 +1,38 @@
 #pragma once
 class EffectScreen
 {
+private:
+	EffectScreen() = default;
+	static EffectScreen* m_pInstanceSound;
 public:
-	EffectScreen();
+	virtual~EffectScreen() = default;
+	// コピーコンストラクタの禁止
+	EffectScreen(const EffectScreen&) = delete;
+	EffectScreen& operator=(const EffectScreen&) = delete;
+	EffectScreen(EffectScreen&&) = delete;
+	EffectScreen& operator=(EffectScreen&&) = delete;
 
-	~EffectScreen();
+	// インスタンスの作成
+	static EffectScreen& GetInstance()
+	{
+		if (!m_pInstanceSound)
+		{
+			m_pInstanceSound = new EffectScreen();
+		}
+		return *m_pInstanceSound;
+	}
+
+	// 解放処理
+	static void Destroy()
+	{
+		delete m_pInstanceSound;
+		m_pInstanceSound = nullptr;
+	}
+public:
 
 	// MakeScreenして画面サイズを取得する
 	void Init();
+	void End();
 	//	画面に描かれたものを消去する
 	void ClearScreen();
 	// 描画を裏の画面にする
@@ -25,12 +50,6 @@ public:
 	void QuakeRelease();
 	void QuakePreRenderBlurScreen();
 	void QuakePostRenderBlurScreen();
-
-	//// カラー
-	//void ColorReplayInit();
-	//void ColorRelease();
-	//void ColorPreRenderBlurScreen();
-	//void ColorPostRenderBlurScreen();
 
 private:
 	enum class EffectNo

@@ -45,6 +45,10 @@ public:
         m_handle = LoadGraph(name.c_str());
         m_size2D = size;
         m_dataType = type;
+
+        // 画像サイズを取得する
+        GetGraphSizeF(m_handle, &m_sizeX, &m_sizeY);
+
     }
 
     ~GameObject()
@@ -148,6 +152,16 @@ public:
         return m_angle;
     }
 
+    float GetGraphSizeX()
+    {
+        return m_sizeX;
+    }
+
+    float GetGraphSizeY()
+    {
+        return m_sizeY;
+    }
+
     // モデルのフレームインデックスを受け取りその位置を返す
     VECTOR GetCollPos(int modelFrameIndex)
     {
@@ -178,6 +192,8 @@ private:
     // 2D用
     float m_angle2D = 0;
     float m_size2D = 0;
+    float m_sizeX = 0.0f;
+    float m_sizeY = 0.0f;
 
     DataType m_dataType;
 };

@@ -1,12 +1,18 @@
-#include "SceneTitle.h"
 #include <DxLib.h>
-#include "../SlideSelect.h"
 #include "SceneDebug.h"
 #include "SceneMain.h"
+#include "SceneTitle.h"
+
 #include "../SlideSelect.h"
+#include "../SlideSelect.h"
+
 #include "../Util/Game.h"
+
 #include "../GameObject.h"
+
 #include "../Object/Camera/Camera.h";
+
+#include "../DifficultyData.h"
 
 namespace 
 {
@@ -21,7 +27,7 @@ namespace
 SceneTitle::SceneTitle():
 	m_hTitle(-1),
 	m_isInputController(false),
-	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), static_cast<float>(Game::kScreenHeight / 2), 0.0f))
+	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), -static_cast<float>(Game::kScreenHeight / 2), 0.0f))
 {
 }
 
@@ -34,92 +40,151 @@ void SceneTitle::Init()
 	m_arrowSize[0] = kImageSize;
 	m_arrowSize[1] = kImageSize;
 
-	m_isArrowSizeChange[0] = true;
-	m_isArrowSizeChange[1] = false;
-
-	m_arrowAcce[0] = 0.1f;
-	m_arrowAcce[1] = 0.1f;
+	// カメラの位置が正しいかどうかを確認するための初期化
+	m_isCameraStop[0] = false;
+	m_isCameraStop[1] = false;
+	m_isCameraStop[2] = false;
 
 	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
 	m_select = std::make_unique<SlideSelect>();
-	m_select->Init();
+	m_select->Init(2);
 
 	// カメラインスタンス
 	m_camera = std::make_unique<Camera>();
 	// カメラターゲット位置初期化
 	m_camera->SetTargetPos(VGet(0.0f, 0.0f, 0.0f));
 
-	// マップ
-	m_pStage = std::make_unique<GameObject>(
-		GameObject::DataType::THREE,
-		"Data/Model/洋館部屋1.mv1",
-		VGet(0,0,0),
-		VGet(0,0, 180 * DX_PI_F/ 180.0f),
-		VGet(1, 1, 1));
+	// 3Dオブジェクト
+	{
+		// マップ
+		m_pStage = std::make_unique<GameObject>(
+			GameObject::DataType::THREE,
+			"Data/Model/洋館部屋1.mv1",
+			VGet(0,0,0),
+			VGet(0,0, 180 * DX_PI_F/ 180.0f),
+			VGet(1, 1, 1));		
+	}
 
-	// 背景
-	m_hBg = std::make_shared<GameObject>(
-		GameObject::DataType::TWO,
-		"Data/Image/UI/ゲーム難易度選択ベース2.png",
-		m_bgPos,
-		kImageAngle,
-		kImageSize
-	);
+	// 2Dオブジェクト
+	{
+		// 背景
+		m_hBg = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/ゲーム難易度選択ベース2.png",
+			m_bgPos,
+			kImageAngle,
+			kImageSize
+		);
 
-	// 選択文字
-	m_hSelect = std::make_shared<GameObject>(
-		GameObject::DataType::TWO,
-		"Data/Image/UI/Select Difficulty.png",
-		VGet(kImagePosX,-300.0f,0),
-		kImageAngle,
-		kImageSize,
-		m_hBg.get()
-	);
+		// 選択文字
+		m_hSelect = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/Select Difficulty.png",
+			VGet(kImagePosX, -300.0f, 0),
+			kImageAngle,
+			kImageSize,
+			m_hBg.get()
+		);
 
-	// 選択文字の下の飾り
-	m_hDecoration = std::make_shared<GameObject>(
-		GameObject::DataType::TWO,
-		"Data/Image/UI/飾り.png",
-		VGet(kImagePosX,-250.0f, 0),
-		kImageAngle,
-		kImageSize,
-		m_hBg.get()
-	);
+		// 選択文字の下の飾り
+		m_hDecoration = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/飾り.png",
+			VGet(kImagePosX, -250.0f, 0),
+			kImageAngle,
+			kImageSize,
+			m_hBg.get()
+		);
 
-	// 難易度
-	m_hIntermediate = std::make_shared<GameObject>(
-		GameObject::DataType::TWO,
-		"Data/Image/UI/Intermediate.png",
-		VGet(kImagePosX,30.0f, 0),
-		kImageAngle,
-		kImageSize,
-		m_hBg.get()
-	);
+		// 難易度
+		m_hNovice = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/Novice.png",
+			VGet(kImagePosX, 30.0f, 0),
+			kImageAngle,
+			kImageSize,
+			m_hBg.get()
+		);
+		
+		m_hIntermediate = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/Intermediate.png",
+			VGet(kImagePosX, 30.0f, 0),
+			kImageAngle,
+			kImageSize,
+			m_hBg.get()
+		);
 
-	// 矢印上向き
-	m_hArrow[0] = std::make_shared<GameObject>(
-		GameObject::DataType::TWO,
-		"Data/Image/UI/矢印.png",
-		VGet(kImagePosX, -120.0f, 0),
-		kImageAngle + 180.0f * DX_PI_F / 180.0f,
-		m_arrowSize[0],
-		m_hBg.get()
-	);
+		m_hExpert = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/Expert.png",
+			VGet(kImagePosX, 30.0f, 0),
+			kImageAngle,
+			kImageSize,
+			m_hBg.get()
+		);
 
-	// 矢印下向き
-	m_hArrow[1] = std::make_shared<GameObject>(
-		GameObject::DataType::TWO,
-		"Data/Image/UI/矢印.png",
-		VGet(kImagePosX, 180.0f, 0),
-		kImageAngle,
-		m_arrowSize[1],
-		m_hBg.get()
-	);
+		m_hImageNovice = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/黒ポーン.png",
+			VGet(kImagePosX + 800.0f, 30.0f, 0),
+			kImageAngle,
+			kImageSize + 1.0f,
+			m_hBg.get()
+		);
 
-	m_pStage->SetPos(VGet(0.0f, 0.0f, 0.0f));
-	m_pStage->SetRotate(VGet(0.0f, 0.0f, 0.0f));
-	m_pStage->Update();
+		m_hImageIntermediate = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/馬黒.png",
+			VGet(kImagePosX + 800.0f, 30.0f, 0),
+			kImageAngle,
+			kImageSize + 1.0f,
+			m_hBg.get()
+		);
+
+		m_hImageExpert = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/黒キング.png",
+			VGet(kImagePosX + 800.0f, 30.0f, 0),
+			kImageAngle,
+			kImageSize + 1.0f,
+			m_hBg.get()
+		);
+
+		m_hImageDifficultyBg = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/CharactorBg.png",
+			VGet(kImagePosX + 800.0f, 30.0f, 0),
+			kImageAngle,
+			kImageSize + 2.0f,
+			m_hBg.get()
+		);
+
+		// 矢印上向き
+		m_hArrow[0] = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/矢印.png",
+			VGet(kImagePosX, -120.0f, 0),
+			kImageAngle + 180.0f * DX_PI_F / 180.0f,
+			m_arrowSize[0],
+			m_hBg.get()
+		);
+
+		// 矢印下向き
+		m_hArrow[1] = std::make_shared<GameObject>(
+			GameObject::DataType::TWO,
+			"Data/Image/UI/矢印.png",
+			VGet(kImagePosX, 180.0f, 0),
+			kImageAngle,
+			m_arrowSize[1],
+			m_hBg.get()
+		);
+
+		m_pStage->SetPos(VGet(0.0f, 0.0f, 0.0f));
+		m_pStage->SetRotate(VGet(0.0f, 0.0f, 0.0f));
+		m_pStage->Update();
+	}
 }
 
 void SceneTitle::End()
@@ -129,8 +194,8 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
-	char deviceName[260];
-	char productName[260];
+	char deviceName[260]{};
+	char productName[260]{};
 	// コントローラーの接続を確認する
 	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0) 
 	{
@@ -144,50 +209,6 @@ SceneBase* SceneTitle::Update()
 
 	m_select->Update();
 
-#if _DEBUG
-	if (DxLib::CheckHitKey(KEY_INPUT_UP))
-	{
-		z -= 1.0f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_DOWN))
-	{
-		z += 1.0f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_LEFT))
-	{
-		x -= 1.0f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_RIGHT))
-	{
-		x += 1.0f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_SPACE))
-	{
-		y += 1.0f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_LCONTROL))
-	{
-		y -= 1.0f;
-	}
-
-	if (DxLib::CheckHitKey(KEY_INPUT_Q))
-	{
-		rY -= 0.03f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_E))
-	{
-		rY += 0.03f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_RCONTROL))
-	{
-		rX += 0.03f;
-	}
-	if (DxLib::CheckHitKey(KEY_INPUT_RSHIFT))
-	{
-		rX -= 0.03f;
-	}
-#endif
-
 	static float x1 = -25.0f;
 	static float y1 =  21.0f;
 	static float z1 = -27.0f;
@@ -195,77 +216,97 @@ SceneBase* SceneTitle::Update()
 	m_camera->SetPos(VGet(x1, y1, z1));
 
 	const float speed = 0.4f;
+	if (x1 < 0.0f)
+	{
+		x1 += speed;
+	}
+	else
+	{
+		m_isCameraStop[0] = true;
+	}
 	if (y1 > 10.0f)
 	{
 		y1 -= speed;
 	}
-	if (x1 < 0.0f)
+	else
 	{
-		x1 += speed;
+		m_isCameraStop[1] = true;
 	}
 	if (z1 < -5.0f)
 	{
 		z1 += speed;
 	}
+	else
+	{
+		m_isCameraStop[2] = true;
+	}
 
 	m_camera->Setting();
-
-	//if (m_arrowAcce[0] >= 0.0f)
-	//{
-	//	m_arrowAcce[0] -= 0.01f;
-	//}
-	//else
-	//{
-	//	m_arrowAcce[0] = 0.0f;
-	//}
-
-	if (m_isArrowSizeChange[0])
-	{
-		m_arrowSize[0] -= kImageArrowSizeChangeSpeed + m_arrowAcce[0];
-		
-		if (m_arrowSize[0] < kImageSize / 2)
-		{
-			m_arrowAcce[0] = 0.1f;
-			m_isArrowSizeChange[0] = false;
-		}
-	}
-
-	if (!m_isArrowSizeChange[0])
-	{
-		m_arrowSize[0] += kImageArrowSizeChangeSpeed + m_arrowAcce[0];
-
-		if (m_arrowSize[0] >= kImageSize)
-		{
-			m_arrowAcce[0] = 0.1f;
-			m_isArrowSizeChange[0] = true;
-		}
-	}
-
-	m_hArrow[0]->SetSize(m_arrowSize[0]);
-
-
 
 	m_hBg->Update();
 	m_hSelect->Update();
 	m_hDecoration->Update();
+	// 難易度
+	m_hNovice->Update();
 	m_hIntermediate->Update();
+	m_hExpert->Update();
+
+	m_hImageNovice->Update();
+	m_hImageIntermediate->Update();
+	m_hImageExpert->Update();
+
+	m_hImageDifficultyBg->Update();
+	
+	// カメラがx,y,zそれぞれ停止したかをチェックする
+	int count = 0;
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_isCameraStop[i])
+		{
+			count++;
+		}
+
+	}
+
+	// カメラがすべて停止していたら
+	if (count == 3)
+	{
+		// 画面の中心に移動
+		if (m_bgPos.y <= static_cast<float>(Game::kScreenHeight) / 2)
+		{
+			m_hBg->SetPos(m_bgPos);
+			m_bgPos.y += 60.0f;
+		}
+	}
+
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();
 
+	// 難易度調整
+	// 弱い(チュートリアル)
 	if (m_select->GetResult() == 0)
-	{
-		printfDx("まだありません\n");
+	{		
+		return new SceneMain(DifficultyData::NOIVE);
 	}
-
+	// 普通
 	if (m_select->GetResult() == 1)
 	{
-		return new SceneMain();
+		return new SceneMain(DifficultyData::INTERMEDIATE);
+	}
+	// 強い
+	if (m_select->GetResult() == 2)
+	{
+		return new SceneMain(DifficultyData::EXPERT);
 	}
 
+#if _DEBUG
 	if (DxLib::CheckHitKey(KEY_INPUT_Z))
 	{
 		return new SceneDebug();
 	}
+	printfDx("%d\n", m_select->GetSelect());
+#endif
+
 
 	return this;
 }
@@ -277,10 +318,30 @@ void SceneTitle::Draw()
 	m_hBg->Draw();
 	m_hSelect->Draw();
 	m_hDecoration->Draw();
-	m_hIntermediate->Draw();
+
+	m_hImageDifficultyBg->Draw();
+
+	// 難易度
+	if (m_select->GetSelect() == 0)
+	{
+		m_hNovice->Draw();
+		m_hImageNovice->Draw();
+	}
+	else if (m_select->GetSelect() == 1)
+	{
+		m_hIntermediate->Draw();
+		m_hImageIntermediate->Draw();
+	}
+	else if (m_select->GetSelect() == 2)
+	{
+		m_hExpert->Draw();		
+		m_hImageExpert->Draw();
+	}
+	
 	m_hArrow[0]->Draw();
 	m_hArrow[1]->Draw();
 
+	// コントローラー
 	if (m_isInputController)
 	{
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);

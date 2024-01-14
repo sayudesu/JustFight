@@ -1,8 +1,9 @@
 #pragma once
-#include "../Util/CharacterParameter.h";
-#include "../Util/CharacterName.h";
 #include <vector>
 #include <memory>
+
+#include "../Util/CharacterParameter.h";
+#include "../Util/CharacterName.h";
 
 class GameObject;
 class UIDrawer
@@ -18,10 +19,10 @@ public:
 	/// </summary>
 	/// <param name="name">名前を指定</param>
 	/// <param name="param">名前で指定したキャラのパラメーター</param>
-	void SetParam(CharacterName name, int hpNum, float skillNum, int fightMeterNum);
+	void SetParam(CharacterName name, int hpNum, int hpMax, float skillNum, float skillMax, int fightMeterNum);
 private:
-	void UpdateHp(int x,int y);
-	void UpdateSkill(int x, int y);
+	//void UpdateHp(int x,int y);
+	//void UpdateSkill(int x, int y);
 	void DrawAreaResult(int x,int y,int x1,int y1);
 	void DrawAreaALL();
 private:
@@ -38,6 +39,7 @@ private:
 		SP_BG,// スキルの背景
 
 		BAR_OUTSIDE,// 枠
+		BAR_OUTSIDE2,// 枠
 
 		FIGHT_POWER,       // 体幹ゲージ
 		FIGHT_POWER_CENTER,// 体幹ゲージの中心
@@ -52,11 +54,14 @@ private:
 
 	// キャラクターごとのパラメーター
 	int m_hpNum[static_cast<int>(CharacterName::MAX)];
+	int m_hpMax[static_cast<int>(CharacterName::MAX)];
 	int m_skillNum[static_cast<int>(CharacterName::MAX)];
+	int m_skillMax[static_cast<int>(CharacterName::MAX)];
 	int m_fightMeterNum[static_cast<int>(CharacterName::MAX)];
 
 	std::unique_ptr<GameObject> m_image[static_cast<int>(CharacterName::MAX)][static_cast<int>(HandleType::MAX)];
 
 	VECTOR m_playerPos;
+	VECTOR m_enemyPos;
 };
 

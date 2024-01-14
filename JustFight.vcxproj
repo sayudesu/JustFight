@@ -148,6 +148,7 @@
     <ClCompile Include="Scene\SceneClear.cpp" />
     <ClCompile Include="Scene\SceneGameOver.cpp" />
     <ClCompile Include="SlideSelect.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UI\UIDrawer.cpp" />
     <ClCompile Include="Util\BloodDrawer.cpp" />
     <ClCompile Include="Util\EffekseerDrawer.cpp" />
@@ -172,8 +173,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlurScreen.h" />
+    <ClInclude Include="DifficultyData.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameResultData.h" />
     <ClInclude Include="SlideSelect.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="SoundName.h" />
     <ClInclude Include="UI\UIDrawer.h" />
     <ClInclude Include="Util\CharacterParameter.h" />
     <ClInclude Include="Scene\SceneClear.h" />

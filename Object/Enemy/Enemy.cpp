@@ -1,4 +1,5 @@
 #include "Enemy.h"
+
 #include "../../Util/Pad.h"
 
 namespace
@@ -19,8 +20,8 @@ namespace
 }
 
 
-Enemy::Enemy(VECTOR pos) :
-	CharacterBase(pos),
+Enemy::Enemy(DifficultyData data,VECTOR pos) :
+	CharacterBase(data,pos),
 	m_isCheckGuard(false),
 	m_isResultGuard(false),
 	m_isCheckAttack(false),
@@ -38,7 +39,20 @@ Enemy::Enemy(VECTOR pos) :
 	// 自身がエネミーであると決める
 	m_myId = CharacterName::ENEMYNORMAL;
 
-	m_parameter.fileName = "Data/Model/Knight_B.mv1";
+	// 選択した難易度によってモデルを変更
+	if (data == DifficultyData::NOIVE)
+	{
+		m_parameter.fileName = "Data/Model/Pawn_B.mv1";
+	}
+	else if (data == DifficultyData::INTERMEDIATE)
+	{
+		m_parameter.fileName = "Data/Model/Knight_B.mv1";
+	}
+	else if (data == DifficultyData::EXPERT)
+	{
+		m_parameter.fileName = "Data/Model/Queen_B.mv1";
+	}
+
 	// パラメーター調整
 	m_parameter.attackFrameMax = 30;
 	m_parameter.attackFrameGapMax = 0;
@@ -75,202 +89,6 @@ Enemy::Enemy(VECTOR pos) :
 Enemy::~Enemy()
 {
 }
-
-//void Enemy::Input()
-//{
-//	DINPUT_JOYSTATE input;
-//	// 入力状態を取得
-//	GetJoypadDirectInputState(DX_INPUT_PAD2, &input);
-//
-//	if (m_isCameraLockon)
-//	{
-//		// カメラの回転角度を調整
-//		if (input.Rx > 30)
-//		{
-//			m_angle += 0.05f;
-//		}
-//		if (input.Rx < -30)
-//		{
-//			m_angle -= 0.05f;
-//		}
-//	}
-//	else
-//	{
-//		const VECTOR direction = VSub(m_targetPos, m_pos);
-//		m_angle = atan2f(-direction.x, -direction.z);
-//	}
-//
-//	// angleを基底クラスに渡す
-//	SetAngle(m_angle);
-//	// プレイヤーの進行方向
-//	MATRIX rotMtx = MGetRotY(m_angle);
-//	// 回転行列を基底クラスに渡す
-//	SetRotMtx(rotMtx);
-//	if (!IsStun())
-//	{
-//		// 移動or回避
-//		if (m_isAway)
-//		{
-//			static VECTOR away = kVecAwayZ;
-//			static int frameCount = 0;
-//			int frameCountMax = 10;
-//
-//			if (frameCount < frameCountMax)
-//			{
-//				m_awayVec.x = (m_awayRelativePos.x) * (float(frameCount) / frameCountMax);
-//				m_awayVec.z = (m_awayRelativePos.z) * (float(frameCount) / frameCountMax);
-//				frameCount++;
-//				VECTOR move = VTransform(m_awayVec, rotMtx);
-//				m_pos = VAdd(m_pos, move);
-//			}
-//			else
-//			{
-//
-//				m_isAway = false;
-//				frameCount = 0;
-//			}
-//		}
-//		else
-//		{
-//			m_isUp = false;
-//			m_isDown = false;
-//			m_isRight = false;
-//			m_isLeft = false;
-//
-//			if (Pad::IsPress(PAD_INPUT_UP,1))
-//			{
-//				m_isUp = true;
-//
-//				m_pos = AddMoving(kVecZ, rotMtx, m_pos);
-//
-//				MoveAway(0.0f, -60.0f, rotMtx);
-//			}
-//			else if (Pad::IsPress(PAD_INPUT_DOWN, 1))
-//			{
-//				m_isDown = true;
-//
-//				m_pos = SubMoving(kVecZ, rotMtx, m_pos);
-//
-//				MoveAway(0.0f, 60.0f, rotMtx);
-//			}
-//			if (Pad::IsPress(PAD_INPUT_RIGHT, 1))
-//			{
-//				m_isRight = true;
-//
-//				m_pos = AddMoving(kVecX, rotMtx, m_pos);
-//
-//				MoveAway(-60.0f, 0.0f, rotMtx);
-//			}
-//			else if (Pad::IsPress(PAD_INPUT_LEFT, 1))
-//			{
-//				m_isLeft = true;
-//
-//				m_pos = SubMoving(kVecX, rotMtx, m_pos);
-//
-//				MoveAway(60.0f, 0.0f, rotMtx);
-//			}
-//
-//			if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
-//			{
-//				MoveAway(0.0f, 60.0f, rotMtx);
-//			}
-//		}
-//
-//		// 攻撃or防御
-//		{
-//			// 通常攻撃
-//			if (Pad::IsTrigger(PAD_INPUT_6, 1) &&
-//				!m_isAttack &&
-//				!m_isStrongAttack &&
-//				!m_isGuard)
-//			{
-//				m_isAttack = true;
-//				m_comboAttack++;
-//				if (m_comboAttack == 1)
-//				{
-//					m_pFunc = &Enemy::Attack;
-//				}
-//			}
-//
-//			// 強攻撃
-//			if (input.Z < -100 &&
-//				!m_isAttack &&
-//				!m_isStrongAttack &&
-//				!m_isGuard)
-//			{
-//				m_isStrongAttack = true;
-//				m_pFunc = &Enemy::StrongAttack;
-//			}
-//
-//			// 防御
-//			if (Pad::IsPress(PAD_INPUT_5, 1) &&
-//				!m_isAttack &&
-//				!m_isStrongAttack)
-//			{
-//				m_isGuard = true;
-//				m_pFunc = &Enemy::Guard;
-//			}
-//			else
-//			{
-//				m_isGuard = false;
-//			}
-//		}
-//	}
-//
-//	{
-//		// カメラの操作変更
-//		static int frameCount = 0;
-//		if (input.Buttons[9] == 128)
-//		{
-//			frameCount++;
-//			if (frameCount == 1)
-//			{
-//				m_isCameraLockon = (!m_isCameraLockon);
-//			}
-//		}
-//		else
-//		{
-//			frameCount = 0;
-//		}
-//	}
-//
-//
-//	if (Pad::IsTrigger(PAD_INPUT_4, 1))
-//	{
-//		//SetStun(true);
-//		SetFightingMeter(-10000.0f);
-//	}
-//}
-//
-//VECTOR Enemy::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
-//{
-//	VECTOR move = VTransform(RelativePos, rotMtx);
-//	move = VAdd(pos, move);
-//	return move;
-//}
-//
-//VECTOR Enemy::SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
-//{
-//	VECTOR move = VTransform(RelativePos, rotMtx);
-//	move = VSub(m_pos, move);
-//	return move;
-//}
-//
-//void Enemy::MoveAway(float x, float z, MATRIX rotMtx)
-//{
-//	// 回避の仮実装
-//	{
-//		if (Pad::IsTrigger(PAD_INPUT_3, 1))
-//		{
-//			m_isAway = true;
-//			m_awayRelativePos.x = x;
-//			m_awayRelativePos.z = z;
-//			m_awayVec.x = 0.0f;
-//			m_awayVec.y = 0.0f;
-//			m_awayVec.z = 0.0f;
-//		}
-//	}
-//}
 
 void Enemy::Input()
 {
@@ -432,8 +250,11 @@ void Enemy::BattleType()
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-		m_isCheckAttack = true;
-		m_isAttackResult = true;
+		if (GetRand(10) == 0)
+		{
+			m_isCheckAttack = true;
+			m_isAttackResult = true;
+		}
 	}
 	// アイドル状態の場合
 	if (m_targetBattleState == BattleState::IDLE)

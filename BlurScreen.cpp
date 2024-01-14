@@ -1,27 +1,20 @@
-#include "BlurScreen.h"
 #include <DxLib.h>
 
-EffectScreen::EffectScreen():
-	m_quakeX(0.0f),
-	m_quakeTimer(0)
+#include "BlurScreen.h"
+
+#include "Util/Game.h"
+
+EffectScreen* EffectScreen::m_pInstanceSound = nullptr;
+
+void EffectScreen::Init()
 {
+	m_quakeX = 0.0f;
+	m_quakeTimer = 0;
 	m_screen[0] = 0;
 	m_screen[1] = 0;
 	m_current = 0;
 	m_alpha = 0;
 	m_notBlendDraw = 0;
-}
-
-EffectScreen::~EffectScreen()
-{
-	for (int i = 0; i < 3; ++i)
-	{
-		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
-	}
-}
-
-void EffectScreen::Init()
-{
 	// 加工用の画面ハンドルを保存
 	int sw = 0, sh = 0, bit = 0;      // 画面幅＆画面高＆ビット数
 	GetScreenState(&sw, &sh, &bit);   // 幅と高さを取得しておく
@@ -29,6 +22,14 @@ void EffectScreen::Init()
 	for (int i = 0; i < static_cast<int>(EffectNo::MAX); i++)
 	{
 		m_screen[i] = MakeScreen(sw, sh);// 加工用画面を用意する
+	}
+}
+
+void EffectScreen::End()
+{
+	for (int i = 0; i < 3; ++i)
+	{
+		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
 	}
 }
 
@@ -65,7 +66,7 @@ void EffectScreen::BlurIReplayInit(int alpha)
 	for (int i = static_cast<int>(EffectNo::BLUR_0); i <static_cast<int>(EffectNo::BLUR_3); ++i)
 	{
 		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
-		m_screen[i] = MakeScreen(1920, 1080);
+		m_screen[i] = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
 	}
 
 	m_current = 0;
@@ -147,8 +148,8 @@ void EffectScreen::QuakePostRenderBlurScreen()
 	if (m_quakeTimer > 0)
 	{
 		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_INVERT);         // 色を反転させる
-		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
-        GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
+//		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
+//      GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);                                                  // 加算合成する
 		DrawGraph(m_quakeX, m_quakeX, m_screen[static_cast<int>(EffectNo::QUAKE)], false);        // 画面を描画
 		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
