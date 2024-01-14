@@ -2,8 +2,10 @@
 
 #include "SceneResult.h"
 #include "SceneDebug.h"
+#include "SceneTitle.h"
 
 #include "../Util/Game.h"
+#include "../Util/Pad.h"
 
 SceneResult::SceneResult(GameResultData data):
 	m_imageAngle(0.0f)
@@ -46,10 +48,11 @@ SceneBase* SceneResult::Update()
 
 	}
 
-	if (DxLib::CheckHitKey(KEY_INPUT_Z))
+	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
-		return new SceneDebug();
+		return new SceneTitle();
 	}
+	
 	return this;
 }
 

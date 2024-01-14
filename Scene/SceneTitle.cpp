@@ -209,32 +209,30 @@ SceneBase* SceneTitle::Update()
 
 	m_select->Update();
 
-	static float x1 = -25.0f;
-	static float y1 =  21.0f;
-	static float z1 = -27.0f;
 
-	m_camera->SetPos(VGet(x1, y1, z1));
 
-	const float speed = 0.4f;
-	if (x1 < 0.0f)
+	m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
+
+	const float speed = 0.3f;
+	if (m_cameraPosX < 0.0f)
 	{
-		x1 += speed;
+		m_cameraPosX += speed;
 	}
 	else
 	{
 		m_isCameraStop[0] = true;
 	}
-	if (y1 > 10.0f)
+	if (m_cameraPosY > 10.0f)
 	{
-		y1 -= speed;
+		m_cameraPosY -= speed;
 	}
 	else
 	{
 		m_isCameraStop[1] = true;
 	}
-	if (z1 < -5.0f)
+	if (m_cameraPosZ < -5.0f)
 	{
-		z1 += speed;
+		m_cameraPosZ += speed;
 	}
 	else
 	{

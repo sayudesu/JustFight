@@ -55,5 +55,10 @@ private:
 
 	// 矢印のサイズ
 	float m_arrowSize[2];
+
+	// カメラの座標
+	float m_cameraPosX = -25.0f;
+	float m_cameraPosY = 21.0f;
+	float m_cameraPosZ = -27.0f;
 };
 
