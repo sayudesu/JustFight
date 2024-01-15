@@ -43,14 +43,14 @@ void SoundManager::Load()
 	// 書き込むデータ
 	std::vector<std::vector<std::string>> data =
 	{
-		{"No","Name", "Volume", "Extension"},
-		{"0","Attack", "255", ".mp3"},
-		{"1","Guard", "255", ".mp3"},
-		{"2","GuardResult", "255", ".mp3"},
-		{"3","JustGurad", "255", ".mp3"},
-		{"4","SpeedMove2", "255", ".mp3"},
-		{"5","Stun", "255", ".mp3"},
-		{"6","Damage", "255", ".mp3"},
+		{"No","Type","Name", "Volume", "Extension"},
+		{"0","SE","Attack", "255", ".mp3"},
+		{"1","SE","Guard", "255", ".mp3"},
+		{"2","SE","GuardResult", "255", ".mp3"},
+		{"3","SE","JustGurad", "255", ".mp3"},
+		{"4","SE","SpeedMove2", "255", ".mp3"},
+		{"5","SE","Stun", "255", ".mp3"},
+		{"6","SE","Damage", "255", ".mp3"},
 	};
 
 	// CSVファイルにデータを書き込む
@@ -73,12 +73,23 @@ void SoundManager::Load()
 
 		// データ保管
 		m_data[mapKey].no = stoi(strvec.at(0));
-		m_data[mapKey].name = strvec[1].c_str();
-		m_data[mapKey].volume = stoi(strvec.at(2));
-		m_data[mapKey].extension = strvec[3].c_str();
+
+		// 文字列でSEかBGMを分ける
+		if (strvec.at(1) == "SE")
+		{
+			m_data[mapKey].type = Type::SE;
+		}
+		else if(strvec.at(1) == "BGM")
+		{
+			m_data[mapKey].type = Type::BGM;
+		}
+
+		m_data[mapKey].name = strvec[2].c_str();
+		m_data[mapKey].volume = stoi(strvec.at(3));
+		m_data[mapKey].extension = strvec[4].c_str();
 
 		// ファイル位置
-		std::string name = kFile + strvec[1] + strvec[3];
+		std::string name = kFile + strvec[2] + strvec[4];
 		// サウンドのメモリ読み込み
 		m_handle.push_back(LoadSoundMem(name.c_str()));
 		// サウンドの音量を指定

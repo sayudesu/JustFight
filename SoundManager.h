@@ -55,10 +55,16 @@ public:
 
 
 private:
+	enum Type
+	{
+		SE,
+		BGM
+	};
 	// サウンド保存形式データ
 	struct SoundData
 	{
 		int no;
+		Type type;
 		std::string name;
 		int volume;
 		std::string extension;
