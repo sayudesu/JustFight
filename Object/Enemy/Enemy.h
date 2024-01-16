@@ -34,6 +34,9 @@ private:
 	// 通常攻撃
 	bool m_isCheckAttack;
 	bool m_isAttackResult;
+	// 1フレームだけ連続攻撃できない様にする
+	int m_attackContinueDelayOneFrameCount;
+
 	// 強攻撃
 	bool m_isCheckStrongAttack;
 	bool m_isStrongAttackResult;

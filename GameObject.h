@@ -7,48 +7,38 @@
 
 class GameObject
 {
-public:
-    enum DataType
+private:
+    enum class DataType
     {
         THREE,
         TWO,
     };
 public:
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="pos"></param>
-    /// <param name="angle"></param>
-    /// <param name="size"></param>
-    /// <param name="parent"></param>
-    GameObject(DataType type ,std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
+
+    GameObject(std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
         m_pos(pos), m_angle(angle), m_pParent(parent)
-    {
-        // 3Dオブジェクトだったら
-        if (type == DataType::THREE)
-        {
-            m_handle = MV1LoadModel(name.c_str());
-            MV1SetScale(m_handle, size);
-        }
-        // 2Dオブジェクトだったら
-        else if (type == DataType::TWO)
-        {
-            m_handle = LoadGraph(name.c_str());
-        }
-        m_dataType = type;
+    {        
+        m_dataType = DataType::THREE;
+
+        // モデルの読み込み
+        m_handle = MV1LoadModel(name.c_str());
+        // 位置の調整
+        MV1SetPosition(m_handle, pos);
+        // サイズの調整
+        MV1SetScale(m_handle, size);        
     }
 
-    GameObject(DataType type, std::string name, const VECTOR& pos, float angle, float size, GameObject* parent = nullptr) :
+    GameObject(std::string name, const VECTOR& pos, float angle, float size, GameObject* parent = nullptr) :
         m_pos(pos), m_angle2D(angle), m_pParent(parent)
     {
-        m_handle = LoadGraph(name.c_str());
-        m_size2D = size;
-        m_dataType = type;
+        m_dataType = DataType::TWO;
 
+        // 画像の読み込み
+        m_handle = LoadGraph(name.c_str());
         // 画像サイズを取得する
         GetGraphSizeF(m_handle, &m_sizeX, &m_sizeY);
-
+        // サイズの調整
+        m_size2D = size;
     }
 
     ~GameObject()
@@ -111,7 +101,6 @@ public:
        else if (m_dataType == DataType::TWO)
        {
            DrawRotaGraphF(m_tempPos.x, m_tempPos.y, m_size2D, m_angle2D, m_handle, true);
-       //    DrawGraph(m_tempPos.x, m_tempPos.y, m_handle, true);
        }
        
     }
@@ -152,14 +141,26 @@ public:
         return m_angle;
     }
 
+    // 2D画像のXのサイズを渡す
     float GetGraphSizeX()
     {
-        return m_sizeX;
+        if (m_dataType == DataType::TWO)
+        {
+            return m_sizeX;
+        }
+
+        return -1;
     }
 
+    // 2D画像のYのサイズを渡す
     float GetGraphSizeY()
     {
-        return m_sizeY;
+        if (m_dataType == DataType::TWO)
+        {
+            return m_sizeY;
+        }
+
+        return -1;
     }
 
     // モデルのフレームインデックスを受け取りその位置を返す
@@ -195,6 +196,6 @@ private:
     float m_sizeX = 0.0f;
     float m_sizeY = 0.0f;
 
-    DataType m_dataType;
+    DataType m_dataType{};
 };
 

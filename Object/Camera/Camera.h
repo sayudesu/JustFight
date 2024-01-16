@@ -1,4 +1,5 @@
 #pragma once
+
 #include <DxLib.h>
 #include <deque>
 
@@ -27,6 +28,7 @@ private:
 	float m_angle;
 	float m_playerAngle;
 
+	// カメラの位置にディレイを入れるための変数
 	std::deque<VECTOR> m_delayFrameTargetPos;
 	std::deque<float> m_delayFrameAngle;
 };

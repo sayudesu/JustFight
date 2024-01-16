@@ -3,8 +3,6 @@
 #include "SceneMain.h"
 #include "SceneDebug.h"// デバッグシーン
 #include "SceneResult.h"// リザルトシーン
-#include "SceneGameOver.h"// ゲームオーバーシーン
-#include "SceneClear.h"// ゲームクリアシーン
 
 #include "../Object/Camera/Camera.h"// カメラ
 #include "../Object/Player/Player.h"// プレイヤー
@@ -30,11 +28,8 @@ SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr)
 {
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = nullptr;
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]  = nullptr;
-
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(data,VGet(-300.0f, 260.0f, 0.0f));// キャラクタークラス
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)] = std::make_shared<Enemy>(data, VGet(300.0f, 260.0f, 0.0f));  // キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)     ] = std::make_shared<Player>(data,VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)] = std::make_shared<Enemy> (data, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
 }
 
 SceneMain::~SceneMain()
@@ -84,45 +79,44 @@ SceneBase* SceneMain::Update()
 
 SceneBase* SceneMain::UpdateGamePlay()
 {
+	int player = static_cast<int>(CharacterName::PLAYER);
+	int enemy = static_cast<int>(CharacterName::ENEMYNORMAL);
 	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::PLAYER)],
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)], true);
-	UpdateCharacter(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)],
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)], false);
+	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
+	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
 
 
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetMyId(),
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp(),
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetMaxHp(),
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetStrongPower(),
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetkStrongAttackPowerMax(),
-		m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetFightingMeter());
-	// UIにパラメーターの状態を渡す
+		m_pCharacter[player]->GetMyId(),
+		m_pCharacter[player]->GetHp(),
+		m_pCharacter[player]->GetMaxHp(),
+		m_pCharacter[player]->GetStrongPower(),
+		m_pCharacter[player]->GetkStrongAttackPowerMax(),
+		m_pCharacter[player]->GetFightingMeter());
 	m_pUi->SetParam(
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetMyId(),
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp(),
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetMaxHp(),
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetStrongPower(),
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetkStrongAttackPowerMax(),
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetFightingMeter());
+		m_pCharacter[enemy]->GetMyId(),
+		m_pCharacter[enemy]->GetHp(),
+		m_pCharacter[enemy]->GetMaxHp(),
+		m_pCharacter[enemy]->GetStrongPower(),
+		m_pCharacter[enemy]->GetkStrongAttackPowerMax(),
+		m_pCharacter[enemy]->GetFightingMeter());
 
 
 	// 敵の攻撃可能範囲にいるかどうか
-	if (CheckModelAboutHIt(m_pCharacter[static_cast<int>(CharacterName::PLAYER)], m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]))
+	if (CheckModelAboutHIt(m_pCharacter[player], m_pCharacter[enemy]))
 	{
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetAttackRange(true);
+		m_pCharacter[enemy]->SetAttackRange(true);
 	}
 	else
 	{
-		m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->SetAttackRange(false);
+		m_pCharacter[enemy]->SetAttackRange(false);
 	}
 
 	// カメラにプレイヤーとエネミーの位置を渡す
-	m_pCamera->SetTargetPos(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetPos());
+	m_pCamera->SetTargetPos(m_pCharacter[player]->GetPos());
 	// カメラにプレイヤーの角度と位置を渡す
-	m_pCamera->SetPlayerAngle(m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetAngle());
+	m_pCamera->SetPlayerAngle(m_pCharacter[player]->GetAngle());
 		// カメラの更新処理
 	m_pCamera->Update();
 
@@ -148,21 +142,21 @@ SceneBase* SceneMain::UpdateGamePlay()
 	// 勝敗条件処理
 	{
 		// HPが0になった場合
-		if (m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->GetHp() == 0) // プレイヤー
+		if (m_pCharacter[player]->GetHp() == 0) // プレイヤー
 		{						
 			m_resultData = GameResultData::OVER;
 		}
-		else if (m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->GetHp() == 0) // エネミー
+		else if (m_pCharacter[enemy]->GetHp() == 0) // エネミー
 		{			
 			m_resultData = GameResultData::CREAR;
 		}
 
 		// 場外に出た場合
-		if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::PLAYER)])) // プレイヤー
+		if (CheckCollMap(m_pCharacter[player])) // プレイヤー
 		{
 			m_resultData = GameResultData::OVER;
 		}
-		else if (CheckCollMap(m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)])) // エネミー
+		else if (CheckCollMap(m_pCharacter[enemy])) // エネミー
 		{
 			m_resultData = GameResultData::CREAR;
 		}
@@ -333,14 +327,10 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	// 当たったかどうかで処理を分岐
 	if (HitPolyDim.HitNum >= 1)
 	{
+		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
 		return false;
 	}
-
-	//// 当たり判定情報の後始末
-	//MV1CollResultPolyDimTerminate(HitPolyDim);
-
-	//MV1_COLL_RESULT_POLY_DIM HitPolyDim;
 
 	// モデルとカプセルとの当たり判定
 	HitPolyDim = MV1CollCheck_Capsule(
@@ -353,9 +343,8 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	// 当たったかどうかで処理を分岐
 	if (HitPolyDim.HitNum >= 1)
 	{
-		character->SetFieldHit();
 		// ゲームオーバー
-	//	return true;
+		return true;
 	}
 
 	// 当たり判定情報の後始末

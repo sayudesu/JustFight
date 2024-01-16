@@ -51,7 +51,6 @@ UIDrawer::UIDrawer()
 		m_playerPos = VGet(315, Game::kScreenHeight - y + 5, 0);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ステータスベース.png",
 			m_playerPos,
 			0.0f,
@@ -59,7 +58,6 @@ UIDrawer::UIDrawer()
 			);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/馬.png",
 			VGet(270, -30, 0),
 			0.0f,
@@ -68,7 +66,6 @@ UIDrawer::UIDrawer()
 			);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/HPゲージ.png",
 			VGet(-11, -25, 0),
 			0.0f,
@@ -77,7 +74,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/HPゲージベース.png",
 			VGet(-11, -25, 0),
 			0.0f,
@@ -86,7 +82,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ゲージ枠.png",
 			VGet(-11, -25, 0),
 			0.0f,
@@ -95,7 +90,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/必殺技ゲージ.png",
 			VGet(-12, 18, 0),
 			0.0f,
@@ -104,7 +98,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/必殺技ゲージベース.png",
 			VGet(-12, 18, 0),
 			0.0f,
@@ -113,7 +106,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ゲージ枠.png",
 			VGet(-12, 18, 0),
 			0.0f,
@@ -135,7 +127,6 @@ UIDrawer::UIDrawer()
 		m_enemyPos = VGet(Game::kScreenWidth - 315,y + 5 + 50, 0);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ステータスベース黒.png",
 			m_enemyPos,
 			0.0f,
@@ -143,7 +134,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/馬黒.png",
 			VGet(-270, -30, 0),
 			0.0f,
@@ -152,7 +142,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/HPゲージ.png",
 			VGet(11, -25, 0),
 			0.0f,
@@ -161,7 +150,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/HPゲージベース.png",
 			VGet(11, -25, 0),
 			0.0f,
@@ -170,7 +158,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ゲージ枠.png",
 			VGet(11, -25, 0),
 			0.0f,
@@ -179,7 +166,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/必殺技ゲージ.png",
 			VGet(12, 18, 0),
 			0.0f,
@@ -188,7 +174,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/必殺技ゲージベース.png",
 			VGet(12, 18, 0),
 			0.0f,
@@ -197,7 +182,6 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE2)] = std::make_unique<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ゲージ枠.png",
 			VGet(12, 18, 0),
 			0.0f,

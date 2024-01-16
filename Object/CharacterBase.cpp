@@ -93,7 +93,6 @@ void CharacterBase::Init()
 
 	// オブジェクトの生成
 	m_my = new GameObject(
-		GameObject::DataType::THREE,
 		m_parameter.fileName.c_str(),
 		m_pos,
 		VGet(testV1.x, m_angle, testV1.z),
@@ -101,7 +100,6 @@ void CharacterBase::Init()
 
 	// 武器オブジェクトの生成
 	m_weapon = new GameObject(
-		GameObject::DataType::THREE,
 		"Data/Model/SwordCollTest.mv1",
 		m_weaponPos,
 		VGet(testV1.x, m_angle, testV1.z),
@@ -109,7 +107,6 @@ void CharacterBase::Init()
 
 	// 盾オブジェクトの生成
 	m_shield = new GameObject(
-		GameObject::DataType::THREE,
 		"Data/Model/Shield.mv1",
 		VGet(100, m_weaponPos.y, 100),
 		VGet(testV1.x, m_angle, testV1.z),
@@ -187,18 +184,13 @@ void CharacterBase::TargetMove()
 	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
 }
 
-CharacterName CharacterBase::GetMyId()
-{
-	return m_myId;
-}
-
-BattleState CharacterBase::GetBattleState()
-{
-	return m_battleState;
-}
-
 void CharacterBase::Idle()
 {
+	if (m_battleState != BattleState::IDLE)
+	{
+		m_battleState = BattleState::IDLE;
+	}
+
 	m_isSceneChange = false;
 
 	m_isJustGuardCounter = false;
@@ -300,15 +292,13 @@ void CharacterBase::Idle()
 // 攻撃した場合
 void CharacterBase::Attack()
 {
-	// 攻撃サウンドの再生
 	if (m_battleState != BattleState::ATTACK)
 	{
+		// 現在の行動を記録
+		m_battleState = BattleState::ATTACK;
+		// 攻撃サウンドの再生
 		SoundManager::GetInstance().Play(SoundName::ATTACK);
 	}
-
-	// 現在の行動を記録
-	m_battleState = BattleState::ATTACK;
-
 
 	// 次のコンボ攻撃に切り替える
 	if (m_comboAttack == 2)
@@ -390,14 +380,14 @@ void CharacterBase::Attack()
 
 // 攻撃コンボ2
 void CharacterBase::AttackTwo()
-{
-	// 攻撃サウンドの再生
+{	
 	if (m_battleState != BattleState::ATTACKTWO)
 	{
+		// 現在の行動を記録
+		m_battleState = BattleState::ATTACKTWO;
+		// 攻撃サウンドの再生
 		SoundManager::GetInstance().Play(SoundName::ATTACK);
 	}
-	// 現在の行動を記録
-	m_battleState = BattleState::ATTACKTWO;
 
 	// 武器動かす
 	if (!m_isSceneChange)
@@ -438,14 +428,18 @@ void CharacterBase::AttackTwo()
 		}
 	}
 
-	// 現在のHPを調整
-	HitPoint();
-
 	// スタン状態
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
 	}
+
+	// 重力後で処理の位置を変えます
+	if (m_isGravity)
+	{
+		m_pos.y -= kGravity;
+	}
+	m_isGravity = true;
 
 	// 武器
 	{
@@ -474,6 +468,8 @@ void CharacterBase::AttackTwo()
 	m_capsuleUpPos = m_capsuleUpDown;
 	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
 
+	// 現在のHPを調整
+	HitPoint();
 	// ノックバックされた場合
 	KnockBack();
 
@@ -487,8 +483,11 @@ void CharacterBase::AttackTwo()
 // 強攻撃した場合
 void CharacterBase::StrongAttack()
 {
-	// 現在の行動を記録
-	m_battleState = BattleState::STRONGATTACK;
+	if (m_battleState != BattleState::STRONGATTACK)
+	{
+		// 現在の行動を記録
+		m_battleState = BattleState::STRONGATTACK;
+	}
 
 	// 武器動かす
 	if (!m_isSceneChange)
@@ -534,9 +533,6 @@ void CharacterBase::StrongAttack()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-	// 現在のHPを調整
-	HitPoint();
-
 	// 重力後で処理の位置を変えます
 	if (m_isGravity)
 	{
@@ -572,6 +568,8 @@ void CharacterBase::StrongAttack()
 	m_capsuleUpPos = m_capsuleUpDown;
 	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
 
+	// 現在のHPを調整
+	HitPoint();
 	// ノックバックされた場合
 	KnockBack();
 
@@ -587,14 +585,14 @@ void CharacterBase::Guard()
 	m_vecWeapon.x = -80.0f;
 	test2 = 0;
 
-	// ガードサウンドの再生
 	if (m_battleState != BattleState::GUARD)
 	{
+		// 現在の行動を記録
+		m_battleState = BattleState::GUARD;
+		// ガードサウンドの再生
 		SoundManager::GetInstance().Play(SoundName::GUARD);
 	}
 
-	// 現在の行動を記録
-	m_battleState = BattleState::GUARD;
 
 	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < m_parameter.guardFrameMax )
@@ -668,15 +666,15 @@ void CharacterBase::Guard()
 
 // ジャストガードした場合
 void CharacterBase::JustGuard()
-{
-	// ジャストガードサウンドの再生
+{	
 	if (m_battleState != BattleState::JUSTGUARD)
 	{
+		// 現在の行動を記録
+		m_battleState = BattleState::JUSTGUARD;
+		// ジャストガードサウンドの再生
 		SoundManager::GetInstance().Play(SoundName::JUSTGUARD);
 	}
 
-	// 現在の行動を記録
-	m_battleState = BattleState::JUSTGUARD;
 
 	m_isJustGuardCounter = true;
 
@@ -711,8 +709,10 @@ void CharacterBase::JustGuard()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
+#if false
 	// ヒットポイント
 	HitPoint();
+#endif
 	// 位置情報の更新
 	UpdatePos();
 
@@ -724,11 +724,13 @@ void CharacterBase::JustGuard()
 // スタンした場合
 void CharacterBase::Stun()
 {
+	if (m_battleState != BattleState::STUN)
+	{
+		// 現在の行動を記録
+		m_battleState = BattleState::STUN;
+	}
 	// スタン状態のサウンド再生
 	SoundManager::GetInstance().Play(SoundName::STUN,true);
-
-	// 現在の行動を記録
-	m_battleState = BattleState::STUN;
 
 	// スタン状態のフレームをカウント
 	m_stunFrame++;
@@ -752,6 +754,7 @@ void CharacterBase::Stun()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
+	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
 
@@ -979,6 +982,17 @@ void CharacterBase::SetAngle(float angle)
 void CharacterBase::SetRotMtx(MATRIX rotMtx)
 {
 	m_rotMtx = rotMtx;
+}
+
+
+CharacterName CharacterBase::GetMyId()
+{
+	return m_myId;
+}
+
+BattleState CharacterBase::GetBattleState()
+{
+	return m_battleState;
 }
 
 VECTOR CharacterBase::GetPos()const

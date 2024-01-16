@@ -1,6 +1,6 @@
 #pragma once
 
-enum GameResultData
+enum class GameResultData
 {
 	NONE,
 	CREAR,

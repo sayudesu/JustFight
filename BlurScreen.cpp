@@ -6,7 +6,7 @@
 
 EffectScreen* EffectScreen::m_pInstanceSound = nullptr;
 
-void EffectScreen::Init()
+void EffectScreen::Load()
 {
 	m_quakeX = 0.0f;
 	m_quakeTimer = 0;
@@ -25,7 +25,7 @@ void EffectScreen::Init()
 	}
 }
 
-void EffectScreen::End()
+void EffectScreen::Unload()
 {
 	for (int i = 0; i < 3; ++i)
 	{
@@ -109,8 +109,6 @@ void EffectScreen::BlurPostRenderBlurScreen()
 	DrawGraph(0, 0, m_screen[static_cast<int>(EffectNo::BLUR_0) + 1 - m_current], false);
 
 	m_current = 1 - m_current;
-
-	printfDx("%d\n", static_cast<int>(EffectNo::BLUR_0) + 1 - m_current);
 }
 
 void EffectScreen::QuakeReplayInit()

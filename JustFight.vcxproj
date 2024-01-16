@@ -145,8 +145,6 @@
   <ItemGroup>
     <ClCompile Include="BlurScreen.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Scene\SceneClear.cpp" />
-    <ClCompile Include="Scene\SceneGameOver.cpp" />
     <ClCompile Include="SlideSelect.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UI\UIDrawer.cpp" />
@@ -181,8 +179,6 @@
     <ClInclude Include="SoundName.h" />
     <ClInclude Include="UI\UIDrawer.h" />
     <ClInclude Include="Util\CharacterParameter.h" />
-    <ClInclude Include="Scene\SceneClear.h" />
-    <ClInclude Include="Scene\SceneGameOver.h" />
     <ClInclude Include="Util\BattleState.h" />
     <ClInclude Include="Util\BloodDrawer.h" />
     <ClInclude Include="Util\CharacterName.h" />

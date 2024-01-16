@@ -6,7 +6,7 @@
 
 #include "SoundManager.h"
 
-SoundManager* SoundManager::m_pInstanceSound = nullptr;
+SoundManager* SoundManager::m_pInstance = nullptr;
 
 namespace
 {
@@ -19,10 +19,9 @@ void SoundManager::Load()
 	const wchar_t* folderPath = L"Data/CSV";
 
 	// フォルダを作成
-	if (!CreateDirectoryW(folderPath, NULL) || ERROR_ALREADY_EXISTS == GetLastError())
+	if (CreateDirectoryW(folderPath, NULL) || ERROR_ALREADY_EXISTS == GetLastError())
 	{
-		// フォルダの作成に失敗した場合の処理
-		// 既にフォルダが存在する場合		
+		// フォルダの作成に失敗した場合の処理		
 	}
 
 	// ファイルを開く
@@ -51,6 +50,9 @@ void SoundManager::Load()
 		{"4","SE","SpeedMove2", "255", ".mp3"},
 		{"5","SE","Stun", "255", ".mp3"},
 		{"6","SE","Damage", "255", ".mp3"},
+		{"7","BGM","NONE", "255", ".mp3"},
+		{"8","BGM","NONE", "255", ".mp3"},
+		{"9","BGM","NONE", "255", ".mp3"},
 	};
 
 	// CSVファイルにデータを書き込む
@@ -84,18 +86,20 @@ void SoundManager::Load()
 			m_data[mapKey].type = Type::BGM;
 		}
 
-		m_data[mapKey].name = strvec[2].c_str();
-		m_data[mapKey].volume = stoi(strvec.at(3));
-		m_data[mapKey].extension = strvec[4].c_str();
+		// データを読み込む
+		m_data[mapKey].name = strvec[2].c_str();     // 名前
+		m_data[mapKey].volume = stoi(strvec.at(3));  // 音量
+		m_data[mapKey].extension = strvec[4].c_str();// 拡張子
 
 		// ファイル位置
 		std::string name = kFile + strvec[2] + strvec[4];
+
 		// サウンドのメモリ読み込み
 		m_handle.push_back(LoadSoundMem(name.c_str()));
 		// サウンドの音量を指定
 		ChangeVolumeSoundMem(m_data[mapKey].volume, m_handle.back());
 
-		// mapにキーを決める
+		// map用のにキーを決める
 		mapKey++;
 	}
 }
@@ -161,6 +165,7 @@ void SoundManager::WriteCSV(const std::string& filename, const std::vector<std::
 // サウンドを再生
 void SoundManager::Play(SoundName name, bool repeat)
 {
+	// 再生する
 	if (!repeat)
 	{
 		PlaySoundMem(m_handle[name], DX_PLAYTYPE_BACK);

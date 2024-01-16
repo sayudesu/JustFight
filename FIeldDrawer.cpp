@@ -26,14 +26,12 @@ FieldDrawer::~FieldDrawer()
 void FieldDrawer::Init()
 {
 	m_chessModel = new GameObject(
-		m_chessModel->DataType::THREE,
 		kFileName1,
 		m_pos,
 		VGet(0, 0, 0),
 		VGet(kChessSize, kChessSize, kChessSize));
 
 	m_mapModel = new GameObject(
-		m_mapModel->DataType::THREE,
 		kFileName2,
 		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(0, 0, 0),

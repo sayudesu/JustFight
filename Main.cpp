@@ -61,20 +61,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetUseBackCulling(true);
 
 	SetUseLighting(false);
-
-	float lightRange = 2100.0f;
-	float lightRangeMainUp = 700.0f;
-	float lightRangeUp = 800.0f;
-
 	
+	// シーンマネージャー初期化
 	SceneManager* pScene = new SceneManager();
-
 	pScene->Init();
 
 	// 読み込み
 	EffekseerDrawer::GetInstance().Load();
 	SoundManager::GetInstance().Load();
-	EffectScreen::GetInstance().Init();
+	EffectScreen::GetInstance().Load();
 
 	while (ProcessMessage() == 0)
 	{
@@ -106,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	EffekseerDrawer::GetInstance().Unload();
 	SoundManager::GetInstance().Unload();
-	EffectScreen::GetInstance().End();
+	EffectScreen::GetInstance().Unload();
 
 
 	pScene->End();

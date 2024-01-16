@@ -59,7 +59,6 @@ void SceneTitle::Init()
 	{
 		// マップ
 		m_pStage = std::make_unique<GameObject>(
-			GameObject::DataType::THREE,
 			"Data/Model/洋館部屋1.mv1",
 			VGet(0,0,0),
 			VGet(0,0, 180 * DX_PI_F/ 180.0f),
@@ -70,7 +69,6 @@ void SceneTitle::Init()
 	{
 		// 背景
 		m_hBg = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/ゲーム難易度選択ベース2.png",
 			m_bgPos,
 			kImageAngle,
@@ -79,7 +77,6 @@ void SceneTitle::Init()
 
 		// 選択文字
 		m_hSelect = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/Select Difficulty.png",
 			VGet(kImagePosX, -300.0f, 0),
 			kImageAngle,
@@ -89,7 +86,6 @@ void SceneTitle::Init()
 
 		// 選択文字の下の飾り
 		m_hDecoration = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/飾り.png",
 			VGet(kImagePosX, -250.0f, 0),
 			kImageAngle,
@@ -99,7 +95,6 @@ void SceneTitle::Init()
 
 		// 難易度
 		m_hNovice = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/Novice.png",
 			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
@@ -108,7 +103,6 @@ void SceneTitle::Init()
 		);
 		
 		m_hIntermediate = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/Intermediate.png",
 			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
@@ -117,7 +111,6 @@ void SceneTitle::Init()
 		);
 
 		m_hExpert = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/Expert.png",
 			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
@@ -126,7 +119,6 @@ void SceneTitle::Init()
 		);
 
 		m_hImageNovice = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/黒ポーン.png",
 			VGet(kImagePosX + 800.0f, 30.0f, 0),
 			kImageAngle,
@@ -135,7 +127,6 @@ void SceneTitle::Init()
 		);
 
 		m_hImageIntermediate = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/馬黒.png",
 			VGet(kImagePosX + 800.0f, 30.0f, 0),
 			kImageAngle,
@@ -144,7 +135,6 @@ void SceneTitle::Init()
 		);
 
 		m_hImageExpert = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/黒キング.png",
 			VGet(kImagePosX + 800.0f, 30.0f, 0),
 			kImageAngle,
@@ -153,7 +143,6 @@ void SceneTitle::Init()
 		);
 
 		m_hImageDifficultyBg = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/CharactorBg.png",
 			VGet(kImagePosX + 800.0f, 30.0f, 0),
 			kImageAngle,
@@ -163,7 +152,6 @@ void SceneTitle::Init()
 
 		// 矢印上向き
 		m_hArrow[0] = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/矢印.png",
 			VGet(kImagePosX, -120.0f, 0),
 			kImageAngle + 180.0f * DX_PI_F / 180.0f,
@@ -173,7 +161,6 @@ void SceneTitle::Init()
 
 		// 矢印下向き
 		m_hArrow[1] = std::make_shared<GameObject>(
-			GameObject::DataType::TWO,
 			"Data/Image/UI/矢印.png",
 			VGet(kImagePosX, 180.0f, 0),
 			kImageAngle,
@@ -196,6 +183,7 @@ SceneBase* SceneTitle::Update()
 {
 	char deviceName[260]{};
 	char productName[260]{};
+#if true
 	// コントローラーの接続を確認する
 	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0) 
 	{
@@ -206,6 +194,7 @@ SceneBase* SceneTitle::Update()
 		m_isInputController = true;
 		return this;
 	}
+#endif
 
 	m_select->Update();
 

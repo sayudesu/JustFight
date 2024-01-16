@@ -1,5 +1,7 @@
-#include "Camera.h"
 #include <math.h>
+
+#include "Camera.h"
+
 #include "../../Util/Pad.h"
 
 namespace

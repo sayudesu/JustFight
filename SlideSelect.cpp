@@ -5,7 +5,6 @@
 
 namespace 
 {
-	// ‘I‘ğ‚Å‚«‚éÅ‘å”
 	constexpr int kSelectFrameMax = 30;
 	constexpr int kSelectFrameMin = 1;
 }
@@ -13,7 +12,8 @@ namespace
 SlideSelect::SlideSelect():
 	m_selectNo(0),
 	m_selectNoResult(-1),
-	m_isImageDraw(false)
+	m_selectMaxNum(0),
+	m_isSelect(false)
 {
 	for (int i = 0; i < SelectButton::BUTTONMAX; i++)
 	{
@@ -30,10 +30,6 @@ SlideSelect::~SlideSelect()
 void SlideSelect::Init(int selectMaxNum)
 {
 	m_selectMaxNum = selectMaxNum;
-}
-
-void SlideSelect::End()
-{
 }
 
 void SlideSelect::Update()
@@ -120,15 +116,6 @@ void SlideSelect::Update()
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 		m_selectNoResult = m_selectNo;
-	}
-
-	if (m_selectNo == 0)
-	{
-		m_isImageDraw = true;
-	}
-	if (m_selectNo == 1)
-	{
-		m_isImageDraw = false;
 	}
 }
 

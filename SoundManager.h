@@ -5,11 +5,13 @@
 
 #include "SoundName.h"
 
+// サウンドマネージャーのシングルトーンクラス
+
 class SoundManager
 {
 private:
 	SoundManager() = default;
-	static SoundManager* m_pInstanceSound;
+	static SoundManager* m_pInstance;
 public:
 	virtual~SoundManager() = default;
 	// コピーコンストラクタの禁止
@@ -21,18 +23,18 @@ public:
 	// インスタンスの作成
 	static SoundManager& GetInstance()
 	{
-		if (!m_pInstanceSound)
+		if (!m_pInstance)
 		{
-			m_pInstanceSound = new SoundManager();
+			m_pInstance = new SoundManager();
 		}
-		return *m_pInstanceSound;
+		return *m_pInstance;
 	}
 
 	// 解放処理
 	static void Destroy()
 	{
-		delete m_pInstanceSound;
-		m_pInstanceSound = nullptr;
+		delete m_pInstance;
+		m_pInstance = nullptr;
 	}
 
 public:

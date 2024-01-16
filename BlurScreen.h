@@ -31,8 +31,8 @@ public:
 public:
 
 	// MakeScreen‚µ‚Ä‰æ–ÊƒTƒCƒY‚ğæ“¾‚·‚é
-	void Init();
-	void End();
+	void Load();
+	void Unload();
 	//	‰æ–Ê‚É•`‚©‚ê‚½‚à‚Ì‚ğÁ‹‚·‚é
 	void ClearScreen();
 	// •`‰æ‚ğ— ‚Ì‰æ–Ê‚É‚·‚é
