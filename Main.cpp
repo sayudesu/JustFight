@@ -6,8 +6,11 @@
 #include "Util/Game.h"
 #include "Util/EffekseerDrawer.h"
 
-#include "SoundManager.h"
 #include "BlurScreen.h"
+#include "CSVSoundData.h"
+#include "CSVEnemyData.h"
+#include "EnemyDataManager.h"
+#include "SoundManager.h"
 
 // ÉvÉçÉOÉâÉÄÇÕWinMainÇ©ÇÁénÇ‹ÇËÇ‹Ç∑
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -67,8 +70,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pScene->Init();
 
 	// ì«Ç›çûÇ›
+	SoundManager::GetInstance().Load(CSVSoundData::fileNamePath, CSVSoundData::firstData);
+	EnemyDataManager::GetInstance().Load();
 	EffekseerDrawer::GetInstance().Load();
-	SoundManager::GetInstance().Load();
 	EffectScreen::GetInstance().Load();
 
 	while (ProcessMessage() == 0)

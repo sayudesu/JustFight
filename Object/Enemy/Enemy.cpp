@@ -26,7 +26,6 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isResultGuard(false),
 	m_isCheckAttack(false),
 	m_isAttackResult(false),
-	m_attackContinueDelayOneFrameCount(0),
 	m_isCheckStrongAttack(false),
 	m_isStrongAttackResult(false),
 	m_isMoveLeft(false),
@@ -36,6 +35,11 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 
 	m_isAttack = false;
 	m_isGuard = false;
+
+	m_attackContinueDelayFrameCount[0] = 0;
+	m_attackContinueDelayFrameCount[1] = 0;
+	m_isAttackContinueDelay[0] = false;
+	m_isAttackContinueDelay[1] = false;
 
 	// 自身がエネミーであると決める
 	m_myId = CharacterName::ENEMYNORMAL;
@@ -239,12 +243,10 @@ void Enemy::BattleType()
 	// ターゲットが攻撃している場合
 	if (m_targetBattleState == BattleState::ATTACK)
 	{
-		if (GetRand(5) == 0 && (m_attackContinueDelayOneFrameCount == 0))
+		if (GetRand(5) == 0)
 		{
 			m_isCheckGuard = true;
-			m_isResultGuard = true;
-
-			m_attackContinueDelayOneFrameCount++;
+			m_isResultGuard = true;	
 		}
 	}
 	// ターゲットがスタンしている場合
@@ -256,27 +258,37 @@ void Enemy::BattleType()
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-		if (GetRand(60) == 0) 
+		if (GetRand(30) == 0 && (!m_isAttackContinueDelay[0]))
 		{
 			m_isCheckAttack = true;
 			m_isAttackResult = true;
+
+			m_isAttackContinueDelay[0] = true;
 		}
 	}
 	// アイドル状態の場合
 	if (m_targetBattleState == BattleState::IDLE)
 	{
-		if (m_attackContinueDelayOneFrameCount == 0)
+		if (!m_isAttackContinueDelay[1])
 		{
 			m_isCheckAttack = true;
 			m_isAttackResult = true;
 
-			m_attackContinueDelayOneFrameCount++;
+			m_isAttackContinueDelay[1] = true;
 		}
 	}
 
-	if (m_attackContinueDelayOneFrameCount > 2)
+	for (int i = 0; i < 2; i++)
 	{
-		m_attackContinueDelayOneFrameCount = 0;
+		if (m_isAttackContinueDelay[i])
+		{
+			m_attackContinueDelayFrameCount[i]++;
+			if (m_attackContinueDelayFrameCount[i] == 3)
+			{
+				m_attackContinueDelayFrameCount[i] = 0;
+				m_isAttackContinueDelay[i] = false;
+			}
+		}
 	}
 }
 

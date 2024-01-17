@@ -35,7 +35,8 @@ private:
 	bool m_isCheckAttack;
 	bool m_isAttackResult;
 	// 1フレームだけ連続攻撃できない様にする
-	int m_attackContinueDelayOneFrameCount;
+	int m_attackContinueDelayFrameCount[2];
+	int m_isAttackContinueDelay[2];
 
 	// 強攻撃
 	bool m_isCheckStrongAttack;

@@ -7,7 +7,7 @@ class SlideSelect;
 class GameObject;
 class Camera;
 
-class SceneTitle : public SceneBase
+class SceneTitle final : public SceneBase
 {
 public:
 	SceneTitle();

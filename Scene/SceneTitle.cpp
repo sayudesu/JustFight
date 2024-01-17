@@ -10,7 +10,7 @@
 
 #include "../GameObject.h"
 
-#include "../Object/Camera/Camera.h";
+#include "../Object/Camera/Camera.h"
 
 #include "../DifficultyData.h"
 
@@ -183,7 +183,7 @@ SceneBase* SceneTitle::Update()
 {
 	char deviceName[260]{};
 	char productName[260]{};
-#if true
+#if false
 	// コントローラーの接続を確認する
 	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0) 
 	{

@@ -3,7 +3,7 @@
 #include <memory>
 
 class SceneBase;
-class SceneManager
+class SceneManager final
 {
 public:
 	SceneManager();

@@ -179,7 +179,7 @@ SceneBase* SceneMain::UpdateGameResult()
 {
 	// 指定フレームの後にリザルト画面に移動する
 	m_frameCount++;
-	if (m_frameCount == 60 * 3)
+	if (m_frameCount == 60 * 2)
 	{
 		clsDx();
 		return new SceneResult(m_resultData);

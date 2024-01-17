@@ -23,7 +23,7 @@ class FieldDrawer;
 class UIDrawer;
 class EffectScreen;
 
-class SceneMain : public SceneBase
+class SceneMain final : public SceneBase
 {
 public:
 	SceneMain(DifficultyData data);

@@ -2,7 +2,7 @@
 #include "SceneBase.h"
 #include <vector>
 
-class SceneDebug : public SceneBase
+class SceneDebug final : public SceneBase
 {
 public:
 	SceneDebug();

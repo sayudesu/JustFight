@@ -4,7 +4,7 @@
 
 #include "../GameResultData.h"
 
-class SceneResult : public SceneBase
+class SceneResult final : public SceneBase
 {
 public:
 	SceneResult(GameResultData data);

@@ -144,6 +144,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlurScreen.cpp" />
+    <ClCompile Include="CSVManagerBase.cpp" />
+    <ClCompile Include="EnemyDataManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="SlideSelect.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -171,7 +173,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlurScreen.h" />
+    <ClInclude Include="CSVEnemyData.h" />
+    <ClInclude Include="CSVSoundData.h" />
+    <ClInclude Include="CSVManagerBase.h" />
     <ClInclude Include="DifficultyData.h" />
+    <ClInclude Include="EnemyDataManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameResultData.h" />
     <ClInclude Include="SlideSelect.h" />

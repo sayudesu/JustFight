@@ -1,11 +1,13 @@
 #include <DxLib.h>
-#include "SceneManager.h"
 #include <cassert>
+
+#include "SceneManager.h"
 #include "SceneDebug.h"
 #include "SceneBase.h"
 #include "SceneTitle.h"
 #include "SceneMain.h"
 #include "SceneResult.h"
+
 #include "../Util/Pad.h"
 #include "../Util/Game.h"
 

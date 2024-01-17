@@ -119,7 +119,7 @@ void EffectScreen::QuakeReplayInit()
 
 void EffectScreen::QuakeUpdate()
 {
-	if (--m_quakeTimer > 0)
+	if (--m_quakeTimer > 0) 
 	{
 		m_quakeX = -m_quakeX;
 		m_quakeX *= 0.95f;

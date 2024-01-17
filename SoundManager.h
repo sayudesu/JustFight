@@ -4,10 +4,11 @@
 #include <map>
 
 #include "SoundName.h"
+#include "CSVManagerBase.h"
 
 // サウンドマネージャーのシングルトーンクラス
 
-class SoundManager
+class SoundManager final : public CSVManagerBase
 {
 private:
 	SoundManager() = default;
@@ -39,14 +40,9 @@ public:
 
 public:
 	// ロード
-	void Load();
+	void Load(const char* fileNamePath, std::vector<std::vector<std::string>> data);
 	// アンロード
 	void Unload();
-
-	std::vector<std::string> Split(std::string& input, char delimiter);
-
-	// CSVファイルにデータを書き込む関数
-	void WriteCSV(const std::string& filename, const std::vector<std::vector<std::string>>& data);
 
 	/// <summary>
 	/// サウンドの再生
@@ -54,7 +50,6 @@ public:
 	/// <param name="name">サウンドの名前</param>
 	/// <param name="repeat">繰り返し再生するかどうか</param>
 	void Play(SoundName name,bool repeat = false);
-
 
 private:
 	enum Type
