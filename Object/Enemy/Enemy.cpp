@@ -2,6 +2,12 @@
 
 #include "../../Util/Pad.h"
 
+#include "../../CharactorDataManager.h"
+#include "../../ParameterData.h"
+
+#include "../../ModelManager.h"
+#include "../../ModelName.h"
+
 namespace
 {
 	// 角度情報をフレーム単位で遅らせる
@@ -46,49 +52,20 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 
 	// 選択した難易度によってモデルを変更
 	if (data == DifficultyData::NOIVE)
-	{
-		m_parameter.fileName = "Data/Model/Pawn_B.mv1";
+	{		
+		m_parameter.fileName = ModelManager::GetInstance().ModelType(ModelName::Pawn_B);
+		InputParamType(0);
 	}
 	else if (data == DifficultyData::INTERMEDIATE)
 	{
-		m_parameter.fileName = "Data/Model/Knight_B.mv1";
+		m_parameter.fileName = ModelManager::GetInstance().ModelType(ModelName::Knight_B);
+		InputParamType(1);
 	}
 	else if (data == DifficultyData::EXPERT)
 	{
-		m_parameter.fileName = "Data/Model/Queen_B.mv1";
+		m_parameter.fileName = ModelManager::GetInstance().ModelType(ModelName::Queen_B);
+		InputParamType(2);
 	}
-
-	// パラメーター調整
-	m_parameter.attackFrameMax = 30;
-	m_parameter.attackFrameGapMax = 0;
-	m_parameter.attackTotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
-
-	m_parameter.attackAfterStopFrameMax = 60;
-
-	m_parameter.strongAttackFrameMax = 5;
-	m_parameter.strongAttackFrameGapMax = 60;
-	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
-
-	m_parameter.guardFrameMax = 20;
-	m_parameter.justGuardFrameMax = 15;
-
-	m_parameter.stunFrameMax = 60 * 3;
-
-	m_parameter.hpMax = 6;
-	m_parameter.fightingMeterMax = 100.0f;
-
-	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
-	m_parameter.shieldRelativePos = { 100.0f, 100.0f, -50.0f };
-
-	m_parameter.weaponAttackRadius = 100.0f;
-	m_parameter.shieldRadius = 50.0f;
-	m_parameter.modelRadius = 180.0f;
-
-	m_parameter.weaponAttackPos = { 0.0f, 0.0f, -210.0f };
-	m_parameter.knockBackPos = { 0.0f,0.0f ,-20.0f };
-
-	m_parameter.weaponBackSpeed = 30.0f;
-	m_parameter.shieldBackSpeed = 30.0f;
 }
 
 Enemy::~Enemy()
@@ -278,17 +255,25 @@ void Enemy::BattleType()
 		}
 	}
 
+	// 攻撃を1フレーム以内に出さない様に修正
+	// これではいけない...
+	if (m_isAttackContinueDelay[0] || m_isAttackContinueDelay[1])
+	{
+		m_isAttackContinueDelay[0] = true;
+		m_isAttackContinueDelay[1] = true;
+	}
+
 	for (int i = 0; i < 2; i++)
 	{
 		if (m_isAttackContinueDelay[i])
 		{
 			m_attackContinueDelayFrameCount[i]++;
-			if (m_attackContinueDelayFrameCount[i] == 3)
+			if (m_attackContinueDelayFrameCount[i] == 2)
 			{
 				m_attackContinueDelayFrameCount[i] = 0;
 				m_isAttackContinueDelay[i] = false;
 			}
-		}
+		}		
 	}
 }
 

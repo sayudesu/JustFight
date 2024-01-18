@@ -1,5 +1,5 @@
 No,Type,Name,Volume,Extension
-0,SE,Attack,1,.mp3
+0,SE,Attack,255,.mp3
 1,SE,Guard,255,.mp3
 2,SE,GuardResult,255,.mp3
 3,SE,JustGurad,255,.mp3

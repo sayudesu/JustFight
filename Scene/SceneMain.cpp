@@ -18,11 +18,11 @@
 
 #include "../FIeldDrawer.h"// マップ描画
 
-#include "../UI/UIDrawer.h";
+#include "../UI/UIDrawer.h";// UI描画
 
 #include "../DEBUG.h"// デバッグ用
 
-#include "../BlurScreen.h";
+#include "../BlurScreen.h";// 画面加工
 
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),

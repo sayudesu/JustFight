@@ -145,8 +145,9 @@
   <ItemGroup>
     <ClCompile Include="BlurScreen.cpp" />
     <ClCompile Include="CSVManagerBase.cpp" />
-    <ClCompile Include="EnemyDataManager.cpp" />
+    <ClCompile Include="CharactorDataManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="SlideSelect.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UI\UIDrawer.cpp" />
@@ -173,13 +174,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlurScreen.h" />
-    <ClInclude Include="CSVEnemyData.h" />
+    <ClInclude Include="CSVCharactorData.h" />
+    <ClInclude Include="CSVModelData.h" />
     <ClInclude Include="CSVSoundData.h" />
     <ClInclude Include="CSVManagerBase.h" />
     <ClInclude Include="DifficultyData.h" />
-    <ClInclude Include="EnemyDataManager.h" />
+    <ClInclude Include="CharactorDataManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameResultData.h" />
+    <ClInclude Include="ModelManager.h" />
+    <ClInclude Include="ModelName.h" />
+    <ClInclude Include="ParameterData.h" />
     <ClInclude Include="SlideSelect.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SoundName.h" />

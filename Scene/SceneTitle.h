@@ -57,8 +57,8 @@ private:
 	float m_arrowSize[2];
 
 	// ƒJƒƒ‰‚ÌÀ•W
-	float m_cameraPosX = -25.0f;
-	float m_cameraPosY = 21.0f;
-	float m_cameraPosZ = -27.0f;
+	float m_cameraPosX;
+	float m_cameraPosY;
+	float m_cameraPosZ;
 };
 

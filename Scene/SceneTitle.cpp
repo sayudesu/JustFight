@@ -14,6 +14,9 @@
 
 #include "../DifficultyData.h"
 
+#include "../ModelManager.h"
+#include "../ModelName.h"
+
 namespace 
 {
 	constexpr float kImageAngle = 0.0f * DX_PI_F / 180.0f;
@@ -50,6 +53,11 @@ void SceneTitle::Init()
 	m_select = std::make_unique<SlideSelect>();
 	m_select->Init(2);
 
+	// カメラの座標
+	m_cameraPosX = 100.0f;
+	m_cameraPosY = 300.0f;
+	m_cameraPosZ = 100.0f;
+
 	// カメラインスタンス
 	m_camera = std::make_unique<Camera>();
 	// カメラターゲット位置初期化
@@ -59,7 +67,7 @@ void SceneTitle::Init()
 	{
 		// マップ
 		m_pStage = std::make_unique<GameObject>(
-			"Data/Model/洋館部屋1.mv1",
+			ModelManager::GetInstance().ModelType(ModelName::MAP3),
 			VGet(0,0,0),
 			VGet(0,0, 180 * DX_PI_F/ 180.0f),
 			VGet(1, 1, 1));		
@@ -202,48 +210,6 @@ SceneBase* SceneTitle::Update()
 
 	m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
 
-	const float speed = 0.3f;
-	if (m_cameraPosX < 0.0f)
-	{
-		m_cameraPosX += speed;
-	}
-	else
-	{
-		m_isCameraStop[0] = true;
-	}
-	if (m_cameraPosY > 10.0f)
-	{
-		m_cameraPosY -= speed;
-	}
-	else
-	{
-		m_isCameraStop[1] = true;
-	}
-	if (m_cameraPosZ < -5.0f)
-	{
-		m_cameraPosZ += speed;
-	}
-	else
-	{
-		m_isCameraStop[2] = true;
-	}
-
-	m_camera->Setting();
-
-	m_hBg->Update();
-	m_hSelect->Update();
-	m_hDecoration->Update();
-	// 難易度
-	m_hNovice->Update();
-	m_hIntermediate->Update();
-	m_hExpert->Update();
-
-	m_hImageNovice->Update();
-	m_hImageIntermediate->Update();
-	m_hImageExpert->Update();
-
-	m_hImageDifficultyBg->Update();
-	
 	// カメラがx,y,zそれぞれ停止したかをチェックする
 	int count = 0;
 	for (int i = 0; i < 3; i++)
@@ -265,6 +231,59 @@ SceneBase* SceneTitle::Update()
 			m_bgPos.y += 60.0f;
 		}
 	}
+
+	static float speed = 0.01f;
+	speed = (speed * 1.07f);
+
+	if (m_cameraPosX > 0.0f)
+	{
+		m_cameraPosX -= speed;
+	}
+	else
+	{
+		m_cameraPosX = 0.0f;
+		m_isCameraStop[0] = true;
+	}
+
+	if (m_cameraPosY > 32.0f)
+	{
+		m_cameraPosY -= speed;
+	}
+	else
+	{
+		m_cameraPosY = 32.0f;
+		m_isCameraStop[1] = true;
+	}
+	
+	if (m_cameraPosZ > 10.0f)
+	{
+		m_cameraPosZ -= speed;
+	}
+	else
+	{
+		m_cameraPosZ = 10.0f;
+		m_isCameraStop[2] = true;
+	}
+	
+
+	// printfDx("X = %f || Y = %f || Z = %f\n", m_cameraPosX, m_cameraPosY, m_cameraPosZ);
+	// printfDx("%f\n", speed);
+
+	m_camera->Setting();
+
+	m_hBg->Update();
+	m_hSelect->Update();
+	m_hDecoration->Update();
+	// 難易度
+	m_hNovice->Update();
+	m_hIntermediate->Update();
+	m_hExpert->Update();
+
+	m_hImageNovice->Update();
+	m_hImageIntermediate->Update();
+	m_hImageExpert->Update();
+
+	m_hImageDifficultyBg->Update();
 
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();

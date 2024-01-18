@@ -61,6 +61,8 @@ private:
 	virtual void WeaponDefaultPos();
 
 protected:
+	// パラメーターの調整
+	virtual void InputParamType(int type);
 	// 角度を取得
 	virtual void SetAngle(float angle);
 	virtual void SetRotMtx(MATRIX rotMtx);

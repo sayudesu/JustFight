@@ -19,13 +19,6 @@ private:
 	void BattleType();
 
 private:
-	//// ˆÚ“®—pŠÖ”
-	//VECTOR AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
-	//VECTOR SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
-	//// ‰ñ”ğ—pŠÖ”
-	//void MoveAway(float x, float z, MATRIX rotMtx);
-
-private:
 	std::deque<float> m_delayFrameAngle;
 
 	// –hŒä

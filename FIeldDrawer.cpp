@@ -1,6 +1,9 @@
 #include "FIeldDrawer.h"
 #include "GameObject.h"
 
+#include "ModelManager.h"
+#include "ModelName.h"
+
 namespace
 {
 	// オブジェクトのサイズ
@@ -26,13 +29,13 @@ FieldDrawer::~FieldDrawer()
 void FieldDrawer::Init()
 {
 	m_chessModel = new GameObject(
-		kFileName1,
+		ModelManager::GetInstance().ModelType(ModelName::MAP2),
 		m_pos,
 		VGet(0, 0, 0),
 		VGet(kChessSize, kChessSize, kChessSize));
 
 	m_mapModel = new GameObject(
-		kFileName2,
+		ModelManager::GetInstance().ModelType(ModelName::MAP3),
 		VGet(m_pos.x, m_pos.y, m_pos.z),
 		VGet(0, 0, 0),
 		VGet(kMapSize, kMapSize, kMapSize));

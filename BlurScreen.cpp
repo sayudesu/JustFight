@@ -8,6 +8,7 @@ EffectScreen* EffectScreen::m_pInstanceSound = nullptr;
 
 void EffectScreen::Load()
 {
+#if true		
 	m_quakeX = 0.0f;
 	m_quakeTimer = 0;
 	m_screen[0] = 0;
@@ -23,24 +24,31 @@ void EffectScreen::Load()
 	{
 		m_screen[i] = MakeScreen(sw, sh);// â¡çHópâÊñ Çópà”Ç∑ÇÈ
 	}
+#endif
 }
 
 void EffectScreen::Unload()
 {
+#if true	
 	for (int i = 0; i < 3; ++i)
 	{
 		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
 	}
+#endif
 }
 
 void EffectScreen::ClearScreen()
 {
+#if true	
 	ClearDrawScreen();
+#endif
 }
 
 void EffectScreen::ScreenBack()
 {
+#if true	
 	SetDrawScreen(DX_SCREEN_BACK);
+#endif
 }
 
 //void EffectScreen::BlurInit(int alpha)
@@ -58,6 +66,7 @@ void EffectScreen::ScreenBack()
 
 void EffectScreen::BlurIReplayInit(int alpha)
 {
+#if true	
 	/*for (int i = 0; i < 3; ++i)
 	{
 		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
@@ -72,6 +81,7 @@ void EffectScreen::BlurIReplayInit(int alpha)
 	m_current = 0;
 	m_notBlendDraw = 0;
 	m_alpha = alpha;
+#endif
 }
 
 void EffectScreen::BlurRelease()
@@ -84,11 +94,14 @@ void EffectScreen::BlurRelease()
 
 void EffectScreen::BlurPreRenderBlurScreen()
 {
+#if true	
 	SetDrawScreen(m_screen[m_current]);
+#endif
 }
 
 void EffectScreen::BlurPostRenderBlurScreen()
 {
+#if true	
 	int drawMode = GetDrawMode();
 	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
@@ -109,16 +122,20 @@ void EffectScreen::BlurPostRenderBlurScreen()
 	DrawGraph(0, 0, m_screen[static_cast<int>(EffectNo::BLUR_0) + 1 - m_current], false);
 
 	m_current = 1 - m_current;
+#endif
 }
 
 void EffectScreen::QuakeReplayInit()
 {
+#if true	
 	m_quakeX     = 40.0f;
 	m_quakeTimer = 30;
+#endif
 }
 
 void EffectScreen::QuakeUpdate()
 {
+#if true	
 	if (--m_quakeTimer > 0) 
 	{
 		m_quakeX = -m_quakeX;
@@ -129,20 +146,26 @@ void EffectScreen::QuakeUpdate()
 	{
 		m_quakeX = 0.0f;
 	}
+#endif
 }
 
 void EffectScreen::QuakeRelease()
 {
+#if true
 	DeleteGraph(m_screen[static_cast<int>(EffectNo::QUAKE)]);
+#endif
 }
 
 void EffectScreen::QuakePreRenderBlurScreen()
 {
+#if true
 	SetDrawScreen(m_screen[static_cast<int>(EffectNo::QUAKE)]);
+#endif
 }
 
 void EffectScreen::QuakePostRenderBlurScreen()
 {
+#if true
 	if (m_quakeTimer > 0)
 	{
 		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_INVERT);         // êFÇîΩì]Ç≥ÇπÇÈ
@@ -158,4 +181,5 @@ void EffectScreen::QuakePostRenderBlurScreen()
 	{
 		DrawGraph(0, 0, m_screen[static_cast<int>(EffectNo::QUAKE)], false);                      // í èÌâÊñ ï`âÊ
 	}
+#endif
 }

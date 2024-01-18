@@ -9,6 +9,12 @@
 #include "../SoundName.h"
 #include "../BlurScreen.h"
 
+#include "../ParameterData.h"
+#include "../CharactorDataManager.h"
+
+#include "../ModelName.h"
+#include "../ModelManager.h"
+
 namespace
 {
 	// カプセル形状の半径
@@ -100,14 +106,14 @@ void CharacterBase::Init()
 
 	// 武器オブジェクトの生成
 	m_weapon = new GameObject(
-		"Data/Model/SwordCollTest.mv1",
+		ModelManager::GetInstance().ModelType(ModelName::WEAPON),
 		m_weaponPos,
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(3.0f, 3.0f, 3.0f));
 
 	// 盾オブジェクトの生成
 	m_shield = new GameObject(
-		"Data/Model/Shield.mv1",
+		ModelManager::GetInstance().ModelType(ModelName::SHIELD),
 		VGet(100, m_weaponPos.y, 100),
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(3.0f, 3.0f, 3.0f));
@@ -273,7 +279,7 @@ void CharacterBase::Idle()
 
 	test3 = test2;
 
-	// 現在のHPを調整
+	// HP更新処理
 	HitPoint();
 
 	// 位置情報の更新
@@ -364,7 +370,7 @@ void CharacterBase::Attack()
 		m_pFunc = &CharacterBase::Stun;
 	}
 
-	// 現在のHPを調整
+	// HP更新処理
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
@@ -468,7 +474,7 @@ void CharacterBase::AttackTwo()
 	m_capsuleUpPos = m_capsuleUpDown;
 	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
 
-	// 現在のHPを調整
+	// HP更新処理
 	HitPoint();
 	// ノックバックされた場合
 	KnockBack();
@@ -568,7 +574,7 @@ void CharacterBase::StrongAttack()
 	m_capsuleUpPos = m_capsuleUpDown;
 	m_capsuleUpPos.y = m_capsuleUpDown.y + 150.0f;
 
-	// 現在のHPを調整
+	// HP更新処理
 	HitPoint();
 	// ノックバックされた場合
 	KnockBack();
@@ -709,10 +715,8 @@ void CharacterBase::JustGuard()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
-#if false
-	// ヒットポイント
+	// HP更新処理
 	HitPoint();
-#endif
 	// 位置情報の更新
 	UpdatePos();
 
@@ -754,6 +758,7 @@ void CharacterBase::Stun()
 		m_pFunc = &CharacterBase::Idle;
 	}
 
+	// HP更新処理
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
@@ -972,6 +977,41 @@ float CharacterBase::MoveByFrame(const float relativePos, const float EndPos, co
 	// 位置 = 相対位置 + (向かいたい座標 - 相対位置) * (現在のフレーム / 最大フレーム)　　
 	const float resultPos = relativePos + (EndPos - relativePos) * (float(nowFrame) / maxFrame);
 	return resultPos;
+}
+
+void CharacterBase::InputParamType(int type)
+{
+	// パラメーター調整
+	m_parameter.attackFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_FRAME_MAX, type).f;
+	m_parameter.attackFrameGapMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_FRAME_GAP_MAX, type).f;
+	m_parameter.attackTotalFrame = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_TOTAL_FRAME, type).f;
+
+	m_parameter.attackAfterStopFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_AFTER_STOP_FRAME_MAX, type).f;
+
+	m_parameter.strongAttackFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_FRAME_MAX, type).f;
+	m_parameter.strongAttackFrameGapMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_FRAME_GAP_MAX, type).f;
+	m_parameter.strongAttackTotalFrame = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_TOTAL_FRAME, type).f;
+
+	m_parameter.guardFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::GUARD_FRAME_MAX, type).f;
+	m_parameter.justGuardFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::JUST_GUARD_FRAME_MAX, type).f;
+
+	m_parameter.stunFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STUN_FRAME_MAX, type).f;
+
+	m_parameter.hpMax = CharactorDataManager::GetInstance().GetParamData(ParamData::HP_MAX, type).f;
+	m_parameter.fightingMeterMax = CharactorDataManager::GetInstance().GetParamData(ParamData::FIGHTING_METER_MAX, type).f;
+
+	m_parameter.weaponRelativePos = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_RELATIVE_POS, type).v;
+	m_parameter.shieldRelativePos = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RELATIVE_POS, type).v;
+
+	m_parameter.weaponAttackRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_RADIUS, type).f;
+	m_parameter.shieldRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RADIUS, type).f;
+	m_parameter.modelRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::MODEL_RADIUS, type).f;
+
+	m_parameter.weaponAttackPos = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_POS, type).v;
+	m_parameter.knockBackPos = CharactorDataManager::GetInstance().GetParamData(ParamData::KNOCKBACK_POS, type).v;
+
+	m_parameter.weaponBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_BACK_SPEED, type).f;
+	m_parameter.shieldBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_BACK_SPEED, type).f;
 }
 
 void CharacterBase::SetAngle(float angle)

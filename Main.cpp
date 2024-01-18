@@ -8,9 +8,11 @@
 
 #include "BlurScreen.h"
 #include "CSVSoundData.h"
-#include "CSVEnemyData.h"
-#include "EnemyDataManager.h"
+#include "CSVCharactorData.h"
+#include "CharactorDataManager.h"
 #include "SoundManager.h"
+#include "ModelManager.h"
+#include "CSVModelData.h"
 
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -65,15 +67,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SetUseLighting(false);
 	
+	// 読み込み
+	// サウンド
+	SoundManager::GetInstance().Load(
+		CSVSoundData::fileNamePath,
+		CSVSoundData::firstData);
+
+	// キャラクタのパラメータ
+	CharactorDataManager::GetInstance().Load(
+		CSVCharactorData::fileSmallPath, CSVCharactorData::firstSmallData,
+		CSVCharactorData::fileMediumPath, CSVCharactorData::firstMediumData,
+		CSVCharactorData::fileLargePath, CSVCharactorData::firstLargeData);
+
+	// モデル
+	ModelManager::GetInstance().Load(
+		CSVModelData::filePath,
+		CSVModelData::firstData);
+
+	// エフェクシア
+	EffekseerDrawer::GetInstance().Load();
+
+	// スクリーン加工用
+	EffectScreen::GetInstance().Load();
+
 	// シーンマネージャー初期化
 	SceneManager* pScene = new SceneManager();
 	pScene->Init();
-
-	// 読み込み
-	SoundManager::GetInstance().Load(CSVSoundData::fileNamePath, CSVSoundData::firstData);
-	EnemyDataManager::GetInstance().Load();
-	EffekseerDrawer::GetInstance().Load();
-	EffectScreen::GetInstance().Load();
 
 	while (ProcessMessage() == 0)
 	{
@@ -81,9 +100,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 画面のクリア
 		ClearDrawScreen();
 
+		// 更新処理
 		pScene->Update();
 		EffekseerDrawer::GetInstance().Update();
 
+		// 描画処理
 		pScene->Draw();
 		EffekseerDrawer::GetInstance().Draw();
 
@@ -99,16 +120,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	EffekseerDrawer::GetInstance().Destroy();
+	// 内部のメモリ解放
+	SoundManager::GetInstance().Unload();
+	ModelManager::GetInstance().Unload();
+	CharactorDataManager::GetInstance().Unload();
+	EffekseerDrawer::GetInstance().Unload();
+	EffectScreen::GetInstance().Unload();
+	// メモリ解放
 	SoundManager::GetInstance().Destroy();
+	ModelManager::GetInstance().Destroy();
+	CharactorDataManager::GetInstance().Destroy();
+	EffekseerDrawer::GetInstance().Destroy();
 	EffectScreen::GetInstance().Destroy();
 
-	EffekseerDrawer::GetInstance().Unload();
-	SoundManager::GetInstance().Unload();
-	EffectScreen::GetInstance().Unload();
-
-
+	// シーンマネジャーの解放処理
 	pScene->End();
+	delete pScene;
 
 	// Effekseerを終了する。
 	Effkseer_End();
