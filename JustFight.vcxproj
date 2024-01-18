@@ -148,12 +148,8 @@
     <ClCompile Include="CSVData\CSVManagerBase.cpp" />
     <ClCompile Include="CSVData\ModelManager.cpp" />
     <ClCompile Include="CSVData\SoundManager.cpp" />
-    <ClCompile Include="CSVManagerBase.cpp" />
-    <ClCompile Include="CharactorDataManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="SlideSelect.cpp" />
-    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UI\UIDrawer.cpp" />
     <ClCompile Include="Util\BloodDrawer.cpp" />
     <ClCompile Include="Util\EffekseerDrawer.cpp" />
@@ -178,7 +174,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlurScreen.h" />
-    <ClInclude Include="CSVCharactorData.h" />
     <ClInclude Include="CSVData\CharactorDataManager.h" />
     <ClInclude Include="CSVData\CSVCharactorData.h" />
     <ClInclude Include="CSVData\CSVManagerBase.h" />
@@ -186,18 +181,12 @@
     <ClInclude Include="CSVData\CSVSoundData.h" />
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
-    <ClInclude Include="CSVModelData.h" />
-    <ClInclude Include="CSVSoundData.h" />
-    <ClInclude Include="CSVManagerBase.h" />
     <ClInclude Include="DifficultyData.h" />
-    <ClInclude Include="CharactorDataManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameResultData.h" />
-    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="ModelName.h" />
     <ClInclude Include="ParameterData.h" />
     <ClInclude Include="SlideSelect.h" />
-    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SoundName.h" />
     <ClInclude Include="UI\UIDrawer.h" />
     <ClInclude Include="Util\CharacterParameter.h" />
