@@ -43,5 +43,7 @@ private:
 	VECTOR m_awayVec;
 	// ‰ñ”ð‚ÌˆÚ“®—p‘Š‘ÎˆÊ’u
 	VECTOR m_awayRelativePos;
+
+	int m_guardFrameCount = 0;
 };
 

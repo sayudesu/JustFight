@@ -3,8 +3,9 @@
 #include <string>
 #include <map>
 
-#include "SoundName.h"
 #include "CSVManagerBase.h"
+
+#include "../SoundName.h"
 
 // サウンドマネージャーのシングルトーンクラス
 

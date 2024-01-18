@@ -14,7 +14,7 @@
 
 #include "../DifficultyData.h"
 
-#include "../ModelManager.h"
+#include "../CSVData/ModelManager.h"
 #include "../ModelName.h"
 
 namespace 
@@ -61,7 +61,7 @@ void SceneTitle::Init()
 	// カメラインスタンス
 	m_camera = std::make_unique<Camera>();
 	// カメラターゲット位置初期化
-	m_camera->SetTargetPos(VGet(0.0f, 0.0f, 0.0f));
+	m_camera->SetTargetPos(VGet(0.0f, -100.0f, -10.0f));
 
 	// 3Dオブジェクト
 	{
@@ -264,10 +264,6 @@ SceneBase* SceneTitle::Update()
 		m_cameraPosZ = 10.0f;
 		m_isCameraStop[2] = true;
 	}
-	
-
-	// printfDx("X = %f || Y = %f || Z = %f\n", m_cameraPosX, m_cameraPosY, m_cameraPosZ);
-	// printfDx("%f\n", speed);
 
 	m_camera->Setting();
 
@@ -310,7 +306,6 @@ SceneBase* SceneTitle::Update()
 	{
 		return new SceneDebug();
 	}
-	printfDx("%d\n", m_select->GetSelect());
 #endif
 
 

@@ -2,10 +2,10 @@
 
 #include "../../Util/Pad.h"
 
-#include "../../CharactorDataManager.h"
+#include "../../CSVData/CharactorDataManager.h"
 #include "../../ParameterData.h"
 
-#include "../../ModelManager.h"
+#include "../../CSVData/ModelManager.h"
 #include "../../ModelName.h"
 
 namespace
@@ -35,7 +35,8 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isCheckStrongAttack(false),
 	m_isStrongAttackResult(false),
 	m_isMoveLeft(false),
-	m_isMoveRight(false)
+	m_isMoveRight(false),
+	m_guardFrameCount(0)
 {
 	m_pFunc = &Enemy::Idle;
 
@@ -107,8 +108,6 @@ void Enemy::Input()
 		// UŒ‚‰Â”\”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©
 		if (IsAttackRange())
 		{
-			static int guardFrameCount = 0;		
-
 			// UŒ‚or–hŒä‚µ‚Ä‚¢‚È‚©‚Á‚½‚çŸ‚Ìs“®‚ğŒˆ‚ß‚é
 			if (!m_isAttack && !m_isGuard && !m_isStrongAttack)
 			{
@@ -145,12 +144,12 @@ void Enemy::Input()
 			if (m_isResultGuard && !m_isAttack)
 			{
 				m_isGuard = true;
-				guardFrameCount++;
+				m_guardFrameCount++;
 				m_pFunc = &Enemy::Guard;		
 			}
-			if (guardFrameCount == kGuardFrameCountMax)
+			if (m_guardFrameCount == kGuardFrameCountMax)
 			{
-				guardFrameCount = 0;
+				m_guardFrameCount = 0;
 				m_isCheckGuard = false;
 				m_isGuard = false;
 				m_isResultGuard = false;

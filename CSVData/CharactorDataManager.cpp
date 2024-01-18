@@ -1,4 +1,5 @@
 #include <DxLib.h>
+#include <cassert>
 
 #include "CharactorDataManager.h"
 
@@ -67,13 +68,17 @@ void CharactorDataManager::CSVLoad(std::ifstream& ifs,std::string line,int count
 		{
 			m_data[type][mapkey].f = std::stoi(strvec[3].c_str());
 		}
-		else
+		else if(m_data[type][mapkey].valueNum == 3)
 		{
 			m_data[type][mapkey].v.x = std::stoi(strvec[3].c_str());
 			m_data[type][mapkey].v.y = std::stoi(strvec[4].c_str());
 			m_data[type][mapkey].v.z = std::stoi(strvec[5].c_str());
 		}
-
+		else
+		{
+			assert(0 && "ファイルに誤りがあります");
+		}
+		
 		// map用のにキーを決める
 		mapkey++;
 	}

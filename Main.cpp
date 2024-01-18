@@ -7,12 +7,12 @@
 #include "Util/EffekseerDrawer.h"
 
 #include "BlurScreen.h"
-#include "CSVSoundData.h"
-#include "CSVCharactorData.h"
-#include "CharactorDataManager.h"
-#include "SoundManager.h"
-#include "ModelManager.h"
-#include "CSVModelData.h"
+#include "CSVData/CSVSoundData.h"
+#include "CSVData/CSVCharactorData.h"
+#include "CSVData/CSVModelData.h"
+#include "CSVData/CharactorDataManager.h"
+#include "CSVData/SoundManager.h"
+#include "CSVData/ModelManager.h"
 
 // ÉvÉçÉOÉâÉÄÇÕWinMainÇ©ÇÁénÇ‹ÇËÇ‹Ç∑
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)

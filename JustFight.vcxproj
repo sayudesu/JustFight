@@ -144,6 +144,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlurScreen.cpp" />
+    <ClCompile Include="CSVData\CharactorDataManager.cpp" />
+    <ClCompile Include="CSVData\CSVManagerBase.cpp" />
+    <ClCompile Include="CSVData\ModelManager.cpp" />
+    <ClCompile Include="CSVData\SoundManager.cpp" />
     <ClCompile Include="CSVManagerBase.cpp" />
     <ClCompile Include="CharactorDataManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -175,6 +179,13 @@
   <ItemGroup>
     <ClInclude Include="BlurScreen.h" />
     <ClInclude Include="CSVCharactorData.h" />
+    <ClInclude Include="CSVData\CharactorDataManager.h" />
+    <ClInclude Include="CSVData\CSVCharactorData.h" />
+    <ClInclude Include="CSVData\CSVManagerBase.h" />
+    <ClInclude Include="CSVData\CSVModelData.h" />
+    <ClInclude Include="CSVData\CSVSoundData.h" />
+    <ClInclude Include="CSVData\ModelManager.h" />
+    <ClInclude Include="CSVData\SoundManager.h" />
     <ClInclude Include="CSVModelData.h" />
     <ClInclude Include="CSVSoundData.h" />
     <ClInclude Include="CSVManagerBase.h" />

@@ -1,5 +1,4 @@
 #pragma once
-
 #include <DxLib.h>
 #include <map>
 #include <vector>
@@ -8,7 +7,7 @@
 
 #include "CSVManagerBase.h"
 
-#include "ParameterData.h"
+#include "../ParameterData.h"
 
 
 class CharactorDataManager final : public CSVManagerBase

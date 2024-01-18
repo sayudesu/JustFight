@@ -5,15 +5,15 @@
 #include "../Util/EffekseerDrawer.h"
 #include "../GameObject.h"
 
-#include "../SoundManager.h"
+#include "../CSVData/SoundManager.h"
 #include "../SoundName.h"
 #include "../BlurScreen.h"
 
 #include "../ParameterData.h"
-#include "../CharactorDataManager.h"
+#include "../CSVData/CharactorDataManager.h"
 
 #include "../ModelName.h"
-#include "../ModelManager.h"
+#include "../CSVData/ModelManager.h"
 
 namespace
 {
