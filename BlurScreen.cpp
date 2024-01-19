@@ -4,7 +4,7 @@
 
 #include "Util/Game.h"
 
-EffectScreen* EffectScreen::m_pInstanceSound = nullptr;
+EffectScreen* EffectScreen::m_pInstance = nullptr;
 
 void EffectScreen::Load()
 {

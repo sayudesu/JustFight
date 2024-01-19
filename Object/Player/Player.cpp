@@ -202,7 +202,7 @@ void Player::Input()
 				!m_isStrongAttack &&
 				!m_isGuard &&
 				!m_isJustGuard &&
-				(GetStrongPower() > 100.0f))
+				(GetStrongPower() >= 100.0f))
 			{
 				m_isStrongAttack = true;
 				m_pFunc = &Player::StrongAttack;

@@ -1,9 +1,10 @@
 #pragma once
+
 class EffectScreen
 {
 private:
 	EffectScreen() = default;
-	static EffectScreen* m_pInstanceSound;
+	static EffectScreen* m_pInstance;
 public:
 	virtual~EffectScreen() = default;
 	// コピーコンストラクタの禁止
@@ -15,18 +16,18 @@ public:
 	// インスタンスの作成
 	static EffectScreen& GetInstance()
 	{
-		if (!m_pInstanceSound)
+		if (!m_pInstance)
 		{
-			m_pInstanceSound = new EffectScreen();
+			m_pInstance = new EffectScreen();
 		}
-		return *m_pInstanceSound;
+		return *m_pInstance;
 	}
 
 	// 解放処理
 	static void Destroy()
 	{
-		delete m_pInstanceSound;
-		m_pInstanceSound = nullptr;
+		delete m_pInstance;
+		m_pInstance = nullptr;
 	}
 public:
 

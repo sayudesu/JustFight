@@ -363,52 +363,32 @@ void UIDrawer::Draw()
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)          ]->Draw();
 
 
-		float dXL = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x +
+		// 左上
+		int dXL = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x +
 			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().x) -
 			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
 
-		float dX = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x +
+		// 右上
+		int dX = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x +
 			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().x) +
 			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX()/2);
 
-		float dY = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y +
+		// 上
+		int dY = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y +
 			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y -
 			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
 
-		float dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::PLAYER)] + 1) / (m_hpMax[static_cast<int>(CharacterName::PLAYER)] + 1);
+		int dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::PLAYER)] + 1) / (m_hpMax[static_cast<int>(CharacterName::PLAYER)] + 1);
 
-		float dY2 = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y +
+		// 下
+		int dY2 = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y +
 			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y) +
 			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeY()/2);
 
-		//DrawAreaResult(
-		//	dX,
-		//	dY,
-		//	dX2, //長さ* HP/ HPMAX
-		//	dY2);// 描画可能領域を指定
-
-		const int barWidth = dX - dXL;  // バーの幅
-		int currentBarWidth = static_cast<int>(barWidth * m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] / m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)]);
-
-		DrawAreaResult(
-			dXL,
-			dY,
-			dXL + currentBarWidth, //長さ* HP/ HPMAX
-			dY2);// 描画可能領域を指定
-
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)]->Draw();
 
-		DrawAreaALL();
-
-		DrawBox(
-			dX,
-			dY,
-			dX2,
-			dY2,
-			GetColor(GetRand(255), GetRand(255), GetRand(255)), true);
-
-		DrawCircle(dX, dY, 6, 0xffff00);
-		DrawCircle(dX2, dY2, 6, 0xffffff);
+		int aaa = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + aaa * m_hpNum[static_cast<int>(CharacterName::PLAYER)] / m_hpMax[static_cast<int>(CharacterName::PLAYER)], dY2, 0x007700, true);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]->Draw();
 
@@ -426,18 +406,13 @@ void UIDrawer::Draw()
 			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y) +
 			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]->GetGraphSizeY() / 2);
 
-		DrawAreaResult(
-			dX,
-			dY,
-			dX2, //長さ* HP/ HPMAX
-			dY2);// 描画可能領域を指定
-
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)       ]->Draw();
-
-		DrawAreaALL();
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE) ]->Draw();
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
+
+		aaa = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::PLAYER)] / m_skillMax[static_cast<int>(CharacterName::PLAYER)], dY2, 0xaaaa00, true);
 	}
 
 	// エネミー
@@ -455,47 +430,33 @@ void UIDrawer::Draw()
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)]->Draw();
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->Draw();
 
-		// 左上X
-		float dXL = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().x +
+
+		// 左上
+		int dXL = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().x +
 			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().x) -
 			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
-		// 右上X
-		float dX = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().x +
+
+		// 右上
+		int dX = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().x +
 			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().x) +
 			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
-		// 上Y
-		float dY = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().y +
+
+		// 上
+		int dY = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().y +
 			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y -
 			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
 
-		float dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] + 1) / (m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)] + 1);
-		// 下Y
-		float dY2 = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().y +
+		int dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] + 1) / (m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)] + 1);
+
+		// 下
+		int dY2 = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().y +
 			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y) +
 			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
 
-		const int barWidth = dX - dXL;  // バーの幅
-		int currentBarWidth = static_cast<int>(barWidth * m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] / m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)]);
-
-		DrawAreaResult(
-			dXL,
-			dY,
-			dXL + currentBarWidth, //長さ* HP/ HPMAX
-			dY2);// 描画可能領域を指定
-
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)]->Draw();
 
-		DrawAreaALL();
-
-		DrawBox(
-			dX,
-			dY,
-			dX2,
-			dY2,
-			GetColor(GetRand(255), GetRand(255), GetRand(255)), true);
-
-		DrawCircle(dX, dY, 6, 0xffff00);
-		DrawCircle(dX2, dY2, 6, 0xffffff);
+		int aaa = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + aaa * m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] / m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)], dY2, 0x007700, true);
 
 		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->Draw();
 
@@ -513,18 +474,13 @@ void UIDrawer::Draw()
 			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y) +
 			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetGraphSizeY() / 2);
 
-		DrawAreaResult(
-			dX,
-			dY,
-			dX2, //長さ* HP/ HPMAX
-			dY2);// 描画可能領域を指定
+		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)]->Draw();
 
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
 
-		DrawAreaALL();
-
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Draw();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
+		aaa = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::ENEMYNORMAL)] / m_skillMax[static_cast<int>(CharacterName::ENEMYNORMAL)], dY2, 0xaaaa00, true);
 	}
 
 }
@@ -558,18 +514,18 @@ void UIDrawer::SetParam(CharacterName name,int hpNum,int hpMax,float skillNum, f
 
 void UIDrawer::DrawAreaResult(int x, int y, int x1, int y1)
 {
-	DxLib::SetDrawArea(
-		x,
-		y,
-		x1,
-		y1);// 描画可能領域を全体に戻す
+	//DxLib::SetDrawArea(
+	//	x,
+	//	y,
+	//	x1,
+	//	y1);// 描画可能領域を全体に戻す
 }
 
 void UIDrawer::DrawAreaALL()
 {
-	DxLib::SetDrawArea(
-		0,
-		0,
-		Game::kScreenWidth,
-		Game::kScreenHeight);// 描画可能領域を全体に戻す
+	//DxLib::SetDrawArea(
+	//	0,
+	//	0,
+	//	Game::kScreenWidth,
+	//	Game::kScreenHeight);// 描画可能領域を全体に戻す
 }

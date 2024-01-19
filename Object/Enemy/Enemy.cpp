@@ -154,7 +154,6 @@ void Enemy::Input()
 				m_isGuard = false;
 				m_isResultGuard = false;
 			}
-
 		}
 		else
 		{
@@ -228,8 +227,12 @@ void Enemy::BattleType()
 	// ターゲットがスタンしている場合
 	if (m_targetBattleState == BattleState::STUN)
 	{
-		m_isCheckStrongAttack = true;
-		m_isStrongAttackResult = true;
+		// 
+		if (GetStrongPower() >= 100.0f)
+		{
+			m_isCheckStrongAttack = true;
+			m_isStrongAttackResult = true;
+		}
 	}
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)

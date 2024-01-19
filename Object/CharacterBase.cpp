@@ -1142,6 +1142,10 @@ void CharacterBase::SetCollJustGuardEffect()
 void CharacterBase::SetStrongPower(float power)
 {
 	m_strongAttackPower += power;
+	if (m_strongAttackPower >= 100.0f)
+	{
+		m_strongAttackPower = 100.0f;
+	}
 }
 
 void CharacterBase::SetStrongPowerReset()
