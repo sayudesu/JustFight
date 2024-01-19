@@ -11,7 +11,6 @@ enum class ModelName
 	Queen_B,
 	Queen_W,
 
-	MAP1,
 	MAP2,
 	MAP3,
 

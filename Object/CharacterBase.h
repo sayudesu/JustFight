@@ -116,7 +116,7 @@ public:
 
 	// ゲージ関係
 	int GetHp             ()const;// 現在のヒットポイント
-	int GetMaxHp             ()const;// 現在のヒットポイント
+	int GetMaxHp          ()const;// 現在のヒットポイント
 	float GetFightingMeter()const;// 戦闘に必要なメーター
 
 	// 強攻撃をするための力を確認
@@ -150,8 +150,10 @@ public:
 
 	// 攻撃を受けたかどうか
 	void SetDamage(const bool isDamage);
+
 	// ガードが成功しかたどうか
 	void SetGuardKnockBack(bool isGuard, float vec);
+
 	// ジャストガードが成功したかどうか
 	void SetJustGuard(const bool isJustGuard);
 

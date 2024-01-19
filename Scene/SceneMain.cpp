@@ -85,7 +85,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
 	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
 
-
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
 		m_pCharacter[player]->GetMyId(),

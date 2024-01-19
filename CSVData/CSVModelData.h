@@ -21,12 +21,11 @@ namespace CSVModelData
 		{"5","Queen_W", ".mv1"},
 
 		// マップモデル
-		{"6","洋館部屋1", ".mv1"},// 名前は変えます
-		{"7","Stage", ".mv1"},
-		{"8","Map/model/Map", ".mv1"},
+		{"6","Stage", ".mv1"},
+		{"7","Map/model/Map", ".mv1"},
 
 		// 装備
-		{"9","SwordCollTest", ".mv1"},
-		{"10","Shield", ".mv1"},
+		{"8","SwordCollTest", ".mv1"},
+		{"9","Shield", ".mv1"},
 	};
 }
