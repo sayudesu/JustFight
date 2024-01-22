@@ -11,9 +11,49 @@
 #include "../Util/Pad.h"
 #include "../Util/Game.h"
 
+#include <string>
+
+namespace
+{
+	constexpr int kLoadObjectNum = 250;
+	constexpr int kLoadObjectSpeed = 10;
+}
+
 SceneManager::SceneManager():
 	m_pScene()
 {
+	std::string file = "Data/Image/Fade/";
+	std::string v = ".png";
+	
+	for (int i = 0; i < 26; i++)
+	{
+		std::string str = std::to_string(i + 1);
+		std::string a = file + str + v;
+		m_hFade[i] = LoadGraph(a.c_str());
+	}
+
+	m_handle[1] = LoadGraph("Data/Image/UI/”n.png");
+	m_handle[0] = LoadGraph("Data/Image/UI/”n•.png");
+
+	m_isReverce[1] = true;
+	m_isReverce[0] = false;
+	std::vector<float> test;
+	for (int i = 0; i < kLoadObjectNum; i++)
+	{
+		m_x[0].push_back(GetRand(Game::kScreenWidth * 2) + Game::kScreenWidth);
+		m_y[0].push_back(GetRand(Game::kScreenHeight));
+
+		m_x[1].push_back(GetRand(Game::kScreenWidth * 2) + Game::kScreenWidth);
+		m_y[1].push_back(GetRand(Game::kScreenHeight));
+
+		m_x[1].push_back(GetRand(Game::kScreenWidth * 2));
+
+		m_rota.push_back((GetRand(70) - 30) * DX_PI_F / 180.0f);
+
+		m_isRota.push_back(false);
+	}
+
+	m_isLoading = true;
 }
 SceneManager::~SceneManager()
 {
@@ -45,6 +85,15 @@ void SceneManager::Update()
 	Pad::Update();
 
 	SceneBase* pScene = m_pScene->Update();
+	//if (m_isLoading)
+	//{
+	//	if (!LoadUpdate())
+	//	{
+	//		m_isLoading = false;
+	//		printfDx("LoadEnd\n");
+	//	}
+	//	return;
+	//}
 
 	if (pScene != m_pScene.get())
 	{
@@ -53,6 +102,8 @@ void SceneManager::Update()
 
 		m_pScene.reset(pScene);
 		m_pScene->Init();
+
+		m_isLoading = true;
 	}
 #if _DEBUG
 	m_updateTime = GetNowHiPerformanceCount() - start;
@@ -69,6 +120,11 @@ void SceneManager::Draw()
 #endif
 
 	m_pScene->Draw();
+
+	//if (m_isLoading)
+	//{
+	//	LoadDraw();
+	//}
 
 #if _DEBUG
 	m_drawTime = GetNowHiPerformanceCount() - start;
@@ -87,5 +143,62 @@ void SceneManager::Draw()
 	width = static_cast<int>(Game::kScreenWidth * rate);
 	DrawBox(0, Game::kScreenHeight - 16, width, Game::kScreenHeight, 0xff0000, true);
 #endif
+}
+
+bool SceneManager::LoadUpdate()
+{
+	int count = 0;
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < kLoadObjectNum; j++)
+		{
+
+			if (m_rota[j] > 70 * DX_PI_F / 180.0f)
+			{
+				m_isRota[j] = true;
+			}
+			if (m_rota[j] < -70 * DX_PI_F / 180.0f)
+			{
+				m_isRota[j] = false;
+			}
+
+			if (m_isRota[j])
+			{
+				m_rota[j] -= 0.10f;
+			}
+			else
+			{
+				m_rota[j] += 0.10f;
+			}
+
+			m_x[i][j] -= kLoadObjectSpeed;
+
+			if (m_x[i][j] < 0.0f)
+			{
+				count++;
+			}
+		}
+	}
+
+	if (count == kLoadObjectNum)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void SceneManager::LoadDraw()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < kLoadObjectNum; j++)
+		{
+			DrawRotaGraph(m_x[i][j], m_y[i][j], 1, m_rota[j], m_handle[i], true, m_isReverce[i]);
+		}
+	}
+
+	int a = LoadGraph("Data/Image/UI/8.png");
+	DrawGraph(100, 100, a, true);
 }
 

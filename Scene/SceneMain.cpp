@@ -180,17 +180,15 @@ SceneBase* SceneMain::UpdateGameResult()
 	m_frameCount++;
 	if (m_frameCount == 60 * 2)
 	{
-		clsDx();
 		return new SceneResult(m_resultData);
 
 	}
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{	
-		clsDx();
 		return new SceneResult(m_resultData);
 	}
 
-#if _DEBUG
+#if false
 	if (m_resultData == GameResultData::CREAR)
 	{
 		printfDx("èüóò\n");

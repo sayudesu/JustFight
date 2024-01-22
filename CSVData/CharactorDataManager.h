@@ -20,6 +20,7 @@ private:
 		std::string name;
 		int valueNum;
 
+		// ‚©‚¦‚Ü‚·
 		float f;
 		VECTOR v;
 	};

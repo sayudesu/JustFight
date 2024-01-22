@@ -128,30 +128,6 @@ void SceneTitle::Init()
 			m_hBg.get()
 		);
 
-		m_hImageNovice = std::make_shared<GameObject>(
-			"Data/Image/UI/黒ポーン.png",
-			VGet(kImagePosX + 800.0f, 30.0f, 0),
-			kImageAngle,
-			kImageSize + 1.0f,
-			m_hBg.get()
-		);
-
-		m_hImageIntermediate = std::make_shared<GameObject>(
-			"Data/Image/UI/馬黒.png",
-			VGet(kImagePosX + 800.0f, 30.0f, 0),
-			kImageAngle,
-			kImageSize + 1.0f,
-			m_hBg.get()
-		);
-
-		m_hImageExpert = std::make_shared<GameObject>(
-			"Data/Image/UI/黒キング.png",
-			VGet(kImagePosX + 800.0f, 30.0f, 0),
-			kImageAngle,
-			kImageSize + 1.0f,
-			m_hBg.get()
-		);
-
 		m_hImageDifficultyBg = std::make_shared<GameObject>(
 			"Data/Image/UI/CharactorBg.png",
 			VGet(kImagePosX + 800.0f, 30.0f, 0),
@@ -183,6 +159,30 @@ void SceneTitle::Init()
 		m_pStage->Update();
 	}
 
+	m_hModel[0] = std::make_unique<GameObject>(
+		ModelManager::GetInstance().ModelType(ModelName::Pawn_B),
+		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
+		VGet(-90 * DX_PI_F / 180.0f,0,0),
+		VGet(0.9f, 0.9f, 0.9f));
+	m_hModel[1] = std::make_unique<GameObject>(
+		ModelManager::GetInstance().ModelType(ModelName::Knight_B),
+		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
+		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
+		VGet(0.9f, 0.9f, 0.9f));
+	m_hModel[2] = std::make_unique<GameObject>(
+		ModelManager::GetInstance().ModelType(ModelName::Queen_B),
+		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
+		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
+		VGet(0.9f, 0.9f, 0.9f));
+
+	m_hModel[0]->Update();
+	m_hModel[1]->Update();
+	m_hModel[2]->Update();
+
+	m_modelRot[0] = 0.0f;
+	m_modelRot[1] = 0.0f;
+	m_modelRot[2] = 0.0f;
+
 	m_arrowPosX[0] = m_hArrow[0]->GetPos().x;
 	m_arrowPosY[0] = m_hArrow[0]->GetPos().y;
 
@@ -200,6 +200,9 @@ void SceneTitle::Init()
 
 	m_arrowShakeX[1] = 0.0f;
 	m_arrowShakeY[1] = 0.0f;
+
+	m_firstEnemyBgX = m_hImageDifficultyBg->GetPos().x;
+	m_firstEnemyBgY = m_hImageDifficultyBg->GetPos().y;
 }
 
 void SceneTitle::End()
@@ -230,11 +233,15 @@ SceneBase* SceneTitle::Update()
 
 	// ボタン
 	{
+		// 位置の更新
 		m_hArrow[0]->SetPos({ m_arrowPosX[0] + m_arrowShakeX[0],m_arrowPosY[0] + m_arrowShakeY[0],0});
 		m_hArrow[1]->SetPos({ m_arrowPosX[1] + m_arrowShakeX[1],m_arrowPosY[1] + m_arrowShakeY[1],0});
 
+		// 上を押した場合
 		if (m_select->IsUpBotton())
 		{
+			// 矢印を指定の最大数まで上に上昇させる
+			// 最終地点に到達すると乱数で揺らす
 			m_arrowPosY[0] -= 10.0f;
 			if (m_arrowPosY[0] < m_firstArrowPosY[0] - 50.0f)
 			{
@@ -245,6 +252,7 @@ SceneBase* SceneTitle::Update()
 		}
 		else
 		{
+			// 上を押していない場合は元の位置に戻り揺れはしない
 			m_arrowPosY[0] += 15.0f;
 			if (m_arrowPosY[0] > m_firstArrowPosY[0])
 			{
@@ -253,8 +261,11 @@ SceneBase* SceneTitle::Update()
 				m_arrowShakeY[0] = 0;
 			}
 		}
+		// 下を押した場合
 		if (m_select->IsDownBotton())
 		{
+			// 矢印を指定の最大数まで下に下降させる
+			// 最終地点に到達すると乱数で揺らす
 			m_arrowPosY[1] += 10.0f;
 			if (m_arrowPosY[1] > m_firstArrowPosY[1] + 50.0f)
 			{
@@ -265,6 +276,7 @@ SceneBase* SceneTitle::Update()
 		}
 		else
 		{
+			// 下を押していない場合は元の位置に戻り揺れはしない
 			m_arrowPosY[1] -= 15.0f;
 			if (m_arrowPosY[1] < m_firstArrowPosY[1])
 			{
@@ -277,7 +289,43 @@ SceneBase* SceneTitle::Update()
 
 	// 敵の画像
 	{
+		// 位置の更新
+		m_hImageDifficultyBg->SetPos
+		(
+			{
+				m_firstEnemyBgX + m_enemyBgShakeX,
+				m_firstEnemyBgY + m_enemyBgShakeY,
+				m_hImageDifficultyBg->GetPos().x,
+			}
+		);
 
+		// 選択を変更した場合
+		if (m_tempSelect != m_select->GetSelect())
+		{
+			m_isEnemyBgShake = true;
+		}
+		
+		// 指定のフレーム数の間揺らす
+		if (m_isEnemyBgShake)
+		{
+			m_enemyBgshakeCount++;
+			
+			m_enemyBgShakeX = GetRand(5) - 5;
+			m_enemyBgShakeY = GetRand(5) - 5;
+			
+			if (m_enemyBgshakeCount == 5)
+			{
+				m_enemyBgshakeCount = 0;
+				m_isEnemyBgShake = false;
+			}
+		}
+		else
+		{
+			m_enemyBgShakeX = 0;
+			m_enemyBgShakeY = 0;
+		}
+
+		m_tempSelect = m_select->GetSelect();
 	}
 
 	// カメラ処理
@@ -343,6 +391,30 @@ SceneBase* SceneTitle::Update()
 
 	}
 
+	VECTOR  test = ConvScreenPosToWorldPos({ Game::kScreenWidth / 2 + 3900.0f,Game::kScreenHeight / 2 + 1500.0f,0 });
+	for (int i = 0; i < 3; i++)
+	{
+
+		m_hModel[i]->SetPos
+		(
+			{
+				test.x,
+				test.y - 10.0f,
+				test.z
+			}
+		);
+		m_modelRot[i]++;
+		m_hModel[i]->SetRotate
+		(
+			{
+				-90 * DX_PI_F / 180.0f,
+				0,
+				m_modelRot[i] * DX_PI_F / 180.0f
+			}
+		);
+		m_hModel[i]->Update();
+	}
+
 	m_camera->Setting();
 
 	// 背景の更新処理
@@ -353,10 +425,7 @@ SceneBase* SceneTitle::Update()
 	m_hNovice->Update();
 	m_hIntermediate->Update();
 	m_hExpert->Update();
-	// 難易度画像の更新処理
-	m_hImageNovice->Update();
-	m_hImageIntermediate->Update();
-	m_hImageExpert->Update();
+
 	m_hImageDifficultyBg->Update();
 	// 矢印の更新処理
 	m_hArrow[0]->Update();
@@ -386,7 +455,6 @@ SceneBase* SceneTitle::Update()
 	}
 #endif
 
-
 	return this;
 }
 
@@ -404,21 +472,21 @@ void SceneTitle::Draw()
 	if (m_select->GetSelect() == 0)
 	{
 		m_hNovice->Draw();
-		m_hImageNovice->Draw();
+		m_hModel[0]->Draw();
 	}
 	else if (m_select->GetSelect() == 1)
 	{
 		m_hIntermediate->Draw();
-		m_hImageIntermediate->Draw();
+		m_hModel[1]->Draw();
 	}
 	else if (m_select->GetSelect() == 2)
 	{
 		m_hExpert->Draw();		
-		m_hImageExpert->Draw();
+		m_hModel[2]->Draw();
 	}
 	
 	m_hArrow[0]->Draw();
-	m_hArrow[1]->Draw();
+	m_hArrow[1]->Draw();	
 
 	// コントローラー
 	if (m_isInputController)
