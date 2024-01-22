@@ -48,6 +48,8 @@ void SceneTitle::Init()
 	m_isCameraStop[1] = false;
 	m_isCameraStop[2] = false;
 
+	m_cameraStopCount = 0;
+
 	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
 	m_select = std::make_unique<SlideSelect>();
@@ -180,6 +182,24 @@ void SceneTitle::Init()
 		m_pStage->SetRotate(VGet(0.0f, 0.0f, 0.0f));
 		m_pStage->Update();
 	}
+
+	m_arrowPosX[0] = m_hArrow[0]->GetPos().x;
+	m_arrowPosY[0] = m_hArrow[0]->GetPos().y;
+
+	m_arrowPosX[1] = m_hArrow[1]->GetPos().x;
+	m_arrowPosY[1] = m_hArrow[1]->GetPos().y;
+
+	m_firstArrowPosX[0] = m_hArrow[0]->GetPos().x;
+	m_firstArrowPosY[0] = m_hArrow[0]->GetPos().y;
+
+	m_firstArrowPosX[1] = m_hArrow[1]->GetPos().x;
+	m_firstArrowPosY[1] = m_hArrow[1]->GetPos().y;
+
+	m_arrowShakeX[0] = 0.0f;
+	m_arrowShakeY[0] = 0.0f;
+
+	m_arrowShakeX[1] = 0.0f;
+	m_arrowShakeY[1] = 0.0f;
 }
 
 void SceneTitle::End()
@@ -203,70 +223,129 @@ SceneBase* SceneTitle::Update()
 		return this;
 	}
 #endif
-
-	m_select->Update();
-
-
-
-	m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
-
-	// カメラがx,y,zそれぞれ停止したかをチェックする
-	int count = 0;
-	for (int i = 0; i < 3; i++)
+	if (m_cameraStopCount == 3)
 	{
-		if (m_isCameraStop[i])
+		m_select->Update();
+	}
+
+	// ボタン
+	{
+		m_hArrow[0]->SetPos({ m_arrowPosX[0] + m_arrowShakeX[0],m_arrowPosY[0] + m_arrowShakeY[0],0});
+		m_hArrow[1]->SetPos({ m_arrowPosX[1] + m_arrowShakeX[1],m_arrowPosY[1] + m_arrowShakeY[1],0});
+
+		if (m_select->IsUpBotton())
 		{
-			count++;
+			m_arrowPosY[0] -= 10.0f;
+			if (m_arrowPosY[0] < m_firstArrowPosY[0] - 50.0f)
+			{
+				m_arrowPosY[0] = m_firstArrowPosY[0] - 50.0f;
+				m_arrowShakeX[0] = GetRand(10) - 10;
+				m_arrowShakeY[0] = GetRand(10) - 10;
+			}
+		}
+		else
+		{
+			m_arrowPosY[0] += 15.0f;
+			if (m_arrowPosY[0] > m_firstArrowPosY[0])
+			{
+				m_arrowPosY[0] = m_firstArrowPosY[0];
+				m_arrowShakeX[0] = 0;
+				m_arrowShakeY[0] = 0;
+			}
+		}
+		if (m_select->IsDownBotton())
+		{
+			m_arrowPosY[1] += 10.0f;
+			if (m_arrowPosY[1] > m_firstArrowPosY[1] + 50.0f)
+			{
+				m_arrowPosY[1] = m_firstArrowPosY[1] + 50.0f;
+				m_arrowShakeX[1] = GetRand(10) - 10;
+				m_arrowShakeY[1] = GetRand(10) - 10;
+			}
+		}
+		else
+		{
+			m_arrowPosY[1] -= 15.0f;
+			if (m_arrowPosY[1] < m_firstArrowPosY[1])
+			{
+				m_arrowPosY[1] = m_firstArrowPosY[1];
+				m_arrowShakeX[1] = 0;
+				m_arrowShakeY[1] = 0;
+			}
+		}
+	}
+
+	// 敵の画像
+	{
+
+	}
+
+	// カメラ処理
+	{
+		m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
+
+		// カメラがすべて停止していたら
+		if (m_cameraStopCount == 3)
+		{
+			m_cameraStopCount = 3;
+			// 画面の中心に移動
+			if (m_bgPos.y <= static_cast<float>(Game::kScreenHeight) / 2)
+			{
+				m_hBg->SetPos(m_bgPos);
+				m_bgPos.y += 60.0f;
+			}
+		}
+		else
+		{
+			// カメラがx,y,zそれぞれ停止したかをチェックする
+			for (int i = 0; i < 3; i++)
+			{
+				if (m_isCameraStop[i])
+				{
+					m_cameraStopCount++;
+				}
+
+			}
 		}
 
-	}
+		static float speed = 0.01f;
+		speed = (speed * 1.07f);
 
-	// カメラがすべて停止していたら
-	if (count == 3)
-	{
-		// 画面の中心に移動
-		if (m_bgPos.y <= static_cast<float>(Game::kScreenHeight) / 2)
+		if (m_cameraPosX > 0.0f)
 		{
-			m_hBg->SetPos(m_bgPos);
-			m_bgPos.y += 60.0f;
+			m_cameraPosX -= speed;
 		}
-	}
+		else
+		{
+			m_cameraPosX = 0.0f;
+			m_isCameraStop[0] = true;
+		}
 
-	static float speed = 0.01f;
-	speed = (speed * 1.07f);
-
-	if (m_cameraPosX > 0.0f)
-	{
-		m_cameraPosX -= speed;
-	}
-	else
-	{
-		m_cameraPosX = 0.0f;
-		m_isCameraStop[0] = true;
-	}
-
-	if (m_cameraPosY > 32.0f)
-	{
-		m_cameraPosY -= speed;
-	}
-	else
-	{
-		m_cameraPosY = 32.0f;
-		m_isCameraStop[1] = true;
-	}
+		if (m_cameraPosY > 32.0f)
+		{
+			m_cameraPosY -= speed;
+		}
+		else
+		{
+			m_cameraPosY = 32.0f;
+			m_isCameraStop[1] = true;
+		}
 	
-	if (m_cameraPosZ > 10.0f)
-	{
-		m_cameraPosZ -= speed;
-	}
-	else
-	{
-		m_cameraPosZ = 10.0f;
-		m_isCameraStop[2] = true;
+		if (m_cameraPosZ > 10.0f)
+		{
+			m_cameraPosZ -= speed;
+		}
+		else
+		{
+			m_cameraPosZ = 10.0f;
+			m_isCameraStop[2] = true;
+		}
+
 	}
 
 	m_camera->Setting();
 
+	// 背景の更新処理
 	m_hBg->Update();
 	m_hSelect->Update();
 	m_hDecoration->Update();
@@ -274,13 +353,12 @@ SceneBase* SceneTitle::Update()
 	m_hNovice->Update();
 	m_hIntermediate->Update();
 	m_hExpert->Update();
-
+	// 難易度画像の更新処理
 	m_hImageNovice->Update();
 	m_hImageIntermediate->Update();
 	m_hImageExpert->Update();
-
 	m_hImageDifficultyBg->Update();
-
+	// 矢印の更新処理
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();
 

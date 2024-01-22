@@ -49,12 +49,22 @@ private:
 
 	// カメラが指定の位置に停止したかどうかx.y.zそれぞれが
 	bool m_isCameraStop[3];
+	int m_cameraStopCount;
 
 	// 背景画像位置
 	VECTOR m_bgPos;
 
 	// 矢印のサイズ
 	float m_arrowSize[2];
+
+	float m_arrowPosX[2];
+	float m_arrowPosY[2];
+
+	float m_firstArrowPosX[2];
+	float m_firstArrowPosY[2];
+
+	float m_arrowShakeX[2];
+	float m_arrowShakeY[2];
 
 	// カメラの座標
 	float m_cameraPosX;

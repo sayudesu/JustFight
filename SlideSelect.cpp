@@ -5,7 +5,7 @@
 
 namespace 
 {
-	constexpr int kSelectFrameMax = 30;
+	constexpr int kSelectFrameMax = 20;
 	constexpr int kSelectFrameMin = 1;
 }
 
@@ -13,7 +13,9 @@ SlideSelect::SlideSelect():
 	m_selectNo(0),
 	m_selectNoResult(-1),
 	m_selectMaxNum(0),
-	m_isSelect(false)
+	m_isSelect(false),
+	m_isUpBotton(false),
+	m_isDownBotton(false)
 {
 	for (int i = 0; i < SelectButton::BUTTONMAX; i++)
 	{
@@ -34,9 +36,12 @@ void SlideSelect::Init(int selectMaxNum)
 
 void SlideSelect::Update()
 {
+	m_isUpBotton = false;
+	m_isDownBotton = false;
 	// 上にスライド
 	if (Pad::IsPress(PAD_INPUT_UP))
 	{
+		m_isUpBotton = true;
 		// ボタンを押している間フレーム単位でカウントする
 		m_selectFramesPressCount[SelectButton::UP]++;
 		m_selectUpSpeedFramePressCount[SelectButton::UP]++;
@@ -76,6 +81,7 @@ void SlideSelect::Update()
 	// 下にスライド
 	if (Pad::IsPress(PAD_INPUT_DOWN))
 	{
+		m_isDownBotton = true;
 		// ボタンを押している間フレーム単位でカウントする
 		m_selectFramesPressCount[SelectButton::DOWN]++;
 		m_selectUpSpeedFramePressCount[SelectButton::DOWN]++;
@@ -127,4 +133,14 @@ int SlideSelect::GetResult()
 int SlideSelect::GetSelect()
 {
 	return m_selectNo;
+}
+
+bool SlideSelect::IsUpBotton()
+{
+	return m_isUpBotton;
+}
+
+bool SlideSelect::IsDownBotton()
+{
+	return m_isDownBotton;
 }

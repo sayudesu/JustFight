@@ -15,6 +15,10 @@ public:
 	int GetResult();
 	// 現在の選択している番号を返します
 	int GetSelect();
+	// 上のボタンを押したかどうかを返します
+	bool IsUpBotton();
+	// 下のボタンを押したかどうかを返します
+	bool IsDownBotton();
 private:
 	enum SelectButton
 	{
@@ -39,5 +43,8 @@ private:
 
 	// 選択を変更する為のフレーム
 	int m_selectFrameMax[SelectButton::BUTTONMAX];
+
+	bool m_isUpBotton;
+	bool m_isDownBotton;
 };
 
