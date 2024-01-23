@@ -2,7 +2,7 @@
 
 #include "SceneBase.h"
 
-#include "../GameResultData.h"
+#include "../Util/GameResultData.h"
 
 class SceneResult final : public SceneBase
 {

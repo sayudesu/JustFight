@@ -45,7 +45,7 @@ private:
 	bool m_isInputController;
 
 	// カメラが指定の位置に停止したかどうかx.y.zそれぞれが
-	bool m_isCameraStop[3];
+	bool m_isCameraStop[4];
 	int m_cameraStopCount;
 
 	// 背景画像位置
@@ -79,5 +79,9 @@ private:
 	float m_cameraPosX;
 	float m_cameraPosY;
 	float m_cameraPosZ;
+
+	// カメラの移動スピード
+	float m_speed;
+
 };
 

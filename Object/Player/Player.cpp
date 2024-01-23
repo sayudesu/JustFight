@@ -5,7 +5,7 @@
 #include "../../Util/Pad.h"
 
 #include "../../CSVData/SoundManager.h"
-#include "../../SoundName.h"
+#include "../../Util/SoundName.h"
 
 
 namespace
@@ -59,7 +59,7 @@ Player::Player(DifficultyData data,VECTOR pos):
 	m_parameter.stunFrameMax = 60 * 3;
 
 	m_parameter.hpMax = 6;
-	m_parameter.fightingMeterMax = 100.0f;
+	m_parameter.fightingMeterMax = 100;
 
 	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
 	m_parameter.shieldRelativePos = { 100.0f, 100.0f, 10.0f };

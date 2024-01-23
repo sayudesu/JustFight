@@ -3,19 +3,19 @@
 #include "SceneMain.h"
 #include "SceneTitle.h"
 
-#include "../SlideSelect.h"
-#include "../SlideSelect.h"
+#include "../Util/SlideSelect.h"
+#include "../Util/SlideSelect.h"
 
 #include "../Util/Game.h"
 
-#include "../GameObject.h"
+#include "../Util/GameObject.h"
 
 #include "../Object/Camera/Camera.h"
 
-#include "../DifficultyData.h"
+#include "../Util/DifficultyData.h"
 
 #include "../CSVData/ModelManager.h"
-#include "../ModelName.h"
+#include "../Util/ModelName.h"
 
 namespace 
 {
@@ -30,7 +30,8 @@ namespace
 SceneTitle::SceneTitle():
 	m_hTitle(-1),
 	m_isInputController(false),
-	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), -static_cast<float>(Game::kScreenHeight / 2), 0.0f))
+	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), -static_cast<float>(Game::kScreenHeight / 2), 0.0f)),
+	m_speed(0.0f)
 {
 }
 
@@ -47,6 +48,7 @@ void SceneTitle::Init()
 	m_isCameraStop[0] = false;
 	m_isCameraStop[1] = false;
 	m_isCameraStop[2] = false;
+	m_isCameraStop[3] = false;
 
 	m_cameraStopCount = 0;
 
@@ -243,11 +245,11 @@ SceneBase* SceneTitle::Update()
 			// 矢印を指定の最大数まで上に上昇させる
 			// 最終地点に到達すると乱数で揺らす
 			m_arrowPosY[0] -= 10.0f;
-			if (m_arrowPosY[0] < m_firstArrowPosY[0] - 50.0f)
+			if (m_arrowPosY[0] < m_firstArrowPosY[0] - 20.0f)
 			{
-				m_arrowPosY[0] = m_firstArrowPosY[0] - 50.0f;
-				m_arrowShakeX[0] = GetRand(10) - 10;
-				m_arrowShakeY[0] = GetRand(10) - 10;
+				m_arrowPosY[0] = m_firstArrowPosY[0] - 20.0f;
+				m_arrowShakeX[0] = GetRand(5) - 5;
+				m_arrowShakeY[0] = GetRand(5) - 5;
 			}
 		}
 		else
@@ -267,11 +269,11 @@ SceneBase* SceneTitle::Update()
 			// 矢印を指定の最大数まで下に下降させる
 			// 最終地点に到達すると乱数で揺らす
 			m_arrowPosY[1] += 10.0f;
-			if (m_arrowPosY[1] > m_firstArrowPosY[1] + 50.0f)
+			if (m_arrowPosY[1] > m_firstArrowPosY[1] + 20.0f)
 			{
-				m_arrowPosY[1] = m_firstArrowPosY[1] + 50.0f;
-				m_arrowShakeX[1] = GetRand(10) - 10;
-				m_arrowShakeY[1] = GetRand(10) - 10;
+				m_arrowPosY[1] = m_firstArrowPosY[1] + 20.0f;
+				m_arrowShakeX[1] = GetRand(5) - 5;
+				m_arrowShakeY[1] = GetRand(5) - 5;
 			}
 		}
 		else
@@ -335,6 +337,7 @@ SceneBase* SceneTitle::Update()
 		// カメラがすべて停止していたら
 		if (m_cameraStopCount == 3)
 		{
+			m_isCameraStop[3] = true;
 			m_cameraStopCount = 3;
 			// 画面の中心に移動
 			if (m_bgPos.y <= static_cast<float>(Game::kScreenHeight) / 2)
@@ -356,12 +359,12 @@ SceneBase* SceneTitle::Update()
 			}
 		}
 
-		static float speed = 0.01f;
-		speed = (speed * 1.07f);
+		m_speed = 1.0f;
+		m_speed = (m_speed * 2.0f);
 
 		if (m_cameraPosX > 0.0f)
 		{
-			m_cameraPosX -= speed;
+			m_cameraPosX -= m_speed;
 		}
 		else
 		{
@@ -371,7 +374,7 @@ SceneBase* SceneTitle::Update()
 
 		if (m_cameraPosY > 32.0f)
 		{
-			m_cameraPosY -= speed;
+			m_cameraPosY -= m_speed;
 		}
 		else
 		{
@@ -381,7 +384,7 @@ SceneBase* SceneTitle::Update()
 	
 		if (m_cameraPosZ > 10.0f)
 		{
-			m_cameraPosZ -= speed;
+			m_cameraPosZ -= m_speed;
 		}
 		else
 		{
@@ -430,22 +433,24 @@ SceneBase* SceneTitle::Update()
 	// 矢印の更新処理
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();
-
-	// 難易度調整
-	// 弱い(チュートリアル)
-	if (m_select->GetResult() == 0)
-	{		
-		return new SceneMain(DifficultyData::NOIVE);
-	}
-	// 普通
-	if (m_select->GetResult() == 1)
+	if (m_isCameraStop[3])
 	{
-		return new SceneMain(DifficultyData::INTERMEDIATE);
-	}
-	// 強い
-	if (m_select->GetResult() == 2)
-	{
-		return new SceneMain(DifficultyData::EXPERT);
+		// 難易度調整
+		// 弱い(チュートリアル)
+		if (m_select->GetResult() == 0)
+		{		
+			return new SceneMain(DifficultyData::NOIVE);
+		}
+		// 普通
+		if (m_select->GetResult() == 1)
+		{
+			return new SceneMain(DifficultyData::INTERMEDIATE);
+		}
+		// 強い
+		if (m_select->GetResult() == 2)
+		{
+			return new SceneMain(DifficultyData::EXPERT);
+		}
 	}
 
 #if _DEBUG
@@ -460,33 +465,37 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-	m_pStage->Draw();
-
-	m_hBg->Draw();
-	m_hSelect->Draw();
-	m_hDecoration->Draw();
-
-	m_hImageDifficultyBg->Draw();
-
-	// 難易度
-	if (m_select->GetSelect() == 0)
+	if (m_isCameraStop[3])
 	{
-		m_hNovice->Draw();
-		m_hModel[0]->Draw();
-	}
-	else if (m_select->GetSelect() == 1)
-	{
-		m_hIntermediate->Draw();
-		m_hModel[1]->Draw();
-	}
-	else if (m_select->GetSelect() == 2)
-	{
-		m_hExpert->Draw();		
-		m_hModel[2]->Draw();
+		m_pStage->Draw();
+
+		m_hBg->Draw();
+		m_hSelect->Draw();
+		m_hDecoration->Draw();
+
+		m_hImageDifficultyBg->Draw();
+
+		m_hArrow[0]->Draw();
+		m_hArrow[1]->Draw();
+
+		// 難易度
+		if (m_select->GetSelect() == 0)
+		{
+			m_hNovice->Draw();
+			m_hModel[0]->Draw();
+		}
+		else if (m_select->GetSelect() == 1)
+		{
+			m_hIntermediate->Draw();
+			m_hModel[1]->Draw();
+		}
+		else if (m_select->GetSelect() == 2)
+		{
+			m_hExpert->Draw();		
+			m_hModel[2]->Draw();
+		}
 	}
 	
-	m_hArrow[0]->Draw();
-	m_hArrow[1]->Draw();	
 
 	// コントローラー
 	if (m_isInputController)

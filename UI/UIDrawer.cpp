@@ -2,7 +2,7 @@
 
 #include "../Util/Game.h"
 
-#include "../GameObject.h"
+#include "../Util/GameObject.h"
 
 #include "UIDrawer.h"
 

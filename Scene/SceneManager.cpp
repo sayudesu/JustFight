@@ -15,45 +15,56 @@
 
 namespace
 {
-	constexpr int kLoadObjectNum = 250;
-	constexpr int kLoadObjectSpeed = 10;
+	constexpr int kLoadObjectNum = 12;
+	constexpr int kLoadObjectSpeed = 16;
 }
 
 SceneManager::SceneManager():
 	m_pScene()
 {
 	std::string file = "Data/Image/Fade/";
-	std::string v = ".png";
+	std::string extension = ".png";
 	
 	for (int i = 0; i < 26; i++)
 	{
-		std::string str = std::to_string(i + 1);
-		std::string a = file + str + v;
+		std::string name = std::to_string(i + 1);
+		std::string a = file + name + extension;
 		m_hFade[i] = LoadGraph(a.c_str());
 	}
 
 	m_handle[1] = LoadGraph("Data/Image/UI/馬.png");
 	m_handle[0] = LoadGraph("Data/Image/UI/馬黒.png");
 
-	m_isReverce[1] = true;
-	m_isReverce[0] = false;
+	m_isReverce[1] = false;
+	m_isReverce[0] = true;
 	std::vector<float> test;
 	for (int i = 0; i < kLoadObjectNum; i++)
 	{
-		m_x[0].push_back(GetRand(Game::kScreenWidth * 2) + Game::kScreenWidth);
+		m_x[0].push_back(GetRand(-500.0f));
 		m_y[0].push_back(GetRand(Game::kScreenHeight));
 
-		m_x[1].push_back(GetRand(Game::kScreenWidth * 2) + Game::kScreenWidth);
+		m_x[1].push_back(GetRand(-500.0f));
 		m_y[1].push_back(GetRand(Game::kScreenHeight));
-
-		m_x[1].push_back(GetRand(Game::kScreenWidth * 2));
 
 		m_rota.push_back((GetRand(70) - 30) * DX_PI_F / 180.0f);
 
 		m_isRota.push_back(false);
 	}
 
-	m_isLoading = true;
+//	LoadInit();
+
+	//for (int i = 0; i < 26; i++)
+	//{
+	//	for (int j = 0; j < kLoadObjectNum; j++)
+	//	{
+	//		for (int k = 0; k < 2; k++)
+	//		{
+	//			size[k][j][i] = 1.0f;
+	//		}
+	//	}
+	//}
+
+	
 }
 SceneManager::~SceneManager()
 {
@@ -71,6 +82,10 @@ void SceneManager::End()
 {
 	assert(m_pScene);
 	if (!m_pScene)	return;
+	for (int i = 0; i < 26; i++)
+	{
+		DeleteGraph(m_hFade[i]);
+	}
 
 	m_pScene->End();
 }
@@ -79,32 +94,51 @@ void SceneManager::Update()
 {
 	assert(m_pScene);
 	if (!m_pScene)return;
+
 #if _DEBUG
 	LONGLONG start = GetNowHiPerformanceCount();
 #endif
+
+	// コントローラーの更新処理
 	Pad::Update();
 
-	SceneBase* pScene = m_pScene->Update();
-	//if (m_isLoading)
-	//{
-	//	if (!LoadUpdate())
-	//	{
-	//		m_isLoading = false;
-	//		printfDx("LoadEnd\n");
-	//	}
-	//	return;
-	//}
-
-	if (pScene != m_pScene.get())
+	// 更新処理を有効にする
+	if (m_isLoading)
 	{
+		// 更新処理
+		UpdateFade();
+		return;
+	}
+	else
+	{
+		// シーンの更新、コピー		
+		m_pTempScene = m_pScene->Update();
+	}
+
+	// 別シーンがコピーされていたら
+	if (m_pTempScene != m_pScene.get())
+	{
+		// ロードを初期化する
+		InitFade();
+	}
+
+	if (m_isSceneSet)
+	{
+		//// ロードを初期化する
+		//InitFade();
 		// 前のシーンの終了処理
 		m_pScene->End();
+		// シーンを変更する
+		m_pScene.reset(m_pTempScene);
 
-		m_pScene.reset(pScene);
+		// 初期化する
 		m_pScene->Init();
 
-		m_isLoading = true;
+		m_isSceneSet = false;
 	}
+
+
+
 #if _DEBUG
 	m_updateTime = GetNowHiPerformanceCount() - start;
 #endif
@@ -119,12 +153,14 @@ void SceneManager::Draw()
 	LONGLONG start = GetNowHiPerformanceCount();
 #endif
 
+	// 描画
 	m_pScene->Draw();
 
-	//if (m_isLoading)
-	//{
-	//	LoadDraw();
-	//}
+	// フェイド画面の描画
+	if (m_isLoading)
+	{
+		DrawFade();
+	}
 
 #if _DEBUG
 	m_drawTime = GetNowHiPerformanceCount() - start;
@@ -145,14 +181,26 @@ void SceneManager::Draw()
 #endif
 }
 
-bool SceneManager::LoadUpdate()
+void SceneManager::InitFade()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < m_x->size(); j++)
+		{
+			m_x[i][j] = GetRand(-500.0f);
+			m_y[i][j] = GetRand(Game::kScreenHeight);
+		}
+	}
+	m_isLoading = true;
+}
+
+void SceneManager::UpdateFade()
 {
 	int count = 0;
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < kLoadObjectNum; j++)
 		{
-
 			if (m_rota[j] > 70 * DX_PI_F / 180.0f)
 			{
 				m_isRota[j] = true;
@@ -164,32 +212,81 @@ bool SceneManager::LoadUpdate()
 
 			if (m_isRota[j])
 			{
-				m_rota[j] -= 0.10f;
+				m_rota[j] -= 0.05f;
 			}
 			else
 			{
-				m_rota[j] += 0.10f;
+				m_rota[j] += 0.05f;
 			}
 
-			m_x[i][j] -= kLoadObjectSpeed;
+			m_x[i][j] += kLoadObjectSpeed;
 
-			if (m_x[i][j] < 0.0f)
+			if (m_x[i][j] > Game::kScreenWidth)
 			{
 				count++;
 			}
 		}
 	}
 
-	if (count == kLoadObjectNum)
+	if (count >= kLoadObjectNum)
 	{
-		return false;
+		m_isLoading = false;
+		m_isSceneSet = true;
 	}
-
-	return true;
 }
 
-void SceneManager::LoadDraw()
+void SceneManager::DrawFade()
 {
+	int x[26], y[26];
+
+	////float resultPosX[2][kLoadObjectNum][26]{};
+	////float resultPosY[2][kLoadObjectNum][26]{};
+
+	for (int i = 0; i < 26; i++)
+	{
+		GetGraphSize(m_hFade[i], &x[i], &y[i]);
+
+		for (int j = 0; j < 2; j++)
+		{
+			for (int k = 0; k < kLoadObjectNum; k++)
+			{
+			//	size[j][k][i] += 0.00005f;
+			//	m_x[j][k] = (m_x[j][k] + size[j][k][i]);
+			//	resultPosX[j][k][i] = (-(static_cast<float>(x[i]) / 2.0f) + (m_x[j][k]));
+			//	resultPosY[j][k][i] = (-(static_cast<float>(y[i]) / 2.0f) + (m_y[j][k]));
+
+			//	DrawRotaGraph(m_x[j][k], m_y[j][k], 1, m_rota[k], m_handle[j], true, m_isReverce[j]);
+
+			}
+		}
+
+	}
+
+	m_animFadeFrameCount++;
+	if (m_animFadeFrameCount == 3)
+	{
+		m_animFadeFrameCount = 0;
+		m_animArray++;
+
+		if (m_animArray == 26)
+		{
+			m_animArray = 0;
+		}
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < kLoadObjectNum; j++)
+		{
+			for (int k = 0; k < 26; k++)
+			{
+			//	DrawRotaGraph(resultPosX[i][j][k], resultPosY[i][j][k], size[i][j][k], 0, m_hFade[m_animArray], true, true);
+				DrawExtendGraph(m_x[i][j], m_y[i][j] - x[k], 0, m_y[i][j], m_hFade[m_animArray], true);
+			//	DrawRotaGraph(m_x[i][j], m_y[i][j], 1, m_rota[j], m_handle[i], true, m_isReverce[i]);
+			}
+		}
+	}
+
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < kLoadObjectNum; j++)
@@ -197,8 +294,5 @@ void SceneManager::LoadDraw()
 			DrawRotaGraph(m_x[i][j], m_y[i][j], 1, m_rota[j], m_handle[i], true, m_isReverce[i]);
 		}
 	}
-
-	int a = LoadGraph("Data/Image/UI/8.png");
-	DrawGraph(100, 100, a, true);
 }
 

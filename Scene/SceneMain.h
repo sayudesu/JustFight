@@ -6,8 +6,8 @@
 
 #include "../Util/CharacterName.h"
 
-#include "../DifficultyData.h"
-#include "../GameResultData.h"
+#include "../Util/DifficultyData.h"
+#include "../Util/GameResultData.h"
 
 namespace
 {
@@ -74,6 +74,7 @@ private:
 
 	// 勝敗の結果
 	GameResultData m_resultData;
+
 	// クリア後カウント
 	int m_frameCount;
 };

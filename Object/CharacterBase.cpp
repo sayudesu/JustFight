@@ -9,11 +9,11 @@
 #include "../CSVData/SoundManager.h"
 #include "../CSVData/CharactorDataManager.h"
 
-#include "../GameObject.h"
-#include "../SoundName.h"
+#include "../Util/GameObject.h"
+#include "../Util/SoundName.h"
 #include "../BlurScreen.h"
-#include "../ParameterData.h"
-#include "../ModelName.h"
+#include "../Util/ParameterData.h"
+#include "../Util/ModelName.h"
 
 namespace
 {
@@ -982,36 +982,57 @@ float CharacterBase::MoveByFrame(const float relativePos, const float EndPos, co
 void CharacterBase::InputParamType(int type)
 {
 	// パラメーター調整
-	m_parameter.attackFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_FRAME_MAX, type).f;
-	m_parameter.attackFrameGapMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_FRAME_GAP_MAX, type).f;
-	m_parameter.attackTotalFrame = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_TOTAL_FRAME, type).f;
+	m_parameter.attackFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_FRAME_MAX, type).element[0];
+	m_parameter.attackFrameGapMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_FRAME_GAP_MAX, type).element[0];
+	m_parameter.attackTotalFrame = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_TOTAL_FRAME, type).element[0];
 
-	m_parameter.attackAfterStopFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_AFTER_STOP_FRAME_MAX, type).f;
+	m_parameter.attackAfterStopFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::ATTACK_AFTER_STOP_FRAME_MAX, type).element[0];
 
-	m_parameter.strongAttackFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_FRAME_MAX, type).f;
-	m_parameter.strongAttackFrameGapMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_FRAME_GAP_MAX, type).f;
-	m_parameter.strongAttackTotalFrame = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_TOTAL_FRAME, type).f;
+	m_parameter.strongAttackFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_FRAME_MAX, type).element[0];
+	m_parameter.strongAttackFrameGapMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_FRAME_GAP_MAX, type).element[0];
+	m_parameter.strongAttackTotalFrame = CharactorDataManager::GetInstance().GetParamData(ParamData::STRONG_ATTACK_TOTAL_FRAME, type).element[0];
 
-	m_parameter.guardFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::GUARD_FRAME_MAX, type).f;
-	m_parameter.justGuardFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::JUST_GUARD_FRAME_MAX, type).f;
+	m_parameter.guardFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::GUARD_FRAME_MAX, type).element[0];
+	m_parameter.justGuardFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::JUST_GUARD_FRAME_MAX, type).element[0];
 
-	m_parameter.stunFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STUN_FRAME_MAX, type).f;
+	m_parameter.stunFrameMax = CharactorDataManager::GetInstance().GetParamData(ParamData::STUN_FRAME_MAX, type).element[0];
 
-	m_parameter.hpMax = CharactorDataManager::GetInstance().GetParamData(ParamData::HP_MAX, type).f;
-	m_parameter.fightingMeterMax = CharactorDataManager::GetInstance().GetParamData(ParamData::FIGHTING_METER_MAX, type).f;
+	m_parameter.hpMax = CharactorDataManager::GetInstance().GetParamData(ParamData::HP_MAX, type).element[0];
+	m_parameter.fightingMeterMax = CharactorDataManager::GetInstance().GetParamData(ParamData::FIGHTING_METER_MAX, type).element[0];
 
-	m_parameter.weaponRelativePos = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_RELATIVE_POS, type).v;
-	m_parameter.shieldRelativePos = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RELATIVE_POS, type).v;
+	m_parameter.weaponRelativePos =
+	{
+		CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_RELATIVE_POS, type).element[0],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_RELATIVE_POS, type).element[1],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_RELATIVE_POS, type).element[2]
+	};
+	m_parameter.shieldRelativePos =
+	{
+		CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RELATIVE_POS, type).element[0],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RELATIVE_POS, type).element[1],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RELATIVE_POS, type).element[2]
+	};
 
-	m_parameter.weaponAttackRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_RADIUS, type).f;
-	m_parameter.shieldRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RADIUS, type).f;
-	m_parameter.modelRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::MODEL_RADIUS, type).f;
 
-	m_parameter.weaponAttackPos = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_POS, type).v;
-	m_parameter.knockBackPos = CharactorDataManager::GetInstance().GetParamData(ParamData::KNOCKBACK_POS, type).v;
+	m_parameter.weaponAttackRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_RADIUS, type).element[0];
+	m_parameter.shieldRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RADIUS, type).element[0];
+	m_parameter.modelRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::MODEL_RADIUS, type).element[0];
 
-	m_parameter.weaponBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_BACK_SPEED, type).f;
-	m_parameter.shieldBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_BACK_SPEED, type).f;
+	m_parameter.weaponAttackPos =
+	{
+		CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_POS, type).element[0],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_POS, type).element[1],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_POS, type).element[2]
+	};
+	m_parameter.knockBackPos =
+	{
+		CharactorDataManager::GetInstance().GetParamData(ParamData::KNOCKBACK_POS, type).element[0],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::KNOCKBACK_POS, type).element[1],
+		CharactorDataManager::GetInstance().GetParamData(ParamData::KNOCKBACK_POS, type).element[2]
+	};
+
+	m_parameter.weaponBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_BACK_SPEED, type).element[0];
+	m_parameter.shieldBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_BACK_SPEED, type).element[0];
 }
 
 void CharacterBase::SetAngle(float angle)

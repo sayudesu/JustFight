@@ -3,10 +3,10 @@
 #include "../../Util/Pad.h"
 
 #include "../../CSVData/CharactorDataManager.h"
-#include "../../ParameterData.h"
+#include "../../Util/ParameterData.h"
 
 #include "../../CSVData/ModelManager.h"
-#include "../../ModelName.h"
+#include "../../Util/ModelName.h"
 
 namespace
 {
@@ -208,7 +208,7 @@ void Enemy::MoveLeftAndRight(MATRIX mtxRot)
 		moveType = -1;
 	}
 
-	const VECTOR move = VTransform(VGet(moveType * 10, 0, 0), mtxRot);
+	const VECTOR move = VTransform(VGet(static_cast<float>(moveType) * 10, 0, 0), mtxRot);
 	m_pos = VAdd(m_pos, move);
 }
 

@@ -5,8 +5,8 @@
 
 #include "CSVManagerBase.h"
 
-#include "../SoundName.h"
-#include "../ModelName.h"
+#include "../Util/SoundName.h"
+#include "../Util/ModelName.h"
 
 // サウンドマネージャーのシングルトーンクラス
 

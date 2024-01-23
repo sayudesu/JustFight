@@ -1,7 +1,7 @@
 #include <DxLib.h>
 #include "SlideSelect.h"
-#include "Util/Pad.h"
-#include "Util/Game.h"
+#include "Pad.h"
+#include "Game.h"
 
 namespace 
 {

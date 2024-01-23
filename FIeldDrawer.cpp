@@ -1,18 +1,14 @@
 #include "FIeldDrawer.h"
-#include "GameObject.h"
+#include "Util/GameObject.h"
 
 #include "CSVData/ModelManager.h"
-#include "ModelName.h"
+#include "Util/ModelName.h"
 
 namespace
 {
 	// オブジェクトのサイズ
 	constexpr float kChessSize = 0.6;
 	constexpr float kMapSize = 40.0f;
-
-	const char* const kFileName1 = "Data/Model/Stage.mv1";
-//	const char* const kFileName2 = "Data/Model/Map.mv1";
-	const char* const kFileName2 = "Data/Model/Map/model/Map.mv1";
 }
 
 FieldDrawer::FieldDrawer():

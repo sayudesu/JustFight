@@ -7,7 +7,7 @@
 
 #include "CSVManagerBase.h"
 
-#include "../ParameterData.h"
+#include "../Util/ParameterData.h"
 
 
 class CharactorDataManager final : public CSVManagerBase
@@ -20,9 +20,7 @@ private:
 		std::string name;
 		int valueNum;
 
-		// ‚©‚¦‚Ü‚·
-		float f;
-		VECTOR v;
+		std::vector<float> element;
 	};
 
 private:

@@ -5,7 +5,7 @@
 
 #include "CSVManagerBase.h"
 
-#include "../SoundName.h"
+#include "../Util/SoundName.h"
 
 // サウンドマネージャーのシングルトーンクラス
 

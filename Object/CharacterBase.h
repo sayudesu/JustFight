@@ -5,7 +5,7 @@
 #include "../Util/BattleState.h"
 #include "../Util/CharacterParameter.h"
 
-#include "../DifficultyData.h"
+#include "../Util/DifficultyData.h"
 
 // ゲームオブジェクト
 class GameObject;

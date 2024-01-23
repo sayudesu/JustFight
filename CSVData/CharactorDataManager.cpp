@@ -66,13 +66,13 @@ void CharactorDataManager::CSVLoad(std::ifstream& ifs,std::string line,int count
 
 		if (m_data[type][mapkey].valueNum == 1)
 		{
-			m_data[type][mapkey].f = std::stoi(strvec[3].c_str());
+			m_data[type][mapkey].element.push_back(std::stoi(strvec[3].c_str()));
 		}
 		else if(m_data[type][mapkey].valueNum == 3)
 		{
-			m_data[type][mapkey].v.x = std::stoi(strvec[3].c_str());
-			m_data[type][mapkey].v.y = std::stoi(strvec[4].c_str());
-			m_data[type][mapkey].v.z = std::stoi(strvec[5].c_str());
+			m_data[type][mapkey].element.push_back(std::stoi(strvec[3].c_str()));
+			m_data[type][mapkey].element.push_back(std::stoi(strvec[4].c_str()));
+			m_data[type][mapkey].element.push_back(std::stoi(strvec[5].c_str()));
 		}
 		else
 		{

@@ -3,7 +3,7 @@
 
 #include "../CharacterBase.h"
 
-#include "../../DifficultyData.h"
+#include "../../Util/DifficultyData.h"
 
 class Player : public CharacterBase
 {
