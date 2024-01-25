@@ -26,10 +26,9 @@
 
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
-	m_pCamera(nullptr)
+	m_pCamera(nullptr),
+	m_difficultyData(data)
 {
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)     ] = std::make_shared<Player>(data,VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)] = std::make_shared<Enemy> (data, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
 }
 
 SceneMain::~SceneMain()
@@ -41,6 +40,9 @@ void SceneMain::Init()
 	// シーン遷移
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
+	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::ENEMY)] = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
+
 	m_pCamera               = std::make_unique<Camera>();// カメラクラス
 	m_pField                = std::make_unique<FieldDrawer>();// フィールド描画クラス
 	m_pUi                   = std::make_unique<UIDrawer>();   // UI描画クラス
@@ -48,7 +50,7 @@ void SceneMain::Init()
 	// 初期化
 	m_pCamera->Setting();
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Init();
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->Init();
+	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->Init();
 	m_pField->Init();
 
 	m_hCheckmate = LoadGraph("Data/Image/UI/Checkmate.png");
@@ -60,7 +62,7 @@ void SceneMain::End()
 {
 	// 解放処理
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->End();
-	m_pCharacter[static_cast<int>(CharacterName::ENEMYNORMAL)]->End();
+	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->End();
 	m_pField->End();
 
 	for (int i = 0; i < m_pBlood.size(); i++)
@@ -80,7 +82,7 @@ SceneBase* SceneMain::Update()
 SceneBase* SceneMain::UpdateGamePlay()
 {
 	int player = static_cast<int>(CharacterName::PLAYER);
-	int enemy = static_cast<int>(CharacterName::ENEMYNORMAL);
+	int enemy = static_cast<int>(CharacterName::ENEMY);
 	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
 	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
@@ -140,14 +142,25 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	// 勝敗条件処理
 	{
+
 		// HPが0になった場合
 		if (m_pCharacter[player]->GetHp() == 0) // プレイヤー
-		{						
-			m_resultData = GameResultData::OVER;
+		{		
+			m_frameCount++;
+			if (m_frameCount > 20)
+			{
+				m_frameCount = 0;
+				m_resultData = GameResultData::OVER;
+			}
 		}
 		else if (m_pCharacter[enemy]->GetHp() == 0) // エネミー
-		{			
-			m_resultData = GameResultData::CREAR;
+		{	
+			m_frameCount++;
+			if (m_frameCount > 20)
+			{
+				m_frameCount = 0;
+				m_resultData = GameResultData::CREAR;
+			}
 		}
 
 		// 場外に出た場合

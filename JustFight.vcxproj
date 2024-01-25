@@ -146,6 +146,7 @@
     <ClCompile Include="BlurScreen.cpp" />
     <ClCompile Include="CSVData\CharactorDataManager.cpp" />
     <ClCompile Include="CSVData\CSVManagerBase.cpp" />
+    <ClCompile Include="CSVData\FontManager.cpp" />
     <ClCompile Include="CSVData\ModelManager.cpp" />
     <ClCompile Include="CSVData\SoundManager.cpp" />
     <ClCompile Include="Util\GameObject.cpp" />
@@ -176,9 +177,12 @@
     <ClInclude Include="BlurScreen.h" />
     <ClInclude Include="CSVData\CharactorDataManager.h" />
     <ClInclude Include="CSVData\CSVCharactorData.h" />
+    <ClInclude Include="CSVData\CSVFontData.h" />
     <ClInclude Include="CSVData\CSVManagerBase.h" />
     <ClInclude Include="CSVData\CSVModelData.h" />
     <ClInclude Include="CSVData\CSVSoundData.h" />
+    <ClInclude Include="CSVData\FontData.h" />
+    <ClInclude Include="CSVData\FontManager.h" />
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
     <ClInclude Include="Util\DifficultyData.h" />

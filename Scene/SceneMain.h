@@ -77,4 +77,7 @@ private:
 
 	// クリア後カウント
 	int m_frameCount;
+
+	// 難易度データ
+	DifficultyData m_difficultyData;
 };

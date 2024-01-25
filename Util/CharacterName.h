@@ -5,6 +5,6 @@ enum class CharacterName
 {
 	NONE = -1,
 	PLAYER,
-	ENEMYNORMAL,
+	ENEMY,
 	MAX,
 }; 

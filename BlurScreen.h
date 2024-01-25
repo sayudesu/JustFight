@@ -73,6 +73,6 @@ private:
 
 	// ‰æ–Ê—h‚ê—p
 	float m_quakeX;
-	int m_quakeTimer;
+	int m_quakeFrame;
 };
 

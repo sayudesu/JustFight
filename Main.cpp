@@ -7,12 +7,16 @@
 #include "Util/EffekseerDrawer.h"
 
 #include "BlurScreen.h"
+
 #include "CSVData/CSVSoundData.h"
 #include "CSVData/CSVCharactorData.h"
 #include "CSVData/CSVModelData.h"
+#include "CSVData/CSVFontData.h"
+
 #include "CSVData/CharactorDataManager.h"
 #include "CSVData/SoundManager.h"
 #include "CSVData/ModelManager.h"
+#include "CSVData/FontManager.h"
 
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -73,6 +77,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		CSVSoundData::fileNamePath,
 		CSVSoundData::firstData);
 
+	// フォント
+	FontManager::GetInstance().Load(
+		CSVFontData::filePath,
+		CSVFontData::data
+	);
+
 	// キャラクタのパラメータ
 	CharactorDataManager::GetInstance().Load(
 		CSVCharactorData::fileSmallPath, CSVCharactorData::firstSmallData,
@@ -126,12 +136,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CharactorDataManager::GetInstance().Unload();
 	EffekseerDrawer::GetInstance().Unload();
 	EffectScreen::GetInstance().Unload();
+	FontManager::GetInstance().Unload();
+
 	// メモリ解放
 	SoundManager::GetInstance().Destroy();
 	ModelManager::GetInstance().Destroy();
 	CharactorDataManager::GetInstance().Destroy();
 	EffekseerDrawer::GetInstance().Destroy();
 	EffectScreen::GetInstance().Destroy();
+	FontManager::GetInstance().Destroy();
 
 	// シーンマネジャーの解放処理
 	pScene->End();

@@ -25,17 +25,17 @@ UIDrawer::UIDrawer()
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)]      = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]        = LoadGraph("Data/Image/UI/ゲージ枠.png");
 
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)] = LoadGraph("Data/Image/UI/ステータスベース黒.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)] = LoadGraph("Data/Image/UI/馬黒.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)] = LoadGraph("Data/Image/UI/HPゲージ.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)] = LoadGraph("Data/Image/UI/HPゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)] = LoadGraph("Data/Image/UI/必殺技ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)] = LoadGraph("Data/Image/UI/必殺技ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::FIGHT_POWER)] = LoadGraph("Data/Image/UI/体幹ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/体幹ゲージ真ん中.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::FIGHT_POWER_BG)] = LoadGraph("Data/Image/UI/体幹ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::FIGHT_OUTSIDE)] = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
-	m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)] = LoadGraph("Data/Image/UI/ゲージ枠.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)] = LoadGraph("Data/Image/UI/ステータスベース黒.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)] = LoadGraph("Data/Image/UI/馬黒.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)] = LoadGraph("Data/Image/UI/HPゲージ.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)] = LoadGraph("Data/Image/UI/HPゲージベース.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)] = LoadGraph("Data/Image/UI/必殺技ゲージ.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)] = LoadGraph("Data/Image/UI/必殺技ゲージベース.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER)] = LoadGraph("Data/Image/UI/体幹ゲージ.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/体幹ゲージ真ん中.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER_BG)] = LoadGraph("Data/Image/UI/体幹ゲージベース.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_OUTSIDE)] = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)] = LoadGraph("Data/Image/UI/ゲージ枠.png");
 
 
 
@@ -119,74 +119,74 @@ UIDrawer::UIDrawer()
 	int x2 = 0;
 	int y2 = 0;
 	GetGraphSize(
-		m_handle[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)],
+		m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)],
 		&x2, &y2);
 
 	// エネミー
 	{
 		m_enemyPos = VGet(Game::kScreenWidth - 315,y + 5 + 50, 0);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
 			"Data/Image/UI/ステータスベース黒.png",
 			m_enemyPos,
 			0.0f,
 			1.0f
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
 			"Data/Image/UI/馬黒.png",
 			VGet(-270, -30, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)] = std::make_unique<GameObject>(
 			"Data/Image/UI/HPゲージ.png",
 			VGet(11, -25, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)] = std::make_unique<GameObject>(
 			"Data/Image/UI/HPゲージベース.png",
 			VGet(11, -25, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)] = std::make_unique<GameObject>(
 			"Data/Image/UI/ゲージ枠.png",
 			VGet(11, -25, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)] = std::make_unique<GameObject>(
 			"Data/Image/UI/必殺技ゲージ.png",
 			VGet(12, 18, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)] = std::make_unique<GameObject>(
 			"Data/Image/UI/必殺技ゲージベース.png",
 			VGet(12, 18, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE2)] = std::make_unique<GameObject>(
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)] = std::make_unique<GameObject>(
 			"Data/Image/UI/ゲージ枠.png",
 			VGet(12, 18, 0),
 			0.0f,
 			1.0f,
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)].get()
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)].get()
 		);
 	}
 
@@ -200,14 +200,14 @@ UIDrawer::UIDrawer()
 	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
 	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
 
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
-	m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
+	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
 }
 
 UIDrawer::~UIDrawer()
@@ -417,70 +417,70 @@ void UIDrawer::Draw()
 
 	// エネミー
 	{
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->Draw();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::CHARACTOR)]->Draw();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->Draw();
 
 
 		// 左上
-		int dXL = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().x +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().x) -
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
+		int dXL = (m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetPos().x +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().x) -
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
 
 		// 右上
-		int dX = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().x +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().x) +
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
+		int dX = (m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetPos().x +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().x) +
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
 
 		// 上
-		int dY = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().y +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y -
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
+		int dY = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetPos().y +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().y -
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
 
-		int dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] + 1) / (m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)] + 1);
+		int dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::ENEMY)] + 1) / (m_hpMax[static_cast<int>(CharacterName::ENEMY)] + 1);
 
 		// 下
-		int dY2 = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetPos().y +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y) +
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
+		int dY2 = (m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetPos().y +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().y) +
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP_BG)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)]->Draw();
 
-		int aaa = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
-		DrawBox(dXL, dY, dXL + aaa * m_hpNum[static_cast<int>(CharacterName::ENEMYNORMAL)] / m_hpMax[static_cast<int>(CharacterName::ENEMYNORMAL)], dY2, 0x007700, true);
+		int aaa = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + aaa * m_hpNum[static_cast<int>(CharacterName::ENEMY)] / m_hpMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0x007700, true);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->Draw();
 
-		dX = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetPos().x +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().x) +
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetGraphSizeX() / 2);
+		dX = (m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetPos().x +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().x) +
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetGraphSizeX() / 2);
 
-		dY = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetPos().y +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y -
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetGraphSizeY() / 2);
+		dY = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetPos().y +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().y -
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetGraphSizeY() / 2);
 
-		dX2 = dX * (m_skillNum[static_cast<int>(CharacterName::ENEMYNORMAL)]) / (m_skillMax[static_cast<int>(CharacterName::ENEMYNORMAL)]);
+		dX2 = dX * (m_skillNum[static_cast<int>(CharacterName::ENEMY)]) / (m_skillMax[static_cast<int>(CharacterName::ENEMY)]);
 
-		dY2 = (m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetPos().y +
-			m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BG)]->GetPos().y) +
-			(m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetGraphSizeY() / 2);
+		dY2 = (m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetPos().y +
+			m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->GetPos().y) +
+			(m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetGraphSizeY() / 2);
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP_BG)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)]->Draw();
 
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Draw();
-		m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Draw();
+		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
 
-		aaa = m_image[static_cast<int>(CharacterName::ENEMYNORMAL)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
-		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::ENEMYNORMAL)] / m_skillMax[static_cast<int>(CharacterName::ENEMYNORMAL)], dY2, 0xaaaa00, true);
+		aaa = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::ENEMY)] / m_skillMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0xaaaa00, true);
 	}
 
 }

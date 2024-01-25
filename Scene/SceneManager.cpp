@@ -51,6 +51,8 @@ SceneManager::SceneManager():
 		m_isRota.push_back(false);
 	}
 
+	m_isLoading = false;
+
 //	LoadInit();
 
 	//for (int i = 0; i < 26; i++)
@@ -75,6 +77,7 @@ void SceneManager::Init()
 {
 //	m_pScene.reset(new SceneDebug);
 	m_pScene.reset(new SceneTitle);
+
 	m_pScene->Init();
 }
 
@@ -102,42 +105,41 @@ void SceneManager::Update()
 	// コントローラーの更新処理
 	Pad::Update();
 
-	// 更新処理を有効にする
-	if (m_isLoading)
-	{
-		// 更新処理
-		UpdateFade();
-		return;
-	}
-	else
-	{
-		// シーンの更新、コピー		
-		m_pTempScene = m_pScene->Update();
-	}
+	m_pTempScene = m_pScene->Update();
 
 	// 別シーンがコピーされていたら
 	if (m_pTempScene != m_pScene.get())
 	{
-		// ロードを初期化する
-		InitFade();
-	}
-
-	if (m_isSceneSet)
-	{
-		//// ロードを初期化する
-		//InitFade();
 		// 前のシーンの終了処理
 		m_pScene->End();
 		// シーンを変更する
 		m_pScene.reset(m_pTempScene);
-
 		// 初期化する
 		m_pScene->Init();
-
-		m_isSceneSet = false;
 	}
 
+	//if (m_isSceneSet)
+	//{
+	//	//// ロードを初期化する
+	//	//InitFade();
+	//	// 前のシーンの終了処理
+	//	m_pScene->End();
+	//	// シーンを変更する
+	//	m_pScene.reset(m_pTempScene);
 
+	//	// 初期化する
+	//	m_pScene->Init();
+
+	//	m_isSceneSet = false;
+	//}
+
+	//// 更新処理を有効にする
+	//if (m_isLoading)
+	//{
+	//	// 更新処理
+	//	UpdateFade();
+	//	return;
+	//}
 
 #if _DEBUG
 	m_updateTime = GetNowHiPerformanceCount() - start;

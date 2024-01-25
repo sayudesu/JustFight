@@ -49,7 +49,7 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isAttackContinueDelay[1] = false;
 
 	// 自身がエネミーであると決める
-	m_myId = CharacterName::ENEMYNORMAL;
+	m_myId = CharacterName::ENEMY;
 
 	// 選択した難易度によってモデルを変更
 	if (data == DifficultyData::NOIVE)

@@ -17,6 +17,9 @@
 #include "../CSVData/ModelManager.h"
 #include "../Util/ModelName.h"
 
+#include "../CSVData/FontManager.h"
+#include "../CSVData/FontData.h"
+
 namespace 
 {
 	constexpr float kImageAngle = 0.0f * DX_PI_F / 180.0f;
@@ -496,6 +499,8 @@ void SceneTitle::Draw()
 		}
 	}
 	
+
+	FontManager::GetInstance().DrawString(100, 100, "おらおらおらお", 0xffffff, FontSize::NIKKYOU_BIG);
 
 	// コントローラー
 	if (m_isInputController)

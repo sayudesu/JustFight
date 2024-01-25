@@ -10,7 +10,7 @@ void EffectScreen::Load()
 {
 #if true		
 	m_quakeX = 0.0f;
-	m_quakeTimer = 0;
+	m_quakeFrame = 0;
 	m_screen[0] = 0;
 	m_screen[1] = 0;
 	m_current = 0;
@@ -128,19 +128,19 @@ void EffectScreen::BlurPostRenderBlurScreen()
 void EffectScreen::QuakeReplayInit()
 {
 #if true	
-	m_quakeX     = 40.0f;
-	m_quakeTimer = 30;
+	m_quakeX     = 10.0f;
+	m_quakeFrame = 30;
 #endif
 }
 
 void EffectScreen::QuakeUpdate()
 {
 #if true	
-	if (--m_quakeTimer > 0) 
+	if (--m_quakeFrame > 0) 
 	{
 		m_quakeX = -m_quakeX;
 		m_quakeX *= 0.95f;
-		m_quakeTimer--;
+		m_quakeFrame--;
 	}
 	else
 	{
@@ -166,9 +166,9 @@ void EffectScreen::QuakePreRenderBlurScreen()
 void EffectScreen::QuakePostRenderBlurScreen()
 {
 #if true
-	if (m_quakeTimer > 0)
+	if (m_quakeFrame > 0)
 	{
-		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_INVERT);         // 色を反転させる
+//		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_INVERT);         // 色を反転させる
 //		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
 //      GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);                                                  // 加算合成する
