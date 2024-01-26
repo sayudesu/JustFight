@@ -18,7 +18,7 @@
 #include "../Util/ModelName.h"
 
 #include "../CSVData/FontManager.h"
-#include "../CSVData/FontData.h"
+#include "../Util/FontSize.h"
 
 namespace 
 {
@@ -34,7 +34,7 @@ SceneTitle::SceneTitle():
 	m_hTitle(-1),
 	m_isInputController(false),
 	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), -static_cast<float>(Game::kScreenHeight / 2), 0.0f)),
-	m_speed(0.0f)
+	m_speed(0.1f)
 {
 }
 
@@ -52,8 +52,6 @@ void SceneTitle::Init()
 	m_isCameraStop[1] = false;
 	m_isCameraStop[2] = false;
 	m_isCameraStop[3] = false;
-
-	m_cameraStopCount = 0;
 
 	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
@@ -127,7 +125,7 @@ void SceneTitle::Init()
 
 		m_hExpert = std::make_shared<GameObject>(
 			"Data/Image/UI/Expert.png",
-			VGet(kImagePosX, 30.0f, 0),
+			VGet(kImagePosX, 24.0f, 0),
 			kImageAngle,
 			kImageSize,
 			m_hBg.get()
@@ -159,6 +157,24 @@ void SceneTitle::Init()
 			m_hBg.get()
 		);
 
+		// オプションの背景
+		m_hOptionBack = std::make_shared<GameObject>(
+			"Data/Image/UI/OptionBack.png",
+			VGet(550.0f, 400.0f, 0),
+			0,
+			1,
+			m_hBg.get()
+			);
+
+		// オプションボタン
+		m_hOptionBotton = std::make_shared<GameObject>(
+			"Data/Image/UI/StartBotton.png",
+			VGet(430.0f, 400.0f, 0),
+			0,
+			1,
+			m_hBg.get()
+			);
+
 		m_pStage->SetPos(VGet(0.0f, 0.0f, 0.0f));
 		m_pStage->SetRotate(VGet(0.0f, 0.0f, 0.0f));
 		m_pStage->Update();
@@ -169,20 +185,18 @@ void SceneTitle::Init()
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
 		VGet(-90 * DX_PI_F / 180.0f,0,0),
 		VGet(0.9f, 0.9f, 0.9f));
+
 	m_hModel[1] = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Knight_B),
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
 		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
 		VGet(0.9f, 0.9f, 0.9f));
+
 	m_hModel[2] = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Queen_B),
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
 		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
 		VGet(0.9f, 0.9f, 0.9f));
-
-	m_hModel[0]->Update();
-	m_hModel[1]->Update();
-	m_hModel[2]->Update();
 
 	m_modelRot[0] = 0.0f;
 	m_modelRot[1] = 0.0f;
@@ -231,9 +245,11 @@ SceneBase* SceneTitle::Update()
 		return this;
 	}
 #endif
-	if (m_cameraStopCount == 3)
+	static float posY = 30.0f;
+	if (m_isCameraStop[3])
 	{
 		m_select->Update();
+		posY -= 1.0f;
 	}
 
 	// ボタン
@@ -337,33 +353,25 @@ SceneBase* SceneTitle::Update()
 	{
 		m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
 
-		// カメラがすべて停止していたら
-		if (m_cameraStopCount == 3)
+		// カメラがx,y,zそれぞれ停止したかをチェックする
+		if (m_isCameraStop[0] && m_isCameraStop[1] && m_isCameraStop[2])
 		{
-			m_isCameraStop[3] = true;
-			m_cameraStopCount = 3;
 			// 画面の中心に移動
-			if (m_bgPos.y <= static_cast<float>(Game::kScreenHeight) / 2)
+			if (m_bgPos.y < static_cast<float>(Game::kScreenHeight) / 2)
 			{
-				m_hBg->SetPos(m_bgPos);
 				m_bgPos.y += 60.0f;
+				m_hBg->SetPos(m_bgPos);
 			}
-		}
-		else
-		{
-			// カメラがx,y,zそれぞれ停止したかをチェックする
-			for (int i = 0; i < 3; i++)
+			else
 			{
-				if (m_isCameraStop[i])
-				{
-					m_cameraStopCount++;
-				}
+				// 画面の中心に固定
+				m_bgPos.y = static_cast<float>(Game::kScreenHeight) / 2;
 
+				m_isCameraStop[3] = true;
 			}
 		}
 
-		m_speed = 1.0f;
-		m_speed = (m_speed * 2.0f);
+		m_speed = (m_speed * 1.1f);
 
 		if (m_cameraPosX > 0.0f)
 		{
@@ -397,29 +405,44 @@ SceneBase* SceneTitle::Update()
 
 	}
 
-	VECTOR  test = ConvScreenPosToWorldPos({ Game::kScreenWidth / 2 + 3900.0f,Game::kScreenHeight / 2 + 1500.0f,0 });
-	for (int i = 0; i < 3; i++)
+	// 3Dモデルの描画
 	{
+		if (posY < -10.0f)
+		{
+			posY = -10.0f;
+		}
 
-		m_hModel[i]->SetPos
-		(
-			{
-				test.x,
-				test.y - 10.0f,
-				test.z
-			}
-		);
-		m_modelRot[i]++;
-		m_hModel[i]->SetRotate
-		(
-			{
-				-90 * DX_PI_F / 180.0f,
-				0,
-				m_modelRot[i] * DX_PI_F / 180.0f
-			}
-		);
-		m_hModel[i]->Update();
+		VECTOR  test = ConvScreenPosToWorldPos({ Game::kScreenWidth / 2 + 3900.0f,Game::kScreenHeight / 2 + 1500.0f,0 });
+		for (int i = 0; i < 3; i++)
+		{
+			// 位置の更新
+			m_hModel[i]->SetPos
+			(
+				{
+					test.x,
+					test.y + posY,
+					test.z
+				}
+			);
+
+			// 回転
+			m_modelRot[i]++;
+
+			// 回転の更新
+			m_hModel[i]->SetRotate
+			(
+				{
+					-90 * DX_PI_F / 180.0f,
+					0,
+					m_modelRot[i] * DX_PI_F / 180.0f
+				}
+			);
+
+			// 3Dモデルの更新
+			m_hModel[i]->Update();
+		}
 	}
+
 
 	m_camera->Setting();
 
@@ -427,6 +450,9 @@ SceneBase* SceneTitle::Update()
 	m_hBg->Update();
 	m_hSelect->Update();
 	m_hDecoration->Update();
+	m_hOptionBack->Update();
+	m_hOptionBotton->Update();
+
 	// 難易度
 	m_hNovice->Update();
 	m_hIntermediate->Update();
@@ -436,6 +462,7 @@ SceneBase* SceneTitle::Update()
 	// 矢印の更新処理
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();
+
 	if (m_isCameraStop[3])
 	{
 		// 難易度調整
@@ -456,7 +483,7 @@ SceneBase* SceneTitle::Update()
 		}
 	}
 
-#if _DEBUG
+#if false
 	if (DxLib::CheckHitKey(KEY_INPUT_Z))
 	{
 		return new SceneDebug();
@@ -468,40 +495,59 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-	if (m_isCameraStop[3])
+
+	m_pStage->Draw();
+
+	m_hBg->Draw();
+	m_hSelect->Draw();
+	m_hDecoration->Draw();
+
+	m_hImageDifficultyBg->Draw();
+
+	m_hArrow[0]->Draw();
+	m_hArrow[1]->Draw();
+
+	// 難易度
+	if (m_select->GetSelect() == 0)
 	{
-		m_pStage->Draw();
+		m_hNovice->Draw();
+		m_hModel[0]->Draw();
 
-		m_hBg->Draw();
-		m_hSelect->Draw();
-		m_hDecoration->Draw();
-
-		m_hImageDifficultyBg->Draw();
-
-		m_hArrow[0]->Draw();
-		m_hArrow[1]->Draw();
-
-		// 難易度
-		if (m_select->GetSelect() == 0)
-		{
-			m_hNovice->Draw();
-			m_hModel[0]->Draw();
-		}
-		else if (m_select->GetSelect() == 1)
-		{
-			m_hIntermediate->Draw();
-			m_hModel[1]->Draw();
-		}
-		else if (m_select->GetSelect() == 2)
-		{
-			m_hExpert->Draw();		
-			m_hModel[2]->Draw();
-		}
+		FontManager::GetInstance().DrawString(
+			m_hBg->GetPos().x + m_hNovice->GetPos().x - 150.0f,
+			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
+			"チュートリアル!", 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
+	else if (m_select->GetSelect() == 1)
+	{
+		m_hIntermediate->Draw();
+		m_hModel[1]->Draw();
+
+		FontManager::GetInstance().DrawString(
+			m_hBg->GetPos().x + m_hNovice->GetPos().x - 65.0f,
+			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
+			"ふつう！", 0xffffff, FontSize::GENEITERAMIN_SMALL);
+	}
+	else if (m_select->GetSelect() == 2)
+	{
+		m_hExpert->Draw();		
+		m_hModel[2]->Draw();
+
+		FontManager::GetInstance().DrawString(
+			m_hBg->GetPos().x + m_hNovice->GetPos().x - 105.0f,
+			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
+			"むずかしい！", 0xffffff, FontSize::GENEITERAMIN_SMALL);
+	}
+
+	FontManager::GetInstance().DrawString(
+		m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 75.0f,
+		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 50.0f,
+		"オプション", 0xffffff, FontSize::GENEITERAMIN_SMALL);
+
+
+	m_hOptionBack->Draw();
+	m_hOptionBotton->Draw();
 	
-
-	FontManager::GetInstance().DrawString(100, 100, "おらおらおらお", 0xffffff, FontSize::NIKKYOU_BIG);
-
 	// コントローラー
 	if (m_isInputController)
 	{

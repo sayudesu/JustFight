@@ -53,11 +53,13 @@ void FontManager::Load(const char* fileNamePath, std::vector<std::vector<std::st
 	{
 		for (int i = 0; i < mapKey; i++)
 		{
+			// フォントハンドルを作成
 			m_fontHandle[m_data[i].sizeNo] = CreateFontToHandle(m_data[i].name.c_str(), m_data[i].size, 3, DX_FONTTYPE_NORMAL, DX_CHARSET_DEFAULT);
 		}
 	}
 }
 
+// メモリの解放
 void FontManager::Unload()
 {
 	for (int i = 0; i < m_data.size(); i++)
@@ -66,11 +68,13 @@ void FontManager::Unload()
 	}
 }
 
+// 文字列描画
 void FontManager::DrawString(int x, int y, std::string text, int color, FontSize size)
 {
 	DrawStringToHandle(x, y, text.c_str(), color, m_fontHandle[static_cast<int>(size)]);
 }
 
+// 整数描画
 void FontManager::DrawFormatString(int x, int y, int text, int color, FontSize size)
 {
 	DrawFormatStringToHandle(x, y, color, m_fontHandle[static_cast<int>(size)], "%d", text);

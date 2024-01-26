@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-#include "FontData.h"
+#include "../Util/FontSize.h"
 
 #include "CSVManagerBase.h"
 
@@ -41,7 +41,9 @@ public:
 	void Load(const char* fileNamePath, std::vector<std::vector<std::string>> data);
 	// ƒAƒ“ƒ[ƒh
 	void Unload();
+	// •¶š—ñ•`‰æ
 	void DrawString(int x, int y, std::string text, int color, FontSize size);
+	// ®”•`‰æ
 	void DrawFormatString(int x, int y, int text, int color, FontSize size);
 private:
 	int m_fontHandle[static_cast<int>(FontSize::MAX)];
@@ -59,7 +61,5 @@ private:
 	std::map<int, FontData> m_data;
 
 	std::vector<int> m_handle;
-
-	int m_mapKey;
 };
 

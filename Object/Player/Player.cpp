@@ -28,6 +28,7 @@ Player::Player(DifficultyData data,VECTOR pos):
 	m_isRight(false),
 	m_isCameraLockon(false)
 {
+	// ‰Šú‘Ò‹@ó‘Ô‚Å’âŽ~
 	m_pFunc = &Player::Idle;
 
 	m_isAttack = false;
@@ -81,18 +82,20 @@ Player::~Player()
 
 void Player::Input()
 {
-	DINPUT_JOYSTATE input;
 	// “ü—Íó‘Ô‚ðŽæ“¾
-	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
+	GetJoypadDirectInputState(DX_INPUT_PAD1, &m_padInput);
+
+	// Œü‚«‚ðŽw’è
+	Direction();
 
 	if (m_isCameraLockon)
 	{
 		// ƒJƒƒ‰‚Ì‰ñ“]Šp“x‚ð’²®
-		if (input.Rx > 30)
+		if (m_padInput.Rx > 30)
 		{
 			m_angle += 0.05f;
 		}
-		if (input.Rx < -30)
+		if (m_padInput.Rx < -30)
 		{
 			m_angle -= 0.05f;
 		}
@@ -197,7 +200,7 @@ void Player::Input()
 			}
 
 			// ‹­UŒ‚
-			if (input.Z < -100 &&
+			if (m_padInput.Z < -100 &&
 				!m_isAttack &&
 				!m_isStrongAttack &&
 				!m_isGuard &&
@@ -230,7 +233,7 @@ void Player::Input()
 	{
 		// ƒJƒƒ‰‚Ì‘€ì•ÏX
 		static int frameCount = 0;
-		if (input.Buttons[9] == 128)
+		if (m_padInput.Buttons[9] == 128)
 		{
 			frameCount++;
 			if (frameCount == 1)
@@ -244,6 +247,40 @@ void Player::Input()
 		}
 	}
 }
+
+void Player::InputTutorial()
+{
+	// Œü‚«‚ðŽw’è
+	Direction();
+}
+
+void Player::Direction()
+{
+	if (m_isCameraLockon)
+	{
+		// ƒJƒƒ‰‚Ì‰ñ“]Šp“x‚ð’²®
+		if (m_padInput.Rx > 30)
+		{
+			m_angle += 0.05f;
+		}
+		if (m_padInput.Rx < -30)
+		{
+			m_angle -= 0.05f;
+		}
+	}
+	else
+	{
+		const VECTOR direction = VSub(m_targetPos, m_pos);
+		m_angle = atan2f(-direction.x, -direction.z);
+	}
+	// angle‚ðŠî’êƒNƒ‰ƒX‚É“n‚·
+	SetAngle(m_angle);
+	// ƒvƒŒƒCƒ„[‚Ìis•ûŒü
+	MATRIX rotMtx = MGetRotY(m_angle);
+	// ‰ñ“]s—ñ‚ðŠî’êƒNƒ‰ƒX‚É“n‚·
+	SetRotMtx(rotMtx);
+}
+
 
 VECTOR Player::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
 {

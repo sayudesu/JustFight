@@ -76,21 +76,21 @@ SceneBase* SceneDebug::Update()
 		m_resultSelectScene = m_selectScene;
 	}
 
-	//if (m_resultSelectScene != -1)
-	//{
-	//	if (m_resultSelectScene == 0)
-	//	{
-	//		return new SceneMain();
-	//	}
-	//	else if (m_resultSelectScene == 1)
-	//	{
-	//		return new SceneTitle();
-	//	}
-	//	else if (m_resultSelectScene == 2)
-	//	{
-	//		return new SceneDebug();
-	//	}
-	//}
+	if (m_resultSelectScene != -1)
+	{
+		if (m_resultSelectScene == 0)
+		{
+			return new SceneMain(DifficultyData::INTERMEDIATE);
+		}
+		else if (m_resultSelectScene == 1)
+		{
+			return new SceneTitle();
+		}
+		else if (m_resultSelectScene == 2)
+		{
+			return new SceneDebug();
+		}
+	}
 
 
 	return this;

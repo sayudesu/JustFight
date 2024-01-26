@@ -11,13 +11,17 @@ class Enemy : public CharacterBase
 public:
 	Enemy(DifficultyData data,VECTOR pos);
 	virtual ~Enemy();
+
 	void Input()override;
+	void InputTutorial()override;
+
 private:
 	// ターゲットに近づいた場合左右移動をする
 	void MoveLeftAndRight(MATRIX mtxRot);
 	// 戦闘態勢を決める
 	void BattleType();
-
+	// キャラクターの向き
+	void Direction()override;
 private:
 	std::deque<float> m_delayFrameAngle;
 
@@ -45,5 +49,8 @@ private:
 	VECTOR m_awayRelativePos;
 
 	int m_guardFrameCount = 0;
+
+	// 敵専用の回転行列
+	MATRIX m_enemyRotMtx;
 };
 

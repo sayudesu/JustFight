@@ -38,6 +38,7 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isMoveRight(false),
 	m_guardFrameCount(0)
 {
+	// 初期待機状態で停止
 	m_pFunc = &Enemy::Idle;
 
 	m_isAttack = false;
@@ -49,7 +50,7 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isAttackContinueDelay[1] = false;
 
 	// 自身がエネミーであると決める
-	m_myId = CharacterName::ENEMY;
+	m_myId = CharacterName::ENEMY;	
 
 	// 選択した難易度によってモデルを変更
 	if (data == DifficultyData::NOIVE)
@@ -79,29 +80,16 @@ void Enemy::Input()
 	// 入力状態を取得
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
-	const VECTOR direction = VSub(m_targetPos, m_pos);
+	// 向きを指定
+	Direction();
 
-	const float angle = atan2f(-direction.x, -direction.z);
-
-	m_delayFrameAngle.push_front(angle);
-	if (m_delayFrameAngle.size() > kDelayFrameAngle)
-	{
-		m_delayFrameAngle.pop_back();
-	}
-
-	SetAngle(m_delayFrameAngle.back());
-
-	// プレイヤーの進行方向
-	MATRIX rotMtx = MGetRotY(m_delayFrameAngle.back());
-
-	SetRotMtx(rotMtx);
 #if true	
 	if (!IsStun())
 	{
 		// 一定距離近づくとランダムで左右移動を始める
 		if (m_targetRange.x + m_targetRange.z < 1000.0f)
 		{
-			MoveLeftAndRight(rotMtx);
+			MoveLeftAndRight(m_enemyRotMtx);
 			//m_isGuard = false;
 		}
 
@@ -179,6 +167,32 @@ void Enemy::Input()
 		m_isAttackResult = false;
 	}
 #endif
+}
+
+void Enemy::InputTutorial()
+{
+	// 向きを指定
+	Direction();
+}
+
+void Enemy::Direction()
+{
+	const VECTOR direction = VSub(m_targetPos, m_pos);
+
+	const float angle = atan2f(-direction.x, -direction.z);
+
+	m_delayFrameAngle.push_front(angle);
+	if (m_delayFrameAngle.size() > kDelayFrameAngle)
+	{
+		m_delayFrameAngle.pop_back();
+	}
+
+	SetAngle(m_delayFrameAngle.back());
+
+	// プレイヤーの進行方向
+	m_enemyRotMtx = MGetRotY(m_delayFrameAngle.back());
+
+	SetRotMtx(m_enemyRotMtx);
 }
 
 void Enemy::MoveLeftAndRight(MATRIX mtxRot)

@@ -83,9 +83,25 @@ SceneBase* SceneMain::UpdateGamePlay()
 {
 	int player = static_cast<int>(CharacterName::PLAYER);
 	int enemy = static_cast<int>(CharacterName::ENEMY);
+
+	if (m_difficultyData == DifficultyData::INTERMEDIATE||
+		m_difficultyData == DifficultyData::EXPERT)
+	{
+		m_pCharacter[player]->Input();
+		m_pCharacter[enemy]->Input();
+	}
+	else if(m_difficultyData == DifficultyData::NOIVE)
+	{
+		m_pCharacter[player]->InputTutorial();
+		m_pCharacter[enemy]->InputTutorial();
+	}
+
 	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
 	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
+
+	SetUseBackCulling();
+
 
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
@@ -144,7 +160,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 
 		// HPが0になった場合
-		if (m_pCharacter[player]->GetHp() == 0) // プレイヤー
+		if (m_pCharacter[player]->GetHp() <= 0) // プレイヤー
 		{		
 			m_frameCount++;
 			if (m_frameCount > 20)
@@ -153,7 +169,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 				m_resultData = GameResultData::OVER;
 			}
 		}
-		else if (m_pCharacter[enemy]->GetHp() == 0) // エネミー
+		else if (m_pCharacter[enemy]->GetHp() <= 0) // エネミー
 		{	
 			m_frameCount++;
 			if (m_frameCount > 20)
@@ -191,7 +207,7 @@ SceneBase* SceneMain::UpdateGameResult()
 {
 	// 指定フレームの後にリザルト画面に移動する
 	m_frameCount++;
-	if (m_frameCount == 60 * 2)
+	if (m_frameCount == 60 * 1)
 	{
 		return new SceneResult(m_resultData);
 
@@ -368,9 +384,6 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer)
 {
 #if true
-
-	// プレイヤーの入力情報
-	character1->Input();
 	// プレイヤー更新処理
 	character1->Update();
 

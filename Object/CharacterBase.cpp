@@ -61,7 +61,8 @@ CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
 	m_guardOneFrame (0),
 	m_attackAfterStopFrame(0),
 	m_isSceneChange(false),
-	m_comboAttack   (0)
+	m_comboAttack   (0),
+	m_difficultyData(data)
 {
 	// メンバ関数の初期
 	m_pFunc = &CharacterBase::Idle;
@@ -98,21 +99,21 @@ void CharacterBase::Init()
 	m_weaponPos = VAdd(m_pos, move);
 
 	// オブジェクトの生成
-	m_my = new GameObject(
+	m_pCharactor = new GameObject(
 		m_parameter.fileName.c_str(),
 		m_pos,
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(40.0f, 40.0f, 40.0f));
 
 	// 武器オブジェクトの生成
-	m_weapon = new GameObject(
+	m_pWeapon = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::WEAPON),
 		m_weaponPos,
 		VGet(testV1.x, m_angle, testV1.z),
 		VGet(3.0f, 3.0f, 3.0f));
 
 	// 盾オブジェクトの生成
-	m_shield = new GameObject(
+	m_pShield = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::SHIELD),
 		VGet(100, m_weaponPos.y, 100),
 		VGet(testV1.x, m_angle, testV1.z),
@@ -125,12 +126,12 @@ void CharacterBase::Init()
 void CharacterBase::End()
 {
 	// 解放処理
-	delete m_my;
-	m_my = nullptr;
-	delete m_weapon;
-	m_weapon = nullptr;
-	delete m_shield;
-	m_shield = nullptr;
+	delete m_pCharactor;
+	m_pCharactor = nullptr;
+	delete m_pWeapon;
+	m_pWeapon = nullptr;
+	delete m_pShield;
+	m_pShield = nullptr;
 }
 
 void CharacterBase::Update()
@@ -141,11 +142,11 @@ void CharacterBase::Update()
 void CharacterBase::Draw()
 {
 	// キャラクターモデル
-	m_my->Draw();
+	m_pCharactor->Draw();
 	// 武器モデル
-	m_weapon->Draw();
+	m_pWeapon->Draw();
 	// 盾モデル
-	m_shield->Draw();
+	m_pShield->Draw();
 
 #if false
 	// カプセルの描画
@@ -242,13 +243,13 @@ void CharacterBase::Idle()
 		}
 	}
 
-	if (m_hp == 0)
+	if (m_hp <= 0)
 	{
 		m_pFunc = &CharacterBase::Losers;
 		m_vecWeapon.y = 100.0f;
 	}
 
-	if (m_targetHp == 0)
+	if (m_targetHp <= 0)
 	{
 		m_pFunc = &CharacterBase::Winner;
 	}
@@ -375,9 +376,9 @@ void CharacterBase::Attack()
 	// 位置情報の更新
 	UpdatePos();
 
-	m_my->SetPos(m_pos);
-	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
-	m_my->Update();
+	m_pCharactor->SetPos(m_pos);
+	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_pCharactor->Update();
 
 #if _DEBUG
 	Dname = "攻撃１";
@@ -451,22 +452,22 @@ void CharacterBase::AttackTwo()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->SetPos(m_weaponPos);
-		m_weapon->SetRotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
-		m_weapon->Update();
+		m_pWeapon->SetPos(m_weaponPos);
+		m_pWeapon->SetRotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
+		m_pWeapon->Update();
 	}
 	// 盾
 	{
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
-		m_shield->SetPos(move);
-		m_shield->SetRotate(VGet(0, m_angle - test1, 0));
-		m_shield->Update();
+		m_pShield->SetPos(move);
+		m_pShield->SetRotate(VGet(0, m_angle - test1, 0));
+		m_pShield->Update();
 	}
 
-	m_my->SetPos(m_pos);
-	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
-	m_my->Update();
+	m_pCharactor->SetPos(m_pos);
+	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_pCharactor->Update();
 
 	m_capsuleUpDown = m_pos;
 	m_capsuleUpDown.y = m_pos.y + 50.0f;
@@ -550,23 +551,23 @@ void CharacterBase::StrongAttack()
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->SetPos(m_weaponPos);
-		m_weapon->SetRotate(VGet(test1, m_angle - test2 + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
-		m_weapon->Update();
+		m_pWeapon->SetPos(m_weaponPos);
+		m_pWeapon->SetRotate(VGet(test1, m_angle - test2 + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
+		m_pWeapon->Update();
 	}
 	// 盾
 	{
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
-		m_shield->SetPos(move);
-		m_shield->SetRotate(VGet(0, m_angle, 0));
-		m_shield->Update();
+		m_pShield->SetPos(move);
+		m_pShield->SetRotate(VGet(0, m_angle, 0));
+		m_pShield->Update();
 	}
 
 	// キャラクターの位置
-	m_my->SetPos(m_pos);
-	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
-	m_my->Update();
+	m_pCharactor->SetPos(m_pos);
+	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_pCharactor->Update();
 
 	m_capsuleUpDown = m_pos;
 	m_capsuleUpDown.y = m_pos.y + 50.0f;
@@ -773,7 +774,7 @@ void CharacterBase::Winner()
 	// 位置情報の更新
 	UpdatePos();
 
-	m_weapon->SetPos(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
+	m_pWeapon->SetPos(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
 
 #if _DEBUG
 	Dname = "勝利";
@@ -796,7 +797,7 @@ void CharacterBase::Losers()
 		}
 		Wpos.y += m_jumpAcc;
 
-		m_weapon->SetPos(Wpos);
+		m_pWeapon->SetPos(Wpos);
 	}
 
 #if _DEBUG
@@ -828,6 +829,11 @@ void CharacterBase::HitPoint()
 
 			// 体力を減らす
 			m_hp--;
+
+			if (m_hp <= 0)
+			{
+				m_hp = 0;
+			}
 
 			// 一時的に最後の攻撃の種類を取得
 			m_tempTargetBattleState = m_targetBattleState;
@@ -921,23 +927,23 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_weapon->SetPos(m_weaponPos);
-		m_weapon->SetRotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
-		m_weapon->Update();
+		m_pWeapon->SetPos(m_weaponPos);
+		m_pWeapon->SetRotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
+		m_pWeapon->Update();
 	}
 	// 盾
 	{
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
-		m_shield->SetPos(move);
-		m_shield->SetRotate(VGet(0, m_angle - test1, 0));
-		m_shield->Update();
+		m_pShield->SetPos(move);
+		m_pShield->SetRotate(VGet(0, m_angle - test1, 0));
+		m_pShield->Update();
 	}	
 
 	// キャラクターの位置
-	m_my->SetPos(m_pos);
-	m_my->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
-	m_my->Update();
+	m_pCharactor->SetPos(m_pos);
+	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_pCharactor->Update();
 
 	m_capsuleUpDown = m_pos;
 	m_capsuleUpDown.y = m_pos.y + 50.0f;
@@ -975,7 +981,7 @@ void CharacterBase::WeaponAttacksShield()
 float CharacterBase::MoveByFrame(const float relativePos, const float EndPos, const int nowFrame, const int maxFrame)
 {
 	// 位置 = 相対位置 + (向かいたい座標 - 相対位置) * (現在のフレーム / 最大フレーム)　　
-	const float resultPos = relativePos + (EndPos - relativePos) * (float(nowFrame) / maxFrame);
+	const float resultPos = relativePos + (EndPos - relativePos) * (static_cast<float>(nowFrame) / static_cast<float>(maxFrame));
 	return resultPos;
 }
 
@@ -1068,7 +1074,7 @@ VECTOR CharacterBase::GetCollPos() const
 
 VECTOR CharacterBase::GetCollWeaponPos() const
 {
-	return m_weapon->GetCollPos(3);
+	return m_pWeapon->GetCollPos(3);
 }
 
 VECTOR CharacterBase::GetShieldPos() const

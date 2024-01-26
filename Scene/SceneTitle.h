@@ -30,23 +30,27 @@ private:
 	std::shared_ptr<GameObject> m_hExpert;       // 難しい
 	// 敵のモデル
 	std::shared_ptr<GameObject> m_hModel[3];
-
-	std::shared_ptr<GameObject> m_hImageDifficultyBg; // 敵の背景
-
+	// 敵の背景
+	std::shared_ptr<GameObject> m_hImageDifficultyBg; 
+	// 選択用矢印
 	std::shared_ptr<GameObject> m_hArrow[2];
+	// オプションボタンの背景
+	std::shared_ptr<GameObject>m_hOptionBack;
+	// オプションボタン
+	std::shared_ptr<GameObject>m_hOptionBotton;
 
 	std::unique_ptr<Camera> m_camera;
 
 	std::unique_ptr<SlideSelect> m_select;
 
 	std::unique_ptr<GameObject>m_pStage;
+
 	
 	// コントローラーを接続してるかどうか
 	bool m_isInputController;
 
 	// カメラが指定の位置に停止したかどうかx.y.zそれぞれが
 	bool m_isCameraStop[4];
-	int m_cameraStopCount;
 
 	// 背景画像位置
 	VECTOR m_bgPos;

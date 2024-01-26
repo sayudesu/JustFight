@@ -59,6 +59,7 @@ public:
 	// アンロード
 	void Unload();
 public:
+	// キャラクターのパラメーターを渡す
 	CharactorData GetParamData(ParamData id,int type);
 private:
 	void CSVLoad(std::ifstream& ifs, std::string line, int count, int mapkey, int type);

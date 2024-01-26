@@ -181,11 +181,12 @@
     <ClInclude Include="CSVData\CSVManagerBase.h" />
     <ClInclude Include="CSVData\CSVModelData.h" />
     <ClInclude Include="CSVData\CSVSoundData.h" />
-    <ClInclude Include="CSVData\FontData.h" />
     <ClInclude Include="CSVData\FontManager.h" />
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
     <ClInclude Include="Util\DifficultyData.h" />
+    <ClInclude Include="Util\FontSize.h" />
+    <ClInclude Include="Util\Game.h" />
     <ClInclude Include="Util\GameObject.h" />
     <ClInclude Include="Util\GameResultData.h" />
     <ClInclude Include="Util\ModelName.h" />

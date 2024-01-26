@@ -13,13 +13,19 @@ public:
 	
 	// ボタン入力
 	void Input()override;
+	void InputTutorial()override;
+
 private:
+	// キャラクターの向き
+	void Direction()override;
 	// 移動用関数
 	VECTOR AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
 	VECTOR SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
 	// 回避用関数
 	void MoveAway(float x, float z, MATRIX rotMtx);
 private:
+	// メンバ関数ポインタ
+	void(Player::* m_pMyFunc)();
 	// 回避用のベクトル
 	VECTOR m_awayVec;
 	// 回避の移動用相対位置
@@ -32,5 +38,8 @@ private:
 
 	// カメラ操作操作の変更
 	bool m_isCameraLockon;
+
+	// コントローラー用変数
+	DINPUT_JOYSTATE m_padInput;
 };
 

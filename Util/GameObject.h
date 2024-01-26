@@ -15,6 +15,7 @@ private:
     };
 public:
 
+    // 3Dモデルの場合のコンストラクタ オーバーロード
     GameObject(std::string name, const VECTOR& pos, VECTOR angle, VECTOR size, GameObject* parent = nullptr) :
         m_pos(pos), m_angle(angle), m_pParent(parent)
     {        
@@ -28,6 +29,7 @@ public:
         MV1SetScale(m_handle, size);        
     }
 
+    // 2Dモデルの場合のコンストラクタ オーバーロード
     GameObject(std::string name, const VECTOR& pos, float angle, float size, GameObject* parent = nullptr) :
         m_pos(pos), m_angle2D(angle), m_pParent(parent)
     {

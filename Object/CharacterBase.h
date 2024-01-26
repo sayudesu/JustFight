@@ -24,7 +24,11 @@ public:
 
 	// 入力
 	virtual void Input() = 0;
+	// チュートリアル用
+	virtual void InputTutorial() = 0;
+
 protected:
+
 	// アイドル状態
 	virtual void Idle();
 	// 攻撃
@@ -34,6 +38,7 @@ protected:
 	virtual void StrongAttack();
 	// 防御
 	virtual void Guard();
+
 private:
 	// 位置情報の更新
 	void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
@@ -69,6 +74,9 @@ protected:
 
 	// ターゲット位置追跡移動
 	virtual void TargetMove();
+
+	// キャラクターの向きの調整
+	virtual void Direction() = 0;
 
 	// 強攻撃の為に溜めた力をリセットする
 	void SetStrongPowerReset();
@@ -242,9 +250,9 @@ private:
 	// 現在の行動を記録
 	BattleState m_battleState;
 
-	GameObject* m_my;
-	GameObject* m_weapon;
-	GameObject* m_shield;
+	GameObject* m_pCharactor;
+	GameObject* m_pWeapon;
+	GameObject* m_pShield;
 
 #if _DEBUG
 	std::string Dname;
@@ -289,6 +297,9 @@ protected:
 
 	// コンボ技用
 	int m_comboAttack;
+
+	// 難易度
+	DifficultyData m_difficultyData;
 
 public:
 	// ここは使わない
