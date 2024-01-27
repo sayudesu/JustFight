@@ -185,10 +185,6 @@ void CharacterBase::TargetMove()
 	m_pos = VAdd(m_pos, velecity);
 
 	m_pos.y = tempPosY;
-
-	// ‹——£‚ð‘ª‚é
-	m_targetRange.x = sqrt(pow(m_pos.x - m_targetPos.x, 2.0f) + pow(m_pos.x - m_targetPos.x, 2.0f));
-	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
 }
 
 void CharacterBase::Idle()
@@ -1248,6 +1244,11 @@ float CharacterBase::GetStrongPower()
 float CharacterBase::GetkStrongAttackPowerMax()
 {
 	return kStrongAttackPowerMax;
+}
+
+bool CharacterBase::GetTipsMove(Tips tips)
+{
+	return m_isTipsMove[static_cast<int>(tips)];
 }
 
 bool CharacterBase::IsJustGuard() const

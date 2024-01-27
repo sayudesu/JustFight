@@ -5,6 +5,8 @@
 
 #include "../../Util/DifficultyData.h"
 
+#include "../../Tips.h"
+
 class Player : public CharacterBase
 {
 public:
@@ -14,10 +16,18 @@ public:
 	// ボタン入力
 	void Input()override;
 	void InputTutorial()override;
+public:
+	// チュートリアル用
+	// 現在できる行動を渡す
+	bool GetTipsMove(Tips tips);
 
 private:
 	// キャラクターの向き
 	void Direction()override;
+	void InputMove();
+	void InputAttack();
+	void InputGuard();
+
 	// 移動用関数
 	VECTOR AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
 	VECTOR SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
@@ -41,5 +51,14 @@ private:
 
 	// コントローラー用変数
 	DINPUT_JOYSTATE m_padInput;
+
+	// プレイヤーの回転行列
+	MATRIX m_platerRotMtx;
+
+	// 動いているかどうか
+	bool m_isMove;
+
+	// 
+	bool m_isTipsMove[static_cast<int>(Tips::MAX)];
 };
 

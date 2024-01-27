@@ -22,6 +22,7 @@ class BloodDrawer;
 class FieldDrawer;
 class UIDrawer;
 class EffectScreen;
+class TutorialDrawer;
 
 class SceneMain final : public SceneBase
 {
@@ -68,6 +69,8 @@ private:
 	std::unique_ptr<FieldDrawer>m_pField; 
 	// UIクラス
 	std::unique_ptr<UIDrawer> m_pUi;
+	// チュートリアル用クラス
+	std::unique_ptr<TutorialDrawer> m_pTutorial;
 
 	// 勝敗はついた場合の画像
 	int m_hCheckmate;

@@ -24,9 +24,13 @@
 
 #include "../BlurScreen.h";// 画面加工
 
+#include "../TutorialDrawer.h"
+#include "../Tips.h"
+
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr),
+	m_resultData(GameResultData::NONE),
 	m_difficultyData(data)
 {
 }
@@ -41,21 +45,20 @@ void SceneMain::Init()
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
-	m_pCharacter[static_cast<int>(CharacterName::ENEMY)] = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
+	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]  = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
 
-	m_pCamera               = std::make_unique<Camera>();// カメラクラス
-	m_pField                = std::make_unique<FieldDrawer>();// フィールド描画クラス
-	m_pUi                   = std::make_unique<UIDrawer>();   // UI描画クラス
+	m_pCamera   = std::make_unique<Camera>();        // カメラクラス
+	m_pField    = std::make_unique<FieldDrawer>();   // フィールド描画クラス
+	m_pUi       = std::make_unique<UIDrawer>();      // UI描画クラス
+	m_pTutorial = std::make_unique<TutorialDrawer>();// チュートリアルクラス
 
 	// 初期化
-	m_pCamera->Setting();
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Init();
 	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->Init();
+	m_pCamera->Setting();
 	m_pField->Init();
 
 	m_hCheckmate = LoadGraph("Data/Image/UI/Checkmate.png");
-
-	m_resultData = GameResultData::NONE;
 }
 
 void SceneMain::End()
@@ -63,6 +66,7 @@ void SceneMain::End()
 	// 解放処理
 	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->End();
 	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->End();
+
 	m_pField->End();
 
 	for (int i = 0; i < m_pBlood.size(); i++)
@@ -94,13 +98,14 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 		m_pCharacter[player]->InputTutorial();
 		m_pCharacter[enemy]->InputTutorial();
+		m_pTutorial->SetTips(Tips::MOVE);
 	}
+
+	static_cast<Player*>(m_pCharacter[0]->Get)
 
 	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
 	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
-
-	SetUseBackCulling();
 
 
 	// UIにパラメーターの状態を渡す
@@ -212,25 +217,11 @@ SceneBase* SceneMain::UpdateGameResult()
 		return new SceneResult(m_resultData);
 
 	}
+
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{	
 		return new SceneResult(m_resultData);
 	}
-
-#if false
-	if (m_resultData == GameResultData::CREAR)
-	{
-		printfDx("勝利\n");
-	}
-	else if (m_resultData == GameResultData::OVER)
-	{
-		printfDx("敗北\n");
-	}
-	else
-	{
-		printfDx("バグ");
-	}
-#endif
 
 	return this;
 }
@@ -263,7 +254,7 @@ void SceneMain::Draw()
 		blood->Draw();
 	}
 	
-#if _DEBUG
+#if false
 	DEBUG::Field();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
@@ -286,6 +277,12 @@ void SceneMain::Draw()
 
 	// UIの描画
 	m_pUi->Draw();
+
+	if (m_difficultyData == DifficultyData::NOIVE)
+	{
+		// チュートリアル用描画
+		m_pTutorial->Draw();
+	}
 
 	// 勝敗がついた場合描画する
 	if (m_pUpdateFunc == &SceneMain::UpdateGameResult)

@@ -26,7 +26,8 @@ Player::Player(DifficultyData data,VECTOR pos):
 	m_isDown(false),
 	m_isLeft(false),
 	m_isRight(false),
-	m_isCameraLockon(false)
+	m_isCameraLockon(false),
+	m_isMove(false)
 {
 	// 初期待機状態で停止
 	m_pFunc = &Player::Idle;
@@ -41,6 +42,12 @@ Player::Player(DifficultyData data,VECTOR pos):
 
 	// 自身がプレイヤーであると決める
 	m_myId = CharacterName::PLAYER;
+
+	for (int i = 0; i < static_cast<int>(Tips::MAX); i++)
+	{
+		m_isTipsMove[i] = false;
+	}
+	m_isTipsMove[static_cast<int>(Tips::MOVE)] = true;
 
 	m_parameter.fileName = "Data/Model/Knight_W.mv1";
 	// パラメーター調整
@@ -88,148 +95,18 @@ void Player::Input()
 	// 向きを指定
 	Direction();
 
-	if (m_isCameraLockon)
-	{
-		// カメラの回転角度を調整
-		if (m_padInput.Rx > 30)
-		{
-			m_angle += 0.05f;
-		}
-		if (m_padInput.Rx < -30)
-		{
-			m_angle -= 0.05f;
-		}
-	}
-	else
-	{
-		const VECTOR direction = VSub(m_targetPos, m_pos);
-		m_angle = atan2f(-direction.x, -direction.z);
-	}
-
-	// angleを基底クラスに渡す
-	SetAngle(m_angle);
-	// プレイヤーの進行方向
-	MATRIX rotMtx = MGetRotY(m_angle);
-	// 回転行列を基底クラスに渡す
-	SetRotMtx(rotMtx);
+	// スタンしていなかったら
 	if (!IsStun())
 	{
-		// 移動or回避
-		if (m_isAway)
-		{
-			static VECTOR away = kVecAwayZ;
-			static int frameCount = 0;
-			int frameCountMax = 10;
-
-			if (frameCount < frameCountMax)
-			{
-				m_awayVec.x = (m_awayRelativePos.x) * (float(frameCount) / frameCountMax);
-				m_awayVec.z = (m_awayRelativePos.z) * (float(frameCount) / frameCountMax);
-				frameCount++;
-				VECTOR move = VTransform(m_awayVec, rotMtx);
-				m_pos = VAdd(m_pos, move);
-			}
-			else
-			{
-
-				m_isAway = false;
-				frameCount = 0;
-			}
-		}
-		else
-		{
-			m_isUp = false;
-			m_isDown = false;
-			m_isRight = false;
-			m_isLeft = false;
-
-			if (Pad::IsPress(PAD_INPUT_UP))
-			{
-				m_isUp = true;
-
-				m_pos = AddMoving(kVecZ, rotMtx, m_pos);
-
-				MoveAway(0.0f, -60.0f, rotMtx);
-			}
-			else if (Pad::IsPress(PAD_INPUT_DOWN))
-			{
-				m_isDown = true;
-
-				m_pos = SubMoving(kVecZ, rotMtx, m_pos);
-
-				MoveAway(0.0f, 60.0f, rotMtx);
-			}
-			if (Pad::IsPress(PAD_INPUT_RIGHT))
-			{
-				m_isRight = true;
-
-				m_pos = AddMoving(kVecX, rotMtx, m_pos);
-
-				MoveAway(-60.0f, 0.0f, rotMtx);
-			}
-			else if (Pad::IsPress(PAD_INPUT_LEFT))
-			{
-				m_isLeft = true;
-
-				m_pos = SubMoving(kVecX, rotMtx, m_pos);
-
-				MoveAway(60.0f, 0.0f, rotMtx);
-			}
-
-			if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
-			{
-				MoveAway(0.0f, 60.0f, rotMtx);
-			}
-		}
-
-		// 攻撃or防御
-		{
-			// 通常攻撃
-			if (Pad::IsTrigger(PAD_INPUT_6) &&
-				!m_isAttack                 &&
-				!m_isStrongAttack           &&
-				!m_isGuard &&
-				!m_isJustGuard)
-			{
-				m_isAttack = true;
-				m_comboAttack++;
-				if (m_comboAttack == 1)
-				{
-					m_pFunc = &Player::Attack;
-				}
-			}
-
-			// 強攻撃
-			if (m_padInput.Z < -100 &&
-				!m_isAttack &&
-				!m_isStrongAttack &&
-				!m_isGuard &&
-				!m_isJustGuard &&
-				(GetStrongPower() >= 100.0f))
-			{
-				m_isStrongAttack = true;
-				m_pFunc = &Player::StrongAttack;
-			}
-
-			// 防御
-			if (Pad::IsPress(PAD_INPUT_5))
-			{
-				if (!m_isAttack && !m_isStrongAttack && !m_isJustGuard && !m_isJustGuard)
-				{
-					// 
-					//SetStrongPowerReset();
-					m_isGuard = true;
-					m_pFunc = &Player::Guard;
-				}
-			}
-			else
-			{
-				m_isGuard = false;
-			}
-
-		}
+		// 移動
+		InputMove();
+		// 攻撃
+		InputAttack();
+		// 防御
+		InputGuard();
 	}
 
+#if _DEBUG
 	{
 		// カメラの操作変更
 		static int frameCount = 0;
@@ -246,12 +123,46 @@ void Player::Input()
 			frameCount = 0;
 		}
 	}
+#endif
 }
 
 void Player::InputTutorial()
 {
 	// 向きを指定
 	Direction();
+
+	// 敵との距離を測る
+	m_targetRange.x = sqrt(pow(m_pos.x - m_targetPos.x, 2.0f) + pow(m_pos.x - m_targetPos.x, 2.0f));
+	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
+
+	if (m_isMove)
+	{
+		m_isTipsMove[static_cast<int>(Tips::ATTACK)] = true;
+	}
+
+	// 動けるかどうか
+	if (m_isTipsMove[static_cast<int>(Tips::MOVE)])
+	{
+		InputMove();
+	}
+
+	// 攻撃ができるかどうか
+	if (m_isTipsMove[static_cast<int>(Tips::ATTACK)])
+	{
+		// 攻撃できる範囲にいるかどうか
+		if (m_targetRange.x + m_targetRange.z < 500.0f)
+		{
+			InputAttack();
+			m_isTipsMove[static_cast<int>(Tips::GUARD)] = true;
+		}
+	}
+
+	// ガードできるかどうか
+	if (m_isTipsMove[static_cast<int>(Tips::GUARD)])
+	{
+		InputGuard();
+	}
+
 }
 
 void Player::Direction()
@@ -276,9 +187,134 @@ void Player::Direction()
 	// angleを基底クラスに渡す
 	SetAngle(m_angle);
 	// プレイヤーの進行方向
-	MATRIX rotMtx = MGetRotY(m_angle);
+	m_platerRotMtx = MGetRotY(m_angle);
 	// 回転行列を基底クラスに渡す
-	SetRotMtx(rotMtx);
+	SetRotMtx(m_platerRotMtx);
+}
+
+void Player::InputMove()
+{
+	m_isMove = false;
+	// 移動or回避
+	if (m_isAway)
+	{
+		static VECTOR away = kVecAwayZ;
+		static int frameCount = 0;
+		int frameCountMax = 10;
+
+		if (frameCount < frameCountMax)
+		{
+			m_awayVec.x = (m_awayRelativePos.x) * (float(frameCount) / frameCountMax);
+			m_awayVec.z = (m_awayRelativePos.z) * (float(frameCount) / frameCountMax);
+			frameCount++;
+			VECTOR move = VTransform(m_awayVec, m_platerRotMtx);
+			m_pos = VAdd(m_pos, move);
+		}
+		else
+		{
+
+			m_isAway = false;
+			frameCount = 0;
+		}
+	}
+	else
+	{
+		m_isUp = false;
+		m_isDown = false;
+		m_isRight = false;
+		m_isLeft = false;
+
+		if (Pad::IsPress(PAD_INPUT_UP))
+		{
+			m_isUp = true;
+			m_isMove = true;
+
+			m_pos = AddMoving(kVecZ, m_platerRotMtx, m_pos);
+
+			MoveAway(0.0f, -60.0f, m_platerRotMtx);
+		}
+		else if (Pad::IsPress(PAD_INPUT_DOWN))
+		{
+			m_isDown = true;
+			m_isMove = true;
+
+			m_pos = SubMoving(kVecZ, m_platerRotMtx, m_pos);
+
+			MoveAway(0.0f, 60.0f, m_platerRotMtx);
+		}
+		if (Pad::IsPress(PAD_INPUT_RIGHT))
+		{
+			m_isRight = true;
+			m_isMove = true;
+
+			m_pos = AddMoving(kVecX, m_platerRotMtx, m_pos);
+
+			MoveAway(-60.0f, 0.0f, m_platerRotMtx);
+		}
+		else if (Pad::IsPress(PAD_INPUT_LEFT))
+		{
+			m_isLeft = true;
+			m_isMove = true;
+
+			m_pos = SubMoving(kVecX, m_platerRotMtx, m_pos);
+
+			MoveAway(60.0f, 0.0f, m_platerRotMtx);
+		}
+
+		if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
+		{
+			MoveAway(0.0f, 60.0f, m_platerRotMtx);
+		}
+	}
+}
+
+void Player::InputAttack()
+{
+	// 通常攻撃
+	if (Pad::IsTrigger(PAD_INPUT_6) &&
+		!m_isAttack &&
+		!m_isStrongAttack &&
+		!m_isGuard &&
+		!m_isJustGuard)
+	{
+		m_isAttack = true;
+		m_comboAttack++;
+		if (m_comboAttack == 1)
+		{
+			m_pFunc = &Player::Attack;
+		}
+	}
+
+	// 強攻撃
+	if (m_padInput.Z < -100 &&
+		!m_isAttack &&
+		!m_isStrongAttack &&
+		!m_isGuard &&
+		!m_isJustGuard &&
+		(GetStrongPower() >= 100.0f))
+	{
+		m_isStrongAttack = true;
+		m_pFunc = &Player::StrongAttack;
+	}
+}
+
+void Player::InputGuard()
+{
+	// 防御
+	if (Pad::IsPress(PAD_INPUT_5))
+	{
+		if (!m_isAttack && !m_isStrongAttack && !m_isJustGuard && !m_isJustGuard)
+		{
+			// 
+			//SetStrongPowerReset();
+			m_isGuard = true;
+			m_pFunc = &Player::Guard;
+		}
+	}
+	else
+	{
+		m_isGuard = false;
+	}
 }
 
 

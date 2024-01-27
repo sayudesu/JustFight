@@ -7,6 +7,8 @@
 
 #include "../Util/DifficultyData.h"
 
+#include "../Tips.h"
+
 // ゲームオブジェクト
 class GameObject;
 
@@ -131,6 +133,10 @@ public:
 	float GetStrongPower();
 	// 強攻撃の最大値
 	float GetkStrongAttackPowerMax();
+
+	// チュートリアル用
+	// 現在できる行動を渡す
+	bool GetTipsMove(Tips tips);
 
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
@@ -300,6 +306,10 @@ protected:
 
 	// 難易度
 	DifficultyData m_difficultyData;
+
+	// チュートリアル用
+	// どの行動ができるか決める
+	bool m_isTipsMove[static_cast<int>(Tips::MAX)];
 
 public:
 	// ここは使わない
