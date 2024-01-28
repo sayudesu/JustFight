@@ -3,6 +3,9 @@
 #include "Pad.h"
 #include "Game.h"
 
+#include "../CSVData/SoundManager.h"
+#include "SoundName.h"
+
 namespace 
 {
 	constexpr int kSelectFrameMax = 20;
@@ -53,6 +56,7 @@ void SlideSelect::Update()
 		{
 			// 選択を変更する
 			m_selectNo--;
+			SoundManager::GetInstance().Play(SoundName::SLIDE);
 
 			// 選択した場合フレームを初期化する
 			m_selectUpSpeedFramePressCount[SelectButton::UP] = 0;
@@ -93,6 +97,7 @@ void SlideSelect::Update()
 		{
 			// 選択を変更する
 			m_selectNo++;
+			SoundManager::GetInstance().Play(SoundName::SLIDE);
 
 			// 選択した場合フレームを初期化する
 			m_selectUpSpeedFramePressCount[SelectButton::DOWN] = 0;
@@ -121,6 +126,7 @@ void SlideSelect::Update()
 	// 選択
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
+		SoundManager::GetInstance().Play(SoundName::SELECT);
 		m_selectNoResult = m_selectNo;
 	}
 }

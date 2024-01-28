@@ -27,6 +27,9 @@
 #include "../TutorialDrawer.h"
 #include "../Tips.h"
 
+#include "../CSVData/SoundManager.h"
+#include "../Util/SoundName.h"
+
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr),
@@ -41,11 +44,13 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {	
+	int player = static_cast<int>(CharacterName::PLAYER);
+	int enemy = static_cast<int>(CharacterName::ENEMY);
 	// シーン遷移
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
-	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]  = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
+	m_pCharacter[player] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
+	m_pCharacter[enemy]  = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
 
 	m_pCamera   = std::make_unique<Camera>();        // カメラクラス
 	m_pField    = std::make_unique<FieldDrawer>();   // フィールド描画クラス
@@ -53,12 +58,29 @@ void SceneMain::Init()
 	m_pTutorial = std::make_unique<TutorialDrawer>();// チュートリアルクラス
 
 	// 初期化
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->Init();
-	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->Init();
+	m_pCharacter[player]->Init();
+	m_pCharacter[enemy]->Init();
 	m_pCamera->Setting();
 	m_pField->Init();
+	m_pTutorial->Init();
 
 	m_hCheckmate = LoadGraph("Data/Image/UI/Checkmate.png");
+
+	// UIにパラメーターの状態を渡す
+	m_pUi->SetParam(
+		m_pCharacter[player]->GetMyId(),
+		m_pCharacter[player]->GetHp(),
+		m_pCharacter[player]->GetMaxHp(),
+		m_pCharacter[player]->GetStrongPower(),
+		m_pCharacter[player]->GetkStrongAttackPowerMax(),
+		m_pCharacter[player]->GetFightingMeter());
+	m_pUi->SetParam(
+		m_pCharacter[enemy]->GetMyId(),
+		m_pCharacter[enemy]->GetHp(),
+		m_pCharacter[enemy]->GetMaxHp(),
+		m_pCharacter[enemy]->GetStrongPower(),
+		m_pCharacter[enemy]->GetkStrongAttackPowerMax(),
+		m_pCharacter[enemy]->GetFightingMeter());
 }
 
 void SceneMain::End()
@@ -68,6 +90,7 @@ void SceneMain::End()
 	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->End();
 
 	m_pField->End();
+	m_pTutorial->End();
 
 	for (int i = 0; i < m_pBlood.size(); i++)
 	{
@@ -85,6 +108,9 @@ SceneBase* SceneMain::Update()
 
 SceneBase* SceneMain::UpdateGamePlay()
 {
+
+	SoundManager::GetInstance().Play(SoundName::PLAY, true);
+
 	int player = static_cast<int>(CharacterName::PLAYER);
 	int enemy = static_cast<int>(CharacterName::ENEMY);
 
@@ -101,7 +127,14 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_pTutorial->SetTips(Tips::MOVE);
 	}
 
-	static_cast<Player*>(m_pCharacter[0]->Get)
+	if (m_pCharacter[player]->GetTipsMove(Tips::ATTACK))
+	{
+		m_pTutorial->SetTips(Tips::ATTACK);
+	}
+	if (m_pCharacter[player]->GetTipsMove(Tips::GUARD))
+	{
+		m_pTutorial->SetTips(Tips::GUARD);
+	}
 
 	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
@@ -214,12 +247,14 @@ SceneBase* SceneMain::UpdateGameResult()
 	m_frameCount++;
 	if (m_frameCount == 60 * 1)
 	{
+		SoundManager::GetInstance().Stop(SoundName::PLAY);
 		return new SceneResult(m_resultData);
 
 	}
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{	
+		SoundManager::GetInstance().Stop(SoundName::PLAY);
 		return new SceneResult(m_resultData);
 	}
 
@@ -254,7 +289,7 @@ void SceneMain::Draw()
 		blood->Draw();
 	}
 	
-#if false
+#if false	
 	DEBUG::Field();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);

@@ -173,6 +173,82 @@ void Enemy::InputTutorial()
 {
 	// Œü‚«‚ğw’è
 	Direction();
+
+	if (!IsStun())
+	{
+		// UŒ‚‰Â”\”ÍˆÍ‚É“ü‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©
+		if (IsAttackRange())
+		{
+			// UŒ‚or–hŒä‚µ‚Ä‚¢‚È‚©‚Á‚½‚çŸ‚Ìs“®‚ğŒˆ‚ß‚é
+			if (!m_isAttack && !m_isGuard && !m_isStrongAttack)
+			{
+				// ƒ^[ƒQƒbƒg‚Ìó‘Ô‚Å“®ì‚ğ•ÏX‚·‚é
+				BattleTypeT();
+			}
+
+			// UŒ‚‚©‚Ç‚¤‚©
+			if (m_isAttackResult)
+			{
+				m_isAttackResult = false;
+				m_isAttack = true;
+				m_pFunc = &Enemy::Attack;
+			}
+			// UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
+			if (!m_isAttack)
+			{
+				m_isAttack = false;
+			}
+
+			// ‹­UŒ‚‚©‚Ç‚¤‚©
+			if (m_isStrongAttackResult && !m_isGuard)
+			{
+				m_isStrongAttackResult = false;
+				m_isCheckStrongAttack = true;
+				m_pFunc = &Enemy::StrongAttack;
+			}
+			// ‹­UŒ‚‚ğ‚µ‚Ä‚¢‚È‚¢ê‡
+			if (!m_isCheckStrongAttack)
+			{
+				m_isCheckStrongAttack = false;
+			}
+
+			if (m_isResultGuard && !m_isAttack)
+			{
+				m_isGuard = true;
+				m_guardFrameCount++;
+				m_pFunc = &Enemy::Guard;
+			}
+			if (m_guardFrameCount == kGuardFrameCountMax)
+			{
+				m_guardFrameCount = 0;
+				m_isCheckGuard = false;
+				m_isGuard = false;
+				m_isResultGuard = false;
+			}
+		}
+		else
+		{
+			TargetMove();
+
+			m_isGuard = false;
+			m_isCheckGuard = false;
+			m_isResultGuard = false;
+
+			m_isAttack = false;
+			m_isCheckAttack = false;
+			m_isAttackResult = false;
+		}
+	}
+	else
+	{
+		m_isGuard = false;
+		m_isCheckGuard = false;
+		m_isResultGuard = false;
+
+		m_isAttack = false;
+		m_isCheckAttack = false;
+		m_isAttackResult = false;
+	}
 }
 
 void Enemy::Direction()
@@ -290,6 +366,23 @@ void Enemy::BattleType()
 				m_isAttackContinueDelay[i] = false;
 			}
 		}		
+	}
+}
+
+void Enemy::BattleTypeT()
+{
+	if (m_targetGuard)
+	{
+		// ƒ^[ƒQƒbƒg‚ª–hŒä‚µ‚Ä‚¢‚éê‡
+		if (m_targetBattleState == BattleState::GUARD)
+		{
+			m_isCheckAttack = true;
+			m_isAttackResult = true;
+
+			m_isAttackContinueDelay[0] = true;
+
+			m_targetGuard = true;
+		}
 	}
 }
 

@@ -135,6 +135,7 @@ void Player::InputTutorial()
 	m_targetRange.x = sqrt(pow(m_pos.x - m_targetPos.x, 2.0f) + pow(m_pos.x - m_targetPos.x, 2.0f));
 	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
 
+	// ìÆÇ¢ÇΩèÍçáçUåÇÇóLå¯Ç…Ç∑ÇÈ
 	if (m_isMove)
 	{
 		m_isTipsMove[static_cast<int>(Tips::ATTACK)] = true;
@@ -153,7 +154,10 @@ void Player::InputTutorial()
 		if (m_targetRange.x + m_targetRange.z < 500.0f)
 		{
 			InputAttack();
-			m_isTipsMove[static_cast<int>(Tips::GUARD)] = true;
+			if (m_isAttack)
+			{
+				m_isTipsMove[static_cast<int>(Tips::GUARD)] = true;
+			}
 		}
 	}
 
@@ -194,7 +198,7 @@ void Player::Direction()
 
 void Player::InputMove()
 {
-	m_isMove = false;
+
 	// à⁄ìÆorâÒî
 	if (m_isAway)
 	{
@@ -212,7 +216,6 @@ void Player::InputMove()
 		}
 		else
 		{
-
 			m_isAway = false;
 			frameCount = 0;
 		}
@@ -227,7 +230,10 @@ void Player::InputMove()
 		if (Pad::IsPress(PAD_INPUT_UP))
 		{
 			m_isUp = true;
-			m_isMove = true;
+			if (!m_isMove)
+			{
+				m_isMove = true;
+			}
 
 			m_pos = AddMoving(kVecZ, m_platerRotMtx, m_pos);
 
@@ -236,7 +242,10 @@ void Player::InputMove()
 		else if (Pad::IsPress(PAD_INPUT_DOWN))
 		{
 			m_isDown = true;
-			m_isMove = true;
+			if (!m_isMove)
+			{
+				m_isMove = true;
+			}
 
 			m_pos = SubMoving(kVecZ, m_platerRotMtx, m_pos);
 
@@ -245,7 +254,10 @@ void Player::InputMove()
 		if (Pad::IsPress(PAD_INPUT_RIGHT))
 		{
 			m_isRight = true;
-			m_isMove = true;
+			if (!m_isMove)
+			{
+				m_isMove = true;
+			}
 
 			m_pos = AddMoving(kVecX, m_platerRotMtx, m_pos);
 
@@ -254,7 +266,10 @@ void Player::InputMove()
 		else if (Pad::IsPress(PAD_INPUT_LEFT))
 		{
 			m_isLeft = true;
-			m_isMove = true;
+			if (!m_isMove)
+			{
+				m_isMove = true;
+			}
 
 			m_pos = SubMoving(kVecX, m_platerRotMtx, m_pos);
 
@@ -285,16 +300,19 @@ void Player::InputAttack()
 		}
 	}
 
-	// ã≠çUåÇ
-	if (m_padInput.Z < -100 &&
-		!m_isAttack &&
-		!m_isStrongAttack &&
-		!m_isGuard &&
-		!m_isJustGuard &&
-		(GetStrongPower() >= 100.0f))
+	if (m_difficultyData != DifficultyData::NOIVE)
 	{
-		m_isStrongAttack = true;
-		m_pFunc = &Player::StrongAttack;
+		// ã≠çUåÇ
+		if (m_padInput.Z < -100 &&
+			!m_isAttack &&
+			!m_isStrongAttack &&
+			!m_isGuard &&
+			!m_isJustGuard &&
+			(GetStrongPower() >= 100.0f))
+		{
+			m_isStrongAttack = true;
+			m_pFunc = &Player::StrongAttack;
+		}
 	}
 }
 

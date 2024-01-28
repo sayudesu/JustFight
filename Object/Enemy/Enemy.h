@@ -20,6 +20,7 @@ private:
 	void MoveLeftAndRight(MATRIX mtxRot);
 	// 戦闘態勢を決める
 	void BattleType();
+	void BattleTypeT();
 	// キャラクターの向き
 	void Direction()override;
 private:
@@ -52,5 +53,8 @@ private:
 
 	// 敵専用の回転行列
 	MATRIX m_enemyRotMtx;
+
+	// チュートリアル用
+	bool m_targetGuard;
 };
 

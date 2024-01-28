@@ -28,5 +28,8 @@ private:
 
 	bool m_tips[static_cast<int>(Tips::MAX)];
 
+	// チュートリアル終了用カウント
+	int m_endFrameCount;
+
 };
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "SceneBase.h"
 
 #include "../Util/GameResultData.h"
@@ -24,5 +26,10 @@ private:
 	int m_hImageResult;
 	// ‰æ‘œ‚ÌŠp“x
 	float m_imageAngle;
+
+	std::vector<int> m_posX[2];
+	std::vector<int> m_posY[2];
+
+	std::vector<int> m_vec[2];
 };
 

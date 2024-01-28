@@ -16,10 +16,6 @@ public:
 	// ボタン入力
 	void Input()override;
 	void InputTutorial()override;
-public:
-	// チュートリアル用
-	// 現在できる行動を渡す
-	bool GetTipsMove(Tips tips);
 
 private:
 	// キャラクターの向き
@@ -57,8 +53,5 @@ private:
 
 	// 動いているかどうか
 	bool m_isMove;
-
-	// 
-	bool m_isTipsMove[static_cast<int>(Tips::MAX)];
 };
 

@@ -9,7 +9,7 @@ namespace
 {
 	// 説明用文字
 	const char* const kTipsOne = "_説明①_";
-	const char* const kLeftStick = " 左のスティックで移動できる！";
+	const char* const kLeftStick = " 左のスティックで移動できる！\n 敵に近づこう！";
 	const char* const kEnemy = " 敵に近づこう！";
 
 	const char* const kTipsTwo = "_説明②_";
@@ -17,6 +17,9 @@ namespace
 
 	const char* const kTipsThree = "_説明③_";
 	const char* const kGuard = " LB で 防御しよう！";
+
+	const char* const kTipsEnd = "_おつかれさま！_";
+	const char* const kEnd = " これでチュートリアルは終了！\n 敵を倒せ！";
 }
 
 TutorialDrawer::TutorialDrawer()
@@ -39,6 +42,8 @@ void TutorialDrawer::Init()
 
 	m_step = kTipsOne;
 	m_text = kLeftStick;
+
+	m_endFrameCount = 0;
 }
 
 void TutorialDrawer::End()
@@ -86,5 +91,13 @@ void TutorialDrawer::SetTips(Tips tips)
 	{
 		m_step = kTipsThree;
 		m_text = kGuard;
+
+		m_endFrameCount++;
+	}
+
+	if (m_endFrameCount > 60 * 3)
+	{
+		m_step = kTipsEnd;
+		m_text = kEnd;
 	}
 }

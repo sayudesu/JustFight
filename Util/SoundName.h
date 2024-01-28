@@ -10,6 +10,15 @@ enum SoundName
 	STUN,
 	DAMAGE,
 
+	TITLE,
+	PLAY,
+
+	WIN,
+	LOSE,
+
+	SLIDE,
+	SELECT,
+
 	MAX
 };
 

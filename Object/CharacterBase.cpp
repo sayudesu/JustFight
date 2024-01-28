@@ -736,6 +736,8 @@ void CharacterBase::Stun()
 	// スタン状態のフレームをカウント
 	m_stunFrame++;
 
+	stunRota += 1.0f;
+
 	if (m_vecWeapon.y < m_parameter.weaponRelativePos.y + 60.0f)
 	{
 		m_vecWeapon.y += 10.0f;
@@ -750,6 +752,7 @@ void CharacterBase::Stun()
 	if (m_parameter.stunFrameMax < m_stunFrame)
 	{
 		m_fightingMeter = 30.0f;
+		stunRota = 0.0f;
 		m_stunFrame = 0;
 		m_isStun = false;
 		m_pFunc = &CharacterBase::Idle;
@@ -938,7 +941,7 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 
 	// キャラクターの位置
 	m_pCharactor->SetPos(m_pos);
-	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_pCharactor->SetRotate(VGet(0.0f, stunRota + m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_pCharactor->Update();
 
 	m_capsuleUpDown = m_pos;
@@ -1310,8 +1313,9 @@ void CharacterBase::SetJustGuard(bool isJustGuard)
 void CharacterBase::SetFightingMeter(const float fightingMeter)
 {
 	m_tempFightingMeter = fightingMeter;
-
+#if _DEBUG
 	FightingMeter();
+#endif
 }
 
 void CharacterBase::FightingMeter()

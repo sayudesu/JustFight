@@ -20,6 +20,9 @@
 #include "../CSVData/FontManager.h"
 #include "../Util/FontSize.h"
 
+#include "../CSVData/SoundManager.h"
+#include "../Util/SoundName.h"
+
 namespace 
 {
 	constexpr float kImageAngle = 0.0f * DX_PI_F / 180.0f;
@@ -231,6 +234,9 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {
+
+	SoundManager::GetInstance().Play(SoundName::TITLE,true);
+
 	char deviceName[260]{};
 	char productName[260]{};
 #if false
@@ -469,16 +475,19 @@ SceneBase* SceneTitle::Update()
 		// 弱い(チュートリアル)
 		if (m_select->GetResult() == 0)
 		{		
+			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::NOIVE);
 		}
 		// 普通
 		if (m_select->GetResult() == 1)
 		{
+			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::INTERMEDIATE);
 		}
 		// 強い
 		if (m_select->GetResult() == 2)
 		{
+			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::EXPERT);
 		}
 	}
@@ -511,7 +520,10 @@ void SceneTitle::Draw()
 	if (m_select->GetSelect() == 0)
 	{
 		m_hNovice->Draw();
-		m_hModel[0]->Draw();
+		if (m_isCameraStop[3])
+		{
+			m_hModel[0]->Draw();
+		}
 
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 150.0f,
@@ -521,7 +533,10 @@ void SceneTitle::Draw()
 	else if (m_select->GetSelect() == 1)
 	{
 		m_hIntermediate->Draw();
-		m_hModel[1]->Draw();
+		if (m_isCameraStop[3])
+		{
+			m_hModel[1]->Draw();
+		}
 
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 65.0f,
@@ -531,7 +546,10 @@ void SceneTitle::Draw()
 	else if (m_select->GetSelect() == 2)
 	{
 		m_hExpert->Draw();		
-		m_hModel[2]->Draw();
+		if (m_isCameraStop[3])
+		{
+			m_hModel[2]->Draw();
+		}
 
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 105.0f,
@@ -539,15 +557,15 @@ void SceneTitle::Draw()
 			"むずかしい！", 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 
+#if false
 	FontManager::GetInstance().DrawString(
 		m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 75.0f,
 		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 50.0f,
 		"オプション", 0xffffff, FontSize::GENEITERAMIN_SMALL);
-
-
 	m_hOptionBack->Draw();
 	m_hOptionBotton->Draw();
-	
+#endif
+
 	// コントローラー
 	if (m_isInputController)
 	{

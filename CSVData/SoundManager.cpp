@@ -86,3 +86,8 @@ void SoundManager::Play(SoundName name, bool repeat)
 		}
 	}
 }
+
+void SoundManager::Stop(SoundName name)
+{
+	StopSoundMem(m_handle[name]);
+}

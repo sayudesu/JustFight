@@ -52,6 +52,8 @@ public:
 	/// <param name="repeat">ŒJ‚è•Ô‚µÄ¶‚·‚é‚©‚Ç‚¤‚©</param>
 	void Play(SoundName name,bool repeat = false);
 
+	void Stop(SoundName name);
+
 private:
 	enum Type
 	{

@@ -321,5 +321,7 @@ public:
 	VECTOR testV1 = VGet(0, 0, 0);
 	VECTOR testV2 = VGet(0, 0, 0);
 	VECTOR testV3 = VGet(0, 0, 0);
+
+	float stunRota = 0.0f;
 };
 
