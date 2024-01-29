@@ -44,7 +44,6 @@ private:
 	std::unique_ptr<SlideSelect> m_select;
 
 	std::unique_ptr<GameObject>m_pStage;
-
 	
 	// コントローラーを接続してるかどうか
 	bool m_isInputController;
@@ -86,6 +85,9 @@ private:
 
 	// カメラの移動スピード
 	float m_speed;
+
+	// 難易度文字の大きさ
+	float m_difficulty;
 
 };
 

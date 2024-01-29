@@ -40,7 +40,7 @@ public:
 	void ScreenBack();
 
 	// ブラー
-	void BlurIReplayInit(int alpha);
+	void BlurIReplayInit();
 	void BlurRelease();
 	void BlurPreRenderBlurScreen();
 	void BlurPostRenderBlurScreen();
@@ -53,26 +53,33 @@ public:
 	void QuakePostRenderBlurScreen();
 
 private:
-	enum class EffectNo
+	enum class DamageEffectNo
 	{
-		BLUR_0,
-		BLUR_1,
-		BLUR_2,
-		BLUR_3,
 		QUAKE,
 		COLOR,
 		MAX,
 	};
-	// 共通変数
-	int m_screen[static_cast<int>(EffectNo::MAX)];
+	// 攻撃をされた場合の画面処理
+	int m_damageScreen[static_cast<int>(DamageEffectNo::MAX)];
+
+	// 画面揺れ用
+	float m_quakeX;
+	int m_quakeFrame;
+
+	enum class BlurEffectNo
+	{
+		ONE,
+		TWO,
+
+		MAX,
+	};
+
+	// 攻撃をされた場合の画面処理
+	int m_blurScreen[static_cast<int>(BlurEffectNo::MAX)];
 
 	// ブラー専用
 	int m_current;
 	int m_alpha;
 	int m_notBlendDraw;
-
-	// 画面揺れ用
-	float m_quakeX;
-	int m_quakeFrame;
 };
 

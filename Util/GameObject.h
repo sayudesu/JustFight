@@ -143,6 +143,11 @@ public:
         return m_angle;
     }
 
+    float GetSize2D()
+    {
+        return m_size2D;
+    }
+
     // 2D‰æ‘œ‚ÌX‚ÌƒTƒCƒY‚ğ“n‚·
     float GetGraphSizeX()
     {

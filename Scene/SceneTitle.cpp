@@ -23,6 +23,8 @@
 #include "../CSVData/SoundManager.h"
 #include "../Util/SoundName.h"
 
+#include "../PoseScreen.h"
+
 namespace 
 {
 	constexpr float kImageAngle = 0.0f * DX_PI_F / 180.0f;
@@ -59,7 +61,7 @@ void SceneTitle::Init()
 	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
 	m_select = std::make_unique<SlideSelect>();
-	m_select->Init(2);
+	m_select->Init(2,true);
 
 	// カメラの座標
 	m_cameraPosX = 100.0f;
@@ -225,6 +227,8 @@ void SceneTitle::Init()
 
 	m_firstEnemyBgX = m_hImageDifficultyBg->GetPos().x;
 	m_firstEnemyBgY = m_hImageDifficultyBg->GetPos().y;
+
+	m_difficulty = m_hNovice->GetSize2D();
 }
 
 void SceneTitle::End()
@@ -236,6 +240,8 @@ SceneBase* SceneTitle::Update()
 {
 
 	SoundManager::GetInstance().Play(SoundName::TITLE,true);
+
+	PoseScreen::GetInstance().Update();
 
 	char deviceName[260]{};
 	char productName[260]{};
@@ -260,9 +266,13 @@ SceneBase* SceneTitle::Update()
 
 	// ボタン
 	{
+		static int timer = 0;
+		float y = cos(timer * 0.07f) * 5.0f;
+		timer++;
+
 		// 位置の更新
-		m_hArrow[0]->SetPos({ m_arrowPosX[0] + m_arrowShakeX[0],m_arrowPosY[0] + m_arrowShakeY[0],0});
-		m_hArrow[1]->SetPos({ m_arrowPosX[1] + m_arrowShakeX[1],m_arrowPosY[1] + m_arrowShakeY[1],0});
+		m_hArrow[0]->SetPos({ m_arrowPosX[0] + m_arrowShakeX[0],m_arrowPosY[0] + m_arrowShakeY[0] +   y,0});
+		m_hArrow[1]->SetPos({ m_arrowPosX[1] + m_arrowShakeX[1],m_arrowPosY[1] + m_arrowShakeY[1] + (-y),0});
 
 		// 上を押した場合
 		if (m_select->IsUpBotton())
@@ -556,6 +566,8 @@ void SceneTitle::Draw()
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
 			"むずかしい！", 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
+
+	PoseScreen::GetInstance().Draw();
 
 #if false
 	FontManager::GetInstance().DrawString(

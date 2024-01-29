@@ -32,9 +32,20 @@ SlideSelect::~SlideSelect()
 {
 }
 
-void SlideSelect::Init(int selectMaxNum)
+void SlideSelect::Init(int selectMaxNum,bool isUpDown)
 {
 	m_selectMaxNum = selectMaxNum;
+
+	if (isUpDown)
+	{
+		m_selectButton[0] = PAD_INPUT_UP;
+		m_selectButton[1] = PAD_INPUT_DOWN;
+	}
+	else
+	{
+		m_selectButton[0] = PAD_INPUT_LEFT;
+		m_selectButton[1] = PAD_INPUT_RIGHT;
+	}
 }
 
 void SlideSelect::Update()
@@ -42,7 +53,7 @@ void SlideSelect::Update()
 	m_isUpBotton = false;
 	m_isDownBotton = false;
 	// 上にスライド
-	if (Pad::IsPress(PAD_INPUT_UP))
+	if (Pad::IsPress(m_selectButton[0]))
 	{
 		m_isUpBotton = true;
 		// ボタンを押している間フレーム単位でカウントする
@@ -83,7 +94,7 @@ void SlideSelect::Update()
 	}
 
 	// 下にスライド
-	if (Pad::IsPress(PAD_INPUT_DOWN))
+	if (Pad::IsPress(m_selectButton[1]))
 	{
 		m_isDownBotton = true;
 		// ボタンを押している間フレーム単位でカウントする
@@ -149,4 +160,9 @@ bool SlideSelect::IsUpBotton()
 bool SlideSelect::IsDownBotton()
 {
 	return m_isDownBotton;
+}
+
+void SlideSelect::Reset()
+{
+	m_selectNo = 0;
 }

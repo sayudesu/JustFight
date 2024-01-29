@@ -7,7 +7,7 @@ public:
 	SlideSelect();
 	~SlideSelect();
 
-	void Init(int selectMaxNum);
+	void Init(int selectMaxNum, bool isUpDown);
 	void Update();
 
 public:
@@ -19,6 +19,8 @@ public:
 	bool IsUpBotton();
 	// 下のボタンを押したかどうかを返します
 	bool IsDownBotton();
+	// 現在の選択状態をリセットする
+	void Reset();
 private:
 	enum SelectButton
 	{
@@ -46,5 +48,9 @@ private:
 
 	bool m_isUpBotton;
 	bool m_isDownBotton;
+
+	int m_selectButton[2];
+
+
 };
 

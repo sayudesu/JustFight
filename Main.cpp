@@ -18,6 +18,8 @@
 #include "CSVData/ModelManager.h"
 #include "CSVData/FontManager.h"
 
+#include "PoseScreen.h"
+
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -99,6 +101,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// スクリーン加工用
 	EffectScreen::GetInstance().Load();
+
+	// ポーズ画面の設定
+	PoseScreen::GetInstance().Load();
 
 	// シーンマネージャー初期化
 	SceneManager* pScene = new SceneManager();

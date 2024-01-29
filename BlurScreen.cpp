@@ -9,22 +9,29 @@ EffectScreen* EffectScreen::m_pInstance = nullptr;
 void EffectScreen::Load()
 {
 #if true		
+
+	// 攻撃演出用
 	m_quakeX = 0.0f;
 	m_quakeFrame = 0;
-	m_screen[0] = 0;
-	m_screen[1] = 0;
-	m_current = 0;
-	m_alpha = 0;
-	m_notBlendDraw = 0;
+
 	// 加工用の画面ハンドルを保存
 	int sw = 0, sh = 0, bit = 0;      // 画面幅＆画面高＆ビット数
 	GetScreenState(&sw, &sh, &bit);   // 幅と高さを取得しておく
 
-	for (int i = 0; i < static_cast<int>(EffectNo::MAX); i++)
+	for (int i = 0; i < static_cast<int>(DamageEffectNo::MAX); i++)
 	{
-		m_screen[i] = MakeScreen(sw, sh);// 加工用画面を用意する
+		m_damageScreen[i] = MakeScreen(sw, sh);// 加工用画面を用意する
 	}
 #endif
+	// モーションブラー用
+	m_notBlendDraw = 0;
+	m_current = 0;
+	m_alpha = 150;
+
+	for (int i = 0; i < static_cast<int>(BlurEffectNo::MAX); ++i)
+	{
+		m_blurScreen[i] = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
+	}
 }
 
 void EffectScreen::Unload()
@@ -32,7 +39,10 @@ void EffectScreen::Unload()
 #if true	
 	for (int i = 0; i < 3; ++i)
 	{
-		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
+		if (m_damageScreen[i] != -1)
+		{
+			DeleteGraph(m_damageScreen[i]);
+		}
 	}
 #endif
 }
@@ -51,76 +61,62 @@ void EffectScreen::ScreenBack()
 #endif
 }
 
-//void EffectScreen::BlurInit(int alpha)
-//{
-//	//for (int i = 0; i < 2; ++i)
-//	//{
-//	//	m_screen[i] = -1;
-//	//	m_screen[i] = MakeScreen(m_screenWidth, m_screenHeight);
-//	//}
-//	//m_current = 0;
-//	//m_alpha = alpha;
-//
-//	//m_notBlendDraw = 0;
-//}
-
-void EffectScreen::BlurIReplayInit(int alpha)
+void EffectScreen::BlurIReplayInit()
 {
 #if true	
-	/*for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < static_cast<int>(BlurEffectNo::MAX); ++i)
 	{
-		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
-		m_screen[i] = MakeScreen(1920, 1080);
-	}*/
-	for (int i = static_cast<int>(EffectNo::BLUR_0); i <static_cast<int>(EffectNo::BLUR_3); ++i)
-	{
-		if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
-		m_screen[i] = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
-	}
+		if (m_blurScreen[i] != -1)
+		{
+			DeleteGraph(m_blurScreen[i]);
+		}
 
+		m_blurScreen[i] = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
+	}
 	m_current = 0;
 	m_notBlendDraw = 0;
-	m_alpha = alpha;
 #endif
 }
 
 void EffectScreen::BlurRelease()
 {
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	if (m_screen[i] != -1) DeleteGraph(m_screen[i]);
-	//}
+	for (int i = 0; i < static_cast<int>(BlurEffectNo::MAX); ++i)
+	{
+		if (m_blurScreen[i] != -1)
+		{
+			DeleteGraph(m_blurScreen[i]);
+		}
+	}
 }
 
 void EffectScreen::BlurPreRenderBlurScreen()
 {
 #if true	
-	SetDrawScreen(m_screen[m_current]);
+	SetDrawScreen(m_blurScreen[m_current]);
+	ClearDrawScreen();
 #endif
 }
 
 void EffectScreen::BlurPostRenderBlurScreen()
 {
 #if true	
-	int drawMode = GetDrawMode();
-	SetDrawMode(DX_DRAWMODE_BILINEAR);
+//	int drawMode = GetDrawMode();
+//	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
-	int blendMode, param;
-	GetDrawBlendMode(&blendMode, &param);
+	//int blendMode, param;
+	//GetDrawBlendMode(&blendMode, &param);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);
 
-	if (m_notBlendDraw++ > 2)
+	m_notBlendDraw++;
+	if (m_notBlendDraw > static_cast<int>(BlurEffectNo::MAX))
 	{
-		DrawExtendGraph(0, 0, 1920, 1080, m_screen[static_cast<int>(EffectNo::BLUR_0) + 1 - m_current], false);
+		DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[1 - m_current], false);
 	}
-
-	SetDrawBlendMode(blendMode, param);
-	SetDrawMode(drawMode);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+//	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
 	SetDrawScreen(DX_SCREEN_BACK);
-
-	DrawGraph(0, 0, m_screen[static_cast<int>(EffectNo::BLUR_0) + 1 - m_current], false);
-
+	DrawGraph(0, 0, m_blurScreen[m_current], false);
 	m_current = 1 - m_current;
 #endif
 }
@@ -152,14 +148,14 @@ void EffectScreen::QuakeUpdate()
 void EffectScreen::QuakeRelease()
 {
 #if true
-	DeleteGraph(m_screen[static_cast<int>(EffectNo::QUAKE)]);
+	DeleteGraph(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)]);
 #endif
 }
 
 void EffectScreen::QuakePreRenderBlurScreen()
 {
 #if true
-	SetDrawScreen(m_screen[static_cast<int>(EffectNo::QUAKE)]);
+	SetDrawScreen(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)]);
 #endif
 }
 
@@ -172,14 +168,14 @@ void EffectScreen::QuakePostRenderBlurScreen()
 //		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
 //      GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);                                                  // 加算合成する
-		DrawGraph(m_quakeX, m_quakeX, m_screen[static_cast<int>(EffectNo::QUAKE)], false);        // 画面を描画
-		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
-		DrawGraph(m_quakeX, m_quakeX, m_screen[static_cast<int>(EffectNo::QUAKE)], false);        // 画面を描画
+		DrawGraph(m_quakeX, m_quakeX, m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], false);        // 画面を描画
+		GraphFilter(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
+		DrawGraph(m_quakeX, m_quakeX, m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], false);        // 画面を描画
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);                                              // ブレンドモードを初期状態に戻す
 	}
 	else
 	{
-		DrawGraph(0, 0, m_screen[static_cast<int>(EffectNo::QUAKE)], false);                      // 通常画面描画
+		DrawGraph(0, 0, m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], false);                      // 通常画面描画
 	}
 #endif
 }

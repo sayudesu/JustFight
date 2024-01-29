@@ -83,4 +83,11 @@ private:
 
 	// 難易度データ
 	DifficultyData m_difficultyData;
+
+	// チェックメイト時に表示する画像用
+	float m_checkmateSize;
+	float m_checkmateRota;
+	// チェックメイト時背景のブレンドアルファ用
+	int m_checkmateBgBlendRate;
+	int m_checkmatePosY;
 };

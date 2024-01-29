@@ -30,11 +30,22 @@
 #include "../CSVData/SoundManager.h"
 #include "../Util/SoundName.h"
 
+namespace
+{
+
+}
+
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr),
+	m_hCheckmate(-1),
 	m_resultData(GameResultData::NONE),
-	m_difficultyData(data)
+	m_frameCount(0),
+	m_difficultyData(data),
+	m_checkmateSize(10.0f),
+	m_checkmateRota(10.0f),
+	m_checkmateBgBlendRate(0),
+	m_checkmatePosY(0)
 {
 }
 
@@ -81,6 +92,8 @@ void SceneMain::Init()
 		m_pCharacter[enemy]->GetStrongPower(),
 		m_pCharacter[enemy]->GetkStrongAttackPowerMax(),
 		m_pCharacter[enemy]->GetFightingMeter());
+
+	EffectScreen::GetInstance().BlurIReplayInit();
 }
 
 void SceneMain::End()
@@ -108,12 +121,14 @@ SceneBase* SceneMain::Update()
 
 SceneBase* SceneMain::UpdateGamePlay()
 {
-
+	// BGMの再生
 	SoundManager::GetInstance().Play(SoundName::PLAY, true);
 
 	int player = static_cast<int>(CharacterName::PLAYER);
 	int enemy = static_cast<int>(CharacterName::ENEMY);
 
+	// if 難易度が中、大だったら
+	// else if 難易度が小だったら チュートリアル
 	if (m_difficultyData == DifficultyData::INTERMEDIATE||
 		m_difficultyData == DifficultyData::EXPERT)
 	{
@@ -125,15 +140,16 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_pCharacter[player]->InputTutorial();
 		m_pCharacter[enemy]->InputTutorial();
 		m_pTutorial->SetTips(Tips::MOVE);
-	}
 
-	if (m_pCharacter[player]->GetTipsMove(Tips::ATTACK))
-	{
-		m_pTutorial->SetTips(Tips::ATTACK);
-	}
-	if (m_pCharacter[player]->GetTipsMove(Tips::GUARD))
-	{
-		m_pTutorial->SetTips(Tips::GUARD);
+		if (m_pCharacter[player]->GetTipsMove(Tips::ATTACK))
+		{
+			m_pTutorial->SetTips(Tips::ATTACK);
+		}
+		if (m_pCharacter[player]->GetTipsMove(Tips::GUARD))
+		{
+			m_pTutorial->SetTips(Tips::GUARD);
+		}
+
 	}
 
 	// キャラクターの更新処理
@@ -196,7 +212,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	// 勝敗条件処理
 	{
-
 		// HPが0になった場合
 		if (m_pCharacter[player]->GetHp() <= 0) // プレイヤー
 		{		
@@ -245,17 +260,35 @@ SceneBase* SceneMain::UpdateGameResult()
 {
 	// 指定フレームの後にリザルト画面に移動する
 	m_frameCount++;
-	if (m_frameCount == 60 * 1)
+	// 指定したフレームまでカウントが進むと
+	if (m_frameCount >= 60 * 1)
 	{
-		SoundManager::GetInstance().Stop(SoundName::PLAY);
-		return new SceneResult(m_resultData);
-
+		// ボタンを押した場合
+		if (Pad::IsTrigger(PAD_INPUT_1))
+		{	
+			// BGMの停止
+			SoundManager::GetInstance().Stop(SoundName::PLAY);
+			return new SceneResult(m_resultData);
+		}
 	}
 
-	if (Pad::IsTrigger(PAD_INPUT_1))
-	{	
-		SoundManager::GetInstance().Stop(SoundName::PLAY);
-		return new SceneResult(m_resultData);
+	m_checkmatePosY = cos(static_cast<int>(m_frameCount) * 0.07f) * 100.0f + Game::kScreenHeight / 2 - 160.0f;
+
+	// 予めでかくしたサイズを1にする
+	if (m_checkmateSize > 1)
+	{
+		m_checkmateSize -= 1.0f;
+	}
+	// 予め変更した角度を0にする
+	if (m_checkmateRota > 0.0f)
+	{
+		m_checkmateRota -= 0.5f;
+	}
+
+	// ブレンド率を変更
+	if (m_checkmateBgBlendRate < 128)
+	{
+		m_checkmateBgBlendRate += 5;
 	}
 
 	return this;
@@ -264,9 +297,10 @@ SceneBase* SceneMain::UpdateGameResult()
 
 void SceneMain::Draw()
 {
+	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
 	// 
-	EffectScreen::GetInstance().QuakePreRenderBlurScreen();
-	EffectScreen::GetInstance().ClearScreen();
+	//EffectScreen::GetInstance().QuakePreRenderBlurScreen();
+	//EffectScreen::GetInstance().ClearScreen();
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
@@ -288,6 +322,8 @@ void SceneMain::Draw()
 	{
 		blood->Draw();
 	}
+
+	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
 	
 #if false	
 	DEBUG::Field();
@@ -306,9 +342,9 @@ void SceneMain::Draw()
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
 
-	// 画面エフェクトの更新処理
-	EffectScreen::GetInstance().ScreenBack();
-	EffectScreen::GetInstance().QuakePostRenderBlurScreen();
+	//// 画面エフェクトの更新処理
+	//EffectScreen::GetInstance().ScreenBack();
+	//EffectScreen::GetInstance().QuakePostRenderBlurScreen();
 
 	// UIの描画
 	m_pUi->Draw();
@@ -319,11 +355,17 @@ void SceneMain::Draw()
 		m_pTutorial->Draw();
 	}
 
+
 	// 勝敗がついた場合描画する
 	if (m_pUpdateFunc == &SceneMain::UpdateGameResult)
 	{
-		DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, 0.0f, m_hCheckmate, true);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_checkmateBgBlendRate);
+		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		DrawRotaGraph(Game::kScreenWidth/2, m_checkmatePosY, m_checkmateSize, m_checkmateRota, m_hCheckmate, true);
 	}
+
 }
 
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
