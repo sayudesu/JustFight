@@ -42,8 +42,13 @@ public:
 	// アンロード
 	void Unload();
 public:
+	// 更新処理
 	void Update();
+	// 描画
 	void Draw();
+public:
+	// ポーズ画面を開く閉じる用
+	void PoseSelect();
 private:
 	struct Box
 	{
@@ -68,6 +73,11 @@ private:
 	// アルファブレンド率
 	int m_blendModeRate[2];
 
-	std::vector<Box> m_box;
+	std::vector<Box> m_soundSelectBox;
+	std::vector<Box> m_utilSelectBox;
+
+	int m_slidePosY;
+
+	bool m_isPose;
 };
 

@@ -7,7 +7,14 @@ public:
 	SlideSelect();
 	~SlideSelect();
 
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="selectMaxNum">選択肢の最大巣 0～ </param>
+	/// <param name="isUpDown">上下に選択するかどうあ</param>
 	void Init(int selectMaxNum, bool isUpDown);
+
+	// 更新処理
 	void Update();
 
 public:

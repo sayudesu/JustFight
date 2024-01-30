@@ -250,6 +250,7 @@ SceneBase* SceneTitle::Update()
 	SoundManager::GetInstance().Play(SoundName::TITLE,true);
 
 	PoseScreen::GetInstance().Update();
+	PoseScreen::GetInstance().PoseSelect();
 
 	char deviceName[260]{};
 	char productName[260]{};
@@ -483,6 +484,7 @@ SceneBase* SceneTitle::Update()
 	m_hExpert->Update();
 
 	m_hImageDifficultyBg->Update();
+
 	// 矢印の更新処理
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();
@@ -522,7 +524,6 @@ SceneBase* SceneTitle::Update()
 
 void SceneTitle::Draw()
 {
-
 	m_pStage->Draw();
 
 	m_hBg->Draw();
@@ -584,8 +585,10 @@ void SceneTitle::Draw()
 		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
 		kOption, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 
+#if true
 	// ポーズ画面の描画
 	PoseScreen::GetInstance().Draw();
+#endif
 
 #if false
 	// コントローラー
