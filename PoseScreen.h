@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "Util/FontSize.h"
+
 class SlideSelect;
 
 class PoseScreen
@@ -52,6 +54,12 @@ private:
 
 		int color;
 		bool fill;
+
+		const char* text;
+		FontSize size;
+		int textColor;
+
+
 	};
 
 //	std::unique_ptr<SlideSelect> m_pSlide;

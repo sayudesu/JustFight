@@ -5,9 +5,18 @@
 #include "Util/Game.h"
 #include "Util/SlideSelect.h"
 
+#include "CSVData/FontManager.h"
+
 
 namespace
 {
+	// スライドクラスの数
+	constexpr int kSlideNum = 3;
+	// 左右スライドの数
+	constexpr int kLeftRightSelectsNum = 1;
+	// 上下スライドの数
+	constexpr int kUpDwonSelectsNum = 2;
+
 	// 背景位置
 	constexpr int kPoseBgX = 200;
 	constexpr int kPoseBgY = 100;
@@ -20,37 +29,39 @@ PoseScreen* PoseScreen::m_pInstance = nullptr;
 void PoseScreen::Load()
 {
 	// インスタンス生成
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < kSlideNum; i++)
 	{
 		m_pSlide[i] = new SlideSelect();
 	}
 
 	// 左右にスライド
-	m_pSlide[0]->Init(1, false);
+	m_pSlide[0]->Init(kLeftRightSelectsNum, false);
 	// 上下にスライド
-	m_pSlide[1]->Init(3, true);
+	m_pSlide[1]->Init(kUpDwonSelectsNum, true);
 
-	int a[3]{};
-	a[0] = 0xff0000;
-	a[1] = 0x00ff00;
-	a[2] = 0x0000ff;
-	for (int i = 0; i < 3; i++)
+	const char* text[2]{};
+	text[0] = "BGM";
+	text[1] = "SE";
+	for (int i = 0; i < kUpDwonSelectsNum; i++)
 	{
 		m_box.push_back
 		(
 			{
-				kPoseBgX + 50 * (i + 1),
-				kPoseBgY + 150 * (i + 1),
-				kPoseBgX1 - 50,
-				kPoseBgY1 + kPoseBgY * (i + 1),
-				a[i],
-				true
+				kPoseBgX + 50,
+				(kPoseBgY + 200) + (i * 100) + 50,
+				kPoseBgX + 50 + 500,
+				(kPoseBgY + 200) + (i * 100) + 130,
+				0xaaaaaaa,
+				true,
+				text[i],
+				FontSize::GENEITERAMIN_MEDIUM,
+				0x0000ff
 			}
 		);
 	}
 
 	// 上下にスライド
-	m_pSlide[2]->Init(3, true);
+	m_pSlide[2]->Init(kUpDwonSelectsNum, true);
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -61,7 +72,7 @@ void PoseScreen::Load()
 void PoseScreen::Unload()
 {
 	// メモリの解放
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < kSlideNum; i++)
 	{
 		delete m_pSlide[i];
 		m_pSlide[i] = nullptr;
@@ -116,15 +127,13 @@ void PoseScreen::Draw()
 
 	// 描画ブレンドモードをノーブレンドにする
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	FontManager::GetInstance().DrawString(200, 100, "サウンド", 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(Game::kScreenWidth / 2, 100,"その他", 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
 
 	// 上下の選択しを描画
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < kUpDwonSelectsNum; i++)
 	{
-		DrawBox(m_box[i].x, m_box[i].y, m_box[i].x2, m_box[i].x2, m_box[i].color, m_box[i].fill);
+		DrawBox(m_box[i].x, m_box[i].y, m_box[i].x2, m_box[i].y2, m_box[i].color, m_box[i].fill);
+		FontManager::GetInstance().DrawString(m_box[i].x, m_box[i].y, m_box[i].text, m_box[i].textColor, m_box[i].size);
 	}
-
-	DrawCircle(kPoseBgX + 50, kPoseBgY + 150 * (0 + 1), 15, 0xffffff);
-	DrawCircle(kPoseBgX + 50, kPoseBgY + 150 * (1 + 1), 15, 0xffffff);
-	DrawCircle(kPoseBgX + 50, kPoseBgY + 150 * (2 + 1), 15, 0xffffff);
-
 }

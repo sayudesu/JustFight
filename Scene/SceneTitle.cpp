@@ -33,6 +33,14 @@ namespace
 	constexpr float kImageSize = 0.95f;
 
 	constexpr float kImageArrowSizeChangeSpeed = 0.002f;
+
+	// 難易度
+	const char* const kNovice = "チュートリアル";
+	const char* const kIntermediate = "普通";
+	const char* const kExpart = "難しい";
+
+	// オプション
+	const char* const kOption = "オプション";
 }
 
 SceneTitle::SceneTitle():
@@ -538,7 +546,7 @@ void SceneTitle::Draw()
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 150.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
-			"チュートリアル!", 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			kNovice, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 	else if (m_select->GetSelect() == 1)
 	{
@@ -551,7 +559,7 @@ void SceneTitle::Draw()
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 65.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
-			"ふつう！", 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			kIntermediate, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 	else if (m_select->GetSelect() == 2)
 	{
@@ -564,24 +572,27 @@ void SceneTitle::Draw()
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 105.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
-			"むずかしい！", 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			kExpart, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 
+
+	// オプションボタンの描画
+	m_hOptionBack->Draw();
+	m_hOptionBotton->Draw();
+	FontManager::GetInstance().DrawString(
+		m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 30.0f,
+		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
+		kOption, 0xffffff, FontSize::GENEITERAMIN_SMALL);
+
+	// ポーズ画面の描画
 	PoseScreen::GetInstance().Draw();
 
 #if false
-	FontManager::GetInstance().DrawString(
-		m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 75.0f,
-		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 50.0f,
-		"オプション", 0xffffff, FontSize::GENEITERAMIN_SMALL);
-	m_hOptionBack->Draw();
-	m_hOptionBotton->Draw();
-#endif
-
 	// コントローラー
 	if (m_isInputController)
 	{
 		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0xffffff, true);
 		DrawFormatString((Game::kScreenWidth - ((17 * 32)/2)) / 2, Game::kScreenHeight/2 - 32, 0x000000, "コントローラーを接続してください。");
 	}	
+#endif
 }
