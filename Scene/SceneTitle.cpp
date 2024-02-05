@@ -47,7 +47,8 @@ SceneTitle::SceneTitle():
 	m_hTitle(-1),
 	m_isInputController(false),
 	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), -static_cast<float>(Game::kScreenHeight / 2), 0.0f)),
-	m_speed(0.1f)
+	m_cameraSpeed(0.1f),
+	m_modelSlidePosY(30.0f)
 {
 }
 
@@ -193,6 +194,7 @@ void SceneTitle::Init()
 		m_pStage->Update();
 	}
 
+	// モデルの読み込み
 	m_hModel[0] = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Pawn_B),
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
@@ -266,11 +268,10 @@ SceneBase* SceneTitle::Update()
 		return this;
 	}
 #endif
-	static float posY = 30.0f;
 	if (m_isCameraStop[3])
 	{
 		m_select->Update();
-		posY -= 1.0f;
+		m_modelSlidePosY -= 1.0f;
 	}
 
 	// ボタン
@@ -396,11 +397,11 @@ SceneBase* SceneTitle::Update()
 			}
 		}
 
-		m_speed = (m_speed * 1.1f);
+		m_cameraSpeed = (m_cameraSpeed * 1.1f);
 
 		if (m_cameraPosX > 0.0f)
 		{
-			m_cameraPosX -= m_speed;
+			m_cameraPosX -= m_cameraSpeed;
 		}
 		else
 		{
@@ -410,7 +411,7 @@ SceneBase* SceneTitle::Update()
 
 		if (m_cameraPosY > 32.0f)
 		{
-			m_cameraPosY -= m_speed;
+			m_cameraPosY -= m_cameraSpeed;
 		}
 		else
 		{
@@ -420,7 +421,7 @@ SceneBase* SceneTitle::Update()
 	
 		if (m_cameraPosZ > 10.0f)
 		{
-			m_cameraPosZ -= m_speed;
+			m_cameraPosZ -= m_cameraSpeed;
 		}
 		else
 		{
@@ -432,43 +433,45 @@ SceneBase* SceneTitle::Update()
 
 	// 3Dモデルの描画
 	{
-		if (posY < -10.0f)
+		if (m_modelSlidePosY < -10.0f)
 		{
-			posY = -10.0f;
+			m_modelSlidePosY = -10.0f;
 		}
 
-		VECTOR  test = ConvScreenPosToWorldPos({ Game::kScreenWidth / 2 + 3900.0f,Game::kScreenHeight / 2 + 1500.0f,0 });
+		const VECTOR  modelPos = ConvScreenPosToWorldPos
+		({
+			Game::kScreenWidth / 2 + 3900.0f,
+			Game::kScreenHeight / 2 + 1500.0f,
+			0 
+		});
+
 		for (int i = 0; i < 3; i++)
 		{
 			// 位置の更新
 			m_hModel[i]->SetPos
-			(
-				{
-					test.x,
-					test.y + posY,
-					test.z
-				}
-			);
+			({
+					modelPos.x,
+					modelPos.y + m_modelSlidePosY,
+					modelPos.z
+			});
 
 			// 回転
 			m_modelRot[i]++;
 
 			// 回転の更新
 			m_hModel[i]->SetRotate
-			(
-				{
+			({
 					-90 * DX_PI_F / 180.0f,
 					0,
 					m_modelRot[i] * DX_PI_F / 180.0f
-				}
-			);
+			});
 
 			// 3Dモデルの更新
 			m_hModel[i]->Update();
 		}
 	}
 
-
+	// カメラの位置を変更している為設定を変更
 	m_camera->Setting();
 
 	// 背景の更新処理
@@ -489,6 +492,7 @@ SceneBase* SceneTitle::Update()
 	m_hArrow[0]->Update();
 	m_hArrow[1]->Update();
 
+	// 全てのカメラの移動が停止したら
 	if (m_isCameraStop[3])
 	{
 		// 難易度調整

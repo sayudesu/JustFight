@@ -18,7 +18,9 @@ namespace
 	constexpr int kLeftRightSelectsNum = 1;
 	// 上下スライドの数
 	constexpr int kUpDwonSelectsNum = 2;
-	constexpr int kUpDwonSelectsNum2 = 5;
+	constexpr int kUpDwonSelectsNum2 = 3;
+
+	constexpr float kSlideSpeed = 100.0f;
 
 	// 背景位置
 	constexpr int kPoseBgX = 200;
@@ -66,11 +68,9 @@ void PoseScreen::Load()
 		);
 	}
 
-	text[0] = "AAA";
-	text[1] = "BBB";
-	text[2] = "CCC";
-	text[3] = "DDD";
-	text[4] = "EEE";
+	text[0] = "やり直す";
+	text[1] = "操作説明";
+	text[2] = "選択画面に戻る";
 
 	for (int i = 0; i < kUpDwonSelectsNum2; i++)
 	{
@@ -134,11 +134,12 @@ void PoseScreen::Update()
 		m_pSlide[1]->Reset();
 	}
 
+	// ポーズボタンを押した場合
 	if (m_isPose)
 	{
 		if (m_slidePosY < 0)
 		{
-			m_slidePosY += 30;
+			m_slidePosY += kSlideSpeed;
 		}
 		else
 		{
@@ -149,17 +150,13 @@ void PoseScreen::Update()
 	{
 		if (m_slidePosY > -Game::kScreenHeight)
 		{
-			m_slidePosY += 30;
+			m_slidePosY -= kSlideSpeed;
 		}
 		else
 		{
 			m_slidePosY = -Game::kScreenHeight;
 		}
 	}
-
-	printfDx("X  = %d\n", m_pSlide[0]->GetSelect());
-	printfDx("Y1 = %d\n", m_pSlide[1]->GetSelect());
-	printfDx("Y2 = %d\n", m_pSlide[2]->GetSelect());
 }
 
 void PoseScreen::Draw()
@@ -236,5 +233,10 @@ void PoseScreen::PoseSelect()
 	if (Pad::IsTrigger(PAD_INPUT_8))
 	{
 		m_isPose = !m_isPose;
+	}
+
+	if (m_isPose)
+	{		
+
 	}
 }

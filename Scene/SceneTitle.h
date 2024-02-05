@@ -77,6 +77,7 @@ private:
 
 	// 敵モデル
 	float m_modelRot[3];
+	float m_modelSlidePosY;
 
 	// カメラの座標
 	float m_cameraPosX;
@@ -84,7 +85,7 @@ private:
 	float m_cameraPosZ;
 
 	// カメラの移動スピード
-	float m_speed;
+	float m_cameraSpeed;
 
 	// 難易度文字の大きさ
 	float m_difficulty;

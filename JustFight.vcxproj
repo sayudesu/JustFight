@@ -149,6 +149,7 @@
     <ClCompile Include="CSVData\FontManager.cpp" />
     <ClCompile Include="CSVData\ModelManager.cpp" />
     <ClCompile Include="CSVData\SoundManager.cpp" />
+    <ClCompile Include="Easing.cpp" />
     <ClCompile Include="PoseScreen.cpp" />
     <ClCompile Include="TutorialDrawer.cpp" />
     <ClCompile Include="Util\GameObject.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="CSVData\FontManager.h" />
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
+    <ClInclude Include="Easing.h" />
     <ClInclude Include="PoseScreen.h" />
     <ClInclude Include="Tips.h" />
     <ClInclude Include="TutorialDrawer.h" />

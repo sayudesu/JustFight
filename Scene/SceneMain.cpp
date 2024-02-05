@@ -260,16 +260,19 @@ SceneBase* SceneMain::UpdateGameResult()
 {
 	// 指定フレームの後にリザルト画面に移動する
 	m_frameCount++;
-	// 指定したフレームまでカウントが進むと
-	if (m_frameCount >= 60 * 1)
+	// ボタンを押した場合
+	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
-		// ボタンを押した場合
-		if (Pad::IsTrigger(PAD_INPUT_1))
-		{	
-			// BGMの停止
-			SoundManager::GetInstance().Stop(SoundName::PLAY);
-			return new SceneResult(m_resultData);
-		}
+		// BGMの停止
+		SoundManager::GetInstance().Stop(SoundName::PLAY);
+		return new SceneResult(m_resultData);
+	}
+	// 指定したフレームまでカウントが進むと
+	if (m_frameCount >= 60 * 3)
+	{
+		// BGMの停止
+		SoundManager::GetInstance().Stop(SoundName::PLAY);
+		return new SceneResult(m_resultData);
 	}
 
 	m_checkmatePosY = cos(static_cast<int>(m_frameCount) * 0.07f) * 100.0f + Game::kScreenHeight / 2 - 160.0f;
@@ -297,10 +300,10 @@ SceneBase* SceneMain::UpdateGameResult()
 
 void SceneMain::Draw()
 {
-	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
+//	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
 	// 
-	//EffectScreen::GetInstance().QuakePreRenderBlurScreen();
-	//EffectScreen::GetInstance().ClearScreen();
+	EffectScreen::GetInstance().QuakePreRenderBlurScreen();
+	EffectScreen::GetInstance().ClearScreen();
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
@@ -323,7 +326,7 @@ void SceneMain::Draw()
 		blood->Draw();
 	}
 
-	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
+//	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
 	
 #if false	
 	DEBUG::Field();
@@ -343,8 +346,8 @@ void SceneMain::Draw()
 #endif
 
 	//// 画面エフェクトの更新処理
-	//EffectScreen::GetInstance().ScreenBack();
-	//EffectScreen::GetInstance().QuakePostRenderBlurScreen();
+	EffectScreen::GetInstance().ScreenBack();
+	EffectScreen::GetInstance().QuakePostRenderBlurScreen();
 
 	// UIの描画
 	m_pUi->Draw();

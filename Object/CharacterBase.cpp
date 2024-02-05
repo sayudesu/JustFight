@@ -15,6 +15,8 @@
 #include "../Util/ParameterData.h"
 #include "../Util/ModelName.h"
 
+#include "../Easing.h"
+
 namespace
 {
 	// カプセル形状の半径
@@ -154,7 +156,7 @@ void CharacterBase::Draw()
 #endif
 
 #if _DEBUG
-	VECTOR pos = ConvWorldPosToScreenPos(m_pos);
+	const VECTOR pos = ConvWorldPosToScreenPos(m_pos);
 	DrawCircle(pos.x, pos.y, 32, 0xffffff, true);
 	DrawFormatString(pos.x, pos.y, 0x000000, Dname.c_str());
 #endif
@@ -324,7 +326,9 @@ void CharacterBase::Attack()
 	// 武器動かす
 	if (!m_isSceneChange)
 	{
-		test2 = MoveByFrame(test3, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
+		test2 = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, (90 * 3) * DX_PI / 180.0f,0.0f);
+	//	test2 = MoveByFrame(test3, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
+
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
 		// 攻撃時のフレームを乗算
@@ -395,7 +399,8 @@ void CharacterBase::AttackTwo()
 	// 武器動かす
 	if (!m_isSceneChange)
 	{
-		test2 = MoveByFrame(test3, -((90 * 5) * DX_PI / 180.0f), m_attackFrame, m_parameter.attackFrameMax);
+		test2 = Easing::InQuad(m_attackFrame, m_parameter.attackFrameMax, -((90 * 5) * DX_PI / 180.0f), test3);
+	//	test2 = MoveByFrame(test3, -((90 * 5) * DX_PI / 180.0f), m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
 		// 攻撃時のフレームを乗算
@@ -602,7 +607,8 @@ void CharacterBase::Guard()
 	{
 		m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 0.0f, m_guardFrame, m_parameter.guardFrameMax);
 		m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z, -50.0f, m_guardFrame, m_parameter.guardFrameMax);
-		test1 = MoveByFrame((90) * DX_PI_F / 180.0f, 0 , m_guardFrame, m_parameter.guardFrameMax);
+		test1 = Easing::InQuad(m_guardFrame, m_parameter.guardFrameMax, (90) * DX_PI_F / 180.0f, 0.0f);
+	//	test1 = MoveByFrame((90) * DX_PI_F / 180.0f, 0 , m_guardFrame, m_parameter.guardFrameMax);
 		m_guardFrame++;
 
 		// ジャストガードのフレーム
@@ -736,7 +742,7 @@ void CharacterBase::Stun()
 	// スタン状態のフレームをカウント
 	m_stunFrame++;
 
-	stunRota += 1.0f;
+	stunRota += 0.3f;
 
 	if (m_vecWeapon.y < m_parameter.weaponRelativePos.y + 60.0f)
 	{
@@ -871,7 +877,6 @@ void CharacterBase::KnockBack()
 
 void CharacterBase::WeaponDefaultPos()
 {
-
 	// 武器を元の位置に戻す
 	{
 		bool isEndX = false;

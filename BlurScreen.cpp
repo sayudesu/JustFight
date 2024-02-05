@@ -56,7 +56,7 @@ void EffectScreen::ClearScreen()
 
 void EffectScreen::ScreenBack()
 {
-#if true	
+#if true
 	SetDrawScreen(DX_SCREEN_BACK);
 #endif
 }
@@ -162,8 +162,14 @@ void EffectScreen::QuakePreRenderBlurScreen()
 void EffectScreen::QuakePostRenderBlurScreen()
 {
 #if true
+
+	/*SetDrawScreen(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)]);
+	ClearDrawScreen();
+	SetDrawScreen(DX_SCREEN_BACK);*/
+
 	if (m_quakeFrame > 0)
 	{
+
 //		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_INVERT);         // 色を反転させる
 //		GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_MONO, 128, 0);   // 各ピクセルの色をＲＧＢ形式からYCbCr形式に変換し引数の Cb Cr の値を置き換えた後、再びＲＧＢ形式に戻す
 //      GraphFilter(m_screen[static_cast<int>(EffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 16, 1400);// ガウスでぼかしを入れる
@@ -176,6 +182,21 @@ void EffectScreen::QuakePostRenderBlurScreen()
 	else
 	{
 		DrawGraph(0, 0, m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], false);                      // 通常画面描画
+
+		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);
+
+		//m_notBlendDraw++;
+		//if (m_notBlendDraw > static_cast<int>(BlurEffectNo::MAX))
+		//{
+		//	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[1 - m_current], false);
+		//}
+		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		//	SetDrawMode(DX_DRAWMODE_BILINEAR);
+
+		//SetDrawScreen(DX_SCREEN_BACK);
+		//DrawGraph(0, 0, m_blurScreen[m_current], false);
+		//m_current = 1 - m_current;
+
 	}
 #endif
 }
