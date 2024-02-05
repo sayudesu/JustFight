@@ -89,7 +89,7 @@ void SceneTitle::Init()
 			ModelManager::GetInstance().ModelType(ModelName::MAP3),
 			VGet(0,0,0),
 			VGet(0,0, 180 * DX_PI_F/ 180.0f),
-			VGet(1, 1, 1));		
+			VGet(1, 1, 1));
 	}
 
 	// 2Dオブジェクト
@@ -213,28 +213,28 @@ void SceneTitle::Init()
 		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
 		VGet(0.9f, 0.9f, 0.9f));
 
+	// モデルの回転角度を初期化
 	m_modelRot[0] = 0.0f;
 	m_modelRot[1] = 0.0f;
 	m_modelRot[2] = 0.0f;
 
+	// 矢印の初期位置を取得
+	m_firstArrowPosX[0] = m_hArrow[0]->GetPos().x;
+	m_firstArrowPosY[0] = m_hArrow[0]->GetPos().y;
+	m_firstArrowPosX[1] = m_hArrow[1]->GetPos().x;
+	m_firstArrowPosY[1] = m_hArrow[1]->GetPos().y;
 	m_arrowPosX[0] = m_hArrow[0]->GetPos().x;
 	m_arrowPosY[0] = m_hArrow[0]->GetPos().y;
-
 	m_arrowPosX[1] = m_hArrow[1]->GetPos().x;
 	m_arrowPosY[1] = m_hArrow[1]->GetPos().y;
 
-	m_firstArrowPosX[0] = m_hArrow[0]->GetPos().x;
-	m_firstArrowPosY[0] = m_hArrow[0]->GetPos().y;
-
-	m_firstArrowPosX[1] = m_hArrow[1]->GetPos().x;
-	m_firstArrowPosY[1] = m_hArrow[1]->GetPos().y;
-
+	// 矢印の振動を初期化
 	m_arrowShakeX[0] = 0.0f;
 	m_arrowShakeY[0] = 0.0f;
-
 	m_arrowShakeX[1] = 0.0f;
 	m_arrowShakeY[1] = 0.0f;
 
+	// 敵の座標をしる
 	m_firstEnemyBgX = m_hImageDifficultyBg->GetPos().x;
 	m_firstEnemyBgY = m_hImageDifficultyBg->GetPos().y;
 

@@ -151,6 +151,7 @@
     <ClCompile Include="CSVData\SoundManager.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="PoseScreen.cpp" />
+    <ClCompile Include="CSVData\SubtitleManager.cpp" />
     <ClCompile Include="TutorialDrawer.cpp" />
     <ClCompile Include="Util\GameObject.cpp" />
     <ClCompile Include="Util\SlideSelect.cpp" />
@@ -184,11 +185,15 @@
     <ClInclude Include="CSVData\CSVManagerBase.h" />
     <ClInclude Include="CSVData\CSVModelData.h" />
     <ClInclude Include="CSVData\CSVSoundData.h" />
+    <ClInclude Include="CSVData\CSVSubtitleData.h" />
     <ClInclude Include="CSVData\FontManager.h" />
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
+    <ClInclude Include="Util\SubtitleData.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="PoseScreen.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="CSVData\SubtitleManager.h" />
     <ClInclude Include="Tips.h" />
     <ClInclude Include="TutorialDrawer.h" />
     <ClInclude Include="Util\DifficultyData.h" />
@@ -224,6 +229,9 @@
     <ClInclude Include="scene\SceneManager.h" />
     <ClInclude Include="util\Pad.h" />
     <ClInclude Include="util\Vec2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="JustFight.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

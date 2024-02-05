@@ -12,11 +12,13 @@
 #include "CSVData/CSVCharactorData.h"
 #include "CSVData/CSVModelData.h"
 #include "CSVData/CSVFontData.h"
+#include "CSVData/CSVSubtitleData.h"
 
 #include "CSVData/CharactorDataManager.h"
 #include "CSVData/SoundManager.h"
 #include "CSVData/ModelManager.h"
 #include "CSVData/FontManager.h"
+#include "CSVData/SubtitleManager.h"
 
 #include "PoseScreen.h"
 
@@ -95,6 +97,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ModelManager::GetInstance().Load(
 		CSVModelData::filePath,
 		CSVModelData::firstData);
+
+	// 描画する文字の読み込み
+	SubtitleManager::GetInstance().Load(
+		CSVSubtitleData::filePath,
+		CSVSubtitleData::data);
 
 	// エフェクシア
 	EffekseerDrawer::GetInstance().Load();

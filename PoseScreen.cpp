@@ -165,7 +165,7 @@ void PoseScreen::Draw()
 	DrawBox(kPoseBgX, kPoseBgY + m_slidePosY, kPoseBgX1, kPoseBgY1 + m_slidePosY, 0xffffff, true);
 
 	// 左右の選択
-	DrawBox(200, 100, Game::kScreenWidth / 2, 200, 0x000000, false);
+	DrawBox(200, 100 + m_slidePosY, Game::kScreenWidth / 2, 200 + m_slidePosY, 0x000000, false);
 	DrawBox(Game::kScreenWidth / 2, 100 + m_slidePosY, Game::kScreenWidth - 200, 200 + m_slidePosY, 0x000000, false);
 
 	// 描画ブレンドモードをアルファブレンド
