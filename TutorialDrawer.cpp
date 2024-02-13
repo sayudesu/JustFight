@@ -3,24 +3,10 @@
 #include "TutorialDrawer.h"
 
 #include "CSVData/FontManager.h"
+#include "CSVData/SubtitleManager.h"
 
 #include "Util/FontSize.h"
-namespace
-{
-	// 説明用文字
-	const char* const kTipsOne = "_説明①_";
-	const char* const kLeftStick = " 左のスティックで移動できる！\n 敵に近づこう！";
-	const char* const kEnemy = " 敵に近づこう！";
-
-	const char* const kTipsTwo = "_説明②_";
-	const char* const kAttack = " RB で 攻撃しよう！";
-
-	const char* const kTipsThree = "_説明③_";
-	const char* const kGuard = " LB で 防御しよう！";
-
-	const char* const kTipsEnd = "_おつかれさま！_";
-	const char* const kEnd = " これでチュートリアルは終了！\n 敵を倒せ！";
-}
+#include "Util/SubtitleData.h"
 
 TutorialDrawer::TutorialDrawer()
 {
@@ -40,8 +26,9 @@ void TutorialDrawer::Init()
 		m_tips[i] = false;
 	}
 
-	m_step = kTipsOne;
-	m_text = kLeftStick;
+	// 始めの説明を更新
+	m_step = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_ONE);
+	m_text = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_LEFTSTICK);
 
 	m_endFrameCount = 0;
 }
@@ -77,27 +64,28 @@ void TutorialDrawer::SetTips(Tips tips)
 
 	m_tips[static_cast<int>(tips)] = true;
 
+	// 現在の行動の文字を描画
 	if (m_tips[static_cast<int>(Tips::MOVE)])
 	{
-		m_step = kTipsOne;
-		m_text = kLeftStick;
+		m_step = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_ONE);
+		m_text = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_LEFTSTICK);
 	}
 	else if (m_tips[static_cast<int>(Tips::ATTACK)])
 	{
-		m_step = kTipsTwo;
-		m_text = kAttack;
+		m_step = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_ONE);
+		m_text = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_ATTACK);
 	}
 	else if (m_tips[static_cast<int>(Tips::GUARD)])
 	{
-		m_step = kTipsThree;
-		m_text = kGuard;
+		m_step = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_THREE);
+		m_text = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_GUARD);
 
 		m_endFrameCount++;
 	}
 
 	if (m_endFrameCount > 60 * 3)
 	{
-		m_step = kTipsEnd;
-		m_text = kEnd;
+		m_step = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_END);
+		m_text = SubtitleManager::GetInstance().SubtitleStringData(Subtitle::TIPS_END_TOW);
 	}
 }

@@ -23,7 +23,11 @@
 #include "../CSVData/SoundManager.h"
 #include "../Util/SoundName.h"
 
+#include "../CSVData/SubtitleManager.h"
+#include "../Util/SubtitleData.h"
+
 #include "../PoseScreen.h"
+
 
 namespace 
 {
@@ -33,14 +37,6 @@ namespace
 	constexpr float kImageSize = 0.95f;
 
 	constexpr float kImageArrowSizeChangeSpeed = 0.002f;
-
-	// 難易度
-	const char* const kNovice = "チュートリアル";
-	const char* const kIntermediate = "普通";
-	const char* const kExpart = "難しい";
-
-	// オプション
-	const char* const kOption = "オプション";
 }
 
 SceneTitle::SceneTitle():
@@ -551,7 +547,7 @@ void SceneTitle::Draw()
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
-			kNovice, 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::NOVICE), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 	else if (m_select->GetSelect() == 1)
 	{
@@ -564,7 +560,7 @@ void SceneTitle::Draw()
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 42.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
-			kIntermediate, 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::INTERMEDIATE), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 	else if (m_select->GetSelect() == 2)
 	{
@@ -577,22 +573,22 @@ void SceneTitle::Draw()
 		FontManager::GetInstance().DrawString(
 			m_hBg->GetPos().x + m_hNovice->GetPos().x - 60.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
-			kExpart, 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::EXPERT), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 
 
 	// オプションボタンの描画
-	//m_hOptionBack->Draw();
-	//m_hOptionBotton->Draw();
+	m_hOptionBack->Draw();
+	m_hOptionBotton->Draw();
 
-	//FontManager::GetInstance().DrawString(
-	//	m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 30.0f,
-	//	m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
-	//	kOption, 0xffffff, FontSize::GENEITERAMIN_SMALL);
+	FontManager::GetInstance().DrawString(
+		m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 30.0f,
+		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
+		SubtitleManager::GetInstance().SubtitleStringData(Subtitle::OPSION), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 
 #if true
 	// ポーズ画面の描画
-//	PoseScreen::GetInstance().Draw();
+	PoseScreen::GetInstance().Draw();
 #endif
 
 #if false
