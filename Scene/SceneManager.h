@@ -15,6 +15,8 @@ public:
 
 	void Update();
 	void Draw();
+public:
+	void StartFade();
 private:
 	void InitFade();
 	void UpdateFade();
@@ -36,8 +38,11 @@ private:
 	int m_hFade[26];
 	int m_animFadeFrameCount;
 	int m_animArray;
-//	float size[2][6][26];
 	bool m_isSceneSet;
+
+	// フェイドをスタートする
+	bool m_isFade;
+	bool m_isInitFade;
 
 #if _DEBUG
 	int m_updateTime = 0;

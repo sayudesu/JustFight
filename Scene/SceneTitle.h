@@ -90,5 +90,14 @@ private:
 	// “ïˆÕ“x•¶š‚Ì‘å‚«‚³
 	float m_difficulty;
 
+	// ƒJƒƒ‰’â~—p
+	enum CameraStopData
+	{
+		X,
+		Y,
+		Z,
+		ALL,
+	};
+
 };
 

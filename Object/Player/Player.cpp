@@ -131,10 +131,6 @@ void Player::InputTutorial()
 	// Œü‚«‚ğw’è
 	Direction();
 
-	// “G‚Æ‚Ì‹——£‚ğ‘ª‚é
-	m_targetRange.x = sqrt(pow(m_pos.x - m_targetPos.x, 2.0f) + pow(m_pos.x - m_targetPos.x, 2.0f));
-	m_targetRange.z = sqrt(pow(m_pos.z - m_targetPos.z, 2.0f) + pow(m_pos.z - m_targetPos.z, 2.0f));
-
 	// “®‚¢‚½ê‡UŒ‚‚ğ—LŒø‚É‚·‚é
 	if (m_isMove)
 	{
@@ -150,14 +146,10 @@ void Player::InputTutorial()
 	// UŒ‚‚ª‚Å‚«‚é‚©‚Ç‚¤‚©
 	if (m_isTipsMove[static_cast<int>(Tips::ATTACK)])
 	{
-		// UŒ‚‚Å‚«‚é”ÍˆÍ‚É‚¢‚é‚©‚Ç‚¤‚©
-		if (m_targetRange.x + m_targetRange.z < 500.0f)
+		InputAttack();
+		if (m_isAttack)
 		{
-			InputAttack();
-			if (m_isAttack)
-			{
-				m_isTipsMove[static_cast<int>(Tips::GUARD)] = true;
-			}
+			m_isTipsMove[static_cast<int>(Tips::GUARD)] = true;
 		}
 	}
 
@@ -198,7 +190,6 @@ void Player::Direction()
 
 void Player::InputMove()
 {
-
 	// ˆÚ“®or‰ñ”ğ
 	if (m_isAway)
 	{

@@ -31,12 +31,19 @@
 
 namespace 
 {
+	// 画像の基本情報
 	constexpr float kImageAngle = 0.0f * DX_PI_F / 180.0f;
 	constexpr float kImagePosX = -450.0f;
 	constexpr float kImagePosY = 0.0f;
 	constexpr float kImageSize = 0.95f;
 
+	// 矢のサイズの変更速度
 	constexpr float kImageArrowSizeChangeSpeed = 0.002f;
+
+	// カメラの停止位置
+	constexpr float kCameraStopX = 0.0f;
+	constexpr float kCameraStopY = 32.0f;
+	constexpr float kCameraStopZ = 10.0f;
 }
 
 SceneTitle::SceneTitle():
@@ -58,10 +65,10 @@ void SceneTitle::Init()
 	m_arrowSize[1] = kImageSize;
 
 	// カメラの位置が正しいかどうかを確認するための初期化
-	m_isCameraStop[0] = false;
-	m_isCameraStop[1] = false;
-	m_isCameraStop[2] = false;
-	m_isCameraStop[3] = false;
+	m_isCameraStop[CameraStopData::X] = false;
+	m_isCameraStop[CameraStopData::Y] = false;
+	m_isCameraStop[CameraStopData::Z] = false;
+	m_isCameraStop[CameraStopData::ALL] = false;
 
 	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 
@@ -252,6 +259,7 @@ SceneBase* SceneTitle::Update()
 
 	char deviceName[260]{};
 	char productName[260]{};
+
 #if false
 	// コントローラーの接続を確認する
 	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0) 
@@ -264,7 +272,7 @@ SceneBase* SceneTitle::Update()
 		return this;
 	}
 #endif
-	if (m_isCameraStop[3])
+	if (m_isCameraStop[CameraStopData::ALL])
 	{
 		m_select->Update();
 		m_modelSlidePosY -= 1.0f;
@@ -376,7 +384,7 @@ SceneBase* SceneTitle::Update()
 		m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
 
 		// カメラがx,y,zそれぞれ停止したかをチェックする
-		if (m_isCameraStop[0] && m_isCameraStop[1] && m_isCameraStop[2])
+		if (m_isCameraStop[CameraStopData::X] && m_isCameraStop[CameraStopData::Y] && m_isCameraStop[CameraStopData::Z])
 		{
 			// 画面の中心に移動
 			if (m_bgPos.y < static_cast<float>(Game::kScreenHeight) / 2)
@@ -389,40 +397,40 @@ SceneBase* SceneTitle::Update()
 				// 画面の中心に固定
 				m_bgPos.y = static_cast<float>(Game::kScreenHeight) / 2;
 
-				m_isCameraStop[3] = true;
+				m_isCameraStop[CameraStopData::ALL] = true;
 			}
 		}
 
 		m_cameraSpeed = (m_cameraSpeed * 1.1f);
 
-		if (m_cameraPosX > 0.0f)
+		if (m_cameraPosX > kCameraStopX)
 		{
 			m_cameraPosX -= m_cameraSpeed;
 		}
 		else
 		{
-			m_cameraPosX = 0.0f;
-			m_isCameraStop[0] = true;
+			m_cameraPosX = kCameraStopX;
+			m_isCameraStop[CameraStopData::X] = true;
 		}
 
-		if (m_cameraPosY > 32.0f)
+		if (m_cameraPosY > kCameraStopY)
 		{
 			m_cameraPosY -= m_cameraSpeed;
 		}
 		else
 		{
-			m_cameraPosY = 32.0f;
-			m_isCameraStop[1] = true;
+			m_cameraPosY = kCameraStopY;
+			m_isCameraStop[CameraStopData::Y] = true;
 		}
 	
-		if (m_cameraPosZ > 10.0f)
+		if (m_cameraPosZ > kCameraStopZ)
 		{
 			m_cameraPosZ -= m_cameraSpeed;
 		}
 		else
 		{
-			m_cameraPosZ = 10.0f;
-			m_isCameraStop[2] = true;
+			m_cameraPosZ = kCameraStopZ;
+			m_isCameraStop[CameraStopData::Z] = true;
 		}
 
 	}
@@ -489,23 +497,23 @@ SceneBase* SceneTitle::Update()
 	m_hArrow[1]->Update();
 
 	// 全てのカメラの移動が停止したら
-	if (m_isCameraStop[3])
+	if (m_isCameraStop[CameraStopData::ALL])
 	{
 		// 難易度調整
 		// 弱い(チュートリアル)
-		if (m_select->GetResult() == 0)
+		if (m_select->GetResult() == static_cast<int>(DifficultyData::NOIVE))
 		{		
 			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::NOIVE);
 		}
 		// 普通
-		if (m_select->GetResult() == 1)
+		if (m_select->GetResult() == static_cast<int>(DifficultyData::INTERMEDIATE))
 		{
 			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::INTERMEDIATE);
 		}
 		// 強い
-		if (m_select->GetResult() == 2)
+		if (m_select->GetResult() == static_cast<int>(DifficultyData::EXPERT))
 		{
 			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::EXPERT);
@@ -539,7 +547,7 @@ void SceneTitle::Draw()
 	if (m_select->GetSelect() == 0)
 	{
 		m_hNovice->Draw();
-		if (m_isCameraStop[3])
+		if (m_isCameraStop[CameraStopData::ALL])
 		{
 			m_hModel[0]->Draw();
 		}
@@ -552,7 +560,7 @@ void SceneTitle::Draw()
 	else if (m_select->GetSelect() == 1)
 	{
 		m_hIntermediate->Draw();
-		if (m_isCameraStop[3])
+		if (m_isCameraStop[CameraStopData::ALL])
 		{
 			m_hModel[1]->Draw();
 		}
@@ -565,7 +573,7 @@ void SceneTitle::Draw()
 	else if (m_select->GetSelect() == 2)
 	{
 		m_hExpert->Draw();		
-		if (m_isCameraStop[3])
+		if (m_isCameraStop[CameraStopData::ALL])
 		{
 			m_hModel[2]->Draw();
 		}

@@ -94,6 +94,8 @@ void SceneMain::Init()
 		m_pCharacter[enemy]->GetFightingMeter());
 
 	EffectScreen::GetInstance().BlurIReplayInit();
+
+	
 }
 
 void SceneMain::End()

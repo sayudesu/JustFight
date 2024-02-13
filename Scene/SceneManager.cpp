@@ -20,7 +20,8 @@ namespace
 }
 
 SceneManager::SceneManager():
-	m_pScene()
+	m_pScene(nullptr),
+	m_pTempScene(nullptr)
 {
 	std::string file = "Data/Image/Fade/";
 	std::string extension = ".png";
@@ -66,7 +67,7 @@ SceneManager::SceneManager():
 	//	}
 	//}
 
-	
+	m_isFade = false;
 }
 SceneManager::~SceneManager()
 {
@@ -105,18 +106,33 @@ void SceneManager::Update()
 	// コントローラーの更新処理
 	Pad::Update();
 
+	if (m_isFade)
+	{
+		// ロードを初期化する
+		InitFade();
+		// 更新処理
+		UpdateFade();
+
+		return;
+	}
+	
 	m_pTempScene = m_pScene->Update();
 
-	// 別シーンがコピーされていたら
 	if (m_pTempScene != m_pScene.get())
 	{
+		// フェイドを開始する
+		StartFade();
+
 		// 前のシーンの終了処理
 		m_pScene->End();
+
 		// シーンを変更する
 		m_pScene.reset(m_pTempScene);
+
 		// 初期化する
 		m_pScene->Init();
 	}
+
 
 	//if (m_isSceneSet)
 	//{
@@ -183,17 +199,25 @@ void SceneManager::Draw()
 #endif
 }
 
+void SceneManager::StartFade()
+{
+	m_isFade = true;
+}
+
 void SceneManager::InitFade()
 {
-	for (int i = 0; i < 2; i++)
+	if (!m_isLoading)
 	{
-		for (int j = 0; j < m_x->size(); j++)
+		for (int i = 0; i < 2; i++)
 		{
-			m_x[i][j] = GetRand(-500.0f);
-			m_y[i][j] = GetRand(Game::kScreenHeight);
+			for (int j = 0; j < m_x->size(); j++)
+			{
+				m_x[i][j] = GetRand(-500.0f);
+				m_y[i][j] = GetRand(Game::kScreenHeight);
+			}
 		}
+		m_isLoading = true;
 	}
-	m_isLoading = true;
 }
 
 void SceneManager::UpdateFade()
@@ -234,6 +258,7 @@ void SceneManager::UpdateFade()
 	{
 		m_isLoading = false;
 		m_isSceneSet = true;
+		m_isFade = false;
 	}
 }
 
