@@ -483,7 +483,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// ジャストガード処理
 	// 攻撃が当たっていた場合
-	if ((CheckWeaponAndShieldHIt(character2, character1)))
+	if (CheckWeaponAndShieldHIt(character2, character1))
 	{
 		// ジャストガードフレーム
 		if (character1->GetJustGuardFrame() > 0 &&
@@ -510,7 +510,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	if (character1->GetGuardFrame() == character1->GetGuardFrameMax())
 	{
 		// 攻撃状態だったら
-		//攻撃が盾に当たったかどうか
+		// 攻撃が盾に当たったかどうか
 		if (CheckWeaponAndShieldHIt(character2, character1))
 		{
 			// ノックバック
@@ -539,7 +539,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	{
 		// 攻撃が当たったかどうか
 		if (CheckWeaponAndBodyHit(character1, character2))
-		{
+		{		
 			// ダメージを与える
 			character2->SetDamage(true);
 

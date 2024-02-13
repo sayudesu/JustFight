@@ -327,46 +327,46 @@ void Enemy::BattleType()
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-		if (GetRand(30) == 0 && (!m_isAttackContinueDelay[0]))
+		if (GetRand(30) == 0 /*&& (!m_isAttackContinueDelay[0])*/)
 		{
 			m_isCheckAttack = true;
 			m_isAttackResult = true;
 
-			m_isAttackContinueDelay[0] = true;
+		//	m_isAttackContinueDelay[0] = true;
 		}
 	}
 	// アイドル状態の場合
 	if (m_targetBattleState == BattleState::IDLE)
 	{
-		if (!m_isAttackContinueDelay[1])
-		{
-			m_isCheckAttack = true;
-			m_isAttackResult = true;
+		m_isCheckAttack = true;
+		m_isAttackResult = true;
+		//if (!m_isAttackContinueDelay[1])
+		//{
 
-			m_isAttackContinueDelay[1] = true;
-		}
+		//	m_isAttackContinueDelay[1] = true;
+		//}
 	}
 
-	// 攻撃を1フレーム以内に出さない様に修正
-	// これではいけない...
-	if (m_isAttackContinueDelay[0] || m_isAttackContinueDelay[1])
-	{
-		m_isAttackContinueDelay[0] = true;
-		m_isAttackContinueDelay[1] = true;
-	}
+	//// 攻撃を1フレーム以内に出さない様に修正
+	//// これではいけない...
+	//if (m_isAttackContinueDelay[0] || m_isAttackContinueDelay[1])
+	//{
+	//	m_isAttackContinueDelay[0] = true;
+	//	m_isAttackContinueDelay[1] = true;
+	//}
 
-	for (int i = 0; i < 2; i++)
-	{
-		if (m_isAttackContinueDelay[i])
-		{
-			m_attackContinueDelayFrameCount[i]++;
-			if (m_attackContinueDelayFrameCount[i] == 2)
-			{
-				m_attackContinueDelayFrameCount[i] = 0;
-				m_isAttackContinueDelay[i] = false;
-			}
-		}		
-	}
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	if (m_isAttackContinueDelay[i])
+	//	{
+	//		m_attackContinueDelayFrameCount[i]++;
+	//		if (m_attackContinueDelayFrameCount[i] == 2)
+	//		{
+	//			m_attackContinueDelayFrameCount[i] = 0;
+	//			m_isAttackContinueDelay[i] = false;
+	//		}
+	//	}		
+	//}
 }
 
 void Enemy::BattleTypeT()

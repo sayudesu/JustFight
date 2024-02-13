@@ -323,5 +323,8 @@ public:
 	VECTOR testV3 = VGet(0, 0, 0);
 
 	float stunRota = 0.0f;
+
+	bool m_isHitNow = false;
+	bool m_isHitResult = false;
 };
 

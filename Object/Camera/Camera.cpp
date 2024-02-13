@@ -8,6 +8,10 @@ namespace
 {
 	// 視野角
 	constexpr float kFov = 80.0f * DX_PI_F / 180.0f;
+	// Near
+	constexpr float kNear = 1.0f;
+	// Far
+	constexpr float kFar = 30000.0f;
 
 	// カメラの初期位置
 	constexpr VECTOR kCameraPos{ -50.0f, 500.0f, 350.0f };
@@ -32,7 +36,7 @@ Camera::~Camera()
 void Camera::Setting()
 {
 	// どこから、どこまで見えるか
-	SetCameraNearFar(100.0f, 30000.0f);
+	SetCameraNearFar(kNear, kFar);
 	// カメラの位置、どこを見ているかを設定する
 	SetCameraPositionAndTarget_UpVecY(VGet(m_pos.x, m_pos.y, m_pos.z ), m_targetPos);
 	// FOV

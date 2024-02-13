@@ -139,7 +139,7 @@ void SceneTitle::Init()
 
 		m_hExpert = std::make_shared<GameObject>(
 			"Data/Image/UI/Expert.png",
-			VGet(kImagePosX, 24.0f, 0),
+			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
 			kImageSize,
 			m_hBg.get()
@@ -251,8 +251,8 @@ SceneBase* SceneTitle::Update()
 
 	SoundManager::GetInstance().Play(SoundName::TITLE,true);
 
-	PoseScreen::GetInstance().Update();
-	PoseScreen::GetInstance().PoseSelect();
+	//PoseScreen::GetInstance().Update();
+	//PoseScreen::GetInstance().PoseSelect();
 
 	char deviceName[260]{};
 	char productName[260]{};
@@ -549,7 +549,7 @@ void SceneTitle::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 150.0f,
+			m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
 			kNovice, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
@@ -562,7 +562,7 @@ void SceneTitle::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 65.0f,
+			m_hBg->GetPos().x + m_hNovice->GetPos().x - 42.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
 			kIntermediate, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
@@ -575,23 +575,24 @@ void SceneTitle::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 105.0f,
+			m_hBg->GetPos().x + m_hNovice->GetPos().x - 60.0f,
 			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
 			kExpart, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 
 
 	// オプションボタンの描画
-	m_hOptionBack->Draw();
-	m_hOptionBotton->Draw();
-	FontManager::GetInstance().DrawString(
-		m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 30.0f,
-		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
-		kOption, 0xffffff, FontSize::GENEITERAMIN_SMALL);
+	//m_hOptionBack->Draw();
+	//m_hOptionBotton->Draw();
+
+	//FontManager::GetInstance().DrawString(
+	//	m_hBg->GetPos().x + m_hOptionBack->GetPos().x - 30.0f,
+	//	m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
+	//	kOption, 0xffffff, FontSize::GENEITERAMIN_SMALL);
 
 #if true
 	// ポーズ画面の描画
-	PoseScreen::GetInstance().Draw();
+//	PoseScreen::GetInstance().Draw();
 #endif
 
 #if false

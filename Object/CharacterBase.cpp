@@ -271,10 +271,10 @@ void CharacterBase::Idle()
 		test2 = 0.0f;
 	}
 
-	if (m_targetBattleState == BattleState::IDLE)
-	{
-		m_tempTargetBattleState = BattleState::NONE;
-	}
+	//if (m_targetBattleState == BattleState::IDLE)
+	//{
+	//	m_tempTargetBattleState = BattleState::NONE;
+	//}
 
 	test3 = test2;
 
@@ -326,11 +326,12 @@ void CharacterBase::Attack()
 	// 武器動かす
 	if (!m_isSceneChange)
 	{
+		// イージングを使用し武器を振る速度を徐々に早くする
 		test2 = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, (90 * 3) * DX_PI / 180.0f,0.0f);
-	//	test2 = MoveByFrame(test3, (90 * 3) * DX_PI / 180.0f, m_attackFrame, m_parameter.attackFrameMax);
 
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+
 		// 攻撃時のフレームを乗算
 		m_attackFrame++;
 	}
@@ -349,6 +350,8 @@ void CharacterBase::Attack()
 
 		// 攻撃後の硬直状態
 		m_attackAfterStopFrame++;
+
+		// 攻撃用フレームが攻撃最大フレームになった場合
 		if (m_attackAfterStopFrame == m_parameter.attackAfterStopFrameMax)
 		{
 			// 硬直状態用フレームをリセット
@@ -399,10 +402,12 @@ void CharacterBase::AttackTwo()
 	// 武器動かす
 	if (!m_isSceneChange)
 	{
-		test2 = Easing::InQuad(m_attackFrame, m_parameter.attackFrameMax, -((90 * 5) * DX_PI / 180.0f), test3);
-	//	test2 = MoveByFrame(test3, -((90 * 5) * DX_PI / 180.0f), m_attackFrame, m_parameter.attackFrameMax);
+		// イージングを使用し武器を振る速度を徐々に早くする
+		test2 = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, -((90 * 5) * DX_PI / 180.0f), test3);
+
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+
 		// 攻撃時のフレームを乗算
 		m_attackFrame++;
 	}
@@ -515,7 +520,7 @@ void CharacterBase::StrongAttack()
 			//m_vecWeapon.y = MoveByFrame(m_parameter.weaponRelativePos.y, 500.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
 			m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z, -500.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
 
-			//// 攻撃時のフレームを乗算
+			// 攻撃時のフレームを乗算
 			m_attackFrame++;
 		}
 	}
@@ -605,10 +610,13 @@ void CharacterBase::Guard()
 	// 最大フレーム内に目標地点まで移動する
 	if (m_guardFrame < m_parameter.guardFrameMax )
 	{
+		// イージングを使用し武器を振る速度を徐々に早くする
+		test1 = Easing::InQuad(m_guardFrame, m_parameter.guardFrameMax, (90) * DX_PI_F / 180.0f, 0.0f);
+
 		m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 0.0f, m_guardFrame, m_parameter.guardFrameMax);
 		m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z, -50.0f, m_guardFrame, m_parameter.guardFrameMax);
-		test1 = Easing::InQuad(m_guardFrame, m_parameter.guardFrameMax, (90) * DX_PI_F / 180.0f, 0.0f);
-	//	test1 = MoveByFrame((90) * DX_PI_F / 180.0f, 0 , m_guardFrame, m_parameter.guardFrameMax);
+
+		// フレームカウント
 		m_guardFrame++;
 
 		// ジャストガードのフレーム
@@ -815,10 +823,13 @@ void CharacterBase::HitPoint()
 	// 攻撃を受けたら
 	if (m_isResultDamage)
 	{
+		// 攻撃を受けている場合
+		m_isHitNow = true;
 		// 現在の攻撃と前回の攻撃が違う場合かつ
 		// 自身がガードしていない場合
 		// ジャストガードが成功していない場合
-		if (m_targetBattleState != m_tempTargetBattleState &&
+		if (/*m_targetBattleState != m_tempTargetBattleState &&*/
+			!m_isHitResult &&
 			m_battleState != BattleState::GUARD && 
 			m_battleState != BattleState::JUSTGUARD)
 		{
@@ -846,6 +857,20 @@ void CharacterBase::HitPoint()
 
 		// 攻撃を無効化
 		m_isResultDamage = false;
+	}
+	else
+	{
+		m_isHitNow = false;
+	//	m_tempTargetBattleState = BattleState::NONE;
+	}
+
+	if (m_isHitNow)
+	{
+		m_isHitResult = true;
+	}
+	else
+	{
+		m_isHitResult = false;
 	}
 
 	// スタン状態にする
