@@ -275,7 +275,7 @@ SceneBase* SceneTitle::Update()
 	if (m_isCameraStop[CameraStopData::ALL])
 	{
 		m_select->Update();
-		m_modelSlidePosY -= 1.0f;
+		m_modelSlidePosY -= 5.0f;
 	}
 
 	// ƒ{ƒ^ƒ“
