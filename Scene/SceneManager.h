@@ -19,7 +19,8 @@ public:
 	void StartFade();
 private:
 	void InitFade();
-	void UpdateFade();
+	void UpdateFadeIn();
+	void UpdateFadeOut();
 	void DrawFade();
 private:
 	std::unique_ptr<SceneBase>	m_pScene;
@@ -48,4 +49,9 @@ private:
 	int m_updateTime = 0;
 	int m_drawTime = 0;
 #endif	
+
+	int m_blendRate;
+
+	bool m_fadeIn = false;
+	bool m_fadeOut = false;
 };

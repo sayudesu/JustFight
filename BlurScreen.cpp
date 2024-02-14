@@ -28,7 +28,7 @@ void EffectScreen::Load()
 	m_current = 0;
 	m_alpha = 150;
 
-	for (int i = 0; i < static_cast<int>(BlurEffectNo::MAX); ++i)
+	for (int i = 0; i < static_cast<int>(ScreenEffectNo::MAX); ++i)
 	{
 		m_blurScreen[i] = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
 	}
@@ -64,7 +64,7 @@ void EffectScreen::ScreenBack()
 void EffectScreen::BlurIReplayInit()
 {
 #if true	
-	for (int i = 0; i < static_cast<int>(BlurEffectNo::MAX); ++i)
+	for (int i = 0; i < static_cast<int>(ScreenEffectNo::MAX); ++i)
 	{
 		if (m_blurScreen[i] != -1)
 		{
@@ -80,7 +80,7 @@ void EffectScreen::BlurIReplayInit()
 
 void EffectScreen::BlurRelease()
 {
-	for (int i = 0; i < static_cast<int>(BlurEffectNo::MAX); ++i)
+	for (int i = 0; i < static_cast<int>(ScreenEffectNo::MAX); ++i)
 	{
 		if (m_blurScreen[i] != -1)
 		{
@@ -92,8 +92,8 @@ void EffectScreen::BlurRelease()
 void EffectScreen::BlurPreRenderBlurScreen()
 {
 #if true	
+	// 画面の作成
 	SetDrawScreen(m_blurScreen[m_current]);
-	ClearDrawScreen();
 #endif
 }
 
@@ -105,19 +105,39 @@ void EffectScreen::BlurPostRenderBlurScreen()
 
 	//int blendMode, param;
 	//GetDrawBlendMode(&blendMode, &param);
+
+	BlurPreRenderBlurScreen();
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);
 
 	m_notBlendDraw++;
-	if (m_notBlendDraw > static_cast<int>(BlurEffectNo::MAX))
+	if (m_notBlendDraw > static_cast<int>(ScreenEffectNo::MAX))
 	{
+		// 1フレーム前の画面
 		DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[1 - m_current], false);
 	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 //	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
 	SetDrawScreen(DX_SCREEN_BACK);
-	DrawGraph(0, 0, m_blurScreen[m_current], false);
+
+	if (static_cast<int>(m_quakeX) != 0)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
+	
+		DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);// 加算合成する
+		GraphFilter(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
+	}
+
+
+	DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);
 	m_current = 1 - m_current;
+
+
+	if (static_cast<int>(m_quakeX) != 0)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);                                              // ブレンドモードを初期状態に戻す
+	}
 #endif
 }
 
@@ -132,7 +152,7 @@ void EffectScreen::QuakeReplayInit()
 void EffectScreen::QuakeUpdate()
 {
 #if true	
-	if (--m_quakeFrame > 0) 
+	if (m_quakeFrame > 0) 
 	{
 		m_quakeX = -m_quakeX;
 		m_quakeX *= 0.95f;
@@ -142,6 +162,9 @@ void EffectScreen::QuakeUpdate()
 	{
 		m_quakeX = 0.0f;
 	}
+
+	m_blendAddRate = 128 / 30;
+	m_blendAddRate *= m_quakeFrame;
 #endif
 }
 
@@ -155,6 +178,7 @@ void EffectScreen::QuakeRelease()
 void EffectScreen::QuakePreRenderBlurScreen()
 {
 #if true
+	// 画面の保存を行う
 	SetDrawScreen(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)]);
 #endif
 }

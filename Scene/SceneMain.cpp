@@ -302,9 +302,9 @@ SceneBase* SceneMain::UpdateGameResult()
 
 void SceneMain::Draw()
 {
-//	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
+	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
 	// 
-	EffectScreen::GetInstance().QuakePreRenderBlurScreen();
+//	EffectScreen::GetInstance().QuakePreRenderBlurScreen();
 	EffectScreen::GetInstance().ClearScreen();
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
@@ -316,19 +316,21 @@ void SceneMain::Draw()
 	// マップの描画
 	m_pField->Draw();
 
-	// キャラクターの描画
-	for (auto& character : m_pCharacter)
-	{
-		character->Draw();
-	}
 	
 	// 血しぶきの描画(仮)
 	for (auto& blood : m_pBlood)
 	{
 		blood->Draw();
 	}
+	// キャラクターの描画
+	for (auto& character : m_pCharacter)
+	{
+		character->Draw();
+	}
 
-//	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
+
+
+	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
 	
 #if false	
 	DEBUG::Field();
@@ -347,9 +349,9 @@ void SceneMain::Draw()
 	DrawString(0, 0, "SceneMain", 0xffffff);
 #endif
 
-	//// 画面エフェクトの更新処理
-	EffectScreen::GetInstance().ScreenBack();
-	EffectScreen::GetInstance().QuakePostRenderBlurScreen();
+	////// 画面エフェクトの更新処理
+	//EffectScreen::GetInstance().ScreenBack();
+	//EffectScreen::GetInstance().QuakePostRenderBlurScreen();
 
 	// UIの描画
 	m_pUi->Draw();
@@ -536,6 +538,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	const bool a = character1->GetBattleState() == BattleState::ATTACK;
 	const bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
 	const bool c = character1->GetBattleState() == BattleState::STRONGATTACK;
+
 	// 攻撃を与える処理
 	if (a || b || c)
 	{

@@ -1,5 +1,7 @@
 #include <DxLib.h>
 #include <cassert>
+#include <string>
+#include <algorithm>
 
 #include "SceneManager.h"
 #include "SceneDebug.h"
@@ -11,17 +13,19 @@
 #include "../Util/Pad.h"
 #include "../Util/Game.h"
 
-#include <string>
 
 namespace
 {
 	constexpr int kLoadObjectNum = 12;
 	constexpr int kLoadObjectSpeed = 16;
+
+	constexpr int kFadeSpeedRate = 25;
 }
 
 SceneManager::SceneManager():
 	m_pScene(nullptr),
-	m_pTempScene(nullptr)
+	m_pTempScene(nullptr),
+	m_blendRate(0)
 {
 	std::string file = "Data/Image/Fade/";
 	std::string extension = ".png";
@@ -106,23 +110,21 @@ void SceneManager::Update()
 	// コントローラーの更新処理
 	Pad::Update();
 
+	static bool isInit = false;
+
 	if (m_isFade)
 	{
 		// ロードを初期化する
 		InitFade();
 		// 更新処理
-		UpdateFade();
+		UpdateFadeOut();
+
+		isInit = true;
 
 		return;
 	}
-	
-	m_pTempScene = m_pScene->Update();
-
-	if (m_pTempScene != m_pScene.get())
+	else if (isInit)
 	{
-		// フェイドを開始する
-		StartFade();
-
 		// 前のシーンの終了処理
 		m_pScene->End();
 
@@ -131,31 +133,20 @@ void SceneManager::Update()
 
 		// 初期化する
 		m_pScene->Init();
+
+		isInit = false;
 	}
 
+	UpdateFadeIn();
 
-	//if (m_isSceneSet)
-	//{
-	//	//// ロードを初期化する
-	//	//InitFade();
-	//	// 前のシーンの終了処理
-	//	m_pScene->End();
-	//	// シーンを変更する
-	//	m_pScene.reset(m_pTempScene);
+	m_pTempScene = m_pScene->Update();
 
-	//	// 初期化する
-	//	m_pScene->Init();
+	if (m_pTempScene != m_pScene.get())
+	{
+		// フェイドを開始する
+		StartFade();
+	}
 
-	//	m_isSceneSet = false;
-	//}
-
-	//// 更新処理を有効にする
-	//if (m_isLoading)
-	//{
-	//	// 更新処理
-	//	UpdateFade();
-	//	return;
-	//}
 
 #if _DEBUG
 	m_updateTime = GetNowHiPerformanceCount() - start;
@@ -206,64 +197,116 @@ void SceneManager::StartFade()
 
 void SceneManager::InitFade()
 {
+	//if (!m_isLoading)
+	//{
+	//	for (int i = 0; i < 2; i++)
+	//	{
+	//		for (int j = 0; j < m_x->size(); j++)
+	//		{
+	//			m_x[i][j] = GetRand(-500.0f);
+	//			m_y[i][j] = GetRand(Game::kScreenHeight);
+	//		}
+	//	}
+	//	m_isLoading = true;
+	//}
+
 	if (!m_isLoading)
 	{
-		for (int i = 0; i < 2; i++)
+		m_fadeOut = true;
+		if (m_fadeOut)
 		{
-			for (int j = 0; j < m_x->size(); j++)
-			{
-				m_x[i][j] = GetRand(-500.0f);
-				m_y[i][j] = GetRand(Game::kScreenHeight);
-			}
+			m_isLoading = true;
 		}
-		m_isLoading = true;
 	}
 }
 
-void SceneManager::UpdateFade()
+void SceneManager::UpdateFadeIn()
 {
-	int count = 0;
-	for (int i = 0; i < 2; i++)
+	//int count = 0;
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	for (int j = 0; j < kLoadObjectNum; j++)
+	//	{
+	//		if (m_rota[j] > 70 * DX_PI_F / 180.0f)
+	//		{
+	//			m_isRota[j] = true;
+	//		}
+	//		if (m_rota[j] < -70 * DX_PI_F / 180.0f)
+	//		{
+	//			m_isRota[j] = false;
+	//		}
+
+	//		if (m_isRota[j])
+	//		{
+	//			m_rota[j] -= 0.05f;
+	//		}
+	//		else
+	//		{
+	//			m_rota[j] += 0.05f;
+	//		}
+
+	//		m_x[i][j] += kLoadObjectSpeed;
+
+	//		if (m_x[i][j] > Game::kScreenWidth)
+	//		{
+	//			count++;
+	//		}
+	//	}
+	//}
+
+	//if (count >= kLoadObjectNum)
+	//{
+	//	m_isLoading = false;
+	////	m_isSceneSet = true;
+	//	m_isFade = false;
+	//}
+
+
+	// フェイドインの更新処理
+	if (m_fadeIn)
 	{
-		for (int j = 0; j < kLoadObjectNum; j++)
+		m_blendRate = (std::max)(m_blendRate - kFadeSpeedRate, 0);
+
+		if(m_blendRate <= 0)
 		{
-			if (m_rota[j] > 70 * DX_PI_F / 180.0f)
-			{
-				m_isRota[j] = true;
-			}
-			if (m_rota[j] < -70 * DX_PI_F / 180.0f)
-			{
-				m_isRota[j] = false;
-			}
+			m_blendRate = 0;
 
-			if (m_isRota[j])
-			{
-				m_rota[j] -= 0.05f;
-			}
-			else
-			{
-				m_rota[j] += 0.05f;
-			}
+			m_fadeIn = false;
 
-			m_x[i][j] += kLoadObjectSpeed;
+			
 
-			if (m_x[i][j] > Game::kScreenWidth)
-			{
-				count++;
-			}
+			m_isLoading = false;
 		}
 	}
 
-	if (count >= kLoadObjectNum)
+
+
+
+}
+
+void SceneManager::UpdateFadeOut()
+{
+
+	// フェイドアウト処理
+	if (m_fadeOut)
 	{
-		m_isLoading = false;
-		m_isSceneSet = true;
-		m_isFade = false;
+		m_blendRate = (std::min)(m_blendRate + kFadeSpeedRate, 255);
+
+		if (m_blendRate >= 255)
+		{
+			//m_isFade = false;
+			//m_isLoading = false;
+
+			m_fadeOut = false;
+			m_fadeIn = true;
+			m_isFade = false;
+		}
 	}
 }
 
 void SceneManager::DrawFade()
 {
+#if false
 	int x[26], y[26];
 
 	////float resultPosX[2][kLoadObjectNum][26]{};
@@ -321,5 +364,10 @@ void SceneManager::DrawFade()
 			DrawRotaGraph(m_x[i][j], m_y[i][j], 1, m_rota[j], m_handle[i], true, m_isReverce[i]);
 		}
 	}
+#endif
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_blendRate);
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 }
 

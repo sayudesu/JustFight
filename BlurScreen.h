@@ -66,20 +66,23 @@ private:
 	float m_quakeX;
 	int m_quakeFrame;
 
-	enum class BlurEffectNo
+	enum class ScreenEffectNo
 	{
 		ONE,
 		TWO,
 
-		MAX,
+		MAX
 	};
 
 	// UŒ‚‚ğ‚³‚ê‚½ê‡‚Ì‰æ–Êˆ—
-	int m_blurScreen[static_cast<int>(BlurEffectNo::MAX)];
+	int m_blurScreen[static_cast<int>(ScreenEffectNo::MAX)];
 
 	// ƒuƒ‰[ê—p
 	int m_current;
 	int m_alpha;
 	int m_notBlendDraw;
+
+
+	int m_blendAddRate = 0;
 };
 
