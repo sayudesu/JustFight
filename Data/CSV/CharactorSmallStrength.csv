@@ -20,3 +20,4 @@ No,Name,ValueNum,Parameter
 19,knockBackPos,3,0,0,-20
 20,weaponBackSpeed,1,30
 21,shieldBackSpeed,1,30
+22,guradRate,1,0

@@ -16,11 +16,18 @@ public:
 	void InputTutorial()override;
 
 private:
+
+	// 場外に落ちない用にする
+	void FieldLimit();
+
 	// ターゲットに近づいた場合左右移動をする
 	void MoveLeftAndRight(MATRIX mtxRot);
+
 	// 戦闘態勢を決める
 	void BattleType();
+	void BattleTypeGurad();
 	void BattleTypeT();
+
 	// キャラクターの向き
 	void Direction()override;
 private:
@@ -32,14 +39,11 @@ private:
 	// 通常攻撃
 	bool m_isCheckAttack;
 	bool m_isAttackResult;
-	// 1フレームだけ連続攻撃できない様にする
-	int m_attackContinueDelayFrameCount[2];
-	int m_isAttackContinueDelay[2];
 
 	// 強攻撃
 	bool m_isCheckStrongAttack;
 	bool m_isStrongAttackResult;
-
+	
 	// 左右移動用
 	bool m_isMoveLeft;
 	bool m_isMoveRight;

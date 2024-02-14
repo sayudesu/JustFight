@@ -38,4 +38,6 @@ const struct CharacterParameter
 
 	float weaponBackSpeed; // 剣が元の位置に戻る速度
 	float shieldBackSpeed; // 盾が元の位置に戻る速度
+
+	int justGuardRate; // ジャストガードしてくる割合
 }; 

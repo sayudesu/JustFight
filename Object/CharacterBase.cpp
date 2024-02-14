@@ -138,6 +138,20 @@ void CharacterBase::End()
 
 void CharacterBase::Update()
 {
+
+#if _DEBUG
+
+	if (m_myId == CharacterName::PLAYER)
+	{
+		printfDx("P\n");
+	}
+	if (m_myId == CharacterName::ENEMY)
+	{
+		printfDx("E\n");
+	}
+
+#endif
+
 	(this->*m_pFunc)();
 }
 
@@ -211,35 +225,9 @@ void CharacterBase::Idle()
 
 	// 武器を元の位置に戻す
 	WeaponDefaultPos();
-
 	// 盾を元の位置に戻す
-	{
-		bool isEndX = false;
-		bool isEndY = false;
-		if (m_vecShield.x < m_parameter.shieldRelativePos.x)
-		{
-			m_vecShield.x += 30.0f;
-		}
-		else
-		{
-			m_vecShield.x = m_parameter.shieldRelativePos.x;
-			isEndX = true;
-		}
+	ShieldDefaultPos();
 
-		if (m_vecShield.y < m_parameter.shieldRelativePos.y)
-		{
-			m_vecShield.y -= 30.0f;
-		}
-		else
-		{
-			m_vecShield.y = m_parameter.shieldRelativePos.y;
-			isEndY = true;
-		}
-		if (isEndX && isEndY)
-		{
-			m_isGuard = false;
-		}
-	}
 
 	if (m_hp <= 0)
 	{
@@ -286,7 +274,7 @@ void CharacterBase::Idle()
 
 	test1 = (90) * DX_PI_F / 180.0f;
 
-	m_vecShield.z = 10.0f;
+//	m_vecShield.z = 10.0f;
 
 #if _DEBUG
 	Dname = "待機";
@@ -608,7 +596,7 @@ void CharacterBase::Guard()
 
 
 	// 最大フレーム内に目標地点まで移動する
-	if (m_guardFrame < m_parameter.guardFrameMax )
+	if (m_guardFrame < m_parameter.guardFrameMax)
 	{
 		// イージングを使用し武器を振る速度を徐々に早くする
 		test1 = Easing::InQuad(m_guardFrame, m_parameter.guardFrameMax, (90) * DX_PI_F / 180.0f, 0.0f);
@@ -692,7 +680,6 @@ void CharacterBase::JustGuard()
 		SoundManager::GetInstance().Play(SoundName::JUSTGUARD);
 	}
 
-
 	m_isJustGuardCounter = true;
 
 	// 最大フレーム内に目標地点まで移動する
@@ -702,9 +689,18 @@ void CharacterBase::JustGuard()
 		{
 			test1 = MoveByFrame(0.0f, (static_cast<float>(90) / 2.0f) * DX_PI_F / 180.0f, m_justGuardCounterFrame, 10);
 		}
-		if (m_justGuardCounterFrame < 15)m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 100.0f, m_justGuardCounterFrame, 15);
-		if (m_justGuardCounterFrame < 15)m_vecShield.y = MoveByFrame(m_parameter.shieldRelativePos.y, 150.0f, m_justGuardCounterFrame, 15);
-		if (m_justGuardCounterFrame < 15)m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z,  -50.0f, m_justGuardCounterFrame, 15);
+		if (m_justGuardCounterFrame < 15)
+		{
+			m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 100.0f, m_justGuardCounterFrame, 15);
+		}
+		if (m_justGuardCounterFrame < 15)
+		{
+			m_vecShield.y = MoveByFrame(m_parameter.shieldRelativePos.y, 150.0f, m_justGuardCounterFrame, 15);
+		}
+		if (m_justGuardCounterFrame < 15)
+		{
+			m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z, -50.0f, m_justGuardCounterFrame, 15);
+		}
 		m_justGuardCounterFrame++;
 	}
 
@@ -943,6 +939,38 @@ void CharacterBase::WeaponDefaultPos()
 	}
 }
 
+void CharacterBase::ShieldDefaultPos()
+{
+	// 盾を元の位置に戻す
+	{
+		bool isEndX = false;
+		bool isEndY = false;
+		if (m_vecShield.x < m_parameter.shieldRelativePos.x)
+		{
+			m_vecShield.x += 30.0f;
+		}
+		else
+		{
+			m_vecShield.x = m_parameter.shieldRelativePos.x;
+			isEndX = true;
+		}
+
+		if (m_vecShield.y < m_parameter.shieldRelativePos.y)
+		{
+			m_vecShield.y -= 30.0f;
+		}
+		else
+		{
+			m_vecShield.y = m_parameter.shieldRelativePos.y;
+			isEndY = true;
+		}
+		if (isEndX && isEndY)
+		{
+			m_isGuard = false;
+		}
+	}
+}
+
 void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
 	// 重力後で処理の位置を変えます
@@ -1068,6 +1096,8 @@ void CharacterBase::InputParamType(int type)
 
 	m_parameter.weaponBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_BACK_SPEED, type).element[0];
 	m_parameter.shieldBackSpeed = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_BACK_SPEED, type).element[0];
+
+	m_parameter.justGuardRate = CharactorDataManager::GetInstance().GetParamData(ParamData::JUSTGUARDRATE, type).element[0];
 }
 
 void CharacterBase::SetAngle(float angle)

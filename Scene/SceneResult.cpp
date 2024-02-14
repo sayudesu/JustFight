@@ -93,6 +93,7 @@ SceneBase* SceneResult::Update()
 		SoundManager::GetInstance().Stop(SoundName::WIN);
 		SoundManager::GetInstance().Stop(SoundName::LOSE);
 		SoundManager::GetInstance().Play(SoundName::SELECT);
+
 		return new SceneTitle();
 	}
 	

@@ -46,6 +46,8 @@ namespace CSVCharactorData
 
 		{"20","weaponBackSpeed","1","30"},
 		{"21","shieldBackSpeed","1","30"},		
+
+		{"22","guradRate","1","0"},
 	};
 
 	// 書き込むデータ
@@ -83,6 +85,8 @@ namespace CSVCharactorData
 
 		{"20","weaponBackSpeed","1","30"},
 		{"21","shieldBackSpeed","1","30"},
+
+		{"22","guradRate","1","30"},
 	};
 
 	// 書き込むデータ
@@ -120,5 +124,7 @@ namespace CSVCharactorData
 
 		{"20","weaponBackSpeed","1","30"},
 		{"21","shieldBackSpeed","1","30"},
+
+		{"22","guradRate","1","5"},
 	};
 }

@@ -44,11 +44,6 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isAttack = false;
 	m_isGuard = false;
 
-	m_attackContinueDelayFrameCount[0] = 0;
-	m_attackContinueDelayFrameCount[1] = 0;
-	m_isAttackContinueDelay[0] = false;
-	m_isAttackContinueDelay[1] = false;
-
 	// 自身がエネミーであると決める
 	m_myId = CharacterName::ENEMY;	
 
@@ -82,6 +77,9 @@ void Enemy::Input()
 
 	// 向きを指定
 	Direction();
+
+	// 行動範囲を制限する
+	FieldLimit();
 
 #if true	
 	if (!IsStun())
@@ -129,13 +127,25 @@ void Enemy::Input()
 				m_isCheckStrongAttack = false;
 			}
 
+			// ガードをして攻撃をしていない場合
 			if (m_isResultGuard && !m_isAttack)
 			{
 				m_isGuard = true;
 				m_guardFrameCount++;
 				m_pFunc = &Enemy::Guard;		
 			}
+
+			// 指定のフレーム数はガードをし続ける
 			if (m_guardFrameCount == kGuardFrameCountMax)
+			{
+				m_guardFrameCount = 0;
+				m_isCheckGuard = false;
+				m_isGuard = false;
+				m_isResultGuard = false;
+			}
+
+			// ジャストガードに成功したら通常ガードを行わない
+			if (IsJustGuard())
 			{
 				m_guardFrameCount = 0;
 				m_isCheckGuard = false;
@@ -145,15 +155,44 @@ void Enemy::Input()
 		}
 		else
 		{
-			TargetMove();
-
-			m_isGuard = false;
-			m_isCheckGuard = false;
-			m_isResultGuard = false;
-
 			m_isAttack = false;
 			m_isCheckAttack = false;
 			m_isAttackResult = false;
+
+			TargetMove();
+
+			// ガードをするかどうかの選択を行う
+			BattleTypeGurad();
+
+			// ガードをして攻撃をしていない場合
+			if (m_isResultGuard && !m_isAttack)
+			{
+				m_isGuard = true;
+				m_guardFrameCount++;
+				m_pFunc = &Enemy::Guard;
+			}
+			else
+			{
+				m_guardFrameCount = 0;
+			}
+
+			// 指定のフレーム数はガードをし続ける
+			if (m_guardFrameCount == kGuardFrameCountMax)
+			{
+				m_guardFrameCount = 0;
+				m_isCheckGuard = false;
+				m_isGuard = false;
+				m_isResultGuard = false;
+			}
+
+			// ジャストガードに成功したら通常ガードを行わない
+			if (IsJustGuard())
+			{
+				m_guardFrameCount = 0;
+				m_isCheckGuard = false;
+				m_isGuard = false;
+				m_isResultGuard = false;
+			}
 		}
 	}
 	else
@@ -212,12 +251,14 @@ void Enemy::InputTutorial()
 				m_isCheckStrongAttack = false;
 			}
 
+			// ガードをして攻撃をしていない場合
 			if (m_isResultGuard && !m_isAttack)
 			{
 				m_isGuard = true;
 				m_guardFrameCount++;
 				m_pFunc = &Enemy::Guard;
 			}
+			// 指定のフレーム数はガードをし続ける
 			if (m_guardFrameCount == kGuardFrameCountMax)
 			{
 				m_guardFrameCount = 0;
@@ -271,6 +312,27 @@ void Enemy::Direction()
 	SetRotMtx(m_enemyRotMtx);
 }
 
+// 行動範囲を制限する
+void Enemy::FieldLimit()
+{
+	if (m_pos.x > 1000.0f)
+	{
+		m_pos.x = 1000.0f;
+	}
+	if (m_pos.x < -1000.0f)
+	{
+		m_pos.x = -1000.0f;
+	}
+	if (m_pos.z > 1000.0f)
+	{
+		m_pos.z = 1000.0f;
+	}
+	if (m_pos.z < -1000.0f)
+	{
+		m_pos.z = -1000.0f;
+	}
+}
+
 void Enemy::MoveLeftAndRight(MATRIX mtxRot)
 {
 	if (GetRand(100) == 0)
@@ -308,7 +370,7 @@ void Enemy::BattleType()
 	// ターゲットが攻撃している場合
 	if (m_targetBattleState == BattleState::ATTACK)
 	{
-		if (GetRand(5) == 0)
+		if (GetRand(m_parameter.justGuardRate) == 0)
 		{
 			m_isCheckGuard = true;
 			m_isResultGuard = true;	
@@ -327,12 +389,10 @@ void Enemy::BattleType()
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
-		if (GetRand(30) == 0 /*&& (!m_isAttackContinueDelay[0])*/)
+		if (GetRand(30) == 0)
 		{
 			m_isCheckAttack = true;
 			m_isAttackResult = true;
-
-		//	m_isAttackContinueDelay[0] = true;
 		}
 	}
 	// アイドル状態の場合
@@ -340,33 +400,17 @@ void Enemy::BattleType()
 	{
 		m_isCheckAttack = true;
 		m_isAttackResult = true;
-		//if (!m_isAttackContinueDelay[1])
-		//{
-
-		//	m_isAttackContinueDelay[1] = true;
-		//}
 	}
 
-	//// 攻撃を1フレーム以内に出さない様に修正
-	//// これではいけない...
-	//if (m_isAttackContinueDelay[0] || m_isAttackContinueDelay[1])
-	//{
-	//	m_isAttackContinueDelay[0] = true;
-	//	m_isAttackContinueDelay[1] = true;
-	//}
+}
 
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	if (m_isAttackContinueDelay[i])
-	//	{
-	//		m_attackContinueDelayFrameCount[i]++;
-	//		if (m_attackContinueDelayFrameCount[i] == 2)
-	//		{
-	//			m_attackContinueDelayFrameCount[i] = 0;
-	//			m_isAttackContinueDelay[i] = false;
-	//		}
-	//	}		
-	//}
+void Enemy::BattleTypeGurad()
+{
+	if (GetRand(100) == 0)
+	{
+		m_isCheckGuard = true;
+		m_isResultGuard = true;
+	}
 }
 
 void Enemy::BattleTypeT()
@@ -378,8 +422,6 @@ void Enemy::BattleTypeT()
 		{
 			m_isCheckAttack = true;
 			m_isAttackResult = true;
-
-			m_isAttackContinueDelay[0] = true;
 
 			m_targetGuard = true;
 		}

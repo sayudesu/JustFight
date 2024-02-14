@@ -292,15 +292,15 @@ void SceneManager::UpdateFadeOut()
 	{
 		m_blendRate = (std::min)(m_blendRate + kFadeSpeedRate, 255);
 
-		if (m_blendRate >= 255)
-		{
-			//m_isFade = false;
-			//m_isLoading = false;
+	}
+	if (m_blendRate >= 255)
+	{
+		//m_isFade = false;
+		//m_isLoading = false;
 
-			m_fadeOut = false;
-			m_fadeIn = true;
-			m_isFade = false;
-		}
+		m_fadeOut = false;
+		m_fadeIn = true;
+		m_isFade = false;
 	}
 }
 

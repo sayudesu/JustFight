@@ -66,6 +66,7 @@ private:
 
 	// 装備を元の位置に戻す処理
 	virtual void WeaponDefaultPos();
+	virtual void ShieldDefaultPos();
 
 protected:
 	// パラメーターの調整
