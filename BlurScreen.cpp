@@ -121,6 +121,7 @@ void EffectScreen::BlurPostRenderBlurScreen()
 
 	SetDrawScreen(DX_SCREEN_BACK);
 
+	// 画面揺れ効果があるかどうか
 	if (static_cast<int>(m_quakeX) != 0)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
@@ -130,13 +131,15 @@ void EffectScreen::BlurPostRenderBlurScreen()
 	}
 
 
+	// ブラー効果を得た画像を描画する
 	DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);
+	// ブラー効果用に使用していなかった配列の番号を計算する
 	m_current = 1 - m_current;
 
-
+	// 画面揺れ効果があるかどうか
 	if (static_cast<int>(m_quakeX) != 0)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);                                              // ブレンドモードを初期状態に戻す
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);// ブレンドモードを初期状態に戻す
 	}
 #endif
 }
