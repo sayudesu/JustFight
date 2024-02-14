@@ -21,11 +21,11 @@
 
 namespace
 {
-	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 0.5f));
-	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
+	//const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2, 0.5f));
+	//const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
 
-	const VECTOR kWinnerRota = VGet(0, 90 * DX_PI_F / 180.0f, 0);
-	const VECTOR kLoserRota = VGet(90 * DX_PI_F / 180.0f, 180 * DX_PI_F / 180.0f, 0);
+	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
+	const VECTOR kLoserRota = VGet(90 * DX_PI_F / 180.0f, 0 * DX_PI_F / 180.0f, 0);
 }
 
 SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
@@ -60,6 +60,9 @@ SceneResult::~SceneResult()
 
 void SceneResult::Init()
 {
+	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2, 0.5f));
+	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
+
 	VECTOR playerScreenPos{};
 	VECTOR playerRota{};
 	
