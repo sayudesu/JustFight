@@ -19,7 +19,7 @@ namespace
 	constexpr int kLoadObjectNum = 12;
 	constexpr int kLoadObjectSpeed = 16;
 
-	constexpr int kFadeSpeedRate = 25;
+	constexpr int kFadeSpeedRate = 15;
 }
 
 SceneManager::SceneManager():

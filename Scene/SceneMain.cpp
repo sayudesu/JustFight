@@ -267,14 +267,14 @@ SceneBase* SceneMain::UpdateGameResult()
 	{
 		// BGMの停止
 		SoundManager::GetInstance().Stop(SoundName::PLAY);
-		return new SceneResult(m_resultData);
+		return new SceneResult(m_resultData, m_difficultyData);
 	}
 	// 指定したフレームまでカウントが進むと
 	if (m_frameCount >= 60 * 3)
 	{
 		// BGMの停止
 		SoundManager::GetInstance().Stop(SoundName::PLAY);
-		return new SceneResult(m_resultData);
+		return new SceneResult(m_resultData, m_difficultyData);
 	}
 
 	m_checkmatePosY = cos(static_cast<int>(m_frameCount) * 0.07f) * 100.0f + Game::kScreenHeight / 2 - 160.0f;

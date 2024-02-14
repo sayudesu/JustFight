@@ -1,15 +1,20 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+#include <string>
 
 #include "SceneBase.h"
 
 #include "../Util/GameResultData.h"
+#include "../Util/DifficultyData.h"
 
+class GameObject;
+class Camera;
 class SceneResult final : public SceneBase
 {
 public:
-	SceneResult(GameResultData data);
+	SceneResult(GameResultData resultData, DifficultyData data);
 	virtual ~SceneResult();
 
 	virtual void Init() override;
@@ -31,5 +36,12 @@ private:
 	std::vector<int> m_posY[2];
 
 	std::vector<int> m_vec[2];
+
+	std::unique_ptr<GameObject> m_pPlayer;
+	std::unique_ptr<GameObject> m_pEnemy;
+
+	std::unique_ptr<Camera> m_pCamera;
+
+	std::string m_enemyPath;
 };
 

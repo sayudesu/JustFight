@@ -81,9 +81,9 @@ void FieldDrawer::Draw()
 	VECTOR Zm = ConvWorldPosToScreenPos(VGet(0, 300, -1000));
 
 	DrawString(Xp.x, Xp.y, "X+", 0xffff00);
-	DrawString(Xm.x, Xm.y, "X-", 0xffffff);
-	DrawString(Zp.x, Zp.y, "Z+", 0xffffff);
-	DrawString(Zm.x, Zm.y, "Z-", 0xffffff);
+	DrawString(Xm.x, Xm.y, "X-", 0xff0000);
+	DrawString(Zp.x, Zp.y, "Z+", 0x00ff00);
+	DrawString(Zm.x, Zm.y, "Z-", 0x0000ff);
 #endif
 }
 

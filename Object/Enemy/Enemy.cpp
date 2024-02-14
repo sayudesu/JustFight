@@ -315,21 +315,21 @@ void Enemy::Direction()
 // s“®”ÍˆÍ‚ð§ŒÀ‚·‚é
 void Enemy::FieldLimit()
 {
-	if (m_pos.x > 1000.0f)
+	if (m_pos.x > 1000.0f + 100.0f)
 	{
-		m_pos.x = 1000.0f;
+		m_pos.x = 1000.0f + 100.0f;
 	}
-	if (m_pos.x < -1000.0f)
+	if (m_pos.x < -1000.0f - 100.0f)
 	{
-		m_pos.x = -1000.0f;
+		m_pos.x = -1000.0f - 100.0f;
 	}
-	if (m_pos.z > 1000.0f)
+	if (m_pos.z > 1000.0f + 100.0f)
 	{
-		m_pos.z = 1000.0f;
+		m_pos.z = 1000.0f + 100.0f;
 	}
-	if (m_pos.z < -1000.0f)
+	if (m_pos.z < -1000.0f - 100.0f)
 	{
-		m_pos.z = -1000.0f;
+		m_pos.z = -1000.0f - 100.0f;
 	}
 }
 
