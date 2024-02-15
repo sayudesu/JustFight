@@ -152,6 +152,7 @@
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="PoseScreen.cpp" />
     <ClCompile Include="CSVData\SubtitleManager.cpp" />
+    <ClCompile Include="Scene\SceneLevelSelect.cpp" />
     <ClCompile Include="TutorialDrawer.cpp" />
     <ClCompile Include="Util\GameObject.cpp" />
     <ClCompile Include="Util\SlideSelect.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="CSVData\FontManager.h" />
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
+    <ClInclude Include="Scene\SceneLevelSelect.h" />
     <ClInclude Include="Util\SubtitleData.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="PoseScreen.h" />

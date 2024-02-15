@@ -13,7 +13,7 @@ namespace
 }
 
 SlideSelect::SlideSelect():
-	m_selectNo(0),
+	m_selectNo(1),
 	m_selectNoResult(-1),
 	m_selectMaxNum(0),
 	m_isSelect(false),

@@ -54,4 +54,6 @@ private:
 
 	bool m_fadeIn = false;
 	bool m_fadeOut = false;
+
+	bool m_isInit = false;
 };

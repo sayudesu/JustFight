@@ -3,6 +3,7 @@
 #include "SceneResult.h"
 #include "SceneDebug.h"
 #include "SceneTitle.h"
+#include "SceneLevelSelect.h"
 
 #include "../Util/Game.h"
 #include "../Util/Pad.h"
@@ -177,7 +178,7 @@ SceneBase* SceneResult::Update()
 		SoundManager::GetInstance().Stop(SoundName::LOSE);
 		SoundManager::GetInstance().Play(SoundName::SELECT);
 		timer = 0;
-		return new SceneTitle();
+		return new SceneLevelSelect();
 	}
 	
 	return this;

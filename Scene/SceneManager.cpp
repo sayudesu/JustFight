@@ -7,6 +7,7 @@
 #include "SceneDebug.h"
 #include "SceneBase.h"
 #include "SceneTitle.h"
+#include "SceneLevelSelect.h"
 #include "SceneMain.h"
 #include "SceneResult.h"
 
@@ -58,19 +59,6 @@ SceneManager::SceneManager():
 
 	m_isLoading = false;
 
-//	LoadInit();
-
-	//for (int i = 0; i < 26; i++)
-	//{
-	//	for (int j = 0; j < kLoadObjectNum; j++)
-	//	{
-	//		for (int k = 0; k < 2; k++)
-	//		{
-	//			size[k][j][i] = 1.0f;
-	//		}
-	//	}
-	//}
-
 	m_isFade = false;
 }
 SceneManager::~SceneManager()
@@ -82,8 +70,7 @@ void SceneManager::Init()
 {
 //	m_pScene.reset(new SceneDebug);
 	m_pScene.reset(new SceneTitle);
-
-//	m_pScene.reset(new SceneResult(GameResultData::CREAR,DifficultyData::INTERMEDIATE));
+//	m_pScene.reset(new SceneMain(DifficultyData::EXPERT));
 
 	m_pScene->Init();
 }
@@ -112,8 +99,6 @@ void SceneManager::Update()
 	// コントローラーの更新処理
 	Pad::Update();
 
-	static bool isInit = false;
-
 	if (m_isFade)
 	{
 		// ロードを初期化する
@@ -121,11 +106,11 @@ void SceneManager::Update()
 		// 更新処理
 		UpdateFadeOut();
 
-		isInit = true;
+		m_isInit = true;
 
 		return;
 	}
-	else if (isInit)
+	else if (m_isInit)
 	{
 		// 前のシーンの終了処理
 		m_pScene->End();
@@ -136,7 +121,7 @@ void SceneManager::Update()
 		// 初期化する
 		m_pScene->Init();
 
-		isInit = false;
+		m_isInit = false;
 	}
 
 	UpdateFadeIn();
@@ -199,19 +184,6 @@ void SceneManager::StartFade()
 
 void SceneManager::InitFade()
 {
-	//if (!m_isLoading)
-	//{
-	//	for (int i = 0; i < 2; i++)
-	//	{
-	//		for (int j = 0; j < m_x->size(); j++)
-	//		{
-	//			m_x[i][j] = GetRand(-500.0f);
-	//			m_y[i][j] = GetRand(Game::kScreenHeight);
-	//		}
-	//	}
-	//	m_isLoading = true;
-	//}
-
 	if (!m_isLoading)
 	{
 		m_fadeOut = true;
@@ -264,11 +236,10 @@ void SceneManager::UpdateFadeIn()
 	//}
 
 
+	m_blendRate = (std::max)(m_blendRate - kFadeSpeedRate, 0);
 	// フェイドインの更新処理
 	if (m_fadeIn)
 	{
-		m_blendRate = (std::max)(m_blendRate - kFadeSpeedRate, 0);
-
 		if(m_blendRate <= 0)
 		{
 			m_blendRate = 0;
@@ -290,11 +261,11 @@ void SceneManager::UpdateFadeOut()
 {
 
 	// フェイドアウト処理
-	if (m_fadeOut)
+	m_blendRate = (std::min)(m_blendRate + kFadeSpeedRate, 255);
+	/*if (m_fadeOut)
 	{
-		m_blendRate = (std::min)(m_blendRate + kFadeSpeedRate, 255);
 
-	}
+	}*/
 	if (m_blendRate >= 255)
 	{
 		//m_isFade = false;
@@ -370,6 +341,5 @@ void SceneManager::DrawFade()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_blendRate);
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 }
 
