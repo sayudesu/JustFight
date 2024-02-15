@@ -24,8 +24,11 @@ namespace
 	//const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2, 0.5f));
 	//const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
 
+	// 3Dオブジェクトの角度
 	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
 	const VECTOR kLoserRota = VGet(90 * DX_PI_F / 180.0f, 0 * DX_PI_F / 180.0f, 0);
+	// 3Dオブジェクトのサイズ
+	const VECTOR k3DModelSize = VGet(12, 12, 12);
 }
 
 SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
@@ -60,13 +63,14 @@ SceneResult::~SceneResult()
 
 void SceneResult::Init()
 {
+	// コンストラクタでカメラの情報を設定後スクリーン座標から3D空間座標への変換を行う
 	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2, 0.5f));
 	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
 
-	VECTOR playerScreenPos{};
+	VECTOR playerScreenToWorldPos{};
 	VECTOR playerRota{};
 	
-	VECTOR enemyScreenPos{};
+	VECTOR enemyScreenToWorldPos{};
 	VECTOR enemyRota{};
 
 	m_hImageResultBg = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
@@ -74,8 +78,8 @@ void SceneResult::Init()
 	{
 		m_hImageResult = LoadGraph("Data/Image/UI/Win.png");
 
-		playerScreenPos = kWinnerPos;
-		enemyScreenPos = kLoserPos;
+		playerScreenToWorldPos = kWinnerPos;
+		enemyScreenToWorldPos = kLoserPos;
 		playerRota = kWinnerRota;
 		enemyRota = kLoserRota;
 
@@ -91,8 +95,8 @@ void SceneResult::Init()
 	{
 		m_hImageResult = LoadGraph("Data/Image/UI/Lose.png");
 
-		playerScreenPos = kLoserPos;
-		enemyScreenPos = kWinnerPos;
+		playerScreenToWorldPos = kLoserPos;
+		enemyScreenToWorldPos = kWinnerPos;
 		playerRota = kLoserRota;
 		enemyRota = kWinnerRota;
 
@@ -105,18 +109,19 @@ void SceneResult::Init()
 		}
 	}
 
+	// プレイヤーオブジェクトインスタンス生成
 	m_pPlayer = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Knight_W),
-		playerScreenPos,
+		playerScreenToWorldPos,
 		playerRota,
-		VGet(12, 12, 12)
+		k3DModelSize
 		);
-
+	// エネミーオブジェクトインスタンス生成
 	m_pEnemy = std::make_unique<GameObject>(
 		m_enemyPath,
-		enemyScreenPos,
+		enemyScreenToWorldPos,
 		enemyRota,
-		VGet(12, 12, 12)
+		k3DModelSize
 		);
 }
 
