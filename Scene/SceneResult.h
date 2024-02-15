@@ -43,5 +43,7 @@ private:
 	std::unique_ptr<Camera> m_pCamera;
 
 	std::string m_enemyPath;
+
+	float m_y;
 };
 

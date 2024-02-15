@@ -57,7 +57,7 @@ void FieldDrawer::Draw()
 	m_mapModel->Draw();
 
 
-#if _DEBUG
+#if false
 	VECTOR start = VGet(1200, 300, 1200);
 	VECTOR end = VGet(-1200, 300, 1200);
 	DrawLine3D(start, end, 0xffffff);

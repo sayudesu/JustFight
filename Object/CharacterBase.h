@@ -195,7 +195,7 @@ private:
 	int m_effectHandle;
 
 	// 強攻撃を出すための力を溜める
-	float m_strongAttackPower;
+	int m_strongAttackPower;
 
 	// ノックバック用ベクトル
 	float m_vecKnockBack;
@@ -323,7 +323,7 @@ public:
 	VECTOR testV2 = VGet(0, 0, 0);
 	VECTOR testV3 = VGet(0, 0, 0);
 
-	float stunRota = 0.0f;
+	float m_stunRota = 0.0f;
 
 	bool m_isHitNow = false;
 	bool m_isHitResult = false;

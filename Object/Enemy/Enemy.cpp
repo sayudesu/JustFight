@@ -45,7 +45,7 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isGuard = false;
 
 	// 自身がエネミーであると決める
-	m_myId = CharacterName::ENEMY;	
+	m_myId = CharacterName::ENEMY;
 
 	// 選択した難易度によってモデルを変更
 	if (data == DifficultyData::NOIVE)
@@ -78,8 +78,10 @@ void Enemy::Input()
 	// 向きを指定
 	Direction();
 
-	// 行動範囲を制限する
-	FieldLimit();
+	if (m_isAttack || m_isGuard || m_isStrongAttack || m_isJustGuard)
+	{
+
+	}
 
 #if true	
 	if (!IsStun())
@@ -88,7 +90,9 @@ void Enemy::Input()
 		if (m_targetRange.x + m_targetRange.z < 1000.0f)
 		{
 			MoveLeftAndRight(m_enemyRotMtx);
-			//m_isGuard = false;
+
+			// 行動範囲を制限する
+			FieldLimit();
 		}
 
 		// 攻撃可能範囲に入っているかどうか
@@ -379,13 +383,20 @@ void Enemy::BattleType()
 	// ターゲットがスタンしている場合
 	if (m_targetBattleState == BattleState::STUN)
 	{
-		// 
-		if (GetStrongPower() >= 100.0f)
+		// 強攻撃ができる場合はする
+		// できない場合は通常攻撃をする
+		if (GetStrongPower() == 100)
 		{
 			m_isCheckStrongAttack = true;
 			m_isStrongAttackResult = true;
 		}
+		else
+		{
+			m_isCheckAttack = true;
+			m_isAttackResult = true;
+		}
 	}
+
 	// ターゲットが防御している場合
 	if (m_targetBattleState == BattleState::GUARD)
 	{
@@ -395,6 +406,7 @@ void Enemy::BattleType()
 			m_isAttackResult = true;
 		}
 	}
+
 	// アイドル状態の場合
 	if (m_targetBattleState == BattleState::IDLE)
 	{

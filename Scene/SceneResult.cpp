@@ -26,13 +26,17 @@ namespace
 
 	// 3Dオブジェクトの角度
 	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
-	const VECTOR kLoserRota = VGet(90 * DX_PI_F / 180.0f, 0 * DX_PI_F / 180.0f, 0);
+	const VECTOR kLoserRota = VGet(
+		0,
+		180 * DX_PI_F / 180.0f,
+		-90 * DX_PI_F / 180.0f);
 	// 3Dオブジェクトのサイズ
 	const VECTOR k3DModelSize = VGet(12, 12, 12);
 }
 
 SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
-	m_imageAngle(0.0f)
+	m_imageAngle(0.0f),
+	m_y(0.0f)
 {
 	// リザルトデータを取得する
 	m_resultData = resultData;
@@ -64,8 +68,8 @@ SceneResult::~SceneResult()
 void SceneResult::Init()
 {
 	// コンストラクタでカメラの情報を設定後スクリーン座標から3D空間座標への変換を行う
-	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2, 0.5f));
-	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
+	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f));
+	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 400.0f, Game::kScreenHeight / 2, 0.5f));
 
 	VECTOR playerScreenToWorldPos{};
 	VECTOR playerRota{};
@@ -135,6 +139,10 @@ SceneBase* SceneResult::Update()
 	m_pPlayer->Update();
 	m_pEnemy->Update();
 
+	static int timer = 0;
+	m_y = cos(timer * 0.07f) * 5.0f;
+	timer++;
+
 	// 敗北した場合は画像を傾ける
 	if (m_resultData == GameResultData::OVER)
 	{
@@ -168,7 +176,7 @@ SceneBase* SceneResult::Update()
 		SoundManager::GetInstance().Stop(SoundName::WIN);
 		SoundManager::GetInstance().Stop(SoundName::LOSE);
 		SoundManager::GetInstance().Play(SoundName::SELECT);
-
+		timer = 0;
 		return new SceneTitle();
 	}
 	
@@ -180,23 +188,24 @@ void SceneResult::Draw()
 #if _DEBUG
 	DrawString(0, 0, "SceneResult", 0xffffff);
 #endif
+	
 	// 背景を描画
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, 0.0f, m_hImageResultBg, true);
-	if (m_resultData == GameResultData::CREAR)
-	{
-		for (int i = 0; i < 100; i++)
-		{
-			DrawRotaGraph(m_posX[0][i], m_posY[0][i], 0.5f, 0.0f, m_hImageResult, true);
-		}
-	}
-	else if (m_resultData == GameResultData::OVER)
-	{
-		for (int i = 0; i < 100; i++)
-		{
-			DrawRotaGraph(m_posX[1][i], m_posY[1][i], 0.5f, 0.0f, m_hImageResult, true);
-		}
-	}
-	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, m_imageAngle, m_hImageResult, true);
+	//if (m_resultData == GameResultData::CREAR)
+	//{
+	//	for (int i = 0; i < 100; i++)
+	//	{
+	//		DrawRotaGraph(m_posX[0][i], m_posY[0][i], 0.5f, 0.0f, m_hImageResult, true);
+	//	}
+	//}
+	//else if (m_resultData == GameResultData::OVER)
+	//{
+	//	for (int i = 0; i < 100; i++)
+	//	{
+	//		DrawRotaGraph(m_posX[1][i], m_posY[1][i], 0.5f, 0.0f, m_hImageResult, true);
+	//	}
+	//}
+	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2 + m_y, 1, m_imageAngle, m_hImageResult, true);
 
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();

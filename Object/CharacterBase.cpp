@@ -139,7 +139,7 @@ void CharacterBase::End()
 void CharacterBase::Update()
 {
 
-#if _DEBUG
+#if false
 
 	if (m_myId == CharacterName::PLAYER)
 	{
@@ -169,7 +169,7 @@ void CharacterBase::Draw()
 	DrawCapsule3D(m_capsuleUpDown, m_capsuleUpPos, kCapsuleRadius, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), FALSE);
 #endif
 
-#if _DEBUG
+#if false
 	const VECTOR pos = ConvWorldPosToScreenPos(m_pos);
 	DrawCircle(pos.x, pos.y, 32, 0xffffff, true);
 	DrawFormatString(pos.x, pos.y, 0x000000, Dname.c_str());
@@ -209,6 +209,7 @@ void CharacterBase::Idle()
 	{
 		m_battleState = BattleState::IDLE;
 	}
+
 
 	m_isSceneChange = false;
 
@@ -276,7 +277,7 @@ void CharacterBase::Idle()
 
 //	m_vecShield.z = 10.0f;
 
-#if _DEBUG
+#if false
 	Dname = "待機";
 #endif
 
@@ -371,7 +372,7 @@ void CharacterBase::Attack()
 	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_pCharactor->Update();
 
-#if _DEBUG
+#if false
 	Dname = "攻撃１";
 #endif
 }
@@ -476,7 +477,7 @@ void CharacterBase::AttackTwo()
 
 	test1 = (90) * DX_PI_F / 180.0f;
 
-#if _DEBUG
+#if false
 	Dname = "攻撃２";
 #endif
 }
@@ -664,7 +665,7 @@ void CharacterBase::Guard()
 	// 位置情報の更新
 	UpdatePos();
 
-#if _DEBUG
+#if false
 	Dname = "防御";
 #endif
 }
@@ -705,7 +706,7 @@ void CharacterBase::JustGuard()
 	}
 
 	// 最大フレームに到達したら
-	if (m_justGuardCounterFrame == 60)
+	if (m_justGuardCounterFrame == 30)
 	{
 		m_isSceneChange = true;
 	}
@@ -727,7 +728,7 @@ void CharacterBase::JustGuard()
 	// 位置情報の更新
 	UpdatePos();
 
-#if _DEBUG
+#if false
 	Dname = "ジャストガード";
 #endif
 }
@@ -735,34 +736,36 @@ void CharacterBase::JustGuard()
 // スタンした場合
 void CharacterBase::Stun()
 {
+	// スタン状態のフレームをカウント
+	m_stunFrame++;
+
 	if (m_battleState != BattleState::STUN)
 	{
 		// 現在の行動を記録
 		m_battleState = BattleState::STUN;
+
+		// 他フレームのリセット
+		m_attackFrame = 0;
+		m_attackGapFrame = 0;
+		m_guardFrame = 0;
+		m_justGuardFrame = 0;
 	}
+
 	// スタン状態のサウンド再生
 	SoundManager::GetInstance().Play(SoundName::STUN,true);
 
-	// スタン状態のフレームをカウント
-	m_stunFrame++;
-
-	stunRota += 0.3f;
+	// 回転角度を変更する
+	m_stunRota += 0.3f;
 
 	if (m_vecWeapon.y < m_parameter.weaponRelativePos.y + 60.0f)
 	{
 		m_vecWeapon.y += 10.0f;
 	}
 
-	// フレームのリセット
-	m_attackFrame    = 0;
-	m_attackGapFrame = 0;
-	m_guardFrame     = 0;
-	m_justGuardFrame = 0;
-
 	if (m_parameter.stunFrameMax < m_stunFrame)
 	{
 		m_fightingMeter = 30.0f;
-		stunRota = 0.0f;
+		m_stunRota = 0.0f;
 		m_stunFrame = 0;
 		m_isStun = false;
 		m_pFunc = &CharacterBase::Idle;
@@ -773,7 +776,7 @@ void CharacterBase::Stun()
 	// 位置情報の更新
 	UpdatePos();
 
-#if _DEBUG
+#if false
 	Dname = "スタン";
 #endif
 }
@@ -999,7 +1002,7 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 
 	// キャラクターの位置
 	m_pCharactor->SetPos(m_pos);
-	m_pCharactor->SetRotate(VGet(0.0f, stunRota + m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
+	m_pCharactor->SetRotate(VGet(0.0f, m_stunRota + m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_pCharactor->Update();
 
 	m_capsuleUpDown = m_pos;

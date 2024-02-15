@@ -500,7 +500,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			character1->SetCollJustGuardEffect();
 
 			// 戦いに必要な特殊なメーターを減らす
-			character2->SetFightingMeter(-30.0f);
+			character2->SetFightingMeter(-110.0f);
 
 			// 振動開始
 			StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
@@ -524,7 +524,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			character1->SetStrongPower(20.0f);
 
 			// 戦いに必要な特殊なメーターを減らす
-			character1->SetFightingMeter(-3.0f);
+		//	character1->SetFightingMeter(-3.0f);
 
 			character1->SetCollGuardEffect();
 
@@ -549,7 +549,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			character2->SetDamage(true);
 
 			// 戦いに必要な特殊なメーターを減らす
-			character1->SetFightingMeter(-0.1f);
+		//	character1->SetFightingMeter(-0.1f);
 
 			// ノックバック
 			if (character1->GetBattleState() == BattleState::STRONGATTACK)

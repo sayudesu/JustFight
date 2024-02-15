@@ -585,6 +585,7 @@ void SceneTitle::Draw()
 	}
 
 
+#if false
 	// オプションボタンの描画
 	m_hOptionBack->Draw();
 	m_hOptionBotton->Draw();
@@ -594,7 +595,6 @@ void SceneTitle::Draw()
 		m_hBg->GetPos().y + m_hOptionBack->GetPos().y - 20.0f,
 		SubtitleManager::GetInstance().SubtitleStringData(Subtitle::OPSION), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 
-#if true
 	// ポーズ画面の描画
 	PoseScreen::GetInstance().Draw();
 #endif

@@ -83,6 +83,8 @@ void SceneManager::Init()
 //	m_pScene.reset(new SceneDebug);
 	m_pScene.reset(new SceneTitle);
 
+//	m_pScene.reset(new SceneResult(GameResultData::CREAR,DifficultyData::INTERMEDIATE));
+
 	m_pScene->Init();
 }
 
@@ -171,7 +173,7 @@ void SceneManager::Draw()
 		DrawFade();
 	}
 
-#if _DEBUG
+#if false
 	m_drawTime = GetNowHiPerformanceCount() - start;
 	
 	DrawString(0, Game::kScreenHeight - 48, "èàóù", 0xffffff, 0x000000);

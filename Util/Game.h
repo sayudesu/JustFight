@@ -2,7 +2,7 @@
 
 namespace Game
 {
-#if _DEBUG
+#if false
 	// ウインドウモード設定
 	constexpr bool kWindowMode = true;
 #else
