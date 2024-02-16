@@ -72,14 +72,33 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {	
-	if (Pad::IsTrigger(PAD_INPUT_1))
-	{
-		return new SceneLevelSelect();
-	}
 
 	static int timer = 0;
 	m_blendAlpha = cos(timer * 0.06f) * 255.0f;
 	timer++;
+
+	static int rota = 0;
+	float rotaModel = cos(rota * 0.001f) * 15.0f;
+	rota++;
+
+	// ボタンをおした場合
+	if (Pad::IsTrigger(PAD_INPUT_1) || 
+		Pad::IsTrigger(PAD_INPUT_2) || 
+		Pad::IsTrigger(PAD_INPUT_3) || 
+		Pad::IsTrigger(PAD_INPUT_4))
+	{
+		timer = 0;
+		rota = 0;
+		return new SceneLevelSelect();
+	}
+
+	// 3Dモデルの角度変更
+	m_pPlayer->SetRotate(VGet(kWinnerRota.x, kWinnerRota.y + rotaModel, kWinnerRota.z));
+	m_pEnemy->SetRotate(VGet(kWinnerRota2.x, kWinnerRota2.y + rotaModel, kWinnerRota2.z));
+
+	// 3Dモデルの更新処理
+	m_pPlayer->Update();
+	m_pEnemy->Update();
 
 	return this;
 }
