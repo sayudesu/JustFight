@@ -1,6 +1,10 @@
 #pragma once
+#include <memory>
+
 #include "SceneBase.h"
 
+class GameObject;
+class Camera;
 class SceneTitle final : public SceneBase
 {
 public:
@@ -19,5 +23,10 @@ private:
 
 	// アルファ値
 	int m_blendAlpha;
+
+	std::unique_ptr<GameObject> m_pPlayer;
+	std::unique_ptr<GameObject> m_pEnemy;
+
+	std::unique_ptr<Camera> m_pCamera;
 };
 
