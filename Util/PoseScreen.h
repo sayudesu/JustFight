@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "Util/FontSize.h"
+#include "FontSize.h"
 
 class SlideSelect;
 

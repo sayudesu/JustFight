@@ -143,28 +143,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BlurScreen.cpp" />
+    <ClCompile Include="DEBUG\DEBUG.cpp" />
+    <ClCompile Include="Object\Stage\FIeldDrawer.cpp" />
+    <ClCompile Include="Util\BlurScreen.cpp" />
     <ClCompile Include="CSVData\CharactorDataManager.cpp" />
     <ClCompile Include="CSVData\CSVManagerBase.cpp" />
     <ClCompile Include="CSVData\FontManager.cpp" />
     <ClCompile Include="CSVData\ModelManager.cpp" />
     <ClCompile Include="CSVData\SoundManager.cpp" />
-    <ClCompile Include="Easing.cpp" />
-    <ClCompile Include="PoseScreen.cpp" />
+    <ClCompile Include="Util\Easing.cpp" />
+    <ClCompile Include="Util\PoseScreen.cpp" />
     <ClCompile Include="CSVData\SubtitleManager.cpp" />
     <ClCompile Include="Scene\SceneLevelSelect.cpp" />
-    <ClCompile Include="TutorialDrawer.cpp" />
     <ClCompile Include="Util\GameObject.cpp" />
     <ClCompile Include="Util\SlideSelect.cpp" />
     <ClCompile Include="UI\UIDrawer.cpp" />
     <ClCompile Include="Util\BloodDrawer.cpp" />
     <ClCompile Include="Util\EffekseerDrawer.cpp" />
-    <ClCompile Include="FIeldDrawer.cpp" />
-    <ClCompile Include="LoadingDrawer.cpp" />
+    <ClCompile Include="Util\LoadingDrawer.cpp" />
     <ClCompile Include="Scene\SceneResult.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
-    <ClCompile Include="DEBUG.cpp" />
     <ClCompile Include="Util\MyLoadModel.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\CharacterBase.cpp" />
@@ -176,10 +175,13 @@
     <ClCompile Include="Scene\SceneMain.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="util\Pad.cpp" />
+    <ClCompile Include="Util\TutorialDrawer.cpp" />
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BlurScreen.h" />
+    <ClInclude Include="DEBUG\DEBUG.h" />
+    <ClInclude Include="Object\Stage\FIeldDrawer.h" />
+    <ClInclude Include="Util\BlurScreen.h" />
     <ClInclude Include="CSVData\CharactorDataManager.h" />
     <ClInclude Include="CSVData\CSVCharactorData.h" />
     <ClInclude Include="CSVData\CSVFontData.h" />
@@ -192,12 +194,10 @@
     <ClInclude Include="CSVData\SoundManager.h" />
     <ClInclude Include="Scene\SceneLevelSelect.h" />
     <ClInclude Include="Util\SubtitleData.h" />
-    <ClInclude Include="Easing.h" />
-    <ClInclude Include="PoseScreen.h" />
+    <ClInclude Include="Util\Easing.h" />
+    <ClInclude Include="Util\PoseScreen.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CSVData\SubtitleManager.h" />
-    <ClInclude Include="Tips.h" />
-    <ClInclude Include="TutorialDrawer.h" />
     <ClInclude Include="Util\DifficultyData.h" />
     <ClInclude Include="Util\FontSize.h" />
     <ClInclude Include="Util\Game.h" />
@@ -214,12 +214,10 @@
     <ClInclude Include="Util\CharacterName.h" />
     <ClInclude Include="Util\EffectId.h" />
     <ClInclude Include="Util\EffekseerDrawer.h" />
-    <ClInclude Include="FIeldDrawer.h" />
-    <ClInclude Include="LoadingDrawer.h" />
+    <ClInclude Include="Util\LoadingDrawer.h" />
     <ClInclude Include="Scene\SceneResult.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />
-    <ClInclude Include="DEBUG.h" />
     <ClInclude Include="Util\MyLoadModel.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\CharacterBase.h" />
@@ -230,6 +228,8 @@
     <ClInclude Include="Scene\SceneMain.h" />
     <ClInclude Include="scene\SceneManager.h" />
     <ClInclude Include="util\Pad.h" />
+    <ClInclude Include="Util\Tips.h" />
+    <ClInclude Include="Util\TutorialDrawer.h" />
     <ClInclude Include="util\Vec2.h" />
   </ItemGroup>
   <ItemGroup>

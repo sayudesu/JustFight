@@ -2,13 +2,11 @@
 
 #include "PoseScreen.h"
 
-#include "Util/Game.h"
-#include "Util/SlideSelect.h"
+#include "Game.h"
+#include "SlideSelect.h"
+#include "Pad.h"
 
-#include "CSVData/FontManager.h"
-
-#include "Util/Pad.h"
-
+#include "../CSVData/FontManager.h"
 
 namespace
 {

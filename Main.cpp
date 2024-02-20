@@ -5,8 +5,8 @@
 
 #include "Util/Game.h"
 #include "Util/EffekseerDrawer.h"
-
-#include "BlurScreen.h"
+#include "Util/PoseScreen.h"
+#include "Util/BlurScreen.h"
 
 #include "CSVData/CSVSoundData.h"
 #include "CSVData/CSVCharactorData.h"
@@ -20,7 +20,6 @@
 #include "CSVData/FontManager.h"
 #include "CSVData/SubtitleManager.h"
 
-#include "PoseScreen.h"
 
 // ƒvƒƒOƒ‰ƒ€‚ÍWinMain‚©‚çn‚Ü‚è‚Ü‚·
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)

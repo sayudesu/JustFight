@@ -2,7 +2,7 @@
 
 #include "BlurScreen.h"
 
-#include "Util/Game.h"
+#include "Game.h"
 
 EffectScreen* EffectScreen::m_pInstance = nullptr;
 

@@ -26,7 +26,7 @@
 #include "../CSVData/SubtitleManager.h"
 #include "../Util/SubtitleData.h"
 
-#include "../PoseScreen.h"
+#include "../Util/PoseScreen.h"
 
 
 namespace

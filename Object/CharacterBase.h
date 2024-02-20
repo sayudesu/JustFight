@@ -7,7 +7,7 @@
 
 #include "../Util/DifficultyData.h"
 
-#include "../Tips.h"
+#include "../Util/Tips.h"
 
 // ゲームオブジェクト
 class GameObject;
@@ -189,7 +189,7 @@ public:
 	void SetCollJustGuardEffect();// ジャストガード
 
 	// 強攻撃を出すための力を溜める
-	void SetStrongPower(float power);
+	void SetStrongPower(int power);
 private:
 	// エフェクトハンドル
 	int m_effectHandle;

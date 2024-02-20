@@ -5,7 +5,7 @@
 
 #include "../../Util/DifficultyData.h"
 
-#include "../../Tips.h"
+#include "../../Util/Tips.h"
 
 class Player : public CharacterBase
 {

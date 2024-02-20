@@ -2,11 +2,11 @@
 
 #include "TutorialDrawer.h"
 
-#include "CSVData/FontManager.h"
-#include "CSVData/SubtitleManager.h"
+#include "../CSVData/FontManager.h"
+#include "../CSVData/SubtitleManager.h"
 
-#include "Util/FontSize.h"
-#include "Util/SubtitleData.h"
+#include "FontSize.h"
+#include "SubtitleData.h"
 
 TutorialDrawer::TutorialDrawer()
 {

@@ -11,11 +11,10 @@
 
 #include "../Util/GameObject.h"
 #include "../Util/SoundName.h"
-#include "../BlurScreen.h"
+#include "../Util/BlurScreen.h"
 #include "../Util/ParameterData.h"
 #include "../Util/ModelName.h"
-
-#include "../Easing.h"
+#include "../Util/Easing.h"
 
 namespace
 {
@@ -297,7 +296,7 @@ void CharacterBase::Attack()
 	// ŽŸ‚ÌƒRƒ“ƒ{UŒ‚‚ÉØ‚è‘Ö‚¦‚é
 	if (m_comboAttack == 2)
 	{
-		test2 = -(90 * 3) * DX_PI / 180.0f;
+		test2 = -(90.0f * 3.0f) * DX_PI_F / 180.0f;
 		test3 = test2;
 		// UŒ‚‚ðŠJŽn‚·‚é
 		m_isAttack = true;
@@ -1228,7 +1227,7 @@ void CharacterBase::SetCollJustGuardEffect()
 		VGet(0, 0, 0));
 }
 
-void CharacterBase::SetStrongPower(float power)
+void CharacterBase::SetStrongPower(int power)
 {
 	m_strongAttackPower += power;
 	if (m_strongAttackPower >= 100.0f)

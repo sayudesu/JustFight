@@ -1,8 +1,8 @@
 #include "FIeldDrawer.h"
-#include "Util/GameObject.h"
+#include "../../Util/GameObject.h"
 
-#include "CSVData/ModelManager.h"
-#include "Util/ModelName.h"
+#include "../../CSVData/ModelManager.h"
+#include "../../Util/ModelName.h"
 
 namespace
 {

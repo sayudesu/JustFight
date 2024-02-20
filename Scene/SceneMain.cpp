@@ -8,6 +8,7 @@
 #include "../Object/Player/Player.h"// プレイヤー
 #include "../Object/Enemy/Enemy.h"// エネミー
 #include "../Object/CharacterBase.h"// キャラクター
+#include "../Object/Stage/FIeldDrawer.h"// マップ描画
 
 #include "../Util/Collision3D.h"// 当たり判定
 #include "../Util/EffekseerDrawer.h"// 3Dエフェクト
@@ -15,20 +16,16 @@
 #include "../Util/Pad.h"// パッド
 #include "../Util/BloodDrawer.h"// 血のエフェクト
 #include "../Util/CharacterName.h"// キャラクターの名前
-
-#include "../FIeldDrawer.h"// マップ描画
+#include "../Util/BlurScreen.h";// 画面加工
+#include "../Util/TutorialDrawer.h"
+#include "../Util/Tips.h"
+#include "../Util/SoundName.h"
 
 #include "../UI/UIDrawer.h";// UI描画
 
-#include "../DEBUG.h"// デバッグ用
-
-#include "../BlurScreen.h";// 画面加工
-
-#include "../TutorialDrawer.h"
-#include "../Tips.h"
+#include "../DEBUG/DEBUG.h"// デバッグ用
 
 #include "../CSVData/SoundManager.h"
-#include "../Util/SoundName.h"
 
 namespace
 {
