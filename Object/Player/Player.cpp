@@ -51,8 +51,8 @@ Player::Player(DifficultyData data,VECTOR pos):
 
 	m_parameter.fileName = "Data/Model/Knight_W.mv1";
 	// パラメーター調整
-	m_parameter.attackFrameMax = 20;
-	m_parameter.attackFrameGapMax = 0;
+	m_parameter.attackFrameMax = 30;
+	m_parameter.attackFrameGapMax = 10;
 	m_parameter.attackTotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
 
 	m_parameter.attackAfterStopFrameMax = 60;

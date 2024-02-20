@@ -25,6 +25,9 @@ namespace
 	float kGravity = 32.0f;
 
 	constexpr float kStrongAttackPowerMax = 100.0f;
+
+	// 攻撃予兆フレーム時の武器の振動
+	constexpr float kShakeRate = 15.0f;
 }
 
 CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
@@ -139,7 +142,6 @@ void CharacterBase::Update()
 {
 
 #if false
-
 	if (m_myId == CharacterName::PLAYER)
 	{
 		printfDx("P\n");
@@ -148,7 +150,6 @@ void CharacterBase::Update()
 	{
 		printfDx("E\n");
 	}
-
 #endif
 
 	(this->*m_pFunc)();
@@ -246,17 +247,17 @@ void CharacterBase::Idle()
 	}
 
 	// 武器の角度を変える
-	if (test2 > 0.0f)
+	if (m_weaponRotaY > 0.0f)
 	{
 		m_isAttack = true;
-		test2 -= 00.5f;
+		m_weaponRotaY -= 00.5f;
 	}
 	else
 	{
 		m_isAttack = false;
 		// 現在の行動を記録
 		m_battleState = BattleState::IDLE;
-		test2 = 0.0f;
+		m_weaponRotaY = 0.0f;
 	}
 
 	//if (m_targetBattleState == BattleState::IDLE)
@@ -264,7 +265,7 @@ void CharacterBase::Idle()
 	//	m_tempTargetBattleState = BattleState::NONE;
 	//}
 
-	test3 = test2;
+	m_tempWeaponRotaY = m_weaponRotaY;
 
 	// HP更新処理
 	HitPoint();
@@ -272,7 +273,7 @@ void CharacterBase::Idle()
 	// 位置情報の更新
 	UpdatePos();
 
-	test1 = (90) * DX_PI_F / 180.0f;
+	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
 
 //	m_vecShield.z = 10.0f;
 
@@ -285,43 +286,80 @@ void CharacterBase::Idle()
 // 攻撃した場合
 void CharacterBase::Attack()
 {
+	static int frame = 0;
 	if (m_battleState != BattleState::ATTACK)
 	{
 		// 現在の行動を記録
 		m_battleState = BattleState::ATTACK;
 		// 攻撃サウンドの再生
 		SoundManager::GetInstance().Play(SoundName::ATTACK);
+		frame = 0;
 	}
 
 	// 次のコンボ攻撃に切り替える
 	if (m_comboAttack == 2)
 	{
-		test2 = -(90.0f * 3.0f) * DX_PI_F / 180.0f;
-		test3 = test2;
+		m_weaponRotaY = -(90.0f * 3.0f) * DX_PI_F / 180.0f;
+		m_tempWeaponRotaY = m_weaponRotaY;
 		// 攻撃を開始する
 		m_isAttack = true;
 		// 硬直状態用フレームをリセット
 		m_attackAfterStopFrame = 0;
+		// 攻撃予兆フレームをリセット
+		m_attackGapFrame = 0;
 		// 攻撃フレームをリセット
 		m_attackFrame = 0;
 		// シーン遷移用
 		m_isSceneChange = false;
 		// 次の攻撃に移行する
 		m_pFunc = &CharacterBase::AttackTwo;
+
+		// 武器の振動のリセット
+		m_weaponShakeRate.x = 0.0f;
+		m_weaponShakeRate.y = 0.0f;
+		m_weaponShakeRate.z = 0.0f;
+
 		return;
+	}
+
+	if (m_myId == CharacterName::ENEMY)
+	{		
+		// ジャストガードタイミングかどうか
+		if (m_attackFrame > m_parameter.attackFrameMax - m_parameter.justGuardFrameMax &&
+			m_attackFrame < m_parameter.attackFrameMax)
+		{
+			frame++;
+			printfDx("frame = %d\n", frame);
+		}
+
+		//clsDx();
 	}
 
 	// 武器動かす
 	if (!m_isSceneChange)
 	{
-		// イージングを使用し武器を振る速度を徐々に早くする
-		test2 = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, (90 * 3) * DX_PI / 180.0f,0.0f);
+		// 攻撃予兆フレーム
+		if (m_attackGapFrame < m_parameter.attackFrameGapMax)
+		{
+			// 武器の振動用位置
+			m_weaponShakeRate.x = GetRand(kShakeRate);
+			m_weaponShakeRate.y = GetRand(kShakeRate);
+			m_weaponShakeRate.z = GetRand(kShakeRate);
+		}
+		else
+		{
+			// イージングを使用し武器を振る速度を徐々に早くする
+			m_weaponRotaY = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, (90 * 3) * DX_PI / 180.0f,0.0f);
 
-		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
-		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+			m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
+			m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
 
-		// 攻撃時のフレームを乗算
-		m_attackFrame++;
+			// 攻撃時のフレームを乗算
+			m_attackFrame++;
+		}
+
+		// 攻撃予兆フレームを乗算
+		m_attackGapFrame++;
 	}
 
 	// 最大フレームに到達したら
@@ -344,6 +382,8 @@ void CharacterBase::Attack()
 		{
 			// 硬直状態用フレームをリセット
 			m_attackAfterStopFrame = 0;			
+			//攻撃予兆フレームのリセット
+			m_attackGapFrame = 0;
 			// 攻撃フレームをリセット
 			m_attackFrame = 0;
 			// コンボ終了
@@ -352,6 +392,11 @@ void CharacterBase::Attack()
 			m_isSceneChange = false;
 			// シーン繊維
 			m_pFunc = &CharacterBase::Idle;
+
+			// 武器の振動のリセット
+			m_weaponShakeRate.x = 0.0f;
+			m_weaponShakeRate.y = 0.0f;
+			m_weaponShakeRate.z = 0.0f;
 		}
 
 	}
@@ -365,7 +410,7 @@ void CharacterBase::Attack()
 	// HP更新処理
 	HitPoint();
 	// 位置情報の更新
-	UpdatePos();
+	UpdatePos(m_weaponShakeRate.x, m_weaponShakeRate.y, m_weaponShakeRate.z);
 
 	m_pCharactor->SetPos(m_pos);
 	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
@@ -391,10 +436,10 @@ void CharacterBase::AttackTwo()
 	if (!m_isSceneChange)
 	{
 		// イージングを使用し武器を振る速度を徐々に早くする
-		test2 = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, -((90 * 5) * DX_PI / 180.0f), test3);
+		m_weaponRotaY = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, -((90 * 5) * DX_PI / 180.0f), m_tempWeaponRotaY);
 
 		m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
-		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
+		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);		
 
 		// 攻撃時のフレームを乗算
 		m_attackFrame++;
@@ -413,7 +458,7 @@ void CharacterBase::AttackTwo()
 		m_attackAfterStopFrame++;
 		if (m_attackAfterStopFrame == m_parameter.attackAfterStopFrameMax)
 		{
-			test3 = 0;
+			m_tempWeaponRotaY = 0;
 			// 攻撃終了
 			m_isAttack = false;
 			// 硬直状態用フレームをリセット
@@ -447,7 +492,7 @@ void CharacterBase::AttackTwo()
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
 		m_pWeapon->SetPos(m_weaponPos);
-		m_pWeapon->SetRotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - test2, 0));
+		m_pWeapon->SetRotate(VGet((90 * 3) * DX_PI / 180.0f, m_angle - m_weaponRotaY, 0));
 		m_pWeapon->Update();
 	}
 	// 盾
@@ -455,7 +500,7 @@ void CharacterBase::AttackTwo()
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
 		m_pShield->SetPos(move);
-		m_pShield->SetRotate(VGet(0, m_angle - test1, 0));
+		m_pShield->SetRotate(VGet(0, m_angle - m_shieldRotaY, 0));
 		m_pShield->Update();
 	}
 
@@ -474,7 +519,7 @@ void CharacterBase::AttackTwo()
 	// ノックバックされた場合
 	KnockBack();
 
-	test1 = (90) * DX_PI_F / 180.0f;
+	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
 
 #if false
 	Dname = "攻撃２";
@@ -504,7 +549,7 @@ void CharacterBase::StrongAttack()
 		}
 		if (m_attackGapFrame == m_parameter.strongAttackFrameGapMax)
 		{
-			test1 += 30.0f * DX_PI_F / 180.0f;
+			m_shieldRotaY += 30.0f * DX_PI_F / 180.0f;
 			//m_vecWeapon.y = MoveByFrame(m_parameter.weaponRelativePos.y, 500.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
 			m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z, -500.0f, m_attackFrame, m_parameter.strongAttackFrameMax);
 
@@ -524,7 +569,7 @@ void CharacterBase::StrongAttack()
 	{
 		// 強攻撃の力をなくす
 		SetStrongPowerReset();
-		test1 = 0.0f;
+		m_shieldRotaY = 0.0f;
 		// 攻撃フレームをリセット
 		m_attackFrame = 0;
 		m_attackGapFrame = 0;
@@ -546,7 +591,7 @@ void CharacterBase::StrongAttack()
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
 		m_pWeapon->SetPos(m_weaponPos);
-		m_pWeapon->SetRotate(VGet(test1, m_angle - test2 + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
+		m_pWeapon->SetRotate(VGet(m_shieldRotaY, m_angle - m_weaponRotaY + (90 * 3) * DX_PI_F / 180.0f, 0.0f));
 		m_pWeapon->Update();
 	}
 	// 盾
@@ -584,7 +629,7 @@ void CharacterBase::Guard()
 {	
 	m_attackFrame = 0;
 	m_vecWeapon.x = -80.0f;
-	test2 = 0;
+	m_weaponRotaY = 0;
 
 	if (m_battleState != BattleState::GUARD)
 	{
@@ -599,7 +644,7 @@ void CharacterBase::Guard()
 	if (m_guardFrame < m_parameter.guardFrameMax)
 	{
 		// イージングを使用し武器を振る速度を徐々に早くする
-		test1 = Easing::InQuad(m_guardFrame, m_parameter.guardFrameMax, (90) * DX_PI_F / 180.0f, 0.0f);
+		m_shieldRotaY = Easing::InQuad(m_guardFrame, m_parameter.guardFrameMax, (90) * DX_PI_F / 180.0f, 0.0f);
 
 		m_vecShield.x = MoveByFrame(m_parameter.shieldRelativePos.x, 0.0f, m_guardFrame, m_parameter.guardFrameMax);
 		m_vecShield.z = MoveByFrame(m_parameter.shieldRelativePos.z, -50.0f, m_guardFrame, m_parameter.guardFrameMax);
@@ -620,7 +665,7 @@ void CharacterBase::Guard()
 		m_guardFrame = m_parameter.guardFrameMax ;
 		m_vecShield.x = 0.0f;
 
-		test1 = (0) * DX_PI_F / 180.0f;
+		m_shieldRotaY = (0) * DX_PI_F / 180.0f;
 	}
 
 	// ガードをやめた場合
@@ -687,7 +732,7 @@ void CharacterBase::JustGuard()
 	{
 		if (m_justGuardCounterFrame > 10 && m_justGuardCounterFrame < 20)
 		{
-			test1 = MoveByFrame(0.0f, (static_cast<float>(90) / 2.0f) * DX_PI_F / 180.0f, m_justGuardCounterFrame, 10);
+			m_shieldRotaY = MoveByFrame(0.0f, (static_cast<float>(90) / 2.0f) * DX_PI_F / 180.0f, m_justGuardCounterFrame, 10);
 		}
 		if (m_justGuardCounterFrame < 15)
 		{
@@ -717,7 +762,7 @@ void CharacterBase::JustGuard()
 		m_isJustGuardCounter = false;
 		m_justGuardCounterFrame = 0;
 		m_vecShield = m_parameter.shieldRelativePos;
-		test1 = 0.0f;
+		m_shieldRotaY = 0.0f;
 		m_isSceneChange = false;	
 		m_pFunc = &CharacterBase::Idle;
 	}
@@ -986,8 +1031,9 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 	{
 		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 		m_weaponPos = VAdd(m_pos, move);
-		m_pWeapon->SetPos(m_weaponPos);
-		m_pWeapon->SetRotate(VGet(90 * DX_PI / 180.0f, m_angle - test2, 0.0f));
+		VECTOR shakePos{ m_weaponPos.x + shiftX ,m_weaponPos.y + shiftY ,m_weaponPos.z + shiftZ };
+		m_pWeapon->SetPos(shakePos);
+		m_pWeapon->SetRotate(VGet(90 * DX_PI / 180.0f, m_angle - m_weaponRotaY, 0.0f));
 		m_pWeapon->Update();
 	}
 	// 盾
@@ -995,7 +1041,7 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 		VECTOR move = VTransform(m_vecShield, m_rotMtx);
 		move = VAdd(m_pos, move);
 		m_pShield->SetPos(move);
-		m_pShield->SetRotate(VGet(0, m_angle - test1, 0));
+		m_pShield->SetRotate(VGet(0, m_angle - m_shieldRotaY, 0));
 		m_pShield->Update();
 	}	
 

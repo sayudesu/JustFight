@@ -254,6 +254,9 @@ private:
 	// ターゲットの体力
 	int m_targetHp;
 
+	// 攻撃の予兆フレーム時の振動
+	VECTOR m_weaponShakeRate;
+
 	// 現在の行動を記録
 	BattleState m_battleState;
 
@@ -315,9 +318,9 @@ protected:
 public:
 	// ここは使わない
 
-	float test1 = 0.0f;
-	float test2 = 0.0f;
-	float test3 = 0.0f;
+	float m_shieldRotaY = 0.0f;
+	float m_weaponRotaY = 0.0f;
+	float m_tempWeaponRotaY = 0.0f;
 
 	VECTOR testV1 = VGet(0, 0, 0);
 	VECTOR testV2 = VGet(0, 0, 0);

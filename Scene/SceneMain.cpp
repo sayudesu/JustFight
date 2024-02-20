@@ -329,7 +329,7 @@ void SceneMain::Draw()
 
 	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
 	
-#if false	
+#if true	
 	DEBUG::Field();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
@@ -536,53 +536,56 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	const bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
 	const bool c = character1->GetBattleState() == BattleState::STRONGATTACK;
 
-	// 攻撃を与える処理
-	if (a || b || c)
+	if (character1->GetAttackFrame() == character1->GetAttackFrameMax())
 	{
-		// 攻撃が当たったかどうか
-		if (CheckWeaponAndBodyHit(character1, character2))
-		{		
-			// ダメージを与える
-			character2->SetDamage(true);
+		// 攻撃を与える処理
+		if (a || b || c)
+		{
+			// 攻撃が当たったかどうか
+			if (CheckWeaponAndBodyHit(character1, character2))
+			{		
+				// ダメージを与える
+				character2->SetDamage(true);
 
-			// 戦いに必要な特殊なメーターを減らす
-		//	character1->SetFightingMeter(-0.1f);
+				// 戦いに必要な特殊なメーターを減らす
+			//	character1->SetFightingMeter(-0.1f);
 
-			// ノックバック
-			if (character1->GetBattleState() == BattleState::STRONGATTACK)
-			{
-				character2->SetGuardKnockBack(true, -30);
-			}
-			else
-			{
-				character2->SetGuardKnockBack(true, -10);
-			}
-
-			int color = 0xffffff;
-			if (isPlayer)
-			{
-				color = 0x000000;
-			}
-			else
-			{
-				color = 0xffffff;
-			}
-
-			const bool d = character2->GetBattleState() != BattleState::GUARD;
-			if (d)
-			{
-				for (int i = 0; i < 100; i++)
+				// ノックバック
+				if (character1->GetBattleState() == BattleState::STRONGATTACK)
 				{
-					m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
-					m_pBlood.back()->Init(i);
+					character2->SetGuardKnockBack(true, -30);
 				}
-			}
+				else
+				{
+					character2->SetGuardKnockBack(true, -10);
+				}
 
-			// 振動開始
-			StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
+				int color = 0xffffff;
+				if (isPlayer)
+				{
+					color = 0x000000;
+				}
+				else
+				{
+					color = 0xffffff;
+				}
 
-			return;
-		}		
+				const bool d = character2->GetBattleState() != BattleState::GUARD;
+				if (d)
+				{
+					for (int i = 0; i < 100; i++)
+					{
+						m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
+						m_pBlood.back()->Init(i);
+					}
+				}
+
+				// 振動開始
+				StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
+
+				return;
+			}		
+		}
 	}
 #endif
 }
