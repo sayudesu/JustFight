@@ -12,7 +12,9 @@ namespace
 {
 	// プレイヤーの移動量
 	constexpr VECTOR kVecZ{ 0.0f,0.0f,-10.0f };
+	constexpr VECTOR kVecZP{ 0.0f,0.0f,10.0f };
 	constexpr VECTOR kVecX{ -10.0f,0.0f,0.0f };
+	constexpr VECTOR kVecXP{ 10.0f,0.0f,0.0f };
 
 	// 回避
 	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
@@ -199,11 +201,22 @@ void Player::InputMove()
 
 		if (frameCount < frameCountMax)
 		{
-			m_awayVec.x = (m_awayRelativePos.x) * (float(frameCount) / frameCountMax);
-			m_awayVec.z = (m_awayRelativePos.z) * (float(frameCount) / frameCountMax);
-			frameCount++;
-			VECTOR move = VTransform(m_awayVec, m_platerRotMtx);
-			m_pos = VAdd(m_pos, move);
+			float t = static_cast<float>(frameCount) / frameCountMax;
+			m_awayVec.x = m_awayRelativePos.x * t;
+			m_awayVec.z = m_awayRelativePos.z * t;
+
+			// 移動ベクトルを正規化
+			VECTOR moveVector = VTransform(kVecX, m_platerRotMtx);  // 例としてX方向に移動する場合
+			moveVector = VNorm(moveVector);
+
+			// 速度係数
+			const float speedFactor = 1.0f;  // 適切な値を設定してください
+
+			// 速度ベクトルに速度係数を掛ける
+			VECTOR velocity = VAdd(moveVector, VGet(speedFactor, speedFactor, speedFactor));
+
+			// キャラクターの位置に速度を加える
+			m_pos = VAdd(m_pos, velocity);
 		}
 		else
 		{
@@ -221,53 +234,29 @@ void Player::InputMove()
 		if (Pad::IsPress(PAD_INPUT_UP))
 		{
 			m_isUp = true;
-			if (!m_isMove)
-			{
-				m_isMove = true;
-			}
-
-			m_pos = AddMoving(kVecZ, m_platerRotMtx, m_pos);
-
+			MoveCharacter(VTransform(kVecZ, m_platerRotMtx));
 			MoveAway(0.0f, -60.0f, m_platerRotMtx);
 		}
 		else if (Pad::IsPress(PAD_INPUT_DOWN))
 		{
 			m_isDown = true;
-			if (!m_isMove)
-			{
-				m_isMove = true;
-			}
-
-			m_pos = SubMoving(kVecZ, m_platerRotMtx, m_pos);
-
+			MoveCharacter(VTransform(kVecZP, m_platerRotMtx));
 			MoveAway(0.0f, 60.0f, m_platerRotMtx);
 		}
 		if (Pad::IsPress(PAD_INPUT_RIGHT))
 		{
 			m_isRight = true;
-			if (!m_isMove)
-			{
-				m_isMove = true;
-			}
-
-			m_pos = AddMoving(kVecX, m_platerRotMtx, m_pos);
-
+			MoveCharacter(VTransform(kVecX, m_platerRotMtx));
 			MoveAway(-60.0f, 0.0f, m_platerRotMtx);
 		}
 		else if (Pad::IsPress(PAD_INPUT_LEFT))
 		{
 			m_isLeft = true;
-			if (!m_isMove)
-			{
-				m_isMove = true;
-			}
-
-			m_pos = SubMoving(kVecX, m_platerRotMtx, m_pos);
-
+			MoveCharacter(VTransform(kVecXP, m_platerRotMtx));
 			MoveAway(60.0f, 0.0f, m_platerRotMtx);
 		}
 
-		if ((!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight)))
+		if (!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight))
 		{
 			MoveAway(0.0f, 60.0f, m_platerRotMtx);
 		}
@@ -325,7 +314,33 @@ void Player::InputGuard()
 		m_isGuard = false;
 	}
 }
+void Player::MoveCharacter(VECTOR moveVector)
+{
+	if (!m_isMove)
+	{
+		m_isMove = true;
+	}
 
+	// 正規化
+	moveVector = VNorm(moveVector);
+
+	// 速度係数
+	float speedFactor = 10.0f;
+	if (m_isGuard)
+	{
+		speedFactor = speedFactor / 2;
+	}
+	if (GetCheckHitWall())
+	{
+		speedFactor = 0;
+	}
+
+	// 速度ベクトルに速度係数を掛ける
+	VECTOR velocity = VScale(moveVector, speedFactor);
+
+	// キャラクターの位置に速度を加える
+	m_pos = VAdd(m_pos, velocity);
+}
 
 VECTOR Player::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
 {
@@ -351,9 +366,11 @@ void Player::MoveAway(float x, float z, MATRIX rotMtx)
 			m_isAway = true;
 			m_awayRelativePos.x = x;
 			m_awayRelativePos.z = z;
-			m_awayVec.x = 0.0f;
+
+			// 速度ベクトルを設定
+			m_awayVec.x = x;
 			m_awayVec.y = 0.0f;
-			m_awayVec.z = 0.0f;
+			m_awayVec.z = z;
 		}
 	}
 }

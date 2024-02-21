@@ -69,8 +69,8 @@ SceneManager::~SceneManager()
 void SceneManager::Init()
 {
 //	m_pScene.reset(new SceneDebug);
-	m_pScene.reset(new SceneTitle);
-//	m_pScene.reset(new SceneMain(DifficultyData::EXPERT));
+//	m_pScene.reset(new SceneTitle);
+	m_pScene.reset(new SceneMain(DifficultyData::INTERMEDIATE));
 
 	m_pScene->Init();
 }

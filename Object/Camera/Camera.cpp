@@ -18,7 +18,7 @@ namespace
 	constexpr VECTOR kCameraTarget{ 0.0f, 150.0f, -280.0f };
 
 	// カメラの追跡処理にディレイを入れるフレーム数
-	constexpr int kCameraDelayFrame = 6;
+	constexpr int kCameraDelayFrame = 6 + 6;
 }
 
 Camera::Camera():
@@ -72,10 +72,6 @@ void Camera::Update()
 	// 行列を使った座標変換
 	m_pos       = VTransform(kCameraPos, cameraMtx);
 	m_targetPos = VTransform(kCameraTarget, cameraMtx);
-
-	//// カメラの位置、どこを見ているかを設定する
-	//SetCameraPositionAndTarget_UpVecY(m_pos, m_targetPos);
-	//SetupCamera_Perspective(kFov);
 }
 
 void Camera::SetPos(VECTOR pos)

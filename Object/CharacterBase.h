@@ -63,10 +63,12 @@ private:
 	// ノックバック
 	virtual void KnockBack();
 
-
 	// 装備を元の位置に戻す処理
 	virtual void WeaponDefaultPos();
 	virtual void ShieldDefaultPos();
+
+	// 重力
+	virtual void Gravity();
 
 protected:
 	// パラメーターの調整
@@ -83,6 +85,9 @@ protected:
 
 	// 強攻撃の為に溜めた力をリセットする
 	void SetStrongPowerReset();
+
+	// 壁に当たったかどうか
+	bool GetCheckHitWall();
 public:
 	// 自身が誰をを返す
 	CharacterName GetMyId();
@@ -138,6 +143,9 @@ public:
 	// チュートリアル用
 	// 現在できる行動を渡す
 	bool GetTipsMove(Tips tips);
+
+	// 壁に当たったかどうか
+	void IsCheckHitWall(bool isHit);
 
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
@@ -200,8 +208,6 @@ private:
 	// ノックバック用ベクトル
 	float m_vecKnockBack;
 
-	bool m_isGravity;
-
 	// 角度
 	MATRIX m_rotMtx;
 	MATRIX m_targetRotMtx;
@@ -254,6 +260,9 @@ private:
 	// ターゲットの体力
 	int m_targetHp;
 
+	// 壁に当たったかどうか
+	bool m_isHItWall;
+
 	// 攻撃の予兆フレーム時の振動
 	VECTOR m_weaponShakeRate;
 
@@ -272,6 +281,9 @@ protected:
 	
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
+
+	// 
+	bool m_isGravity;
 
 	// 位置
 	VECTOR m_pos;

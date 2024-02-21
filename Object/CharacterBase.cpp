@@ -15,6 +15,7 @@
 #include "../Util/ParameterData.h"
 #include "../Util/ModelName.h"
 #include "../Util/Easing.h"
+#include "../Util/Pad.h"
 
 namespace
 {
@@ -210,7 +211,6 @@ void CharacterBase::Idle()
 		m_battleState = BattleState::IDLE;
 	}
 
-
 	m_isSceneChange = false;
 
 	m_isJustGuardCounter = false;
@@ -228,7 +228,6 @@ void CharacterBase::Idle()
 	WeaponDefaultPos();
 	// 盾を元の位置に戻す
 	ShieldDefaultPos();
-
 
 	if (m_hp <= 0)
 	{
@@ -250,7 +249,7 @@ void CharacterBase::Idle()
 	if (m_weaponRotaY > 0.0f)
 	{
 		m_isAttack = true;
-		m_weaponRotaY -= 00.5f;
+		m_weaponRotaY -= 0.5f;
 	}
 	else
 	{
@@ -331,8 +330,11 @@ void CharacterBase::Attack()
 			frame++;
 			printfDx("frame = %d\n", frame);
 		}
+		else
+		{
+			clsDx();
+		}
 
-		//clsDx();
 	}
 
 	// 武器動かす
@@ -868,13 +870,15 @@ void CharacterBase::HitPoint()
 	{
 		// 攻撃を受けている場合
 		m_isHitNow = true;
+
 		// 現在の攻撃と前回の攻撃が違う場合かつ
 		// 自身がガードしていない場合
 		// ジャストガードが成功していない場合
-		if (/*m_targetBattleState != m_tempTargetBattleState &&*/
-			!m_isHitResult &&
+		// 相手がジャストガードでもない場合
+		if (!m_isHitResult &&
 			m_battleState != BattleState::GUARD && 
-			m_battleState != BattleState::JUSTGUARD)
+			m_battleState != BattleState::JUSTGUARD&&
+			m_targetBattleState != BattleState::STUN)
 		{
 			// ダメージサウンドの再生
 			SoundManager::GetInstance().Play(SoundName::DAMAGE);
@@ -904,7 +908,6 @@ void CharacterBase::HitPoint()
 	else
 	{
 		m_isHitNow = false;
-	//	m_tempTargetBattleState = BattleState::NONE;
 	}
 
 	if (m_isHitNow)
@@ -1018,14 +1021,66 @@ void CharacterBase::ShieldDefaultPos()
 	}
 }
 
+void CharacterBase::Gravity()
+{
+	if (m_myId == CharacterName::PLAYER)
+	{
+		static bool isJumpIng = false;
+		static float jumpSpeed = 150.0f;
+
+		// ジャンプの処理
+		if (Pad::IsTrigger(PAD_INPUT_1))
+		{
+			isJumpIng = true;
+			jumpSpeed = 150.0f;
+		}
+
+		// ジャンプ中の処理
+		if (isJumpIng)
+		{
+			m_pos.y += jumpSpeed;
+			jumpSpeed -= kGravity;
+
+			if (jumpSpeed < 0.0f)
+			{
+				jumpSpeed = 0.0f;
+			}
+
+			if (m_isGravity)
+			{
+				jumpSpeed = 0.0f;
+				isJumpIng = false;
+			}
+		}
+		else
+		{
+			// 重力後で処理の位置を変えます
+			if (m_isGravity)
+			{
+				m_pos.y -= kGravity;
+			}
+		}
+		m_isGravity = true;
+	}
+	
+
+	if (m_myId == CharacterName::ENEMY)
+	{
+		// 重力後で処理の位置を変えます
+		if (m_isGravity)
+		{
+			m_pos.y -= kGravity;
+		}
+		m_isGravity = true;
+	}
+
+}
+
 void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
-	// 重力後で処理の位置を変えます
-	if (m_isGravity)
-	{
-		m_pos.y -= kGravity;
-	}
-	m_isGravity = true;
+
+	// 重力
+	Gravity();
 
 	// 武器
 	{
@@ -1360,6 +1415,16 @@ float CharacterBase::GetkStrongAttackPowerMax()
 bool CharacterBase::GetTipsMove(Tips tips)
 {
 	return m_isTipsMove[static_cast<int>(tips)];
+}
+
+bool CharacterBase::GetCheckHitWall()
+{
+	return m_isHItWall;
+}
+
+void CharacterBase::IsCheckHitWall(bool isHit)
+{
+	m_isHItWall = isHit;
 }
 
 bool CharacterBase::IsJustGuard() const

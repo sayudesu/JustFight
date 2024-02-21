@@ -24,6 +24,7 @@ private:
 	void InputAttack();
 	void InputGuard();
 
+	void MoveCharacter(VECTOR moveVector);
 	// à⁄ìÆópä÷êî
 	VECTOR AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
 	VECTOR SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);

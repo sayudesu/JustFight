@@ -132,7 +132,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_difficultyData == DifficultyData::EXPERT)
 	{
 		m_pCharacter[player]->Input();
-		m_pCharacter[enemy]->Input();
+	//	m_pCharacter[enemy]->Input();
 	}
 	else if(m_difficultyData == DifficultyData::NOIVE)
 	{
@@ -325,8 +325,6 @@ void SceneMain::Draw()
 		character->Draw();
 	}
 
-
-
 	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
 	
 #if true	
@@ -358,7 +356,6 @@ void SceneMain::Draw()
 		// チュートリアル用描画
 		m_pTutorial->Draw();
 	}
-
 
 	// 勝敗がついた場合描画する
 	if (m_pUpdateFunc == &SceneMain::UpdateGameResult)
@@ -418,6 +415,7 @@ bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1, st
 
 bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 {
+	character->IsCheckHitWall(false);
 	MV1_COLL_RESULT_POLY_DIM HitPolyDim;
 
 	// モデルとカプセルとの当たり判定
@@ -433,7 +431,19 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	{
 		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
-		return false;
+
+		if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
+		{
+			printfDx("横 = X\n");
+
+			character->IsCheckHitWall(true);
+		}
+		if (fabs(HitPolyDim.Dim->Normal.z) > 0.9f)
+		{
+			printfDx("横 = Z\n");
+
+			character->IsCheckHitWall(true);
+		}
 	}
 
 	// モデルとカプセルとの当たり判定
@@ -448,7 +458,9 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	if (HitPolyDim.HitNum >= 1)
 	{
 		// ゲームオーバー
-		return true;
+	//	return true;
+		// 当たった情報キャラクターにを渡す
+		character->SetFieldHit();
 	}
 
 	// 当たり判定情報の後始末
@@ -530,20 +542,18 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			return;
 		}		
 	}
-
-
-	const bool a = character1->GetBattleState() == BattleState::ATTACK;
-	const bool b = character1->GetBattleState() == BattleState::ATTACKTWO;
-	const bool c = character1->GetBattleState() == BattleState::STRONGATTACK;
-
-	if (character1->GetAttackFrame() == character1->GetAttackFrameMax())
+	else
 	{
+		const bool isAttack = character1->GetBattleState()       == BattleState::ATTACK;
+		const bool isAttackTow = character1->GetBattleState()    == BattleState::ATTACKTWO;
+		const bool isStrongAttack = character1->GetBattleState() == BattleState::STRONGATTACK;
+
 		// 攻撃を与える処理
-		if (a || b || c)
+		if (isAttack || isAttackTow || isStrongAttack)
 		{
 			// 攻撃が当たったかどうか
 			if (CheckWeaponAndBodyHit(character1, character2))
-			{		
+			{
 				// ダメージを与える
 				character2->SetDamage(true);
 
@@ -584,9 +594,10 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 				StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
 
 				return;
-			}		
+			}
 		}
 	}
+
 #endif
 }
 
