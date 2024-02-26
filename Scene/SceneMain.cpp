@@ -434,15 +434,18 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 
 		if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
 		{
-			printfDx("‰¡ = X\n");
+		//	printfDx("‰¡ = X\n");
 
 			character->IsCheckHitWall(true);
 		}
 		if (fabs(HitPolyDim.Dim->Normal.z) > 0.9f)
 		{
-			printfDx("‰¡ = Z\n");
+			if (HitPolyDim.Dim->Position->z < character->GetPos().z + character->GetModelRadius())
+			{
+				printfDx("‰¡ = Z\n");
+				character->IsCheckHitWall(true);
+			}							
 
-			character->IsCheckHitWall(true);
 		}
 	}
 

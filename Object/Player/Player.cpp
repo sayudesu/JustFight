@@ -328,11 +328,17 @@ void Player::MoveCharacter(VECTOR moveVector)
 	float speedFactor = 10.0f;
 	if (m_isGuard)
 	{
-		speedFactor = speedFactor / 2;
+		speedFactor = speedFactor / 2.0f;
 	}
 	if (GetCheckHitWall())
 	{
-		speedFactor = 0;
+	//	speedFactor = 0;
+		printfDx("Hit\n");
+
+		if(moveVector.z < 0.0f)
+		{
+			moveVector.z = 0.0f;
+		}
 	}
 
 	// 速度ベクトルに速度係数を掛ける
