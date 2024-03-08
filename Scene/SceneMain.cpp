@@ -1,36 +1,30 @@
 #include <DxLib.h>
 
 #include "SceneMain.h"
-#include "SceneDebug.h"// デバッグシーン
+#include "SceneDebug.h" // デバッグシーン
 #include "SceneResult.h"// リザルトシーン
 
-#include "../Object/Camera/Camera.h"// カメラ
-#include "../Object/Player/Player.h"// プレイヤー
-#include "../Object/Enemy/Enemy.h"// エネミー
-#include "../Object/CharacterBase.h"// キャラクター
+#include "../Object/Camera/Camera.h"    // カメラ
+#include "../Object/Player/Player.h"    // プレイヤー
+#include "../Object/Enemy/Enemy.h"      // エネミー
+#include "../Object/CharacterBase.h"    // キャラクター
 #include "../Object/Stage/FIeldDrawer.h"// マップ描画
 
-#include "../Util/Collision3D.h"// 当たり判定
+#include "../Util/Collision3D.h"    // 当たり判定
 #include "../Util/EffekseerDrawer.h"// 3Dエフェクト
-#include "../Util/Game.h"// ゲーム基本設定
-#include "../Util/Pad.h"// パッド
-#include "../Util/BloodDrawer.h"// 血のエフェクト
-#include "../Util/CharacterName.h"// キャラクターの名前
-#include "../Util/BlurScreen.h";// 画面加工
+#include "../Util/Game.h"           // ゲーム基本設定
+#include "../Util/Pad.h"            // パッド
+#include "../Util/BloodDrawer.h"    // 血のエフェクト
+#include "../Util/CharacterName.h"  // キャラクターの名前
+#include "../Util/BlurScreen.h";    // 画面加工
 #include "../Util/TutorialDrawer.h"
 #include "../Util/Tips.h"
 #include "../Util/SoundName.h"
+#include "../Util/HitPos.h"
 
 #include "../UI/UIDrawer.h";// UI描画
 
-#include "../DEBUG/DEBUG.h"// デバッグ用
-
 #include "../CSVData/SoundManager.h"
-
-namespace
-{
-
-}
 
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
@@ -52,8 +46,10 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {	
+	// コードの見やすさの為変数化
 	int player = static_cast<int>(CharacterName::PLAYER);
 	int enemy = static_cast<int>(CharacterName::ENEMY);
+
 	// シーン遷移
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
@@ -72,6 +68,7 @@ void SceneMain::Init()
 	m_pField->Init();
 	m_pTutorial->Init();
 
+	// チェックメイト画像の読み込み
 	m_hCheckmate = LoadGraph("Data/Image/UI/Checkmate.png");
 
 	// UIにパラメーターの状態を渡す
@@ -90,9 +87,8 @@ void SceneMain::Init()
 		m_pCharacter[enemy]->GetkStrongAttackPowerMax(),
 		m_pCharacter[enemy]->GetFightingMeter());
 
-	EffectScreen::GetInstance().BlurIReplayInit();
-
-	
+	// スクリーン効果の初期化
+	EffectScreen::GetInstance().BlurIReplayInit();	
 }
 
 void SceneMain::End()
@@ -123,6 +119,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 	// BGMの再生
 	SoundManager::GetInstance().Play(SoundName::PLAY, true);
 
+	// コードの見やすさの為変数化
 	int player = static_cast<int>(CharacterName::PLAYER);
 	int enemy = static_cast<int>(CharacterName::ENEMY);
 
@@ -154,7 +151,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
 	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
-
 
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
@@ -259,6 +255,7 @@ SceneBase* SceneMain::UpdateGameResult()
 {
 	// 指定フレームの後にリザルト画面に移動する
 	m_frameCount++;
+
 	// ボタンを押した場合
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
@@ -266,6 +263,7 @@ SceneBase* SceneMain::UpdateGameResult()
 		SoundManager::GetInstance().Stop(SoundName::PLAY);
 		return new SceneResult(m_resultData, m_difficultyData);
 	}
+
 	// 指定したフレームまでカウントが進むと
 	if (m_frameCount >= 60 * 3)
 	{
@@ -274,10 +272,11 @@ SceneBase* SceneMain::UpdateGameResult()
 		return new SceneResult(m_resultData, m_difficultyData);
 	}
 
-	m_checkmatePosY = cos(static_cast<int>(m_frameCount) * 0.07f) * 100.0f + Game::kScreenHeight / 2 - 160.0f;
+	// 画像の位置を動かす計算
+	m_checkmatePosY = cosf(static_cast<float>(m_frameCount) * 0.07f) * 100.0f + static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
 
 	// 予めでかくしたサイズを1にする
-	if (m_checkmateSize > 1)
+	if (m_checkmateSize > 1.0f)
 	{
 		m_checkmateSize -= 1.0f;
 	}
@@ -299,20 +298,21 @@ SceneBase* SceneMain::UpdateGameResult()
 
 void SceneMain::Draw()
 {
+	// 新しい画面の作成
 	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
-	// 
-//	EffectScreen::GetInstance().QuakePreRenderBlurScreen();
+	
+	// 画面をクリアにする
 	EffectScreen::GetInstance().ClearScreen();
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
 	m_pCamera->Setting();
+
 	// 上と同様初期化させるのでもう一度再設定する
 	EffekseerDrawer::GetInstance().EffekseerSync();
 
 	// マップの描画
 	m_pField->Draw();
-
 	
 	// 血しぶきの描画(仮)
 	for (auto& blood : m_pBlood)
@@ -325,9 +325,10 @@ void SceneMain::Draw()
 		character->Draw();
 	}
 
+	// ブラー効果、画面の振動効果を描画する
 	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
 	
-#if true	
+#if false	
 	DEBUG::Field();
 	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
 	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
@@ -415,7 +416,7 @@ bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1, st
 
 bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 {
-	character->IsCheckHitWall(false);
+	character->IsCheckHitWall(false,HitPos::NONE);
 	MV1_COLL_RESULT_POLY_DIM HitPolyDim;
 
 	// モデルとカプセルとの当たり判定
@@ -433,19 +434,22 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 		character->SetFieldHit();
 
 		if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
-		{
-		//	printfDx("横 = X\n");
-
-			character->IsCheckHitWall(true);
+		{					
+			if (HitPolyDim.Dim->Position->x < character->GetPos().x + character->GetModelRadius() / 2)
+			{
+				printfDx("横 = X+\n");
+				character->IsCheckHitWall(true,HitPos::XP);
+			}			
 		}
 		if (fabs(HitPolyDim.Dim->Normal.z) > 0.9f)
 		{
-			if (HitPolyDim.Dim->Position->z < character->GetPos().z + character->GetModelRadius())
-			{
-				printfDx("横 = Z\n");
-				character->IsCheckHitWall(true);
-			}							
+			printfDx("HIT == ");
 
+			if (HitPolyDim.Dim->Position->z < character->GetPos().z + character->GetModelRadius() / 2)
+			{
+				printfDx("横 = Z+\n");
+				character->IsCheckHitWall(true, HitPos::ZP);
+			}
 		}
 	}
 

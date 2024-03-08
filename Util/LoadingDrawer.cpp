@@ -1,5 +1,5 @@
-#include "LoadingDrawer.h"
 #include <DxLib.h>
+#include "LoadingDrawer.h"
 
 LoadingDrawer::LoadingDrawer()
 {

@@ -1,5 +1,5 @@
-#include "Collision3D.h"
 #include <cmath>
+#include "Collision3D.h"
 
 namespace Coll
 {

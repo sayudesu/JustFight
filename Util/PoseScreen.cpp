@@ -18,7 +18,7 @@ namespace
 	constexpr int kUpDwonSelectsNum = 2;
 	constexpr int kUpDwonSelectsNum2 = 3;
 
-	constexpr float kSlideSpeed = 100.0f;
+	constexpr int kSlideSpeed = 100;
 
 	// îwåià íu
 	constexpr int kPoseBgX = 200;

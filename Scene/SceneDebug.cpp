@@ -1,8 +1,10 @@
-#include "SceneDebug.h"
 #include <DxLib.h>
+
+#include "SceneDebug.h"
 #include "SceneMain.h";
 #include "SceneResult.h";
 #include "SceneTitle.h";
+
 #include "../Util/Pad.h"
 
 namespace

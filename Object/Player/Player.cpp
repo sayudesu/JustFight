@@ -6,6 +6,7 @@
 
 #include "../../CSVData/SoundManager.h"
 #include "../../Util/SoundName.h"
+#include "../../Util/HitPos.h"
 
 
 namespace
@@ -330,14 +331,22 @@ void Player::MoveCharacter(VECTOR moveVector)
 	{
 		speedFactor = speedFactor / 2.0f;
 	}
-	if (GetCheckHitWall())
-	{
-	//	speedFactor = 0;
-		printfDx("Hit\n");
 
-		if(moveVector.z < 0.0f)
+	if (GetCheckHitWall())
+	{		
+		if (HitPos::ZP == m_hitPos)
 		{
-			moveVector.z = 0.0f;
+			if(moveVector.z < 0.0f)
+			{
+				moveVector.z = 0.0f;
+			}
+		}
+		if (HitPos::XP == m_hitPos)
+		{
+			if (moveVector.x < 0.0f)
+			{
+				moveVector.x = 0.0f;
+			}
 		}
 	}
 

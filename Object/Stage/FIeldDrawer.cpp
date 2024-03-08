@@ -7,7 +7,7 @@
 namespace
 {
 	// オブジェクトのサイズ
-	constexpr float kChessSize = 0.6;
+	constexpr float kChessSize = 0.6f;
 	constexpr float kMapSize = 40.0f;
 }
 

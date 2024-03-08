@@ -1,6 +1,6 @@
 #pragma once
-#include "SceneBase.h"
 #include <vector>
+#include "SceneBase.h"
 
 class SceneDebug final : public SceneBase
 {

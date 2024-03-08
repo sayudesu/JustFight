@@ -3,7 +3,7 @@
 #include <string>
 #include <cmath>
 
-#include "MyLoadModel.h";
+//#include "MyLoadModel.h";
 
 class GameObject
 {

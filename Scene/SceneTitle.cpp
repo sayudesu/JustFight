@@ -3,7 +3,6 @@
 #include "SceneTitle.h"
 #include "SceneLevelSelect.h"
 
-
 #include "../Util/Game.h"
 #include "../Util/Pad.h"
 #include "../CSVData/FontManager.h"
@@ -22,7 +21,6 @@ namespace
 {
 	// 3Dオブジェクトの角度
 	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
-
 	const VECTOR kWinnerRota2 = VGet(0, 180 * DX_PI_F / 180.0f, 0);
 }
 
@@ -31,8 +29,9 @@ SceneTitle::SceneTitle():
 	m_hBg(-1),
 	m_blendAlpha(0)
 {
+	// 画像の読み込み
 	m_hTitle = LoadGraph("Data/Image/Title.png");
-	m_hBg = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
+	m_hBg    = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
 }
 
 SceneTitle::~SceneTitle()
@@ -73,11 +72,13 @@ void SceneTitle::End()
 SceneBase* SceneTitle::Update()
 {	
 
-	static int timer = 0;
+	// タイトル画像の移動の計算
+	static float timer = 0.0f;
 	m_blendAlpha = cos(timer * 0.06f) * 255.0f;
 	timer++;
 
-	static int rota = 0;
+	// モデルの回転の計算
+	static float rota = 0.0f;
 	float rotaModel = cos(rota * 0.001f) * 15.0f;
 	rota++;
 
@@ -116,7 +117,7 @@ void SceneTitle::Draw()
 	m_pEnemy->Draw();
 
 	// ボタン誘導描画
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_blendAlpha);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(m_blendAlpha));
 	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12 + 5, Game::kScreenHeight/2 + 256 + 5, "Press any key", 0x111111, FontSize::GENEITERAMIN_MEDIUM);
 	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12, Game::kScreenHeight/2 + 256, "Press any key", 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);

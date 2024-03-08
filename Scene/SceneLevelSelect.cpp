@@ -297,8 +297,8 @@ SceneBase* SceneLevelSelect::Update()
 			if (m_arrowPosY[0] < m_firstArrowPosY[0] - 20.0f)
 			{
 				m_arrowPosY[0] = m_firstArrowPosY[0] - 20.0f;
-				m_arrowShakeX[0] = GetRand(5) - 5;
-				m_arrowShakeY[0] = GetRand(5) - 5;
+				m_arrowShakeX[0] = static_cast<float>(GetRand(5)) - 5.0f;
+				m_arrowShakeY[0] = static_cast<float>(GetRand(5)) - 5.0f;
 			}
 		}
 		else
@@ -321,8 +321,8 @@ SceneBase* SceneLevelSelect::Update()
 			if (m_arrowPosY[1] > m_firstArrowPosY[1] + 20.0f)
 			{
 				m_arrowPosY[1] = m_firstArrowPosY[1] + 20.0f;
-				m_arrowShakeX[1] = GetRand(5) - 5;
-				m_arrowShakeY[1] = GetRand(5) - 5;
+				m_arrowShakeX[1] = static_cast<float>(GetRand(5)) - 5.0f;
+				m_arrowShakeY[1] = static_cast<float>(GetRand(5)) - 5.0f;
 			}
 		}
 		else
@@ -332,8 +332,8 @@ SceneBase* SceneLevelSelect::Update()
 			if (m_arrowPosY[1] < m_firstArrowPosY[1])
 			{
 				m_arrowPosY[1] = m_firstArrowPosY[1];
-				m_arrowShakeX[1] = 0;
-				m_arrowShakeY[1] = 0;
+				m_arrowShakeX[1] = 0.0f;
+				m_arrowShakeY[1] = 0.0f;
 			}
 		}
 	}
@@ -361,8 +361,8 @@ SceneBase* SceneLevelSelect::Update()
 		{
 			m_enemyBgshakeCount++;
 
-			m_enemyBgShakeX = GetRand(5) - 5;
-			m_enemyBgShakeY = GetRand(5) - 5;
+			m_enemyBgShakeX = static_cast<float>(GetRand(5)) - 5.0f;
+			m_enemyBgShakeY = static_cast<float>(GetRand(5)) - 5.0f;
 
 			if (m_enemyBgshakeCount == 5)
 			{

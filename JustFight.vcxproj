@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DEBUG\DEBUG.h" />
+    <ClInclude Include="Util\HitPos.h" />
     <ClInclude Include="Object\Stage\FIeldDrawer.h" />
     <ClInclude Include="Util\BlurScreen.h" />
     <ClInclude Include="CSVData\CharactorDataManager.h" />

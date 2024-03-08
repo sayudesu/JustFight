@@ -50,6 +50,7 @@ void EffectScreen::Unload()
 void EffectScreen::ClearScreen()
 {
 #if true	
+	// 画面をクリアにする
 	ClearDrawScreen();
 #endif
 }
@@ -106,19 +107,26 @@ void EffectScreen::BlurPostRenderBlurScreen()
 	//int blendMode, param;
 	//GetDrawBlendMode(&blendMode, &param);
 
+	// 新しい画面の作成をする
 	BlurPreRenderBlurScreen();
 
+	// アルファの値を変更する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);
 
+	// 画面の保存数をカウントが上回ったら処理を実行する
 	m_notBlendDraw++;
 	if (m_notBlendDraw > static_cast<int>(ScreenEffectNo::MAX))
 	{
 		// 1フレーム前の画面
 		DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[1 - m_current], false);
 	}
+
+	// 以下の処理にブレンドモードを適用しない
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 //	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
+	// 画面の切り替え
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	// 画面揺れ効果があるかどうか
@@ -126,13 +134,17 @@ void EffectScreen::BlurPostRenderBlurScreen()
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
 	
-		DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);// 加算合成する
-		GraphFilter(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);// ガウスでぼかしを入れる
+		// 加算合成する
+		DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);
+
+		// ガウスでぼかしを入れる
+		GraphFilter(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);
 	}
 
 
 	// ブラー効果を得た画像を描画する
 	DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);
+
 	// ブラー効果用に使用していなかった配列の番号を計算する
 	m_current = 1 - m_current;
 
@@ -209,21 +221,6 @@ void EffectScreen::QuakePostRenderBlurScreen()
 	else
 	{
 		DrawGraph(0, 0, m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], false);                      // 通常画面描画
-
-		//SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);
-
-		//m_notBlendDraw++;
-		//if (m_notBlendDraw > static_cast<int>(BlurEffectNo::MAX))
-		//{
-		//	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[1 - m_current], false);
-		//}
-		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		//	SetDrawMode(DX_DRAWMODE_BILINEAR);
-
-		//SetDrawScreen(DX_SCREEN_BACK);
-		//DrawGraph(0, 0, m_blurScreen[m_current], false);
-		//m_current = 1 - m_current;
-
 	}
 #endif
 }

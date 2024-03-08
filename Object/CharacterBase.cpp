@@ -344,9 +344,9 @@ void CharacterBase::Attack()
 		if (m_attackGapFrame < m_parameter.attackFrameGapMax)
 		{
 			// •Ší‚ÌU“®—pˆÊ’u
-			m_weaponShakeRate.x = GetRand(kShakeRate);
-			m_weaponShakeRate.y = GetRand(kShakeRate);
-			m_weaponShakeRate.z = GetRand(kShakeRate);
+			m_weaponShakeRate.x = static_cast<float>(GetRand(kShakeRate));
+			m_weaponShakeRate.y = static_cast<float>(GetRand(kShakeRate));
+			m_weaponShakeRate.z = static_cast<float>(GetRand(kShakeRate));
 		}
 		else
 		{
@@ -1331,15 +1331,15 @@ void CharacterBase::SetCollJustGuardEffect()
 void CharacterBase::SetStrongPower(int power)
 {
 	m_strongAttackPower += power;
-	if (m_strongAttackPower >= 100.0f)
+	if (m_strongAttackPower >= 100)
 	{
-		m_strongAttackPower = 100.0f;
+		m_strongAttackPower = 100;
 	}
 }
 
 void CharacterBase::SetStrongPowerReset()
 {
-	m_strongAttackPower = 0.0f;
+	m_strongAttackPower = 0;
 }
 
 int CharacterBase::GetAttackFrame()const
@@ -1422,9 +1422,10 @@ bool CharacterBase::GetCheckHitWall()
 	return m_isHItWall;
 }
 
-void CharacterBase::IsCheckHitWall(bool isHit)
+void CharacterBase::IsCheckHitWall(bool isHit,HitPos hitPos)
 {
 	m_isHItWall = isHit;
+	m_hitPos = hitPos;
 }
 
 bool CharacterBase::IsJustGuard() const

@@ -22,7 +22,7 @@ private:
 	int m_hBg;
 
 	// アルファ値
-	int m_blendAlpha;
+	float m_blendAlpha;
 
 	std::unique_ptr<GameObject> m_pPlayer;
 	std::unique_ptr<GameObject> m_pEnemy;
