@@ -5,6 +5,7 @@ enum class BattleState
 {
 	NONE,         // 空
 	IDLE,         // 待機状態
+	JUMP,         // ジャンプ状態
 	ATTACK,       // 攻撃
 	ATTACKTWO,    // コンボ攻撃
 	STRONGATTACK, // 強い攻撃

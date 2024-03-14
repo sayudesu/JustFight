@@ -153,6 +153,13 @@ void CharacterBase::Update()
 	}
 #endif
 
+	if (m_battleState == BattleState::JUMP)
+	{
+		static int count = 0;
+		count++;
+		printfDx("Jump %d \n", count);
+	}
+
 	(this->*m_pFunc)();
 }
 
@@ -276,7 +283,13 @@ void CharacterBase::Idle()
 
 //	m_vecShield.z = 10.0f;
 
-#if false
+	if (static_cast<int>(m_jumpPower) != 0)
+	{
+		printfDx("%f\n", m_jumpPower);
+		m_battleState = BattleState::JUMP;
+	}
+
+#if _DEBUG
 	Dname = "待機";
 #endif
 
@@ -418,7 +431,7 @@ void CharacterBase::Attack()
 	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_pCharactor->Update();
 
-#if false
+#if _DEBUG
 	Dname = "攻撃１";
 #endif
 }
@@ -523,7 +536,7 @@ void CharacterBase::AttackTwo()
 
 	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
 
-#if false
+#if _DEBUG
 	Dname = "攻撃２";
 #endif
 }
@@ -711,7 +724,7 @@ void CharacterBase::Guard()
 	// 位置情報の更新
 	UpdatePos();
 
-#if false
+#if _DEBUG
 	Dname = "防御";
 #endif
 }
@@ -774,7 +787,7 @@ void CharacterBase::JustGuard()
 	// 位置情報の更新
 	UpdatePos();
 
-#if false
+#if _DEBUG
 	Dname = "ジャストガード";
 #endif
 }
@@ -822,7 +835,7 @@ void CharacterBase::Stun()
 	// 位置情報の更新
 	UpdatePos();
 
-#if false
+#if _DEBUG
 	Dname = "スタン";
 #endif
 }
@@ -1025,30 +1038,34 @@ void CharacterBase::Gravity()
 {
 	if (m_myId == CharacterName::PLAYER)
 	{
-		static bool isJumpIng = false;
-		static float jumpSpeed = 150.0f;
+		static bool isJumpIng = false;		
 
 		// ジャンプの処理
 		if (Pad::IsTrigger(PAD_INPUT_1))
 		{
 			isJumpIng = true;
-			jumpSpeed = 150.0f;
+			m_jumpPower = 150.0f;			
 		}
 
 		// ジャンプ中の処理
 		if (isJumpIng)
 		{
-			m_pos.y += jumpSpeed;
-			jumpSpeed -= kGravity;
+			m_pos.y += m_jumpPower;
+			m_jumpPower -= 5;
 
-			if (jumpSpeed < 0.0f)
+
+			if (m_jumpPower < 0.0f)
 			{
-				jumpSpeed = 0.0f;
+				m_jumpPower = 0.0f;
+			}
+			else
+			{
+				m_battleState = BattleState::JUMP;
 			}
 
 			if (m_isGravity)
 			{
-				jumpSpeed = 0.0f;
+				m_jumpPower = 0.0f;
 				isJumpIng = false;
 			}
 		}
@@ -1337,6 +1354,12 @@ void CharacterBase::SetStrongPower(int power)
 	}
 }
 
+void CharacterBase::SetHitFall()
+{
+	// Ｙ軸方向の移動速度は０に
+	m_jumpPower = 0.0f;
+}
+
 void CharacterBase::SetStrongPowerReset()
 {
 	m_strongAttackPower = 0;
@@ -1410,6 +1433,11 @@ float CharacterBase::GetStrongPower()
 float CharacterBase::GetkStrongAttackPowerMax()
 {
 	return kStrongAttackPowerMax;
+}
+
+float CharacterBase::GetJumpPower()
+{
+	return m_jumpPower;
 }
 
 bool CharacterBase::GetTipsMove(Tips tips)

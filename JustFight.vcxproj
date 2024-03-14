@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="DEBUG\DEBUG.cpp" />
     <ClCompile Include="Object\Stage\FIeldDrawer.cpp" />
+    <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Util\BlurScreen.cpp" />
     <ClCompile Include="CSVData\CharactorDataManager.cpp" />
     <ClCompile Include="CSVData\CSVManagerBase.cpp" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DEBUG\DEBUG.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="Util\HitPos.h" />
     <ClInclude Include="Object\Stage\FIeldDrawer.h" />
     <ClInclude Include="Util\BlurScreen.h" />

@@ -433,7 +433,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
 
-		if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
+		/*if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
 		{					
 			if (HitPolyDim.Dim->Position->x < character->GetPos().x + character->GetModelRadius() / 2)
 			{
@@ -450,7 +450,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 				printfDx("横 = Z+\n");
 				character->IsCheckHitWall(true, HitPos::ZP);
 			}
-		}
+		}*/
 	}
 
 	// モデルとカプセルとの当たり判定

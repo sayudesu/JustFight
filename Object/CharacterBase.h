@@ -141,6 +141,9 @@ public:
 	// 強攻撃の最大値
 	float GetkStrongAttackPowerMax();
 
+	// ジャンプ力を渡す
+	float GetJumpPower();
+
 	// チュートリアル用
 	// 現在できる行動を渡す
 	bool GetTipsMove(Tips tips);
@@ -199,6 +202,10 @@ public:
 
 	// 強攻撃を出すための力を溜める
 	void SetStrongPower(int power);
+
+	// 床に当たった時
+	void SetHitFall();
+
 private:
 	// エフェクトハンドル
 	int m_effectHandle;
@@ -228,6 +235,9 @@ private:
 	int m_hp;
 	float m_tempFightingMeter;
 	float m_fightingMeter;
+
+	// ジャンプ
+	float m_jumpPower = 150.0f;
 
 	// フレーム関連
 	int m_attackGapFrame;// 攻撃時の遊びのフレーム
