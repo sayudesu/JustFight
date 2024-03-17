@@ -19,6 +19,9 @@ namespace
 
 	// 回避
 	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
+
+	// 移動速度
+	constexpr float kMoveSpeed = 10.0f;
 }
 
 Player::Player(DifficultyData data,VECTOR pos):
@@ -326,9 +329,10 @@ void Player::MoveCharacter(VECTOR moveVector)
 	moveVector = VNorm(moveVector);
 
 	// 速度係数
-	float speedFactor = 10.0f;
+	float speedFactor = kMoveSpeed;
 	if (m_isGuard)
 	{
+		// ガード中は速度を半分に
 		speedFactor = speedFactor / 2.0f;
 	}
 
