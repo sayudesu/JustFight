@@ -235,6 +235,7 @@ void Player::InputMove()
 		m_isRight = false;
 		m_isLeft = false;
 
+		// ˆÚ“®‘€ì
 		if (Pad::IsPress(PAD_INPUT_UP))
 		{
 			m_isUp = true;
