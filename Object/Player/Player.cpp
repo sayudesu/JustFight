@@ -19,6 +19,8 @@ namespace
 
 	// 回避
 	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
+	// 回避フレーム制限(再度回避できるまでのフレーム)
+	constexpr int kAwayFrameMax = 10;
 
 	// 移動速度
 	constexpr float kMoveSpeed = 10.0f;
@@ -200,12 +202,11 @@ void Player::InputMove()
 	if (m_isAway)
 	{
 		static VECTOR away = kVecAwayZ;
-		static int frameCount = 0;
-		int frameCountMax = 10;
 
-		if (frameCount < frameCountMax)
+		// 回避できるかどうか
+		if (m_awayFrameCount < kAwayFrameMax)
 		{
-			float t = static_cast<float>(frameCount) / frameCountMax;
+			float t = static_cast<float>(m_awayFrameCount) / kAwayFrameMax;
 			m_awayVec.x = m_awayRelativePos.x * t;
 			m_awayVec.z = m_awayRelativePos.z * t;
 
@@ -225,7 +226,7 @@ void Player::InputMove()
 		else
 		{
 			m_isAway = false;
-			frameCount = 0;
+			m_awayFrameCount = 0;
 		}
 	}
 	else
@@ -305,10 +306,9 @@ void Player::InputGuard()
 	// 防御
 	if (Pad::IsPress(PAD_INPUT_5))
 	{
-		if (!m_isAttack && !m_isStrongAttack && !m_isJustGuard && !m_isJustGuard)
+		// 攻撃、強攻撃、ジャストガードしていない場合
+		if (!m_isAttack && !m_isStrongAttack && !m_isJustGuard)
 		{
-			// 
-			//SetStrongPowerReset();
 			m_isGuard = true;
 			m_pFunc = &Player::Guard;
 		}
@@ -320,6 +320,7 @@ void Player::InputGuard()
 }
 void Player::MoveCharacter(VECTOR moveVector)
 {
+	// 動いていない移動フラグを立てる
 	if (!m_isMove)
 	{
 		m_isMove = true;
@@ -336,24 +337,6 @@ void Player::MoveCharacter(VECTOR moveVector)
 		speedFactor = speedFactor / 2.0f;
 	}
 
-	if (GetCheckHitWall())
-	{		
-		if (HitPos::ZP == m_hitPos)
-		{
-			if(moveVector.z < 0.0f)
-			{
-				moveVector.z = 0.0f;
-			}
-		}
-		if (HitPos::XP == m_hitPos)
-		{
-			if (moveVector.x < 0.0f)
-			{
-				moveVector.x = 0.0f;
-			}
-		}
-	}
-
 	// 速度ベクトルに速度係数を掛ける
 	VECTOR velocity = VScale(moveVector, speedFactor);
 
@@ -361,19 +344,6 @@ void Player::MoveCharacter(VECTOR moveVector)
 	m_pos = VAdd(m_pos, velocity);
 }
 
-VECTOR Player::AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
-{
-	VECTOR move = VTransform(RelativePos, rotMtx);
-	move = VAdd(pos, move);
-	return move;
-}
-
-VECTOR Player::SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos)
-{
-	VECTOR move = VTransform(RelativePos, rotMtx);
-	move = VSub(m_pos, move);
-	return move;
-}
 
 void Player::MoveAway(float x, float z, MATRIX rotMtx)
 {

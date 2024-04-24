@@ -37,6 +37,8 @@ private:
 	VECTOR m_awayVec;
 	// 回避の移動用相対位置
 	VECTOR m_awayRelativePos;
+	// 回避用フレームカウント
+	int m_awayFrameCount;
 
 	bool m_isUp;
 	bool m_isDown;
