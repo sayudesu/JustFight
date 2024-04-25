@@ -129,7 +129,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_difficultyData == DifficultyData::EXPERT)
 	{
 		m_pCharacter[player]->Input();
-	//	m_pCharacter[enemy]->Input();
+		m_pCharacter[enemy]->Input();
 	}
 	else if(m_difficultyData == DifficultyData::NOIVE)
 	{
@@ -506,8 +506,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	if (CheckWeaponAndShieldHIt(character2, character1))
 	{
 		// ジャストガードフレーム
-		if (character1->GetJustGuardFrame() > 0 &&
-			character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
+		//if (character1->GetJustGuardFrame() > 0 &&
+		//	character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
+		if(character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
 		{
 			// ジャストガードが成功したかどうか
 			character1->SetJustGuard(true);

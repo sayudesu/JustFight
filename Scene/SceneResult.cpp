@@ -172,12 +172,16 @@ SceneBase* SceneResult::Update()
 		}
 	}
 
+	// 選択
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
+		// サウンド管理
 		SoundManager::GetInstance().Stop(SoundName::WIN);
 		SoundManager::GetInstance().Stop(SoundName::LOSE);
 		SoundManager::GetInstance().Play(SoundName::SELECT);
 		timer = 0;
+
+		// シーンの切り替え
 		return new SceneLevelSelect();
 	}
 	
@@ -192,25 +196,13 @@ void SceneResult::Draw()
 	
 	// 背景を描画
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, 0.0f, m_hImageResultBg, true);
-	//if (m_resultData == GameResultData::CREAR)
-	//{
-	//	for (int i = 0; i < 100; i++)
-	//	{
-	//		DrawRotaGraph(m_posX[0][i], m_posY[0][i], 0.5f, 0.0f, m_hImageResult, true);
-	//	}
-	//}
-	//else if (m_resultData == GameResultData::OVER)
-	//{
-	//	for (int i = 0; i < 100; i++)
-	//	{
-	//		DrawRotaGraph(m_posX[1][i], m_posY[1][i], 0.5f, 0.0f, m_hImageResult, true);
-	//	}
-	//}
 	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2 + m_y, 1, m_imageAngle, m_hImageResult, true);
 
+	// キャラクターの描画
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
 
+	// ボタン説明
 	FontManager::GetInstance().DrawString(Game::kScreenWidth / 2 - 470.0f + 5, Game::kScreenHeight / 2 + 200 + 5, "A ボタンでタイトルに戻る", 0x000000, FontSize::GENEITERAMIN_MEDIUM);
 	FontManager::GetInstance().DrawString(Game::kScreenWidth / 2 - 470.0f, Game::kScreenHeight / 2 + 200, "A ボタンでタイトルに戻る", 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
 }

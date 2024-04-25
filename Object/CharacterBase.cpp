@@ -682,7 +682,7 @@ void CharacterBase::Guard()
 	{
 		m_isSceneChange = false;
 		m_guardFrame = 0;
-		m_justGuardFrame = 0;
+	//	m_justGuardFrame = 0;
 		m_pFunc = &CharacterBase::JustGuard;
 	}
 
@@ -794,7 +794,7 @@ void CharacterBase::Stun()
 		m_attackFrame = 0;
 		m_attackGapFrame = 0;
 		m_guardFrame = 0;
-		m_justGuardFrame = 0;
+	//	m_justGuardFrame = 0;
 	}
 
 	// スタン状態のサウンド再生

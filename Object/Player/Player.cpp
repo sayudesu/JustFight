@@ -68,7 +68,7 @@ Player::Player(DifficultyData data,VECTOR pos):
 	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
 
 	m_parameter.guardFrameMax = 5;
-	m_parameter.justGuardFrameMax = 5;
+	m_parameter.justGuardFrameMax = 30;
 
 	m_parameter.stunFrameMax = 60 * 3;
 
