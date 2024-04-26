@@ -141,18 +141,19 @@ void CharacterBase::End()
 
 void CharacterBase::Update()
 {
-
-#if false
+	
+#if _DEBUG
+	// デバッグ用
 	if (m_myId == CharacterName::PLAYER)
 	{
-		printfDx("P\n");
+		printfDx("P %s \n", Dname.c_str());
+
 	}
 	if (m_myId == CharacterName::ENEMY)
 	{
 		printfDx("E\n");
 	}
 #endif
-
 	(this->*m_pFunc)();
 }
 
@@ -214,7 +215,8 @@ void CharacterBase::Idle()
 	m_isSceneChange = false;
 
 	m_isJustGuardCounter = false;
-
+	m_isJustGuard = false;
+	m_isGuard = false;
 	// 
 	SetFightingMeter(0.09f);
 
@@ -229,17 +231,20 @@ void CharacterBase::Idle()
 	// 盾を元の位置に戻す
 	ShieldDefaultPos();
 
+	// 体力がなくなった場合
 	if (m_hp <= 0)
 	{
 		m_pFunc = &CharacterBase::Losers;
 		m_vecWeapon.y = 100.0f;
 	}
 
+	// 相手の体力がなくなった場合
 	if (m_targetHp <= 0)
 	{
 		m_pFunc = &CharacterBase::Winner;
 	}
 
+	// 自身がスタンした場合
 	if (m_isStun)
 	{
 		m_pFunc = &CharacterBase::Stun;
@@ -259,11 +264,7 @@ void CharacterBase::Idle()
 		m_weaponRotaY = 0.0f;
 	}
 
-	//if (m_targetBattleState == BattleState::IDLE)
-	//{
-	//	m_tempTargetBattleState = BattleState::NONE;
-	//}
-
+	// 武器のY軸角度を一時保管
 	m_tempWeaponRotaY = m_weaponRotaY;
 
 	// HP更新処理
@@ -272,11 +273,10 @@ void CharacterBase::Idle()
 	// 位置情報の更新
 	UpdatePos();
 
+	// シールドの角度を固定する
 	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
 
-//	m_vecShield.z = 10.0f;
-
-#if false
+#if _DEBUG
 	Dname = "待機";
 #endif
 
@@ -285,14 +285,12 @@ void CharacterBase::Idle()
 // 攻撃した場合
 void CharacterBase::Attack()
 {
-	static int frame = 0;
 	if (m_battleState != BattleState::ATTACK)
 	{
 		// 現在の行動を記録
 		m_battleState = BattleState::ATTACK;
 		// 攻撃サウンドの再生
 		SoundManager::GetInstance().Play(SoundName::ATTACK);
-		frame = 0;
 	}
 
 	// 次のコンボ攻撃に切り替える
@@ -321,21 +319,6 @@ void CharacterBase::Attack()
 		return;
 	}
 
-	if (m_myId == CharacterName::ENEMY)
-	{		
-		// ジャストガードタイミングかどうか
-		if (m_attackFrame > m_parameter.attackFrameMax - m_parameter.justGuardFrameMax &&
-			m_attackFrame < m_parameter.attackFrameMax)
-		{
-			frame++;
-			printfDx("frame = %d\n", frame);
-		}
-		else
-		{
-			clsDx();
-		}
-
-	}
 
 	// 武器動かす
 	if (!m_isSceneChange)
@@ -418,7 +401,7 @@ void CharacterBase::Attack()
 	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_pCharactor->Update();
 
-#if false
+#if _DEBUG
 	Dname = "攻撃１";
 #endif
 }
@@ -523,7 +506,7 @@ void CharacterBase::AttackTwo()
 
 	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
 
-#if false
+#if _DEBUG
 	Dname = "攻撃２";
 #endif
 }
@@ -711,7 +694,7 @@ void CharacterBase::Guard()
 	// 位置情報の更新
 	UpdatePos();
 
-#if false
+#if _DEBUG
 	Dname = "防御";
 #endif
 }
@@ -774,7 +757,7 @@ void CharacterBase::JustGuard()
 	// 位置情報の更新
 	UpdatePos();
 
-#if false
+#if _DEBUG
 	Dname = "ジャストガード";
 #endif
 }
@@ -794,7 +777,7 @@ void CharacterBase::Stun()
 		m_attackFrame = 0;
 		m_attackGapFrame = 0;
 		m_guardFrame = 0;
-	//	m_justGuardFrame = 0;
+		m_justGuardFrame = 0;
 	}
 
 	// スタン状態のサウンド再生
@@ -822,7 +805,7 @@ void CharacterBase::Stun()
 	// 位置情報の更新
 	UpdatePos();
 
-#if false
+#if _DEBUG
 	Dname = "スタン";
 #endif
 }
@@ -1078,7 +1061,6 @@ void CharacterBase::Gravity()
 
 void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 {
-
 	// 重力
 	Gravity();
 
@@ -1487,7 +1469,7 @@ void CharacterBase::SetJustGuard(bool isJustGuard)
 void CharacterBase::SetFightingMeter(const float fightingMeter)
 {
 	m_tempFightingMeter = fightingMeter;
-#if _DEBUG
+#if true
 	FightingMeter();
 #endif
 }

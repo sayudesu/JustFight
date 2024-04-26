@@ -437,17 +437,17 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 		{					
 			if (HitPolyDim.Dim->Position->x < character->GetPos().x + character->GetModelRadius() / 2)
 			{
-				printfDx("横 = X+\n");
+			//	printfDx("横 = X+\n");
 				character->IsCheckHitWall(true,HitPos::XP);
 			}			
 		}
 		if (fabs(HitPolyDim.Dim->Normal.z) > 0.9f)
 		{
-			printfDx("HIT == ");
+		//	printfDx("HIT == ");
 
 			if (HitPolyDim.Dim->Position->z < character->GetPos().z + character->GetModelRadius() / 2)
 			{
-				printfDx("横 = Z+\n");
+				//	printfDx("横 = Z+\n");
 				character->IsCheckHitWall(true, HitPos::ZP);
 			}
 		}
@@ -465,7 +465,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	if (HitPolyDim.HitNum >= 1)
 	{
 		// ゲームオーバー
-	//	return true;
+		return true;
 		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
 	}
@@ -503,12 +503,14 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// ジャストガード処理
 	// 攻撃が当たっていた場合
-	if (CheckWeaponAndShieldHIt(character2, character1))
+	// 相手がスタン状態ではない場合
+	// 自身がガード状態の場合
+	if (CheckWeaponAndShieldHIt(character2, character1) && 
+		character2->GetBattleState() != BattleState::STUN && 
+		character1->GetBattleState() == BattleState::GUARD)
 	{
 		// ジャストガードフレーム
-		//if (character1->GetJustGuardFrame() > 0 &&
-		//	character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
-		if(character1->GetJustGuardFrame() < character1->GetJustGuardFrameMax())
+		if(character1->GetGuardFrame() < character1->GetJustGuardFrameMax())
 		{
 			// ジャストガードが成功したかどうか
 			character1->SetJustGuard(true);
@@ -528,7 +530,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// 通常ガード処理
 	// 通常ガードが出来るかどうか
-	if (character1->GetGuardFrame() == character1->GetGuardFrameMax())
+	if (character1->GetGuardFrame() == character1->GetGuardFrameMax() && character2->GetBattleState() != BattleState::STUN)
 	{
 		// 攻撃状態だったら
 		// 攻撃が盾に当たったかどうか
