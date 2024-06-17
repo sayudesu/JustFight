@@ -335,6 +335,8 @@ void Player::MoveCharacter(VECTOR moveVector)
 		speedFactor = speedFactor / 2.0f;
 	}
 
+	// 壁の判定(使用しない)
+#if _DEBUG
 	if (GetCheckHitWall())
 	{		
 		if (HitPos::ZP == m_hitPos)
@@ -352,7 +354,7 @@ void Player::MoveCharacter(VECTOR moveVector)
 			}
 		}
 	}
-
+#endif
 	// 速度ベクトルに速度係数を掛ける
 	VECTOR velocity = VScale(moveVector, speedFactor);
 

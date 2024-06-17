@@ -530,7 +530,8 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// ’ÊíƒK[ƒhˆ—
 	// ’ÊíƒK[ƒh‚ªo—ˆ‚é‚©‚Ç‚¤‚©
-	if (character1->GetGuardFrame() == character1->GetGuardFrameMax() && character2->GetBattleState() != BattleState::STUN)
+	if (character1->GetGuardFrame() > character1->GetGuardFrameMax() &&
+		character2->GetBattleState() != BattleState::STUN)
 	{
 		// UŒ‚ó‘Ô‚¾‚Á‚½‚ç
 		// UŒ‚‚ª‚‚É“–‚½‚Á‚½‚©‚Ç‚¤‚©

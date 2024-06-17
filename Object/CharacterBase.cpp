@@ -141,7 +141,6 @@ void CharacterBase::End()
 
 void CharacterBase::Update()
 {
-	
 #if _DEBUG
 	// デバッグ用
 	if (m_myId == CharacterName::PLAYER)
@@ -647,7 +646,8 @@ void CharacterBase::Guard()
 	}
 	else
 	{
-		m_guardFrame = m_parameter.guardFrameMax ;
+		// フレームカウント
+		m_guardFrame++;
 		m_vecShield.x = 0.0f;
 
 		m_shieldRotaY = (0) * DX_PI_F / 180.0f;
