@@ -136,6 +136,12 @@ public:
 	int GetMaxHp          ()const;// 現在のヒットポイント
 	float GetFightingMeter()const;// 戦闘に必要なメーター
 
+	bool IsAway()const;
+
+	bool IsHitDamage()const;
+
+	bool IsGuard()const;
+
 	// 強攻撃をするための力を確認
 	float GetStrongPower();
 	// 強攻撃の最大値
@@ -274,6 +280,9 @@ private:
 	GameObject* m_pWeapon;
 	GameObject* m_pShield;
 
+	bool m_isHitNow = false;
+	bool m_isHitResult = false;
+
 #if _DEBUG
 	std::string Dname;
 #endif
@@ -344,7 +353,5 @@ public:
 
 	float m_stunRota = 0.0f;
 
-	bool m_isHitNow = false;
-	bool m_isHitResult = false;
 };
 

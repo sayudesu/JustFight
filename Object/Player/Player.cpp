@@ -208,19 +208,22 @@ void Player::InputMove()
 			float t = static_cast<float>(frameCount) / frameCountMax;
 			m_awayVec.x = m_awayRelativePos.x * t;
 			m_awayVec.z = m_awayRelativePos.z * t;
-
+			frameCount++;
 			// 移動ベクトルを正規化
-			VECTOR moveVector = VTransform(kVecX, m_platerRotMtx);  // 例としてX方向に移動する場合
-			moveVector = VNorm(moveVector);
-
-			// 速度係数
-			const float speedFactor = 1.0f;  // 適切な値を設定してください
-
-			// 速度ベクトルに速度係数を掛ける
-			VECTOR velocity = VAdd(moveVector, VGet(speedFactor, speedFactor, speedFactor));
-
+			VECTOR moveVector = VTransform(m_awayVec, m_platerRotMtx);  // 例としてX方向に移動する場合
 			// キャラクターの位置に速度を加える
-			m_pos = VAdd(m_pos, velocity);
+			m_pos = VAdd(m_pos, moveVector);
+
+			//moveVector = VNorm(moveVector);
+			//// 速度係数
+			//const float speedFactor = 20.0f;
+
+			//// 速度ベクトルに速度係数を掛ける
+			//VECTOR velocity = VAdd(moveVector, VGet(speedFactor, speedFactor, speedFactor));
+
+			//moveVector.y = 0.0f;
+			//// キャラクターの位置に速度を加える
+			//m_pos = VAdd(m_pos, velocity);
 		}
 		else
 		{
@@ -386,11 +389,10 @@ void Player::MoveAway(float x, float z, MATRIX rotMtx)
 			m_isAway = true;
 			m_awayRelativePos.x = x;
 			m_awayRelativePos.z = z;
-
 			// 速度ベクトルを設定
-			m_awayVec.x = x;
+			m_awayVec.x = 0.0f;
 			m_awayVec.y = 0.0f;
-			m_awayVec.z = z;
+			m_awayVec.z = 0.0f;
 		}
 	}
 }

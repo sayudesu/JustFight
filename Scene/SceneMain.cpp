@@ -298,11 +298,15 @@ SceneBase* SceneMain::UpdateGameResult()
 
 void SceneMain::Draw()
 {
-	// 新しい画面の作成
-	EffectScreen::GetInstance().BlurPreRenderBlurScreen();
-	
-	// 画面をクリアにする
-	EffectScreen::GetInstance().ClearScreen();
+	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
+//	if (m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard())
+	if(m_pCharacter[0]->IsAway())
+	{		
+		// 新しい画面の作成
+		EffectScreen::GetInstance().BlurPreRenderBlurScreen();	
+		// 画面をクリアにする
+		EffectScreen::GetInstance().ClearScreen();
+	}
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
@@ -313,7 +317,7 @@ void SceneMain::Draw()
 
 	// マップの描画
 	m_pField->Draw();
-	
+
 	// 血しぶきの描画(仮)
 	for (auto& blood : m_pBlood)
 	{
@@ -325,8 +329,13 @@ void SceneMain::Draw()
 		character->Draw();
 	}
 
-	// ブラー効果、画面の振動効果を描画する
-	EffectScreen::GetInstance().BlurPostRenderBlurScreen();
+	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
+//	if (m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard())
+	if (m_pCharacter[0]->IsAway())
+	{
+		// ブラー効果、画面の振動効果を描画する
+		EffectScreen::GetInstance().BlurPostRenderBlurScreen();
+	}
 	
 #if false	
 	DEBUG::Field();

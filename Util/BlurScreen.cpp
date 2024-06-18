@@ -108,7 +108,7 @@ void EffectScreen::BlurPostRenderBlurScreen()
 	//GetDrawBlendMode(&blendMode, &param);
 
 	// 新しい画面の作成をする
-	BlurPreRenderBlurScreen();
+//	BlurPreRenderBlurScreen();
 
 	// アルファの値を変更する
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);

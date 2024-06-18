@@ -1006,56 +1006,12 @@ void CharacterBase::ShieldDefaultPos()
 
 void CharacterBase::Gravity()
 {
-	if (m_myId == CharacterName::PLAYER)
+	// 重力後で処理の位置を変えます
+	if (m_isGravity)
 	{
-		static bool isJumpIng = false;
-		static float jumpSpeed = 150.0f;
-
-		// ジャンプの処理
-		if (Pad::IsTrigger(PAD_INPUT_1))
-		{
-			isJumpIng = true;
-			jumpSpeed = 150.0f;
-		}
-
-		// ジャンプ中の処理
-		if (isJumpIng)
-		{
-			m_pos.y += jumpSpeed;
-			jumpSpeed -= kGravity;
-
-			if (jumpSpeed < 0.0f)
-			{
-				jumpSpeed = 0.0f;
-			}
-
-			if (m_isGravity)
-			{
-				jumpSpeed = 0.0f;
-				isJumpIng = false;
-			}
-		}
-		else
-		{
-			// 重力後で処理の位置を変えます
-			if (m_isGravity)
-			{
-				m_pos.y -= kGravity;
-			}
-		}
-		m_isGravity = true;
+		m_pos.y -= kGravity;
 	}
-	
-
-	if (m_myId == CharacterName::ENEMY)
-	{
-		// 重力後で処理の位置を変えます
-		if (m_isGravity)
-		{
-			m_pos.y -= kGravity;
-		}
-		m_isGravity = true;
-	}
+	m_isGravity = true;
 
 }
 
@@ -1382,6 +1338,21 @@ int CharacterBase::GetMaxHp() const
 float CharacterBase::GetFightingMeter()const
 {
 	return m_fightingMeter;
+}
+
+bool CharacterBase::IsAway() const
+{
+	return m_isAway;
+}
+
+bool CharacterBase::IsHitDamage() const
+{
+	return m_isHitNow;
+}
+
+bool CharacterBase::IsGuard() const
+{
+	return m_isGuard;
 }
 
 float CharacterBase::GetStrongPower()
