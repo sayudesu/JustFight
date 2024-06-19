@@ -98,33 +98,42 @@ void EffectScreen::BlurPreRenderBlurScreen()
 #endif
 }
 
-void EffectScreen::BlurPostRenderBlurScreen()
+void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 {
 #if true	
-//	int drawMode = GetDrawMode();
-//	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	// アルファ値変更用
+	int alphaRate = 0;
+	// 描画する画面のフレーム
+	int backFrameRate = 0;
 
-	//int blendMode, param;
-	//GetDrawBlendMode(&blendMode, &param);
-
-	// 新しい画面の作成をする
-//	BlurPreRenderBlurScreen();
+	// ブラーを視覚化するかどうか
+	if (isBlurDraw)
+	{
+		alphaRate = m_alpha;
+		backFrameRate = 1;
+	}
+	else
+	{
+		alphaRate = 0;
+		backFrameRate = 0;
+	}
 
 	// アルファの値を変更する
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_alpha);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaRate);
 
 	// 画面の保存数をカウントが上回ったら処理を実行する
 	m_notBlendDraw++;
 	if (m_notBlendDraw > static_cast<int>(ScreenEffectNo::MAX))
 	{
-		// 1フレーム前の画面
-		DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[1 - m_current], false);
+		// backFrameRateフレーム前の画面
+		DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_blurScreen[backFrameRate - m_current], false);		
 	}
 
 	// 以下の処理にブレンドモードを適用しない
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-//	SetDrawMode(DX_DRAWMODE_BILINEAR);
+	// バイリニア法で描画
+	SetDrawMode(DX_DRAWMODE_BILINEAR);
 
 	// 画面の切り替え
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -140,7 +149,6 @@ void EffectScreen::BlurPostRenderBlurScreen()
 		// ガウスでぼかしを入れる
 		GraphFilter(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);
 	}
-
 
 	// ブラー効果を得た画像を描画する
 	DrawGraph(m_quakeX, m_quakeX, m_blurScreen[m_current], false);

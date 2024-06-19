@@ -36,7 +36,8 @@ SceneMain::SceneMain(DifficultyData data):
 	m_checkmateSize(10.0f),
 	m_checkmateRota(10.0f),
 	m_checkmateBgBlendRate(0),
-	m_checkmatePosY(0)
+	m_checkmatePosY(0),
+	m_isBlur(false)
 {
 }
 
@@ -245,6 +246,12 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 	}
 
+	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
+	bool isDamageBlur = m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard();
+	// 回避をしている場合
+	bool isAwayBlur = m_pCharacter[0]->IsAway();
+	m_isBlur = isDamageBlur || isAwayBlur;
+
 	// 画面振動更新処理
 	EffectScreen::GetInstance().QuakeUpdate();
 
@@ -297,16 +304,11 @@ SceneBase* SceneMain::UpdateGameResult()
 
 
 void SceneMain::Draw()
-{
-	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
-//	if (m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard())
-	if(m_pCharacter[0]->IsAway())
-	{		
-		// 新しい画面の作成
-		EffectScreen::GetInstance().BlurPreRenderBlurScreen();	
-		// 画面をクリアにする
-		EffectScreen::GetInstance().ClearScreen();
-	}
+{	
+	// 新しい画面の作成
+	EffectScreen::GetInstance().BlurPreRenderBlurScreen();	
+	// 画面をクリアにする
+	EffectScreen::GetInstance().ClearScreen();		
 	
 	// DxLibの仕様上SetDrawScreenでカメラの位置などの設定が
 	// 初期化されるのでここで再指定
@@ -329,34 +331,8 @@ void SceneMain::Draw()
 		character->Draw();
 	}
 
-	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
-//	if (m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard())
-	if (m_pCharacter[0]->IsAway())
-	{
-		// ブラー効果、画面の振動効果を描画する
-		EffectScreen::GetInstance().BlurPostRenderBlurScreen();
-	}
-	
-#if false	
-	DEBUG::Field();
-	DEBUG::FrameMeter("P体力", 100, 50, m_pCharacter[0]->GetHp(), 6, 30, 0xffff00);
-	DEBUG::FrameMeter("E体力", 100, 100, m_pCharacter[1]->GetHp(), 6, 30, 0xffff00);
-	DEBUG::FrameMeter("Pスタミナ", 100, 150, m_pCharacter[0]->GetFightingMeter(), 100, 15, 0xffff00);
-	DEBUG::FrameMeter("Eスタミナ", 100, 200, m_pCharacter[1]->GetFightingMeter(), 100, 15, 0xffff00);
-
-	DEBUG::FrameMeter("P攻撃フレーム", 100, 250, m_pCharacter[0]->GetAttackFrameMax(), m_pCharacter[0]->GetAttackFrame(), 20, 0xffff00);
-	DEBUG::FrameMeter("P防御フレーム", 100, 300, m_pCharacter[0]->GetGuardFrameMax(), m_pCharacter[0]->GetGuardFrame(), 30, 0xffff00);
-	DEBUG::FrameMeter("              + JustGuard", 100, 300, m_pCharacter[0]->GetJustGuardFrameMax(), m_pCharacter[0]->GetJustGuardFrame(), 30, 0xffffff);
-
-	DEBUG::FrameMeter("E攻撃フレーム", 100, 400, m_pCharacter[1]->GetAttackFrameMax(), m_pCharacter[1]->GetAttackFrame(), 20, 0xffff00);
-	DEBUG::FrameMeter("E防御フレーム", 100, 450, m_pCharacter[1]->GetGuardFrameMax(), m_pCharacter[1]->GetGuardFrame(), 30, 0xffff00);
-	DEBUG::FrameMeter("              + JustGuard", 100, 450, m_pCharacter[1]->GetJustGuardFrameMax(), m_pCharacter[1]->GetJustGuardFrame(), 30, 0xffffff);
-	DrawString(0, 0, "SceneMain", 0xffffff);
-#endif
-
-	////// 画面エフェクトの更新処理
-	//EffectScreen::GetInstance().ScreenBack();
-	//EffectScreen::GetInstance().QuakePostRenderBlurScreen();
+	// ブラー効果、画面の振動効果を描画する
+	EffectScreen::GetInstance().BlurPostRenderBlurScreen(m_isBlur);
 
 	// UIの描画
 	m_pUi->Draw();

@@ -43,7 +43,7 @@ public:
 	void BlurIReplayInit();
 	void BlurRelease();
 	void BlurPreRenderBlurScreen();
-	void BlurPostRenderBlurScreen();
+	void BlurPostRenderBlurScreen(bool isBlurDraw);
 
 	// —h‚ç‚µ
 	void QuakeReplayInit();

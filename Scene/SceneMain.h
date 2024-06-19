@@ -90,4 +90,7 @@ private:
 	// チェックメイト時背景のブレンドアルファ用
 	int m_checkmateBgBlendRate;
 	int m_checkmatePosY;
+
+	// ブラーをかけるかどうか
+	bool m_isBlur;
 };
