@@ -8,10 +8,10 @@ private:
 public:
 	virtual~EffectScreen() = default;
 	// コピーコンストラクタの禁止
-	EffectScreen(const EffectScreen&) = delete;
+	EffectScreen(const EffectScreen&)            = delete;
 	EffectScreen& operator=(const EffectScreen&) = delete;
-	EffectScreen(EffectScreen&&) = delete;
-	EffectScreen& operator=(EffectScreen&&) = delete;
+	EffectScreen(EffectScreen&&)                 = delete;
+	EffectScreen& operator=(EffectScreen&&)      = delete;
 
 	// インスタンスの作成
 	static EffectScreen& GetInstance()
@@ -48,9 +48,6 @@ public:
 	// 揺らし
 	void QuakeReplayInit();
 	void QuakeUpdate();
-	void QuakeRelease();
-	void QuakePreRenderBlurScreen();
-	void QuakePostRenderBlurScreen();
 
 private:
 	enum class DamageEffectNo
@@ -63,9 +60,10 @@ private:
 	int m_damageScreen[static_cast<int>(DamageEffectNo::MAX)];
 
 	// 画面揺れ用
-	float m_quakeX;
-	int m_quakeFrame;
+	float m_shake;
+	int m_shakeFrame;
 
+	// ブラーを変える場合の重ねる画面の数
 	enum class ScreenEffectNo
 	{
 		ONE,
@@ -78,11 +76,9 @@ private:
 	int m_blurScreen[static_cast<int>(ScreenEffectNo::MAX)];
 
 	// ブラー専用
-	int m_current;
-	int m_alpha;
-	int m_notBlendDraw;
-
-
+	int m_current = 0;
+	int m_alpha   = 0;
+	int m_notBlendDraw = 0;
 	int m_blendAddRate = 0;
 };
 
