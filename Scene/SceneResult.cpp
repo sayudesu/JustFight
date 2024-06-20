@@ -1,22 +1,19 @@
 #include <DxLib.h>
 
 #include "SceneResult.h"
-#include "SceneDebug.h"
 #include "SceneTitle.h"
 #include "SceneLevelSelect.h"
 
 #include "../Util/Game.h"
 #include "../Util/Pad.h"
 #include "../Util/GameObject.h"
+#include "../Util/SoundName.h"
+#include "../Util/FontSize.h"
+#include "../\Util/ModelName.h"
 
 #include "../CSVData/SoundManager.h"
-#include "../Util/SoundName.h"
-
 #include "../CSVData/FontManager.h"
-#include "../Util/FontSize.h"
-
 #include "../CSVData/ModelManager.h"
-#include "../\Util/ModelName.h"
 
 #include "../Object/Camera/Camera.h"
 

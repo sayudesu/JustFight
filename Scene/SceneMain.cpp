@@ -1,7 +1,6 @@
 #include <DxLib.h>
 
 #include "SceneMain.h"
-#include "SceneDebug.h" // デバッグシーン
 #include "SceneResult.h"// リザルトシーン
 
 #include "../Object/Camera/Camera.h"    // カメラ

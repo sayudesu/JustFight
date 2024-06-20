@@ -283,6 +283,13 @@ private:
 	bool m_isHitNow = false;
 	bool m_isHitResult = false;
 
+	float m_shieldRotaY = 0.0f;
+	float m_weaponRotaY = 0.0f;
+	float m_tempWeaponRotaY = 0.0f;
+
+	// スタンした場合の回転(ラジアン)
+	float m_stunRota = 0.0f;
+
 #if _DEBUG
 	std::string Dname;
 #endif
@@ -339,19 +346,5 @@ protected:
 
 	// オブジェクトに当たった位置
 	HitPos m_hitPos;
-
-public:
-	// ここは使わない
-
-	float m_shieldRotaY = 0.0f;
-	float m_weaponRotaY = 0.0f;
-	float m_tempWeaponRotaY = 0.0f;
-
-	VECTOR testV1 = VGet(0, 0, 0);
-	VECTOR testV2 = VGet(0, 0, 0);
-	VECTOR testV3 = VGet(0, 0, 0);
-
-	float m_stunRota = 0.0f;
-
 };
 

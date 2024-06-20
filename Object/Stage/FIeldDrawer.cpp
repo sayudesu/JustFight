@@ -24,6 +24,7 @@ FieldDrawer::~FieldDrawer()
 
 void FieldDrawer::Init()
 {
+	// オブジェクトの生成
 	m_chessModel = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::MAP2),
 		m_pos,
@@ -55,36 +56,6 @@ void FieldDrawer::Draw()
 	// 描画
 	m_chessModel->Draw();
 	m_mapModel->Draw();
-
-
-#if false
-	VECTOR start = VGet(1200, 300, 1200);
-	VECTOR end = VGet(-1200, 300, 1200);
-	DrawLine3D(start, end, 0xffffff);
-
-	start = VGet(-1200, 300, -1200);
-	end = VGet(1200, 300, -1200);
-	DrawLine3D(start, end, 0xffffff);
-
-	start = VGet(1200, 300, -1200);
-	end = VGet(1200, 300, 1200);
-	DrawLine3D(start, end, 0xffffff);
-
-	start = VGet(-1200, 300, 1200);
-	end = VGet(-1200, 300, -1200);
-	DrawLine3D(start, end, 0xffffff);
-	// 軸
-	VECTOR Xp = ConvWorldPosToScreenPos(VGet(1000, 300, 0));
-	VECTOR Xm = ConvWorldPosToScreenPos(VGet(-1000, 300, 0));
-
-	VECTOR Zp = ConvWorldPosToScreenPos(VGet(0, 300, 1000));
-	VECTOR Zm = ConvWorldPosToScreenPos(VGet(0, 300, -1000));
-
-	DrawString(Xp.x, Xp.y, "X+", 0xffff00);
-	DrawString(Xm.x, Xm.y, "X-", 0xff0000);
-	DrawString(Zp.x, Zp.y, "Z+", 0x00ff00);
-	DrawString(Zm.x, Zm.y, "Z-", 0x0000ff);
-#endif
 }
 
 int FieldDrawer::GetHandle()

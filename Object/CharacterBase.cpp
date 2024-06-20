@@ -93,9 +93,11 @@ void CharacterBase::Init()
 	// モデルの相対位置
 	m_vecWeapon = m_parameter.weaponRelativePos;
 	m_vecShield = m_parameter.shieldRelativePos;
-	// モデルの角度
-	testV1.z = 90 * DX_PI_F / 180.0f;
 
+	// モデルの角度
+	float angleZ = 90 * DX_PI_F / 180.0f;
+
+	// キャラごとのステータス情報を取得
 	m_hp = m_parameter.hpMax;
 	m_vec = m_parameter.knockBackPos;
 	m_fightingMeter = m_parameter.fightingMeterMax;
@@ -107,21 +109,21 @@ void CharacterBase::Init()
 	m_pCharactor = new GameObject(
 		m_parameter.fileName.c_str(),
 		m_pos,
-		VGet(testV1.x, m_angle, testV1.z),
+		VGet(0.0f, m_angle, angleZ),
 		VGet(40.0f, 40.0f, 40.0f));
 
 	// 武器オブジェクトの生成
 	m_pWeapon = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::WEAPON),
 		m_weaponPos,
-		VGet(testV1.x, m_angle, testV1.z),
+		VGet(0.0f, m_angle, angleZ),
 		VGet(3.0f, 3.0f, 3.0f));
 
 	// 盾オブジェクトの生成
 	m_pShield = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::SHIELD),
 		VGet(100, m_weaponPos.y, 100),
-		VGet(testV1.x, m_angle, testV1.z),
+		VGet(0.0f, m_angle, angleZ),
 		VGet(3.0f, 3.0f, 3.0f));
 
 	// 位置情報の更新
@@ -141,18 +143,7 @@ void CharacterBase::End()
 
 void CharacterBase::Update()
 {
-#if _DEBUG
-	// デバッグ用
-	if (m_myId == CharacterName::PLAYER)
-	{
-		printfDx("P %s \n", Dname.c_str());
-
-	}
-	if (m_myId == CharacterName::ENEMY)
-	{
-		printfDx("E\n");
-	}
-#endif
+	// メンバ関数ポインタ
 	(this->*m_pFunc)();
 }
 

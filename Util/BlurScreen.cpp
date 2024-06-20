@@ -6,6 +6,14 @@
 
 EffectScreen* EffectScreen::m_pInstance = nullptr;
 
+namespace
+{
+	// —h‚ê‹ï‡
+	constexpr float kShakePower = 20.0f;
+	// —h‚êƒtƒŒ[ƒ€
+	constexpr int kShakeFrame = 30;
+}
+
 void EffectScreen::Load()
 {
 	// UŒ‚‰‰o—p
@@ -156,8 +164,10 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 
 void EffectScreen::QuakeReplayInit()
 {	
-	m_shake      = 10.0f;
-	m_shakeFrame = 30;
+	// —h‚ê‹ï‡
+	m_shake      = kShakePower;
+	// —h‚ê‚éƒtƒŒ[ƒ€”
+	m_shakeFrame = kShakeFrame;
 }
 
 void EffectScreen::QuakeUpdate()

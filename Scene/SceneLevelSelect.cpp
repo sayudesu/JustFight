@@ -1,33 +1,22 @@
 #include "SceneLevelSelect.h"
-#include "SceneDebug.h"
 #include "SceneMain.h"
 #include "SceneTitle.h"
 
 #include "../Util/SlideSelect.h"
-#include "../Util/SlideSelect.h"
-
 #include "../Util/Game.h"
-
 #include "../Util/GameObject.h"
-
-#include "../Object/Camera/Camera.h"
-
 #include "../Util/DifficultyData.h"
-
-#include "../CSVData/ModelManager.h"
 #include "../Util/ModelName.h"
-
-#include "../CSVData/FontManager.h"
 #include "../Util/FontSize.h"
-
-#include "../CSVData/SoundManager.h"
 #include "../Util/SoundName.h"
-
-#include "../CSVData/SubtitleManager.h"
 #include "../Util/SubtitleData.h"
-
 #include "../Util/PoseScreen.h"
 
+#include "../Object/Camera/Camera.h"
+#include "../CSVData/ModelManager.h"
+#include "../CSVData/FontManager.h"
+#include "../CSVData/SoundManager.h"
+#include "../CSVData/SubtitleManager.h"
 
 namespace
 {
