@@ -269,7 +269,6 @@ void CharacterBase::Idle()
 #if _DEBUG
 	Dname = "‘Ò‹@";
 #endif
-
 }
 
 // UŒ‚‚µ‚½ê‡

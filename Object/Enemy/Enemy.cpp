@@ -27,7 +27,7 @@ namespace
 
 
 Enemy::Enemy(DifficultyData data,VECTOR pos) :
-	CharacterBase(data,pos),
+	EnemyBase(data,pos),
 	m_isCheckGuard(false),
 	m_isResultGuard(false),
 	m_isCheckAttack(false),

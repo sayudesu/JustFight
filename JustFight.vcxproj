@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Object\Enemy\EnemyBase.cpp" />
+    <ClCompile Include="Object\Enemy\EnemyCcavalry.cpp" />
     <ClCompile Include="Object\Stage\FIeldDrawer.cpp" />
     <ClCompile Include="Util\BlurScreen.cpp" />
     <ClCompile Include="CSVData\CharactorDataManager.cpp" />
@@ -177,6 +179,8 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Enemy\EnemyBase.h" />
+    <ClInclude Include="Object\Enemy\EnemyCcavalry.h" />
     <ClInclude Include="Util\HitPos.h" />
     <ClInclude Include="Object\Stage\FIeldDrawer.h" />
     <ClInclude Include="Util\BlurScreen.h" />

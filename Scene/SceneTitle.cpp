@@ -22,6 +22,9 @@ namespace
 	// 3Dオブジェクトの角度
 	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
 	const VECTOR kWinnerRota2 = VGet(0, 180 * DX_PI_F / 180.0f, 0);
+
+	//選択ボタン用文字
+	const char* const kPresskey = "Press any key";
 }
 
 SceneTitle::SceneTitle():
@@ -118,7 +121,7 @@ void SceneTitle::Draw()
 
 	// ボタン誘導描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(m_blendAlpha));
-	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12 + 5, Game::kScreenHeight/2 + 256 + 5, "Press any key", 0x111111, FontSize::GENEITERAMIN_MEDIUM);
-	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12, Game::kScreenHeight/2 + 256, "Press any key", 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12 + 5, Game::kScreenHeight/2 + 256 + 5, kPresskey, 0x111111, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12, Game::kScreenHeight/2 + 256, kPresskey, 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }

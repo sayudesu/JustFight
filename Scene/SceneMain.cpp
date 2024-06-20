@@ -247,6 +247,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
 	bool isDamageBlur = m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard();
+
 	// 回避をしている場合
 	bool isAwayBlur = m_pCharacter[0]->IsAway();
 	m_isBlur = isDamageBlur || isAwayBlur;
@@ -592,7 +593,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			}
 		}
 	}
-
 #endif
 }
 

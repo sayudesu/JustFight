@@ -2,11 +2,11 @@
 #include <DxLib.h>
 #include <deque>
 
-#include "../CharacterBase.h"
+#include "EnemyBase.h"
 
 #include "../../Util/DifficultyData.h"
 
-class Enemy : public CharacterBase
+class Enemy : public EnemyBase
 {
 public:
 	Enemy(DifficultyData data,VECTOR pos);
@@ -31,6 +31,7 @@ private:
 	// キャラクターの向き
 	void Direction()override;
 private:
+	// プレイヤーの方向を見る為のアングルに遅延を入れる
 	std::deque<float> m_delayFrameAngle;
 
 	// 防御
