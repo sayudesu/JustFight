@@ -58,6 +58,8 @@ public:
     void Update()
     {
         VECTOR relativePos = m_pos;
+
+        // 親オブジェクトが無い場合、親オブジェクトを抜ける場合
         if (m_pParent != nullptr && (!m_isParentEscape))
         {
             // 親オブジェクトが存在する場合、親の座標と角度に基づいて相対的な位置を計算
@@ -78,23 +80,26 @@ public:
 
         }
 
+        // モデルの位置を指定
         MV1SetPosition(m_handle, m_pos);
+        // モデルの角度を指定
         MV1SetRotationXYZ(m_handle, m_angle);
+
+        // 位置を一時的に記録
         m_tempPos = m_pos;
+
+        // 親オブジェクトが無い場合、親オブジェクトを抜ける場合
         if (m_pParent != nullptr && (!m_isParentEscape))
         {
+            // 子オブジェクトの位置
             MV1SetPosition(m_handle, m_childPos);
+            // 位置を一時的に記録
             m_tempPos = m_childPos;
         }
     }
 
     void Draw()
     {       
-#if false
-       // メイン位置
-       DrawSphere3D(m_tempPos, 32.0f, 16, GetColor(0, 0, 255), GetColor(128, 0, 0), false);
-       DrawSphere3D(MV1GetFramePosition(m_handle, 3), 32.0f, 16, GetColor(255, 0, 0), GetColor(128, 0, 0), false);
-#endif
        // 描画
        if (m_dataType == DataType::THREE)
        {

@@ -78,11 +78,6 @@ void Enemy::Input()
 	// Œü‚«‚ðŽw’è
 	Direction();
 
-	if (m_isAttack || m_isGuard || m_isStrongAttack || m_isJustGuard)
-	{
-
-	}
-
 #if true	
 	if (!IsStun())
 	{

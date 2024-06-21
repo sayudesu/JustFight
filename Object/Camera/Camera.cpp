@@ -49,9 +49,11 @@ void Camera::Update()
 	m_delayFrameTargetPos.push_front(m_targetPos);
 	m_delayFrameAngle.push_front(m_playerAngle);
 
+	// 配列の数が指定のフレームを超えると末尾の配列を削除する
 	if (m_delayFrameTargetPos.size() > kCameraDelayFrame &&
 		m_delayFrameAngle.size()  > kCameraDelayFrame)
 	{
+		// 配列の削除
 		m_delayFrameTargetPos.pop_back();
 		m_delayFrameAngle.pop_back();
 	}

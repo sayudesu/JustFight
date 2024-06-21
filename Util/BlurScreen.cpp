@@ -108,12 +108,12 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 	// ブラーを視覚化するかどうか
 	if (isBlurDraw)
 	{
-		alphaRate = m_alpha;
+		alphaRate     = m_alpha;
 		backFrameRate = 1;
 	}
 	else
 	{
-		alphaRate = 0;
+		alphaRate     = 0;
 		backFrameRate = 0;
 	}
 
@@ -140,9 +140,10 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 	// 画面揺れ効果があるかどうか
 	if (static_cast<int>(m_shake) != 0)
 	{
+		// 加算合成する
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
 	
-		// 加算合成する
+		// グラフィックハンドル化した画面を描画させる
 		DrawGraph(m_shake, m_shake, m_blurScreen[m_current], false);
 
 		// ガウスでぼかしを入れる
@@ -158,7 +159,8 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 	// 画面揺れ効果があるかどうか
 	if (static_cast<int>(m_shake) != 0)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);// ブレンドモードを初期状態に戻す
+		// ブレンドモードを初期状態に戻す
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);
 	}
 }
 

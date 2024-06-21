@@ -1,13 +1,17 @@
 #pragma once
-#include "../CharacterBase.h"
+#include "EnemyBase.h"
 
-class EnemyCcavalry : public CharacterBase
+#include "../../Util/DifficultyData.h"
+
+class EnemyCcavalry : public EnemyBase
 {
 public:
-	EnemyCcavalry();
+	EnemyCcavalry(DifficultyData data, VECTOR pos);
 	virtual ~EnemyCcavalry();
 
 	void Input()override;
+	void Update()override;
+	void Draw()override;
 
 private:
 

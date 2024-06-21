@@ -245,13 +245,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 	}
 
-	// 攻撃を受けた場合、ガードしていない場合ブラーをかける
-	bool isDamageBlur = m_pCharacter[0]->IsHitDamage() && !m_pCharacter[0]->IsGuard();
-
-	// 回避をしている場合
-	bool isAwayBlur = m_pCharacter[0]->IsAway();
-	m_isBlur = isDamageBlur || isAwayBlur;
-
 	// 画面振動更新処理
 	EffectScreen::GetInstance().QuakeUpdate();
 
@@ -418,6 +411,8 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
 
+#if _DEBUG
+
 		if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
 		{					
 			if (HitPolyDim.Dim->Position->x < character->GetPos().x + character->GetModelRadius() / 2)
@@ -428,14 +423,13 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 		}
 		if (fabs(HitPolyDim.Dim->Normal.z) > 0.9f)
 		{
-		//	printfDx("HIT == ");
-
 			if (HitPolyDim.Dim->Position->z < character->GetPos().z + character->GetModelRadius() / 2)
 			{
 				//	printfDx("横 = Z+\n");
 				character->IsCheckHitWall(true, HitPos::ZP);
 			}
 		}
+#endif
 	}
 
 	// モデルとカプセルとの当たり判定
@@ -476,9 +470,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// ターゲットの戦闘の状態を受け取る
 	character1->SetBattleState(character2->GetBattleState());
-
-	// ジャストガードOFF
-//	character1->SetJustGuard(false);
 
 	// 回転角度を取得
 	character2->SetTargetMtxRota(character1->GetRot());
@@ -553,9 +544,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 				// ダメージを与える
 				character2->SetDamage(true);
 
-				// 戦いに必要な特殊なメーターを減らす
-			//	character1->SetFightingMeter(-0.1f);
-
 				// ノックバック
 				if (character1->GetBattleState() == BattleState::STRONGATTACK)
 				{
@@ -576,8 +564,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 					color = 0xffffff;
 				}
 
-				const bool d = character2->GetBattleState() != BattleState::GUARD;
-				if (d)
+				// ガードしていなかったら
+				const bool isGruad = character2->GetBattleState() != BattleState::GUARD;
+				if (isGruad)
 				{
 					for (int i = 0; i < 100; i++)
 					{
