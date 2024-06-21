@@ -345,7 +345,6 @@ void SceneMain::Draw()
 
 		DrawRotaGraph(Game::kScreenWidth/2, m_checkmatePosY, m_checkmateSize, m_checkmateRota, m_hCheckmate, true);
 	}
-
 }
 
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)

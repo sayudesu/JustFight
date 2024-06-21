@@ -372,7 +372,6 @@ void CharacterBase::Attack()
 			m_weaponShakeRate.y = 0.0f;
 			m_weaponShakeRate.z = 0.0f;
 		}
-
 	}
 
 	// ƒXƒ^ƒ“ó‘Ô
