@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DEBUG.cpp" />
     <ClCompile Include="Object\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Object\Enemy\EnemyCcavalry.cpp" />
     <ClCompile Include="Object\Stage\FIeldDrawer.cpp" />
@@ -180,7 +179,6 @@
     <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DEBUG.h" />
     <ClInclude Include="Object\Enemy\EnemyBase.h" />
     <ClInclude Include="Object\Enemy\EnemyCcavalry.h" />
     <ClInclude Include="Util\HitPos.h" />
