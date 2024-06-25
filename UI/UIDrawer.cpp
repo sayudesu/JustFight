@@ -13,29 +13,29 @@ namespace
 
 UIDrawer::UIDrawer()
 {
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]					= LoadGraph("Data/Image/UI/ステータスベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]		    = LoadGraph("Data/Image/UI/馬.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]					= LoadGraph("Data/Image/UI/HPゲージ.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)]				= LoadGraph("Data/Image/UI/HPゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]					= LoadGraph("Data/Image/UI/必殺技ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)]              = LoadGraph("Data/Image/UI/必殺技ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER)]        = LoadGraph("Data/Image/UI/体幹ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/体幹ゲージ真ん中.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_BG)]     = LoadGraph("Data/Image/UI/体幹ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)]      = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
-	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]        = LoadGraph("Data/Image/UI/ゲージ枠.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]					= LoadGraph("Data/Image/UI/StatusBaseWhite.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]		    = LoadGraph("Data/Image/UI/HoseWhite.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]					= LoadGraph("Data/Image/UI/HPGauge.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)]				= LoadGraph("Data/Image/UI/HPGaugeBase.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]					= LoadGraph("Data/Image/UI/SpecialMovesGauge.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)]              = LoadGraph("Data/Image/UI/SpecialMovesGaugeBase.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER)]        = LoadGraph("Data/Image/UI/BodyGauge.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/BodyGaugeMid.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_BG)]     = LoadGraph("Data/Image/UI/BodyGaugeBase.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)]      = LoadGraph("Data/Image/UI/BodyGaugeOutSide.png");
+	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)]        = LoadGraph("Data/Image/UI/GaugeOutSide.png");
 
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)] = LoadGraph("Data/Image/UI/ステータスベース黒.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)] = LoadGraph("Data/Image/UI/馬黒.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)] = LoadGraph("Data/Image/UI/HPゲージ.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)] = LoadGraph("Data/Image/UI/HPゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)] = LoadGraph("Data/Image/UI/必殺技ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)] = LoadGraph("Data/Image/UI/必殺技ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER)] = LoadGraph("Data/Image/UI/体幹ゲージ.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/体幹ゲージ真ん中.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER_BG)] = LoadGraph("Data/Image/UI/体幹ゲージベース.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_OUTSIDE)] = LoadGraph("Data/Image/UI/体幹ゲージ枠.png");
-	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)] = LoadGraph("Data/Image/UI/ゲージ枠.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)] = LoadGraph("Data/Image/UI/StatusBaseBlack.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)] = LoadGraph("Data/Image/UI/HoseBlack.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)] = LoadGraph("Data/Image/UI/HPGauge.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)] = LoadGraph("Data/Image/UI/HPGaugeBase.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)] = LoadGraph("Data/Image/UI/SpecialMovesGauge.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)] = LoadGraph("Data/Image/UI/SpecialMovesGaugeBase.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER)] = LoadGraph("Data/Image/UI/BodyGauge.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)] = LoadGraph("Data/Image/UI/BodyGaugeMid.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_POWER_BG)] = LoadGraph("Data/Image/UI/BodyGaugeBase.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::FIGHT_OUTSIDE)] = LoadGraph("Data/Image/UI/BodyGaugeOutSide.png");
+	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)] = LoadGraph("Data/Image/UI/GaugeOutSide.png");
 
 
 
@@ -51,14 +51,14 @@ UIDrawer::UIDrawer()
 		m_playerPos = VGet(315, Game::kScreenHeight - y + 5, 0);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
-			"Data/Image/UI/ステータスベース.png",
+			"Data/Image/UI/StatusBaseWhite.png",
 			m_playerPos,
 			0.0f,
 			1.0f
 			);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
-			"Data/Image/UI/馬.png",
+			"Data/Image/UI/HoseWhite.png",
 			VGet(270, -30, 0),
 			0.0f,
 			1.0f,
@@ -66,7 +66,7 @@ UIDrawer::UIDrawer()
 			);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)] = std::make_unique<GameObject>(
-			"Data/Image/UI/HPゲージ.png",
+			"Data/Image/UI/HPGauge.png",
 			VGet(-11, -25, 0),
 			0.0f,
 			1.0f,
@@ -74,7 +74,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)] = std::make_unique<GameObject>(
-			"Data/Image/UI/HPゲージベース.png",
+			"Data/Image/UI/HPGaugeBase.png",
 			VGet(-11, -25, 0),
 			0.0f,
 			1.0f,
@@ -82,7 +82,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)] = std::make_unique<GameObject>(
-			"Data/Image/UI/ゲージ枠.png",
+			"Data/Image/UI/GaugeOutSide.png",
 			VGet(-11, -25, 0),
 			0.0f,
 			1.0f,
@@ -90,7 +90,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)] = std::make_unique<GameObject>(
-			"Data/Image/UI/必殺技ゲージ.png",
+			"Data/Image/UI/SpecialMovesGauge.png",
 			VGet(-12, 18, 0),
 			0.0f,
 			1.0f,
@@ -98,7 +98,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)] = std::make_unique<GameObject>(
-			"Data/Image/UI/必殺技ゲージベース.png",
+			"Data/Image/UI/SpecialMovesGaugeBase.png",
 			VGet(-12, 18, 0),
 			0.0f,
 			1.0f,
@@ -106,7 +106,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)] = std::make_unique<GameObject>(
-			"Data/Image/UI/ゲージ枠.png",
+			"Data/Image/UI/GaugeOutSide.png",
 			VGet(-12, 18, 0),
 			0.0f,
 			1.0f,
@@ -127,14 +127,14 @@ UIDrawer::UIDrawer()
 		m_enemyPos = VGet(Game::kScreenWidth - 315,y + 5 + 50, 0);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
-			"Data/Image/UI/ステータスベース黒.png",
+			"Data/Image/UI/StatusBaseBlack.png",
 			m_enemyPos,
 			0.0f,
 			1.0f
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)] = std::make_unique<GameObject>(
-			"Data/Image/UI/馬黒.png",
+			"Data/Image/UI/HoseBlack.png",
 			VGet(-270, -30, 0),
 			0.0f,
 			1.0f,
@@ -142,7 +142,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)] = std::make_unique<GameObject>(
-			"Data/Image/UI/HPゲージ.png",
+			"Data/Image/UI/HPGauge.png",
 			VGet(11, -25, 0),
 			0.0f,
 			1.0f,
@@ -150,7 +150,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)] = std::make_unique<GameObject>(
-			"Data/Image/UI/HPゲージベース.png",
+			"Data/Image/UI/HPGaugeBase.png",
 			VGet(11, -25, 0),
 			0.0f,
 			1.0f,
@@ -158,7 +158,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)] = std::make_unique<GameObject>(
-			"Data/Image/UI/ゲージ枠.png",
+			"Data/Image/UI/GaugeOutSide.png",
 			VGet(11, -25, 0),
 			0.0f,
 			1.0f,
@@ -166,7 +166,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)] = std::make_unique<GameObject>(
-			"Data/Image/UI/必殺技ゲージ.png",
+			"Data/Image/UI/SpecialMovesGauge.png",
 			VGet(12, 18, 0),
 			0.0f,
 			1.0f,
@@ -174,7 +174,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)] = std::make_unique<GameObject>(
-			"Data/Image/UI/必殺技ゲージベース.png",
+			"Data/Image/UI/SpecialMovesGaugeBase.png",
 			VGet(12, 18, 0),
 			0.0f,
 			1.0f,
@@ -182,7 +182,7 @@ UIDrawer::UIDrawer()
 		);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)] = std::make_unique<GameObject>(
-			"Data/Image/UI/ゲージ枠.png",
+			"Data/Image/UI/GaugeOutSide.png",
 			VGet(12, 18, 0),
 			0.0f,
 			1.0f,
@@ -492,40 +492,4 @@ void UIDrawer::SetParam(CharacterName name,int hpNum,int hpMax,float skillNum, f
 	m_skillNum[static_cast<int>(name)] = static_cast<int>(skillNum);
 	m_skillMax[static_cast<int>(name)] = static_cast<int>(skillMax);
 	m_fightMeterNum[static_cast<int>(name)] = fightMeterNum;
-}
-
-//void UIDrawer::UpdateHp(int x, int y)
-//{
-//	DrawGraph(
-//		x,
-//		y,
-//		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)],
-//		true);
-//}
-
-//void UIDrawer::UpdateSkill(int x, int y)
-//{
-//	DrawGraph(
-//		x,
-//		y,
-//		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)],
-//		true);
-//}
-
-void UIDrawer::DrawAreaResult(int x, int y, int x1, int y1)
-{
-	//DxLib::SetDrawArea(
-	//	x,
-	//	y,
-	//	x1,
-	//	y1);// 描画可能領域を全体に戻す
-}
-
-void UIDrawer::DrawAreaALL()
-{
-	//DxLib::SetDrawArea(
-	//	0,
-	//	0,
-	//	Game::kScreenWidth,
-	//	Game::kScreenHeight);// 描画可能領域を全体に戻す
 }
