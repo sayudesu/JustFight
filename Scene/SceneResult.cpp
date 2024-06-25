@@ -75,7 +75,7 @@ void SceneResult::Init()
 	VECTOR enemyScreenToWorldPos{};
 	VECTOR enemyRota{};
 
-	m_hImageResultBg = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
+	m_hImageResultBg = LoadGraph("Data/Image/UI/GameDifficultySelectionBase.png");
 	if (m_resultData == GameResultData::CREAR)
 	{
 		m_hImageResult = LoadGraph("Data/Image/UI/Win.png");

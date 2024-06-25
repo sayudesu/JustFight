@@ -34,7 +34,7 @@ SceneTitle::SceneTitle():
 {
 	// 画像の読み込み
 	m_hTitle = LoadGraph("Data/Image/Title.png");
-	m_hBg    = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
+	m_hBg    = LoadGraph("Data/Image/UI/GameDifficultySelectionBase.png");
 }
 
 SceneTitle::~SceneTitle()

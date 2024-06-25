@@ -59,7 +59,7 @@ void SceneLevelSelect::Init()
 	m_isCameraStop[CameraStopData::Z] = false;
 	m_isCameraStop[CameraStopData::ALL] = false;
 
-	m_hTitle = LoadGraph("Data/Image/UI/ゲーム難易度選択ベース2.png");
+	m_hTitle = LoadGraph("Data/Image/UI/GameDifficultySelectionBase.png");
 
 	m_select = std::make_unique<SlideSelect>();
 	m_select->Init(2, true);
@@ -88,7 +88,7 @@ void SceneLevelSelect::Init()
 	{
 		// 背景
 		m_hBg = std::make_shared<GameObject>(
-			"Data/Image/UI/ゲーム難易度選択ベース2.png",
+			"Data/Image/UI/GameDifficultySelectionBase.png",
 			m_bgPos,
 			kImageAngle,
 			kImageSize
@@ -96,7 +96,7 @@ void SceneLevelSelect::Init()
 
 		// 選択文字
 		m_hSelect = std::make_shared<GameObject>(
-			"Data/Image/UI/Select Difficulty.png",
+			"Data/Image/UI/SelectDifficulty.png",
 			VGet(kImagePosX, -300.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -105,7 +105,7 @@ void SceneLevelSelect::Init()
 
 		// 選択文字の下の飾り
 		m_hDecoration = std::make_shared<GameObject>(
-			"Data/Image/UI/飾り.png",
+			"Data/Image/UI/Decoration.png",
 			VGet(kImagePosX, -250.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -147,7 +147,7 @@ void SceneLevelSelect::Init()
 
 		// 矢印上向き
 		m_hArrow[0] = std::make_shared<GameObject>(
-			"Data/Image/UI/矢印.png",
+			"Data/Image/UI/Arrow.png",
 			VGet(kImagePosX, -120.0f, 0),
 			kImageAngle + 180.0f * DX_PI_F / 180.0f,
 			m_arrowSize[0],
@@ -156,7 +156,7 @@ void SceneLevelSelect::Init()
 
 		// 矢印下向き
 		m_hArrow[1] = std::make_shared<GameObject>(
-			"Data/Image/UI/矢印.png",
+			"Data/Image/UI/Arrow.png",
 			VGet(kImagePosX, 180.0f, 0),
 			kImageAngle,
 			m_arrowSize[1],
