@@ -518,9 +518,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			// 強攻撃するための力を溜める
 			character1->SetStrongPower(20.0f);
 
-			// 戦いに必要な特殊なメーターを減らす
-		//	character1->SetFightingMeter(-3.0f);
-
 			character1->SetCollGuardEffect();
 
 			character1->SetWeaponAttacksShield(true);

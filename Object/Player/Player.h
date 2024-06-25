@@ -23,7 +23,8 @@ private:
 	void InputMove();
 	void InputAttack();
 	void InputGuard();
-
+	
+	// キャラクターの移動制御
 	void MoveCharacter(VECTOR moveVector);
 	// 移動用関数
 	VECTOR AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
