@@ -17,8 +17,8 @@ namespace CSVCharactorData
 		{"No","Name","ValueNum","Parameter"},
 
 		{"1","attackFrameMax","1","60"},
-		{"2","attackFrameGapMax","1","0"},
-		{"3","attackTotalFrame","1","60"},
+		{"2","attackFrameGapMax","1","15"},
+		{"3","attackTotalFrame","1","75"},
 
 		{"4","attackAfterStopFrameMax","1","60"},
 
@@ -56,8 +56,8 @@ namespace CSVCharactorData
 		{"No","Name","ValueNum","Parameter"},
 
 		{"1","attackFrameMax","1","30"},
-		{"2","attackFrameGapMax","1","0"},
-		{"3","attackTotalFrame","1","30"},
+		{"2","attackFrameGapMax","1","15"},
+		{"3","attackTotalFrame","1","45"},
 
 		{"4","attackAfterStopFrameMax","1","60"},
 
@@ -95,8 +95,8 @@ namespace CSVCharactorData
 		{"No","Name","ValueNum","Parameter"},
 
 		{"1","attackFrameMax","1","20"},
-		{"2","attackFrameGapMax","1","0"},
-		{"3","attackTotalFrame","1","20"},
+		{"2","attackFrameGapMax","1","5"},
+		{"3","attackTotalFrame","1","25"},
 
 		{"4","attackAfterStopFrameMax","1","60"},
 
