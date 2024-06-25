@@ -1,7 +1,7 @@
 No,Name,ValueNum,Parameter
 1,attackFrameMax,1,60
-2,attackFrameGapMax,1,0
-3,attackTotalFrame,1,60
+2,attackFrameGapMax,1,15
+3,attackTotalFrame,1,75
 4,attackAfterStopFrameMax,1,60
 5,strongAttackFrameMax,1,5
 6,strongAttackFrameGapMax,1,120

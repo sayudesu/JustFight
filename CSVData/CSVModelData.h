@@ -25,7 +25,7 @@ namespace CSVModelData
 		{"7","Map/model/Map", ".mv1"},
 
 		// ‘•”õ
-		{"8","SwordCollTest", ".mv1"},
+		{"8","Sword", ".mv1"},
 		{"9","Shield", ".mv1"},
 	};
 }
