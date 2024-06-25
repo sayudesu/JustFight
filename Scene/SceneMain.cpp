@@ -245,6 +245,15 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 	}
 
+	// プレイヤーに攻撃がヒットしたかどうか
+	bool isDamageBlur = m_pCharacter[player]->IsHitDamage() && !m_pCharacter[player]->IsGuard();
+
+	// プレイヤーが回避行動しているかどうか
+	bool isAwayBlur = m_pCharacter[player]->IsAway();
+
+	// 攻撃がヒットしている、プレイヤーが回避している場合にブラー効果をオンにする
+	m_isBlur = isDamageBlur || isAwayBlur;
+
 	// 画面振動更新処理
 	EffectScreen::GetInstance().QuakeUpdate();
 

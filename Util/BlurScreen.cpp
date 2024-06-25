@@ -109,7 +109,7 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 	if (isBlurDraw)
 	{
 		alphaRate     = m_alpha;
-		backFrameRate = 1;
+		backFrameRate = 1;		
 	}
 	else
 	{
