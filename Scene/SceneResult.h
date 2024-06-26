@@ -32,11 +32,6 @@ private:
 	// ‰æ‘œ‚ÌŠp“x
 	float m_imageAngle;
 
-	std::vector<int> m_posX[2];
-	std::vector<int> m_posY[2];
-
-	std::vector<int> m_vec[2];
-
 	std::unique_ptr<GameObject> m_pPlayer;
 	std::unique_ptr<GameObject> m_pEnemy;
 

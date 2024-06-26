@@ -19,9 +19,6 @@
 
 namespace
 {
-	//const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2, 0.5f));
-	//const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 500.0f, Game::kScreenHeight / 2, 0.5f));
-
 	// 3Dオブジェクトの角度
 	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
 	const VECTOR kLoserRota = VGet(
@@ -84,14 +81,6 @@ void SceneResult::Init()
 		enemyScreenToWorldPos = kLoserPos;
 		playerRota = kWinnerRota;
 		enemyRota = kLoserRota;
-
-		for (int i = 0; i < 100; i++)
-		{
-			m_posX[0].push_back(GetRand(Game::kScreenWidth));
-			m_posY[0].push_back(GetRand(Game::kScreenHeight) + Game::kScreenHeight);
-
-			m_vec[0].push_back(1);
-		}
 	}
 	else if (m_resultData == GameResultData::OVER)
 	{
@@ -101,14 +90,6 @@ void SceneResult::Init()
 		enemyScreenToWorldPos = kWinnerPos;
 		playerRota = kLoserRota;
 		enemyRota = kWinnerRota;
-
-		for (int i = 0; i < 100; i++)
-		{
-			m_posX[1].push_back(GetRand(Game::kScreenWidth));
-			m_posY[1].push_back(0 - GetRand(Game::kScreenHeight));
-
-			m_vec[1].push_back(1);
-		}
 	}
 
 	// プレイヤーオブジェクトインスタンス生成
@@ -150,23 +131,11 @@ SceneBase* SceneResult::Update()
 		{
 			m_imageAngle += 0.001f;
 		}
-
-		for (int i = 0; i < 100; i++)
-		{
-			m_vec[1][i] = GetRand(5) + 1;
-			m_posY[1][i] += m_vec[1][i];
-		}
 	}
 
 	if (m_resultData == GameResultData::CREAR)
 	{
 		SoundManager::GetInstance().Play(SoundName::WIN, true);
-
-		for (int i = 0; i < 100; i++)
-		{
-			m_vec[0][i] = GetRand(5) + 1;
-			m_posY[0][i] -= m_vec[0][i];
-		}
 	}
 
 	// 選択
