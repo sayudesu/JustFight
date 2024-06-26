@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	// Effekseerを初期化する。
-// 引数には画面に表示する最大パーティクル数を設定する。
+	// 引数には画面に表示する最大パーティクル数を設定する。
 	if (Effekseer_Init(8000) == -1)
 	{
 		DxLib_End();
@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ポリゴンの裏面を描画しない
 	SetUseBackCulling(true);
 
-	SetUseLighting(false);
+//	SetUseLighting(false);
 	
 	// 読み込み
 	// サウンド
