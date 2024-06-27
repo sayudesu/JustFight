@@ -25,6 +25,44 @@
 
 #include "../CSVData/SoundManager.h"
 
+namespace
+{
+	// プレイヤーの番号を指定する
+	constexpr int kPlayerNo = static_cast<int>(CharacterName::PLAYER);
+	// エネミーの番号を指定する
+	constexpr int kEnemyNo = static_cast<int>(CharacterName::ENEMY);
+
+	// 勝敗が付いた時に描画する画像位置
+	const char* const kCheckmateGraphPath = "Data/Image/UI/Checkmate.png";
+
+	// 勝敗が決まった際にチェックメイト画像が描画されるまでのフレーム
+	constexpr int kCheckmateDrawFrame = 20;
+
+	// シーンが移行するまでのフレーム
+	constexpr int kResultSceneChengeFrame = 60 * 3;
+
+	// チェックメイト画像のサイズの最大
+	constexpr float kCheckmateGraphSizeMax = 1.0f;
+
+	// チェックメイト画像を最大サイズまで小さくする値
+	constexpr float kCheckmateGraphSizeMinRate = 1.0f;
+
+	// チェックメイト画像の角度の最終の値
+	constexpr float kCheckmateGraphEndRota = 0.0f;
+
+	// チェックメイト画像の角度の変更する値
+	constexpr float kCheckMateGraphRate = 0.5f;
+
+	// 勝敗決定後の背景のアルファ値を変更する最大値
+	constexpr int kResultAlphaRateMax = 128;
+
+	// 勝敗決定後の背景のアルファ値を変更する値
+	constexpr int kResultAlphaRate = 5;
+
+	// 勝敗決定後の背景カラー
+	constexpr int kResultColor = 0x000000;
+}
+
 SceneMain::SceneMain(DifficultyData data):
 	m_pUpdateFunc(nullptr),
 	m_pCamera(nullptr),
@@ -46,15 +84,12 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {	
-	// コードの見やすさの為変数化
-	int player = static_cast<int>(CharacterName::PLAYER);
-	int enemy = static_cast<int>(CharacterName::ENEMY);
-
 	// シーン遷移
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
-	m_pCharacter[player] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); // キャラクタークラス
-	m_pCharacter[enemy]  = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); // キャラクタークラス
+	// キャラクタークラス
+	m_pCharacter[kPlayerNo] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); 
+	m_pCharacter[kEnemyNo]  = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); 
 
 	m_pCamera   = std::make_unique<Camera>();        // カメラクラス
 	m_pField    = std::make_unique<FieldDrawer>();   // フィールド描画クラス
@@ -62,30 +97,30 @@ void SceneMain::Init()
 	m_pTutorial = std::make_unique<TutorialDrawer>();// チュートリアルクラス
 
 	// 初期化
-	m_pCharacter[player]->Init();
-	m_pCharacter[enemy]->Init();
+	m_pCharacter[kPlayerNo]->Init();
+	m_pCharacter[kEnemyNo]->Init();
 	m_pCamera->Setting();
 	m_pField->Init();
 	m_pTutorial->Init();
 
 	// チェックメイト画像の読み込み
-	m_hCheckmate = LoadGraph("Data/Image/UI/Checkmate.png");
+	m_hCheckmate = LoadGraph(kCheckmateGraphPath);
 
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
-		m_pCharacter[player]->GetMyId(),
-		m_pCharacter[player]->GetHp(),
-		m_pCharacter[player]->GetMaxHp(),
-		m_pCharacter[player]->GetStrongPower(),
-		m_pCharacter[player]->GetkStrongAttackPowerMax(),
-		m_pCharacter[player]->GetFightingMeter());
+		m_pCharacter[kPlayerNo]->GetMyId(),
+		m_pCharacter[kPlayerNo]->GetHp(),
+		m_pCharacter[kPlayerNo]->GetMaxHp(),
+		m_pCharacter[kPlayerNo]->GetStrongPower(),
+		m_pCharacter[kPlayerNo]->GetkStrongAttackPowerMax(),
+		m_pCharacter[kPlayerNo]->GetFightingMeter());
 	m_pUi->SetParam(
-		m_pCharacter[enemy]->GetMyId(),
-		m_pCharacter[enemy]->GetHp(),
-		m_pCharacter[enemy]->GetMaxHp(),
-		m_pCharacter[enemy]->GetStrongPower(),
-		m_pCharacter[enemy]->GetkStrongAttackPowerMax(),
-		m_pCharacter[enemy]->GetFightingMeter());
+		m_pCharacter[kEnemyNo]->GetMyId(),
+		m_pCharacter[kEnemyNo]->GetHp(),
+		m_pCharacter[kEnemyNo]->GetMaxHp(),
+		m_pCharacter[kEnemyNo]->GetStrongPower(),
+		m_pCharacter[kEnemyNo]->GetkStrongAttackPowerMax(),
+		m_pCharacter[kEnemyNo]->GetFightingMeter());
 
 	// スクリーン効果の初期化
 	EffectScreen::GetInstance().BlurIReplayInit();	
@@ -94,8 +129,8 @@ void SceneMain::Init()
 void SceneMain::End()
 {
 	// 解放処理
-	m_pCharacter[static_cast<int>(CharacterName::PLAYER)]->End();
-	m_pCharacter[static_cast<int>(CharacterName::ENEMY)]->End();
+	m_pCharacter[kPlayerNo]->End();
+	m_pCharacter[kEnemyNo]->End();
 
 	m_pField->End();
 	m_pTutorial->End();
@@ -119,29 +154,25 @@ SceneBase* SceneMain::UpdateGamePlay()
 	// BGMの再生
 	SoundManager::GetInstance().Play(SoundName::PLAY, true);
 
-	// コードの見やすさの為変数化
-	int player = static_cast<int>(CharacterName::PLAYER);
-	int enemy = static_cast<int>(CharacterName::ENEMY);
-
 	// if 難易度が中、大だったら
 	// else if 難易度が小だったら チュートリアル
 	if (m_difficultyData == DifficultyData::INTERMEDIATE||
 		m_difficultyData == DifficultyData::EXPERT)
 	{
-		m_pCharacter[player]->Input();
-		m_pCharacter[enemy]->Input();
+		m_pCharacter[kPlayerNo]->Input();
+		m_pCharacter[kEnemyNo]->Input();
 	}
 	else if(m_difficultyData == DifficultyData::NOIVE)
 	{
-		m_pCharacter[player]->InputTutorial();
-		m_pCharacter[enemy]->InputTutorial();
+		m_pCharacter[kPlayerNo]->InputTutorial();
+		m_pCharacter[kEnemyNo]->InputTutorial();
 		m_pTutorial->SetTips(Tips::MOVE);
 
-		if (m_pCharacter[player]->GetTipsMove(Tips::ATTACK))
+		if (m_pCharacter[kPlayerNo]->GetTipsMove(Tips::ATTACK))
 		{
 			m_pTutorial->SetTips(Tips::ATTACK);
 		}
-		if (m_pCharacter[player]->GetTipsMove(Tips::GUARD))
+		if (m_pCharacter[kPlayerNo]->GetTipsMove(Tips::GUARD))
 		{
 			m_pTutorial->SetTips(Tips::GUARD);
 		}
@@ -149,40 +180,40 @@ SceneBase* SceneMain::UpdateGamePlay()
 	}
 
 	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[player],m_pCharacter[enemy], true);
-	UpdateCharacter(m_pCharacter[enemy], m_pCharacter[player], false);
+	UpdateCharacter(m_pCharacter[kPlayerNo],m_pCharacter[kEnemyNo], true);
+	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 
 	// UIにパラメーターの状態を渡す
 	m_pUi->SetParam(
-		m_pCharacter[player]->GetMyId(),
-		m_pCharacter[player]->GetHp(),
-		m_pCharacter[player]->GetMaxHp(),
-		m_pCharacter[player]->GetStrongPower(),
-		m_pCharacter[player]->GetkStrongAttackPowerMax(),
-		m_pCharacter[player]->GetFightingMeter());
+		m_pCharacter[kPlayerNo]->GetMyId(),
+		m_pCharacter[kPlayerNo]->GetHp(),
+		m_pCharacter[kPlayerNo]->GetMaxHp(),
+		m_pCharacter[kPlayerNo]->GetStrongPower(),
+		m_pCharacter[kPlayerNo]->GetkStrongAttackPowerMax(),
+		m_pCharacter[kPlayerNo]->GetFightingMeter());
 	m_pUi->SetParam(
-		m_pCharacter[enemy]->GetMyId(),
-		m_pCharacter[enemy]->GetHp(),
-		m_pCharacter[enemy]->GetMaxHp(),
-		m_pCharacter[enemy]->GetStrongPower(),
-		m_pCharacter[enemy]->GetkStrongAttackPowerMax(),
-		m_pCharacter[enemy]->GetFightingMeter());
+		m_pCharacter[kEnemyNo]->GetMyId(),
+		m_pCharacter[kEnemyNo]->GetHp(),
+		m_pCharacter[kEnemyNo]->GetMaxHp(),
+		m_pCharacter[kEnemyNo]->GetStrongPower(),
+		m_pCharacter[kEnemyNo]->GetkStrongAttackPowerMax(),
+		m_pCharacter[kEnemyNo]->GetFightingMeter());
 
 
 	// 敵の攻撃可能範囲にいるかどうか
-	if (CheckModelAboutHIt(m_pCharacter[player], m_pCharacter[enemy]))
+	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]))
 	{
-		m_pCharacter[enemy]->SetAttackRange(true);
+		m_pCharacter[kEnemyNo]->SetAttackRange(true);
 	}
 	else
 	{
-		m_pCharacter[enemy]->SetAttackRange(false);
+		m_pCharacter[kEnemyNo]->SetAttackRange(false);
 	}
 
 	// カメラにプレイヤーとエネミーの位置を渡す
-	m_pCamera->SetTargetPos(m_pCharacter[player]->GetPos());
+	m_pCamera->SetTargetPos(m_pCharacter[kPlayerNo]->GetPos());
 	// カメラにプレイヤーの角度と位置を渡す
-	m_pCamera->SetPlayerAngle(m_pCharacter[player]->GetAngle());
+	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
 		// カメラの更新処理
 	m_pCamera->Update();
 
@@ -208,19 +239,19 @@ SceneBase* SceneMain::UpdateGamePlay()
 	// 勝敗条件処理
 	{
 		// HPが0になった場合
-		if (m_pCharacter[player]->GetHp() <= 0) // プレイヤー
+		if (m_pCharacter[kPlayerNo]->GetHp() <= 0) // プレイヤー
 		{		
 			m_frameCount++;
-			if (m_frameCount > 20)
+			if (m_frameCount > kCheckmateDrawFrame)
 			{
 				m_frameCount = 0;
 				m_resultData = GameResultData::OVER;
 			}
 		}
-		else if (m_pCharacter[enemy]->GetHp() <= 0) // エネミー
+		else if (m_pCharacter[kEnemyNo]->GetHp() <= 0) // エネミー
 		{	
 			m_frameCount++;
-			if (m_frameCount > 20)
+			if (m_frameCount > kCheckmateDrawFrame)
 			{
 				m_frameCount = 0;
 				m_resultData = GameResultData::CREAR;
@@ -228,11 +259,11 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 
 		// 場外に出た場合
-		if (CheckCollMap(m_pCharacter[player])) // プレイヤー
+		if (CheckCollMap(m_pCharacter[kPlayerNo])) // プレイヤー
 		{
 			m_resultData = GameResultData::OVER;
 		}
-		else if (CheckCollMap(m_pCharacter[enemy])) // エネミー
+		else if (CheckCollMap(m_pCharacter[kEnemyNo])) // エネミー
 		{
 			m_resultData = GameResultData::CREAR;
 		}
@@ -246,10 +277,10 @@ SceneBase* SceneMain::UpdateGamePlay()
 	}
 
 	// プレイヤーに攻撃がヒットしたかどうか
-	bool isDamageBlur = m_pCharacter[player]->IsHitDamage() && !m_pCharacter[player]->IsGuard();
+	bool isDamageBlur = m_pCharacter[kPlayerNo]->IsHitDamage() && !m_pCharacter[kPlayerNo]->IsGuard();
 
 	// プレイヤーが回避行動しているかどうか
-	bool isAwayBlur = m_pCharacter[player]->IsAway();
+	bool isAwayBlur = m_pCharacter[kPlayerNo]->IsAway();
 
 	// 攻撃がヒットしている、プレイヤーが回避している場合にブラー効果をオンにする
 	m_isBlur = isDamageBlur || isAwayBlur;
@@ -274,7 +305,7 @@ SceneBase* SceneMain::UpdateGameResult()
 	}
 
 	// 指定したフレームまでカウントが進むと
-	if (m_frameCount >= 60 * 3)
+	if (m_frameCount >= kResultSceneChengeFrame)
 	{
 		// BGMの停止
 		SoundManager::GetInstance().Stop(SoundName::PLAY);
@@ -285,20 +316,20 @@ SceneBase* SceneMain::UpdateGameResult()
 	m_checkmatePosY = cosf(static_cast<float>(m_frameCount) * 0.07f) * 100.0f + static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
 
 	// 予めでかくしたサイズを1にする
-	if (m_checkmateSize > 1.0f)
+	if (m_checkmateSize > kCheckmateGraphSizeMax)
 	{
-		m_checkmateSize -= 1.0f;
+		m_checkmateSize -= kCheckmateGraphSizeMinRate;
 	}
 	// 予め変更した角度を0にする
-	if (m_checkmateRota > 0.0f)
+	if (m_checkmateRota > kCheckmateGraphEndRota)
 	{
-		m_checkmateRota -= 0.5f;
+		m_checkmateRota -= kCheckMateGraphRate;
 	}
 
 	// ブレンド率を変更
-	if (m_checkmateBgBlendRate < 128)
+	if (m_checkmateBgBlendRate < kResultAlphaRateMax)
 	{
-		m_checkmateBgBlendRate += 5;
+		m_checkmateBgBlendRate += kResultAlphaRate;
 	}
 
 	return this;
@@ -348,14 +379,18 @@ void SceneMain::Draw()
 	// 勝敗がついた場合描画する
 	if (m_pUpdateFunc == &SceneMain::UpdateGameResult)
 	{
+		// アルファ値を変更してゲーム画面を暗くする
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_checkmateBgBlendRate);
-		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+		DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, kResultColor, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		DrawRotaGraph(Game::kScreenWidth/2, m_checkmatePosY, m_checkmateSize, m_checkmateRota, m_hCheckmate, true);
+		// 勝敗判別画像
+		DrawRotaGraph(Game::kScreenWidth / 2, m_checkmatePosY, m_checkmateSize, m_checkmateRota, m_hCheckmate, true);
 	}
 }
 
+// 当たり判定
+// 武器と体の判定
 bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
@@ -367,6 +402,7 @@ bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1,
 	return false;
 }
 
+// 武器と盾の判定
 bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
@@ -378,6 +414,7 @@ bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> character
 	return false;
 }
 
+// 武器と体範囲の判定
 bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
@@ -389,6 +426,7 @@ bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara
 	return false;
 }
 
+// 体範囲と体範囲の判定
 bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
@@ -400,6 +438,7 @@ bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1, st
 	return false;
 }
 
+// 地面のモデルとプレイヤーの判定
 bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 {
 	character->IsCheckHitWall(false,HitPos::NONE);
