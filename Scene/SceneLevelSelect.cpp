@@ -243,24 +243,6 @@ SceneBase* SceneLevelSelect::Update()
 
 	SoundManager::GetInstance().Play(SoundName::TITLE, true);
 
-	//PoseScreen::GetInstance().Update();
-	//PoseScreen::GetInstance().PoseSelect();
-
-	char deviceName[260]{};
-	char productName[260]{};
-
-#if false
-	// コントローラーの接続を確認する
-	if (GetJoypadName(DX_INPUT_PAD1, &deviceName[0], &productName[0]) == 0)
-	{
-		m_isInputController = false;
-	}
-	else
-	{
-		m_isInputController = true;
-		return this;
-	}
-#endif
 	if (m_isCameraStop[CameraStopData::ALL])
 	{
 		m_select->Update();
@@ -432,32 +414,38 @@ SceneBase* SceneLevelSelect::Update()
 		}
 
 		const VECTOR  modelPos = ConvScreenPosToWorldPos
-		({
-			Game::kScreenWidth / 2 + 3900.0f,
-			Game::kScreenHeight / 2 + 1500.0f,
-			0
-			});
+		(
+			{
+				Game::kScreenWidth / 2 + 3900.0f,
+				Game::kScreenHeight / 2 + 1500.0f,
+				0
+			}
+		);
 
 		for (int i = 0; i < 3; i++)
 		{
 			// 位置の更新
 			m_hModel[i]->SetPos
-			({
+			(
+				{
 					modelPos.x,
 					modelPos.y + m_modelSlidePosY,
 					modelPos.z
-				});
+				}
+			);
 
 			// 回転
 			m_modelRot[i]++;
 
 			// 回転の更新
 			m_hModel[i]->SetRotate
-			({
+			(
+				{
 					-90 * DX_PI_F / 180.0f,
 					0,
 					m_modelRot[i] * DX_PI_F / 180.0f
-				});
+				}
+			);
 
 			// 3Dモデルの更新
 			m_hModel[i]->Update();
@@ -508,13 +496,6 @@ SceneBase* SceneLevelSelect::Update()
 			return new SceneMain(DifficultyData::EXPERT);
 		}
 	}
-
-#if false
-	if (DxLib::CheckHitKey(KEY_INPUT_Z))
-	{
-		return new SceneDebug();
-	}
-#endif
 
 	return this;
 }

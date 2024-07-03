@@ -353,7 +353,7 @@ void SceneMain::Draw()
 	// ƒ}ƒbƒv‚Ì•`‰æ
 	m_pField->Draw();
 
-	// ŒŒ‚µ‚Ô‚«‚Ì•`‰æ(‰¼)
+	// ŒŒ‚µ‚Ô‚«‚Ì•`‰æ
 	for (auto& blood : m_pBlood)
 	{
 		blood->Draw();

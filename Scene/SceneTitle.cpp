@@ -25,6 +25,10 @@ namespace
 
 	//選択ボタン用文字
 	const char* const kPresskey = "Press any key";
+
+	// 画像パス
+	const char* const kTitleImagePath = "Data/Image/Title.png";
+	const char* const kBgImagePath = "Data/Image/UI/GameDifficultySelectionBase.png";
 }
 
 SceneTitle::SceneTitle():
@@ -33,8 +37,8 @@ SceneTitle::SceneTitle():
 	m_blendAlpha(0)
 {
 	// 画像の読み込み
-	m_hTitle = LoadGraph("Data/Image/Title.png");
-	m_hBg    = LoadGraph("Data/Image/UI/GameDifficultySelectionBase.png");
+	m_hTitle = LoadGraph(kTitleImagePath);
+	m_hBg    = LoadGraph(kBgImagePath);
 }
 
 SceneTitle::~SceneTitle()

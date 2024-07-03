@@ -9,9 +9,17 @@ EffectScreen* EffectScreen::m_pInstance = nullptr;
 namespace
 {
 	// 揺れ具合
-	constexpr float kShakePower = 20.0f;
+	constexpr float kShakeMaxPower = 20.0f;
+	constexpr float kShakeRate = 0.95f;
+
 	// 揺れフレーム
 	constexpr int kShakeFrame = 30;
+
+	// ブレンドモード無しの場合の値
+	constexpr int kNoBlendModeRate = 128;
+
+	// ブラーをかける際のアルファ値
+	constexpr int kBlurAlphaRate = 150;
 }
 
 void EffectScreen::Load()
@@ -31,7 +39,7 @@ void EffectScreen::Load()
 	// モーションブラー用
 	m_notBlendDraw = 0;
 	m_current = 0;
-	m_alpha = 150;
+	m_alpha = kBlurAlphaRate;
 
 	// 画像ハンドルを作成する
 	for (int i = 0; i < static_cast<int>(ScreenEffectNo::MAX); ++i)
@@ -43,7 +51,7 @@ void EffectScreen::Load()
 void EffectScreen::Unload()
 {
 	// 画像ハンドルを削除する
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < static_cast<int>(DamageEffectNo::MAX); ++i)
 	{
 		if (m_damageScreen[i] != -1)
 		{
@@ -76,7 +84,7 @@ void EffectScreen::BlurIReplayInit()
 
 		m_blurScreen[i] = MakeScreen(Game::kScreenWidth, Game::kScreenHeight);
 	}
-	m_current = 0;
+	m_current      = 0;
 	m_notBlendDraw = 0;
 }
 
@@ -160,14 +168,14 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 	if (static_cast<int>(m_shake) != 0)
 	{
 		// ブレンドモードを初期状態に戻す
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 128);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, kNoBlendModeRate);
 	}
 }
 
 void EffectScreen::QuakeReplayInit()
 {	
 	// 揺れ具合
-	m_shake      = kShakePower;
+	m_shake      = kShakeMaxPower;
 	// 揺れるフレーム数
 	m_shakeFrame = kShakeFrame;
 }
@@ -178,14 +186,11 @@ void EffectScreen::QuakeUpdate()
 	if (m_shakeFrame > 0) 
 	{
 		m_shake = -m_shake;
-		m_shake *= 0.95f;
+		m_shake *= kShakeRate;
 		m_shakeFrame--;
 	}
 	else
 	{
 		m_shake = 0.0f;
 	}
-
-	m_blendAddRate = 128 / 30;
-	m_blendAddRate *= m_shakeFrame;
 }
