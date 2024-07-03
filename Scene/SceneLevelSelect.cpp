@@ -26,13 +26,45 @@ namespace
 	constexpr float kImagePosY = 0.0f;
 	constexpr float kImageSize = 0.95f;
 
+	// 選択可能数
+	constexpr int kSelectMaxNum = 2;
+
 	// 矢のサイズの変更速度
 	constexpr float kImageArrowSizeChangeSpeed = 0.002f;
+
+	// カメラ初期位置
+	constexpr float kCameraStartX = 100.0f;
+	constexpr float kCameraStartY = 300.0f;
+	constexpr float kCameraStartZ = 100.0f;
+
+	// カメラターゲット位置
+	const VECTOR kCameraTargetPos = VGet(0.0f, -100.0f, -10.0f);
 
 	// カメラの停止位置
 	constexpr float kCameraStopX = 0.0f;
 	constexpr float kCameraStopY = 32.0f;
 	constexpr float kCameraStopZ = 10.0f;
+
+	// マップモデルサイズ
+	const VECTOR kMapModelAngle = VGet(0, 0, 180 * DX_PI_F / 180.0f);
+	const VECTOR kMapModelSize = VGet(1.0f, 1.0f, 1.0f);
+
+	// モデル設定
+	const VECTOR kChessModelAngle = VGet(-90 * DX_PI_F / 180.0f, 0, 0);
+	const VECTOR kChessModelSize  = VGet(0.9f, 0.9f, 0.9f);
+
+	// 画像読み込みファイル位置
+	const char* const kDifficultySelectionBasePath = "Data/Image/UI/GameDifficultySelectionBase.png";
+	const char* const kSelectDifficultyPath = "Data/Image/UI/SelectDifficulty.png";
+	const char* const kDecorationPath = "Data/Image/UI/Decoration.png";
+	const char* const kNovicePath = "Data/Image/UI/Novice.png";
+	const char* const kIntermediatePath = "Data/Image/UI/Intermediate.png";
+	const char* const kExpertPath = "Data/Image/UI/Expert.png";
+	const char* const kCharactorBgPath = "Data/Image/UI/CharactorBg.png";
+	const char* const kArrowPath = "Data/Image/UI/Arrow.png";
+	const char* const kOptionBackPath = "Data/Image/UI/OptionBack.png";
+	const char* const kStartBottonPath = "Data/Image/UI/StartBotton.png";
+
 }
 
 SceneLevelSelect::SceneLevelSelect():
@@ -59,20 +91,20 @@ void SceneLevelSelect::Init()
 	m_isCameraStop[CameraStopData::Z] = false;
 	m_isCameraStop[CameraStopData::ALL] = false;
 
-	m_hTitle = LoadGraph("Data/Image/UI/GameDifficultySelectionBase.png");
+	m_hTitle = LoadGraph(kDifficultySelectionBasePath);
 
 	m_select = std::make_unique<SlideSelect>();
-	m_select->Init(2, true);
+	m_select->Init(kSelectMaxNum, true);
 
 	// カメラの座標
-	m_cameraPosX = 100.0f;
-	m_cameraPosY = 300.0f;
-	m_cameraPosZ = 100.0f;
+	m_cameraPosX = kCameraStartX;
+	m_cameraPosY = kCameraStartY;
+	m_cameraPosZ = kCameraStartZ;
 
 	// カメラインスタンス
 	m_camera = std::make_unique<Camera>();
 	// カメラターゲット位置初期化
-	m_camera->SetTargetPos(VGet(0.0f, -100.0f, -10.0f));
+	m_camera->SetTargetPos(kCameraTargetPos);
 
 	// 3Dオブジェクト
 	{
@@ -80,15 +112,15 @@ void SceneLevelSelect::Init()
 		m_pStage = std::make_unique<GameObject>(
 			ModelManager::GetInstance().ModelType(ModelName::MAP3),
 			VGet(0, 0, 0),
-			VGet(0, 0, 180 * DX_PI_F / 180.0f),
-			VGet(1, 1, 1));
+			kMapModelAngle,
+			kMapModelSize);
 	}
 
 	// 2Dオブジェクト
 	{
 		// 背景
 		m_hBg = std::make_shared<GameObject>(
-			"Data/Image/UI/GameDifficultySelectionBase.png",
+			kDifficultySelectionBasePath,
 			m_bgPos,
 			kImageAngle,
 			kImageSize
@@ -96,7 +128,7 @@ void SceneLevelSelect::Init()
 
 		// 選択文字
 		m_hSelect = std::make_shared<GameObject>(
-			"Data/Image/UI/SelectDifficulty.png",
+			kSelectDifficultyPath,
 			VGet(kImagePosX, -300.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -105,7 +137,7 @@ void SceneLevelSelect::Init()
 
 		// 選択文字の下の飾り
 		m_hDecoration = std::make_shared<GameObject>(
-			"Data/Image/UI/Decoration.png",
+			kDecorationPath,
 			VGet(kImagePosX, -250.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -114,7 +146,7 @@ void SceneLevelSelect::Init()
 
 		// 難易度
 		m_hNovice = std::make_shared<GameObject>(
-			"Data/Image/UI/Novice.png",
+			kNovicePath,
 			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -122,7 +154,7 @@ void SceneLevelSelect::Init()
 		);
 
 		m_hIntermediate = std::make_shared<GameObject>(
-			"Data/Image/UI/Intermediate.png",
+			kIntermediatePath,
 			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -130,7 +162,7 @@ void SceneLevelSelect::Init()
 		);
 
 		m_hExpert = std::make_shared<GameObject>(
-			"Data/Image/UI/Expert.png",
+			kExpertPath,
 			VGet(kImagePosX, 30.0f, 0),
 			kImageAngle,
 			kImageSize,
@@ -138,7 +170,7 @@ void SceneLevelSelect::Init()
 		);
 
 		m_hImageDifficultyBg = std::make_shared<GameObject>(
-			"Data/Image/UI/CharactorBg.png",
+			kCharactorBgPath,
 			VGet(kImagePosX + 800.0f, 30.0f, 0),
 			kImageAngle,
 			kImageSize + 2.0f,
@@ -147,7 +179,7 @@ void SceneLevelSelect::Init()
 
 		// 矢印上向き
 		m_hArrow[0] = std::make_shared<GameObject>(
-			"Data/Image/UI/Arrow.png",
+			kArrowPath,
 			VGet(kImagePosX, -120.0f, 0),
 			kImageAngle + 180.0f * DX_PI_F / 180.0f,
 			m_arrowSize[0],
@@ -156,7 +188,7 @@ void SceneLevelSelect::Init()
 
 		// 矢印下向き
 		m_hArrow[1] = std::make_shared<GameObject>(
-			"Data/Image/UI/Arrow.png",
+			kArrowPath,
 			VGet(kImagePosX, 180.0f, 0),
 			kImageAngle,
 			m_arrowSize[1],
@@ -165,7 +197,7 @@ void SceneLevelSelect::Init()
 
 		// オプションの背景
 		m_hOptionBack = std::make_shared<GameObject>(
-			"Data/Image/UI/OptionBack.png",
+			kOptionBackPath,
 			VGet(550.0f, 400.0f, 0),
 			0,
 			1,
@@ -174,7 +206,7 @@ void SceneLevelSelect::Init()
 
 		// オプションボタン
 		m_hOptionBotton = std::make_shared<GameObject>(
-			"Data/Image/UI/StartBotton.png",
+			kStartBottonPath,
 			VGet(430.0f, 400.0f, 0),
 			0,
 			1,
@@ -190,20 +222,20 @@ void SceneLevelSelect::Init()
 	m_hModel[0] = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Pawn_B),
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
-		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
-		VGet(0.9f, 0.9f, 0.9f));
+		kChessModelAngle,
+		kChessModelSize);
 
 	m_hModel[1] = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Knight_B),
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
-		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
-		VGet(0.9f, 0.9f, 0.9f));
+		kChessModelAngle,
+		kChessModelSize);
 
 	m_hModel[2] = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Queen_B),
 		ConvScreenPosToWorldPos({ Game::kScreenWidth / 2,Game::kScreenHeight / 2,0 }),
-		VGet(-90 * DX_PI_F / 180.0f, 0, 0),
-		VGet(0.9f, 0.9f, 0.9f));
+		kChessModelAngle,
+		kChessModelSize);
 
 	// モデルの回転角度を初期化
 	m_modelRot[0] = 0.0f;
