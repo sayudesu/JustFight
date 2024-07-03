@@ -19,6 +19,15 @@ public:
 	virtual SceneBase* Update();
 	virtual void Draw();
 private:
+	// ƒJƒƒ‰ˆÚ“®ˆ—
+	void CameraMoveing();
+	// ƒ‚ƒfƒ‹ˆÚ“®ˆ—
+	void ModelMoveing();
+	// “ü—Íˆ—
+	void Input();
+	// ‘I‘ğ‚µ‚½”wŒiŠÖ˜A‚Ìˆ—
+	void SelectBg();
+private:
 	int m_hTitle;
 	// ”wŒi‰æ‘œ
 	std::shared_ptr<GameObject> m_hBg;

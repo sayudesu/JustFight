@@ -26,8 +26,8 @@ namespace
 		180 * DX_PI_F / 180.0f,
 		-90 * DX_PI_F / 180.0f);
 	// 3Dオブジェクトのサイズ
-	constexpr float kModelSize = 12.0f;
-	const VECTOR k3DModelSize = VGet(kModelSize, kModelSize, kModelSize);
+	constexpr float kChessModelSize = 12.0f;
+	const VECTOR k3DModelSize = VGet(kChessModelSize, kChessModelSize, kChessModelSize);
 }
 
 SceneResult::SceneResult(GameResultData resultData, DifficultyData data):

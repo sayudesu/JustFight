@@ -29,6 +29,12 @@ namespace
 
 	// 攻撃予兆フレーム時の武器の振動
 	constexpr float kShakeRate = 15.0f;
+
+	// モデルの角度
+	constexpr float kAngleZ = 90 * DX_PI_F / 180.0f;
+
+	// 追跡速度
+	constexpr float kTargetMoveingSpeed = 5.0f;
 }
 
 CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
@@ -94,9 +100,6 @@ void CharacterBase::Init()
 	m_vecWeapon = m_parameter.weaponRelativePos;
 	m_vecShield = m_parameter.shieldRelativePos;
 
-	// モデルの角度
-	float angleZ = 90 * DX_PI_F / 180.0f;
-
 	// キャラごとのステータス情報を取得
 	m_hp = m_parameter.hpMax;
 	m_vec = m_parameter.knockBackPos;
@@ -109,21 +112,21 @@ void CharacterBase::Init()
 	m_pCharactor = new GameObject(
 		m_parameter.fileName.c_str(),
 		m_pos,
-		VGet(0.0f, m_angle, angleZ),
+		VGet(0.0f, m_angle, kAngleZ),
 		VGet(40.0f, 40.0f, 40.0f));
 
 	// 武器オブジェクトの生成
 	m_pWeapon = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::WEAPON),
 		m_weaponPos,
-		VGet(0.0f, m_angle, angleZ),
+		VGet(0.0f, m_angle, kAngleZ),
 		VGet(3.0f, 3.0f, 3.0f));
 
 	// 盾オブジェクトの生成
 	m_pShield = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::SHIELD),
 		VGet(100, m_weaponPos.y, 100),
-		VGet(0.0f, m_angle, angleZ),
+		VGet(0.0f, m_angle, kAngleZ),
 		VGet(3.0f, 3.0f, 3.0f));
 
 	// 位置情報の更新
@@ -155,22 +158,13 @@ void CharacterBase::Draw()
 	m_pWeapon->Draw();
 	// 盾モデル
 	m_pShield->Draw();
-
-#if false
-	// カプセルの描画
-	DrawCapsule3D(m_capsuleUpDown, m_capsuleUpPos, kCapsuleRadius, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), FALSE);
-#endif
-
-#if false
-	const VECTOR pos = ConvWorldPosToScreenPos(m_pos);
-	DrawCircle(pos.x, pos.y, 32, 0xffffff, true);
-	DrawFormatString(pos.x, pos.y, 0x000000, Dname.c_str());
-#endif
 }
 
 void CharacterBase::TargetMove()
 {
+	// Y軸は変更したくないので始めの位置を記録
 	const float tempPosY = m_pos.y;
+
 	// 向きを算出
 	VECTOR m_dir = VSub(m_targetPos, m_pos);
 
@@ -187,7 +181,7 @@ void CharacterBase::TargetMove()
 	}
 
 	// 速度を求める
-	const VECTOR velecity = VScale(m_dir, 5.0f);
+	const VECTOR velecity = VScale(m_dir, kTargetMoveingSpeed);
 
 	// 位置を変える
 	m_pos = VAdd(m_pos, velecity);
