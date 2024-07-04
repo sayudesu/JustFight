@@ -30,6 +30,8 @@ namespace
 	constexpr int kPlayerNo = static_cast<int>(CharacterName::PLAYER);
 	// エネミーの番号を指定する
 	constexpr int kEnemyNo = static_cast<int>(CharacterName::ENEMY);
+	// プレイヤー、エネミーの数
+	constexpr int kCharactprMaxNum = 2;
 
 	// 勝敗が付いた時に描画する画像位置
 	const char* const kCheckmateGraphPath = "Data/Image/UI/Checkmate.png";
@@ -113,20 +115,16 @@ void SceneMain::Init()
 	m_hCheckmate = LoadGraph(kCheckmateGraphPath);
 
 	// UIにパラメーターの状態を渡す
-	m_pUi->SetParam(
-		m_pCharacter[kPlayerNo]->GetMyId(),
-		m_pCharacter[kPlayerNo]->GetHp(),
-		m_pCharacter[kPlayerNo]->GetMaxHp(),
-		m_pCharacter[kPlayerNo]->GetStrongPower(),
-		m_pCharacter[kPlayerNo]->GetkStrongAttackPowerMax(),
-		m_pCharacter[kPlayerNo]->GetFightingMeter());
-	m_pUi->SetParam(
-		m_pCharacter[kEnemyNo]->GetMyId(),
-		m_pCharacter[kEnemyNo]->GetHp(),
-		m_pCharacter[kEnemyNo]->GetMaxHp(),
-		m_pCharacter[kEnemyNo]->GetStrongPower(),
-		m_pCharacter[kEnemyNo]->GetkStrongAttackPowerMax(),
-		m_pCharacter[kEnemyNo]->GetFightingMeter());
+	for (int i = 0; i < kCharactprMaxNum; i++)
+	{
+		m_pUi->SetParam(
+			m_pCharacter[i]->GetMyId(),
+			m_pCharacter[i]->GetHp(),
+			m_pCharacter[i]->GetMaxHp(),
+			m_pCharacter[i]->GetStrongPower(),
+			m_pCharacter[i]->GetkStrongAttackPowerMax(),
+			m_pCharacter[i]->GetFightingMeter());
+	}
 
 	// スクリーン効果の初期化
 	EffectScreen::GetInstance().BlurIReplayInit();	
@@ -190,21 +188,16 @@ SceneBase* SceneMain::UpdateGamePlay()
 	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 
 	// UIにパラメーターの状態を渡す
-	m_pUi->SetParam(
-		m_pCharacter[kPlayerNo]->GetMyId(),
-		m_pCharacter[kPlayerNo]->GetHp(),
-		m_pCharacter[kPlayerNo]->GetMaxHp(),
-		m_pCharacter[kPlayerNo]->GetStrongPower(),
-		m_pCharacter[kPlayerNo]->GetkStrongAttackPowerMax(),
-		m_pCharacter[kPlayerNo]->GetFightingMeter());
-	m_pUi->SetParam(
-		m_pCharacter[kEnemyNo]->GetMyId(),
-		m_pCharacter[kEnemyNo]->GetHp(),
-		m_pCharacter[kEnemyNo]->GetMaxHp(),
-		m_pCharacter[kEnemyNo]->GetStrongPower(),
-		m_pCharacter[kEnemyNo]->GetkStrongAttackPowerMax(),
-		m_pCharacter[kEnemyNo]->GetFightingMeter());
-
+	for (int i = 0; i < kCharactprMaxNum; i++)
+	{
+		m_pUi->SetParam(
+			m_pCharacter[i]->GetMyId(),
+			m_pCharacter[i]->GetHp(),
+			m_pCharacter[i]->GetMaxHp(),
+			m_pCharacter[i]->GetStrongPower(),
+			m_pCharacter[i]->GetkStrongAttackPowerMax(),
+			m_pCharacter[i]->GetFightingMeter());
+	}
 
 	// 敵の攻撃可能範囲にいるかどうか
 	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]))
@@ -222,13 +215,14 @@ SceneBase* SceneMain::UpdateGamePlay()
 	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
 		// カメラの更新処理
 	m_pCamera->Update();
-
 	
 	// 血のエフェクトを更新
 	for (auto& blood : m_pBlood)
 	{
 		blood->Update();
 	}
+
+	// 削除できる要素を探す
 	for (int i = 0; i < m_pBlood.size(); i++)
 	{
 		if (m_pBlood[i]->IsGetErase())
