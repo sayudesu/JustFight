@@ -1,4 +1,5 @@
 #pragma once
+
 namespace MyModel3D
 {
 	/// <summary>

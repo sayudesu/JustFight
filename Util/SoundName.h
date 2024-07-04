@@ -1,5 +1,6 @@
 #pragma once
 
+// サウンドの名前
 enum SoundName
 {
 	ATTACK,

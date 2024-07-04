@@ -101,6 +101,27 @@ SceneLevelSelect::SceneLevelSelect():
 	m_cameraSpeed(0.1f),
 	m_modelSlidePosY(30.0f)
 {
+	m_arrowPosX[0] = 0.0f;
+	m_arrowPosX[1] = 0.0f;
+	m_arrowPosY[0] = 0.0f;
+	m_arrowPosY[1] = 0.0f;
+
+	m_arrowShakeX[0] = 0.0f;
+	m_arrowShakeX[1] = 0.0f;
+	m_arrowShakeY[0] = 0.0f;
+	m_arrowShakeY[1] = 0.0f;
+
+	m_arrowSize[0] = 0.0f;
+	m_arrowSize[1] = 0.0f;
+
+	m_cameraPosX = 0.0f;
+	m_cameraPosY = 0.0f;
+	m_cameraPosZ = 0.0f;
+
+	m_difficulty = 0.0f;
+
+	m_enemyBgShakeX = 0.0f;
+	m_enemyBgShakeY = 0.0f;
 }
 
 SceneLevelSelect::~SceneLevelSelect()

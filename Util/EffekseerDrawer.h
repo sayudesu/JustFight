@@ -50,11 +50,11 @@ public:
 	// エフェクシアの再生
 	void Play(int& playingEffectHandle,Id id,EffectPlayType type, VECTOR pos,VECTOR size, VECTOR angle,int playFrame = -1);
 private:
-	std::array<int,Id::Max> m_handle;
+	std::array<int, Id::Max> m_handle{};
 
 	// エフェクト再生用ハンドル
-	int m_playingEffectHandle;
+	int m_playingEffectHandle = 0;
 
-	std::vector<EffectData> m_effectData;
+	std::vector<EffectData> m_effectData{};
 };
 

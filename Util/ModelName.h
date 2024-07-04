@@ -1,5 +1,6 @@
 #pragma once
 
+// ƒ‚ƒfƒ‹‚Ì–¼‘O
 enum class ModelName
 {
 	Pawn_B,

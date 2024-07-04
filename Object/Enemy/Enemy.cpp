@@ -36,7 +36,11 @@ Enemy::Enemy(DifficultyData data,VECTOR pos) :
 	m_isStrongAttackResult(false),
 	m_isMoveLeft(false),
 	m_isMoveRight(false),
-	m_guardFrameCount(0)
+	m_awayVec(VGet(0,0,0)),
+	m_awayRelativePos(VGet(0,0,0)),
+	m_guardFrameCount(0),
+	m_targetGuard(false),
+	m_enemyRotMtx({})
 {
 	// 初期待機状態で停止
 	m_pFunc = &Enemy::Idle;
@@ -78,7 +82,7 @@ void Enemy::Input()
 	// 向きを指定
 	Direction();
 
-#if true	
+	// スタンをしていなかったら
 	if (!IsStun())
 	{
 		// 一定距離近づくとランダムで左右移動を始める
@@ -204,7 +208,6 @@ void Enemy::Input()
 		m_isCheckAttack = false;
 		m_isAttackResult = false;
 	}
-#endif
 }
 
 void Enemy::InputTutorial()
@@ -293,21 +296,21 @@ void Enemy::InputTutorial()
 
 void Enemy::Direction()
 {
+	// 自身の位置からターゲットの位置の角度を取得する
 	const VECTOR direction = VSub(m_targetPos, m_pos);
 
 	const float angle = atan2f(-direction.x, -direction.z);
-
+	
+	// 指定のフレーム数分だけ処理ずらす
 	m_delayFrameAngle.push_front(angle);
 	if (m_delayFrameAngle.size() > kDelayFrameAngle)
 	{
 		m_delayFrameAngle.pop_back();
 	}
-
 	SetAngle(m_delayFrameAngle.back());
 
 	// プレイヤーの進行方向
 	m_enemyRotMtx = MGetRotY(m_delayFrameAngle.back());
-
 	SetRotMtx(m_enemyRotMtx);
 }
 

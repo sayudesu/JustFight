@@ -42,6 +42,9 @@ private:
 	// ゲームオーバー
 	SceneBase* UpdateGameResult();
 private:
+	// 勝敗の確認
+	void CheckResult();
+
 	// 当たり判定
 	// 武器と体の判定
 	bool CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2);
@@ -89,7 +92,7 @@ private:
 	float m_checkmateRota;
 	// チェックメイト時背景のブレンドアルファ用
 	int m_checkmateBgBlendRate;
-	int m_checkmatePosY;
+	float m_checkmatePosY;
 
 	// ブラーをかけるかどうか
 	bool m_isBlur;

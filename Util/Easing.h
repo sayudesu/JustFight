@@ -2,13 +2,9 @@
 #include <DxLib.h>
 #include <cmath>
 
+// イージング処理
 namespace Easing
 {
-   /* float ToRadian(const float angle)
-    {
-        return (angle * DX_PI_F / 180.0f);
-    }*/
-  
     inline float InSine(int time, int totaltime, float max, float min)
     {
         max -= min;

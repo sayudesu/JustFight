@@ -1,5 +1,6 @@
 #pragma once
 
+// キャラクターのパラメーター
 enum ParamData
 {
 	ATTACK_FRAME_MAX,

@@ -46,7 +46,7 @@ public:
 	// ®”•`‰æ
 	void DrawFormatString(int x, int y, int text, int color, FontSize size);
 private:
-	int m_fontHandle[static_cast<int>(FontSize::MAX)];
+	int m_fontHandle[static_cast<int>(FontSize::MAX)]{};
 
 	struct FontData
 	{
@@ -58,8 +58,8 @@ private:
 		std::string extension;
 	};
 
-	std::map<int, FontData> m_data;
+	std::map<int, FontData> m_data{};
 
-	std::vector<int> m_handle;
+	std::vector<int> m_handle{};
 };
 

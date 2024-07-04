@@ -31,7 +31,7 @@ namespace
 	// エネミーの番号を指定する
 	constexpr int kEnemyNo = static_cast<int>(CharacterName::ENEMY);
 	// プレイヤー、エネミーの数
-	constexpr int kCharactprMaxNum = 2;
+	constexpr int kCharactorMaxNum = 2;
 
 	// 勝敗が付いた時に描画する画像位置
 	const char* const kCheckmateGraphPath = "Data/Image/UI/Checkmate.png";
@@ -81,7 +81,7 @@ SceneMain::SceneMain(DifficultyData data):
 	m_checkmateSize(10.0f),
 	m_checkmateRota(10.0f),
 	m_checkmateBgBlendRate(0),
-	m_checkmatePosY(0),
+	m_checkmatePosY(0.0f),
 	m_isBlur(false)
 {
 }
@@ -115,7 +115,7 @@ void SceneMain::Init()
 	m_hCheckmate = LoadGraph(kCheckmateGraphPath);
 
 	// UIにパラメーターの状態を渡す
-	for (int i = 0; i < kCharactprMaxNum; i++)
+	for (int i = 0; i < kCharactorMaxNum; i++)
 	{
 		m_pUi->SetParam(
 			m_pCharacter[i]->GetMyId(),
@@ -123,7 +123,7 @@ void SceneMain::Init()
 			m_pCharacter[i]->GetMaxHp(),
 			m_pCharacter[i]->GetStrongPower(),
 			m_pCharacter[i]->GetkStrongAttackPowerMax(),
-			m_pCharacter[i]->GetFightingMeter());
+			static_cast<int>(m_pCharacter[i]->GetFightingMeter()));
 	}
 
 	// スクリーン効果の初期化
@@ -188,7 +188,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 
 	// UIにパラメーターの状態を渡す
-	for (int i = 0; i < kCharactprMaxNum; i++)
+	for (int i = 0; i < kCharactorMaxNum; i++)
 	{
 		m_pUi->SetParam(
 			m_pCharacter[i]->GetMyId(),
@@ -196,7 +196,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 			m_pCharacter[i]->GetMaxHp(),
 			m_pCharacter[i]->GetStrongPower(),
 			m_pCharacter[i]->GetkStrongAttackPowerMax(),
-			m_pCharacter[i]->GetFightingMeter());
+			static_cast<int>(m_pCharacter[i]->GetFightingMeter()));
 	}
 
 	// 敵の攻撃可能範囲にいるかどうか
@@ -234,46 +234,9 @@ SceneBase* SceneMain::UpdateGamePlay()
 			m_pBlood.erase(m_pBlood.begin() + i);
 		}
 	}
-	
-	// 勝敗条件処理
-	{
-		// HPが0になった場合
-		if (m_pCharacter[kPlayerNo]->GetHp() <= 0) // プレイヤー
-		{		
-			m_frameCount++;
-			if (m_frameCount > kCheckmateDrawFrame)
-			{
-				m_frameCount = 0;
-				m_resultData = GameResultData::OVER;
-			}
-		}
-		else if (m_pCharacter[kEnemyNo]->GetHp() <= 0) // エネミー
-		{	
-			m_frameCount++;
-			if (m_frameCount > kCheckmateDrawFrame)
-			{
-				m_frameCount = 0;
-				m_resultData = GameResultData::CREAR;
-			}
-		}
 
-		// 場外に出た場合
-		if (CheckCollMap(m_pCharacter[kPlayerNo])) // プレイヤー
-		{
-			m_resultData = GameResultData::OVER;
-		}
-		else if (CheckCollMap(m_pCharacter[kEnemyNo])) // エネミー
-		{
-			m_resultData = GameResultData::CREAR;
-		}
-
-		// ゲームのクリア,オーバー条件の確認
-		if (m_resultData != GameResultData::NONE)
-		{
-			m_pUpdateFunc = &SceneMain::UpdateGameResult;
-			m_frameCount = 0;
-		}
-	}
+	// 勝敗の確認
+	CheckResult();	
 
 	// プレイヤーに攻撃がヒットしたかどうか
 	bool isDamageBlur = m_pCharacter[kPlayerNo]->IsHitDamage() && !m_pCharacter[kPlayerNo]->IsGuard();
@@ -334,7 +297,6 @@ SceneBase* SceneMain::UpdateGameResult()
 	return this;
 }
 
-
 void SceneMain::Draw()
 {	
 	// 新しい画面の作成
@@ -384,7 +346,48 @@ void SceneMain::Draw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		// 勝敗判別画像
-		DrawRotaGraph(Game::kScreenWidth / 2, m_checkmatePosY, m_checkmateSize, m_checkmateRota, m_hCheckmate, true);
+		DrawRotaGraph(Game::kScreenWidth / 2, static_cast<int>(m_checkmatePosY), m_checkmateSize, m_checkmateRota, m_hCheckmate, true);
+	}
+}
+
+void SceneMain::CheckResult()
+{
+	// 勝敗条件処理
+	// HPが0になった場合
+	if (m_pCharacter[kPlayerNo]->GetHp() <= 0) // プレイヤー
+	{
+		m_frameCount++;
+		if (m_frameCount > kCheckmateDrawFrame)
+		{
+			m_frameCount = 0;
+			m_resultData = GameResultData::OVER;
+		}
+	}
+	else if (m_pCharacter[kEnemyNo]->GetHp() <= 0) // エネミー
+	{
+		m_frameCount++;
+		if (m_frameCount > kCheckmateDrawFrame)
+		{
+			m_frameCount = 0;
+			m_resultData = GameResultData::CREAR;
+		}
+	}
+
+	// 場外に出た場合
+	if (CheckCollMap(m_pCharacter[kPlayerNo])) // プレイヤー
+	{
+		m_resultData = GameResultData::OVER;
+	}
+	else if (CheckCollMap(m_pCharacter[kEnemyNo])) // エネミー
+	{
+		m_resultData = GameResultData::CREAR;
+	}
+
+	// ゲームのクリア,オーバー条件の確認
+	if (m_resultData != GameResultData::NONE)
+	{
+		m_pUpdateFunc = &SceneMain::UpdateGameResult;
+		m_frameCount = 0;
 	}
 }
 
@@ -552,7 +555,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			character1->SetGuardKnockBack(true, -20);
 
 			// 強攻撃するための力を溜める
-			character1->SetStrongPower(20.0f);
+			character1->SetStrongPower(20);
 
 			character1->SetCollGuardEffect();
 

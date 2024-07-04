@@ -3,8 +3,6 @@
 #include <string>
 #include <cmath>
 
-//#include "MyLoadModel.h";
-
 class GameObject
 {
 private:
