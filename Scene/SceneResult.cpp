@@ -156,12 +156,15 @@ void SceneResult::Init()
 
 void SceneResult::End()
 {
+	// 解放処理
 	DeleteGraph(m_hImageResult);
 }
 
 SceneBase* SceneResult::Update()
 {
+	// プレイヤーの更新処理
 	m_pPlayer->Update();
+	// エネミーの更新処理
 	m_pEnemy->Update();
 
 	static int timer = 0;
@@ -171,8 +174,10 @@ SceneBase* SceneResult::Update()
 	// 敗北した場合は画像を傾ける
 	if (m_resultData == GameResultData::OVER)
 	{
+		// 負けた場合のBGM
 		SoundManager::GetInstance().Play(SoundName::LOSE,true);
 
+		// ResultGraphの角度を変更する
 		if (m_imageAngle < kResultGraphRotaMax)
 		{
 			m_imageAngle += kResultGraphRate;
@@ -181,6 +186,7 @@ SceneBase* SceneResult::Update()
 
 	if (m_resultData == GameResultData::CREAR)
 	{
+		// 勝った場合のBGM
 		SoundManager::GetInstance().Play(SoundName::WIN, true);
 	}
 

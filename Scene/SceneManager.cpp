@@ -16,19 +16,21 @@
 
 namespace
 {
-	constexpr int kLoadObjectNum = 12;
-	constexpr int kLoadObjectSpeed = 16;
-
+	// フェード速度
 	constexpr int kFadeSpeedRate = 15;
 }
 
 SceneManager::SceneManager():
 	m_pScene(nullptr),
 	m_pTempScene(nullptr),
-	m_blendRate(0)
+	m_isLoading(false),
+	m_isFade(false),
+	m_blendRate(0),
+	m_fadeIn(false),
+	m_fadeOut(false),
+	m_isInit(false)
 {	
-	m_isLoading = false;
-	m_isFade = false;
+
 }
 SceneManager::~SceneManager()
 {
@@ -37,9 +39,9 @@ SceneManager::~SceneManager()
 
 void SceneManager::Init()
 {
+	// 指定のシーンで初期化する
 	m_pScene.reset(new SceneTitle);
-//	m_pScene.reset(new SceneMain(DifficultyData::INTERMEDIATE));
-
+	// 初期化する
 	m_pScene->Init();
 }
 
@@ -48,6 +50,7 @@ void SceneManager::End()
 	assert(m_pScene);
 	if (!m_pScene)	return;
 
+	// 解放処理を行う
 	m_pScene->End();
 }
 
@@ -55,10 +58,6 @@ void SceneManager::Update()
 {
 	assert(m_pScene);
 	if (!m_pScene)return;
-
-#if _DEBUG
-	LONGLONG start = GetNowHiPerformanceCount();
-#endif
 
 	// コントローラーの更新処理
 	Pad::Update();
@@ -103,10 +102,6 @@ void SceneManager::Draw()
 {
 	assert(m_pScene);
 	if (!m_pScene)	return;
-
-#if _DEBUG
-	LONGLONG start = GetNowHiPerformanceCount();
-#endif
 
 	// 描画
 	m_pScene->Draw();

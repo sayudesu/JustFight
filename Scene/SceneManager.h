@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 class SceneBase;
 class SceneManager final
@@ -15,28 +14,33 @@ public:
 
 	void Update();
 	void Draw();
-public:
-	void StartFade();
 private:
+	// フェード処理を開始する
+	void StartFade();
+	// フェード処理を初期化する
 	void InitFade();
+	// フェード処理を更新する
 	void UpdateFadeIn();
+	// フェードアウト処理をする
 	void UpdateFadeOut();
+	// フェード用描画
 	void DrawFade();
 private:
+	// シーン切り替え用
 	std::unique_ptr<SceneBase>	m_pScene;
+	// 移行したいシーンを記録する
 	SceneBase* m_pTempScene;
 
+	// フェード処理をしているかどうか
 	bool m_isLoading;
-
-	int m_hFade[26];
-	bool m_isSceneSet;
-
-	// フェイドをスタートする
+	// フェードをスタートする
 	bool m_isFade;
-	bool m_isInitFade;
-
+	// フェード用ブレンド率
 	int m_blendRate;
-	bool m_fadeIn = false;
-	bool m_fadeOut = false;
-	bool m_isInit = false;
+	// フェード処理をするかどうか
+	bool m_fadeIn;
+	// フェードアウト処理をするかどうか
+	bool m_fadeOut;
+	// 初期化して始めの状態に戻すかどうか
+	bool m_isInit;
 };
