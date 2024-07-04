@@ -28,8 +28,8 @@ namespace
 
 	//画像パス
 	const char* const kBgImagePath = "Data/Image/UI/GameDifficultySelectionBase.png";
-	const char* const kWinPath = "Data/Image/UI/Win.png";
-	const char* const kLosePath = "Data/Image/UI/Lose.png";
+	const char* const kWinPath     = "Data/Image/UI/Win.png";
+	const char* const kLosePath    = "Data/Image/UI/Lose.png";
 
 	// テキスト
 	const char* const kNextButton = "A ボタンでタイトルに戻る";
@@ -41,8 +41,8 @@ namespace
 	constexpr int kNextTextPosDownY = kNextTextPosUpY + 5;
 
 	// テキストカラー
-	constexpr int kNextTextUpColor = 0x000000;
-	constexpr int kNextTextDownColor = 0xffffff;
+	constexpr int kNextTextUpColor = 0xffffff;
+	constexpr int kNextTextDownColor = 0x000000;
 
 	// 背景画像
 	constexpr int kBgPosX = Game::kScreenWidth / 2;
@@ -55,10 +55,10 @@ namespace
 
 	// 負けた場合の画像の角度
 	constexpr float kResultGraphRotaMax = 0.1f;
-	constexpr float kResultGraphRate = 0.001f;
+	constexpr float kResultGraphRate    = 0.001f;
 
 	// 3Dモデルを描画する為に2Dから3Dへ座標を変換する
-	const VECTOR kWinModel2DPos = VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f);
+	const VECTOR kWinModel2DPos  = VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f);
 	const VECTOR kLoseModel2DPos = VGet(Game::kScreenWidth / 2 + 400.0f, Game::kScreenHeight / 2, 0.5f);
 
 	// カメラ位置
@@ -87,8 +87,9 @@ SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
 		m_enemyPath = ModelManager::GetInstance().ModelType(ModelName::Queen_B);
 	}
 
+	// カメラのインスタンス生成
 	m_pCamera = std::make_unique<Camera>();
-
+	// カメラの設定
 	m_pCamera->SetPos(kCameraPos);
 	m_pCamera->Setting();
 }
@@ -103,28 +104,34 @@ void SceneResult::Init()
 	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(kWinModel2DPos);
 	const VECTOR kLoserPos  = ConvScreenPosToWorldPos(kLoseModel2DPos);
 
+	// 勝敗によってプレイヤー、エネミーのモデル位置を変更する為の変数
 	VECTOR playerScreenToWorldPos{};
-	VECTOR playerRota{};
-	
+	VECTOR playerRota{};	
 	VECTOR enemyScreenToWorldPos{};
 	VECTOR enemyRota{};
 
 	// 背景画像読み込み
 	m_hImageResultBg = LoadGraph(kBgImagePath);
 
+	// プレイヤーが勝利した場合
 	if (m_resultData == GameResultData::CREAR)
 	{
+		// 画像読み込み
 		m_hImageResult = LoadGraph(kWinPath);
 
+		// モデルのトランスフォーム
 		playerScreenToWorldPos = kWinnerPos;
 		enemyScreenToWorldPos = kLoserPos;
 		playerRota = kWinnerRota;
 		enemyRota = kLoserRota;
 	}
+	// エネミーが勝利した場合
 	else if (m_resultData == GameResultData::OVER)
 	{
+		// 画像読み込み
 		m_hImageResult = LoadGraph(kLosePath);
 
+		// モデルのトランスフォーム
 		playerScreenToWorldPos = kLoserPos;
 		enemyScreenToWorldPos = kWinnerPos;
 		playerRota = kLoserRota;
