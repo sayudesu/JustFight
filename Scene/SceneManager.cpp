@@ -62,6 +62,7 @@ void SceneManager::Update()
 	// コントローラーの更新処理
 	Pad::Update();
 
+	// フェード処理を行っている場合1
 	if (m_isFade)
 	{
 		// ロードを初期化する
@@ -87,10 +88,13 @@ void SceneManager::Update()
 		m_isInit = false;
 	}
 
+	// フェード処理の更新
 	UpdateFadeIn();
 
+	// シーンのコピー
 	m_pTempScene = m_pScene->Update();
 
+	// 前回と違うシーンだった場合
 	if (m_pTempScene != m_pScene.get())
 	{
 		// フェイドを開始する
@@ -120,8 +124,10 @@ void SceneManager::StartFade()
 
 void SceneManager::InitFade()
 {
+	// フェード中ではない場合
 	if (!m_isLoading)
 	{
+		// フェードアウトを開始する
 		m_fadeOut = true;
 		if (m_fadeOut)
 		{
@@ -151,7 +157,6 @@ void SceneManager::UpdateFadeIn()
 
 void SceneManager::UpdateFadeOut()
 {
-
 	// フェイドアウト処理
 	m_blendRate = (std::min)(m_blendRate + kFadeSpeedRate, 255);
 
@@ -165,6 +170,7 @@ void SceneManager::UpdateFadeOut()
 
 void SceneManager::DrawFade()
 {
+	// 黒い矩形をアルファ値を変更する事でフェードをさせる
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_blendRate);
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
