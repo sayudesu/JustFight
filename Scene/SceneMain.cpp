@@ -465,7 +465,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 
 	// 当たったかどうかで処理を分岐
 	if (HitPolyDim.HitNum >= 1)
-	{
+	{		
 		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
 	}

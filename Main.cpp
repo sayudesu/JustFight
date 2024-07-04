@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//リセットしない
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
-	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+	SetChangeScreenModeGraphicsSystemResetFlag(false);
 
 	// 3D関連の設定
 	// Zバッファを有効にする。
@@ -72,7 +72,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ポリゴンの裏面を描画しない
 	SetUseBackCulling(true);
 
-//	SetUseLighting(false);
+		
+	SetUseLighting(false);
 	
 	// 読み込み
 	// サウンド

@@ -161,7 +161,6 @@
     <ClCompile Include="UI\UIDrawer.cpp" />
     <ClCompile Include="Util\BloodDrawer.cpp" />
     <ClCompile Include="Util\EffekseerDrawer.cpp" />
-    <ClCompile Include="Util\LoadingDrawer.cpp" />
     <ClCompile Include="Scene\SceneResult.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
@@ -216,7 +215,6 @@
     <ClInclude Include="Util\CharacterName.h" />
     <ClInclude Include="Util\EffectId.h" />
     <ClInclude Include="Util\EffekseerDrawer.h" />
-    <ClInclude Include="Util\LoadingDrawer.h" />
     <ClInclude Include="Scene\SceneResult.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />
