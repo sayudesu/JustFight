@@ -88,7 +88,10 @@ namespace
 	constexpr float kOptionBackAngle   = 1;
 	constexpr float kOptionBottonAngle = 1;
 
-
+	// モデルのスライド
+	constexpr float kModelSlideRate = 5.0f;
+	// 背景のスライド
+	constexpr float kBgSlideRate = 60.0f;
 }
 
 SceneLevelSelect::SceneLevelSelect():
@@ -303,7 +306,7 @@ SceneBase* SceneLevelSelect::Update()
 	if (m_isCameraStop[CameraStopData::ALL])
 	{
 		m_select->Update();
-		m_modelSlidePosY -= 5.0f;
+		m_modelSlidePosY -= kModelSlideRate;
 	}
 
 	// 入力待ち
@@ -446,12 +449,14 @@ void SceneLevelSelect::CameraMoveing()
 	m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
 
 	// カメラがx,y,zそれぞれ停止したかをチェックする
-	if (m_isCameraStop[CameraStopData::X] && m_isCameraStop[CameraStopData::Y] && m_isCameraStop[CameraStopData::Z])
+	if (m_isCameraStop[CameraStopData::X] &&
+		m_isCameraStop[CameraStopData::Y] && 
+		m_isCameraStop[CameraStopData::Z])
 	{
 		// 画面の中心に移動
 		if (m_bgPos.y < static_cast<float>(Game::kScreenHeight) / 2)
 		{
-			m_bgPos.y += 60.0f;
+			m_bgPos.y += kBgSlideRate;
 			m_hBg->SetPos(m_bgPos);
 		}
 		else
@@ -545,7 +550,6 @@ void SceneLevelSelect::ModelMoveing()
 			// 3Dモデルの更新
 			m_hModel[i]->Update();
 		}
-
 	}
 }
 

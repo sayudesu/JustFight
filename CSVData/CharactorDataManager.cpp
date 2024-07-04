@@ -61,9 +61,11 @@ void CharactorDataManager::CSVLoad(std::ifstream& ifs,std::string line,int count
 		//// データ保管
 		m_data[type][mapkey].no = std::stoi(strvec.at(0));
 		m_data[type][mapkey].name = strvec.at(1);
+
 		// データを読み込む
 		m_data[type][mapkey].valueNum = std::stoi(strvec[2].c_str());  // 名前
 
+		// 要素数によって配列を追加する
 		if (m_data[type][mapkey].valueNum == 1)
 		{
 			m_data[type][mapkey].element.push_back(std::stoi(strvec[3].c_str()));

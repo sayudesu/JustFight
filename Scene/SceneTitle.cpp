@@ -26,9 +26,31 @@ namespace
 	//選択ボタン用文字
 	const char* const kPresskey = "Press any key";
 
+	// テキスト位置
+	constexpr int kTextPosUpX = Game::kScreenWidth / 2 - 272 + 12;
+	constexpr int kTextPosUpY = Game::kScreenHeight / 2 + 256;
+
+	constexpr int kTextPosDownX = kTextPosUpX + 5;
+	constexpr int kTextPosDownY = kTextPosUpY + 5;
+
+	// テキストカラー
+	constexpr int kTextUpColor = 0xffffff;
+	constexpr int kTextDownColor = 0x111111;
+
 	// 画像パス
 	const char* const kTitleImagePath = "Data/Image/Title.png";
 	const char* const kBgImagePath = "Data/Image/UI/GameDifficultySelectionBase.png";
+
+	// 3Dモデルを描画する為に2Dから3Dへ座標を変換する
+	const VECTOR kWhiteModelPos = VGet(Game::kScreenWidth / 2 - 700.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f);
+	const VECTOR kBlackModelPos = VGet(Game::kScreenWidth / 2 + 700.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f);
+
+	// オブジェクトサイズ
+	const VECTOR kModelSize = VGet(12.0f, 12.0f, 12.0f);
+
+	// タイトル画像
+	constexpr int kTitleGprahPosX = Game::kScreenWidth / 2;
+	constexpr int kTitleGprahPosY = Game::kScreenHeight / 2;
 }
 
 SceneTitle::SceneTitle():
@@ -47,24 +69,23 @@ SceneTitle::~SceneTitle()
 
 void SceneTitle::Init()
 {
-
 	// コンストラクタでカメラの情報を設定後スクリーン座標から3D空間座標への変換を行う
-	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 700.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f));
-	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 700.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f));
-
+	const VECTOR whiteModelPos = ConvScreenPosToWorldPos(kWhiteModelPos);
+	const VECTOR blackModelPos = ConvScreenPosToWorldPos(kBlackModelPos);
+	
 	// プレイヤーオブジェクトインスタンス生成
 	m_pPlayer = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Knight_W),
-		kWinnerPos,
+		whiteModelPos,
 		kWinnerRota,
-		VGet(12,12,12)
+		kModelSize
 		);
 	// エネミーオブジェクトインスタンス生成
 	m_pEnemy = std::make_unique<GameObject>(
 		ModelManager::GetInstance().ModelType(ModelName::Knight_B),
-		kLoserPos,
+		blackModelPos,
 		kWinnerRota2,
-		VGet(12, 12, 12)
+		kModelSize
 		);
 
 	m_pPlayer->Update();
@@ -78,7 +99,6 @@ void SceneTitle::End()
 
 SceneBase* SceneTitle::Update()
 {	
-
 	// タイトル画像の移動の計算
 	static float timer = 0.0f;
 	m_blendAlpha = cos(timer * 0.06f) * 255.0f;
@@ -117,7 +137,7 @@ void SceneTitle::Draw()
 	DrawExtendGraph(0, 0, Game::kScreenWidth, Game::kScreenHeight, m_hBg, true);
 
 	// タイトル描画
-	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, 0.0f, m_hTitle, true);
+	DrawRotaGraph(kTitleGprahPosX, kTitleGprahPosY, 1, 0.0f, m_hTitle, true);
 
 	// 3Dモデル描画
 	m_pPlayer->Draw();
@@ -125,7 +145,7 @@ void SceneTitle::Draw()
 
 	// ボタン誘導描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(m_blendAlpha));
-	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12 + 5, Game::kScreenHeight/2 + 256 + 5, kPresskey, 0x111111, FontSize::GENEITERAMIN_MEDIUM);
-	FontManager::GetInstance().DrawString(Game::kScreenWidth/2 - 272 + 12, Game::kScreenHeight/2 + 256, kPresskey, 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(kTextPosDownX, kTextPosDownY, kPresskey, kTextDownColor, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(kTextPosUpX, kTextPosUpY, kPresskey, kTextUpColor, FontSize::GENEITERAMIN_MEDIUM);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }

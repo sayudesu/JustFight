@@ -22,6 +22,8 @@ namespace
 
 	// 移動速度
 	constexpr float kMoveSpeed = 10.0f;
+
+	const char* const kModelPath = "Data/Model/Knight_W.mv1";
 }
 
 Player::Player(DifficultyData data,VECTOR pos):
@@ -55,7 +57,7 @@ Player::Player(DifficultyData data,VECTOR pos):
 	}
 	m_isTipsMove[static_cast<int>(Tips::MOVE)] = true;
 
-	m_parameter.fileName = "Data/Model/Knight_W.mv1";
+	m_parameter.fileName = kModelPath;
 	// パラメーター調整
 	m_parameter.attackFrameMax = 10;
 	m_parameter.attackFrameGapMax = 20;
@@ -213,17 +215,6 @@ void Player::InputMove()
 			VECTOR moveVector = VTransform(m_awayVec, m_platerRotMtx);  // 例としてX方向に移動する場合
 			// キャラクターの位置に速度を加える
 			m_pos = VAdd(m_pos, moveVector);
-
-			//moveVector = VNorm(moveVector);
-			//// 速度係数
-			//const float speedFactor = 20.0f;
-
-			//// 速度ベクトルに速度係数を掛ける
-			//VECTOR velocity = VAdd(moveVector, VGet(speedFactor, speedFactor, speedFactor));
-
-			//moveVector.y = 0.0f;
-			//// キャラクターの位置に速度を加える
-			//m_pos = VAdd(m_pos, velocity);
 		}
 		else
 		{
@@ -339,7 +330,7 @@ void Player::MoveCharacter(VECTOR moveVector)
 	}
 
 	// 壁の判定(使用しない)
-#if _DEBUG
+#if false
 	if (GetCheckHitWall())
 	{		
 		if (HitPos::ZP == m_hitPos)

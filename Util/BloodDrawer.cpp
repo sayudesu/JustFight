@@ -13,6 +13,8 @@ namespace
 	constexpr int kRndomYRate = 12;
 	// ƒƒ‚ƒŠŠJ•ú‚·‚éğŒ‚Å‚ÌˆÊ’u
 	constexpr float kEndPosY = -100.0f;
+	// ‹…‘Ì‚Ì•ªŠ„”
+	constexpr int kDivisionNum = 3;
 }
 
 BloodDrawer::BloodDrawer(VECTOR pos, int color)
@@ -55,7 +57,7 @@ void BloodDrawer::Update()
 void BloodDrawer::Draw()
 {
 	// ‚R‚c‹óŠÔã‚É‹…‚ğ•`‰æ‚·‚é
-	DrawSphere3D(m_pos, kSize, 3, m_color, m_color, true);
+	DrawSphere3D(m_pos, kSize, kDivisionNum, m_color, m_color, true);
 
 }
 

@@ -11,7 +11,7 @@ namespace Game
 #endif
 
 	// ウインドウ名
-	const char* const kTitleText = "ドンピシャふぁいと";
+	const char* const kTitleText = "JustFight";
 	// ウインドウサイズ
 	constexpr int kScreenWidth  = 1920;
 	constexpr int kScreenHeight = 1080;

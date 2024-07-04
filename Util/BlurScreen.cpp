@@ -69,7 +69,6 @@ void EffectScreen::ClearScreen()
 void EffectScreen::ScreenBack()
 {
 	SetDrawScreen(DX_SCREEN_BACK);
-
 }
 
 void EffectScreen::BlurIReplayInit()

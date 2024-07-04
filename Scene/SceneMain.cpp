@@ -16,14 +16,13 @@
 #include "../Util/BloodDrawer.h"    // 血のエフェクト
 #include "../Util/CharacterName.h"  // キャラクターの名前
 #include "../Util/BlurScreen.h";    // 画面加工
-#include "../Util/TutorialDrawer.h"
-#include "../Util/Tips.h"
-#include "../Util/SoundName.h"
-#include "../Util/HitPos.h"
+#include "../Util/TutorialDrawer.h" // チュートリアル用の描画
+#include "../Util/Tips.h"           // チュートリアル用構造体
+#include "../Util/SoundName.h"      // サウンド再生用の名前
 
-#include "../UI/UIDrawer.h";// UI描画
+#include "../UI/UIDrawer.h";        // UI描画
 
-#include "../CSVData/SoundManager.h"
+#include "../CSVData/SoundManager.h"// サウンド再生用
 
 namespace
 {
@@ -61,6 +60,13 @@ namespace
 
 	// 勝敗決定後の背景カラー
 	constexpr int kResultColor = 0x000000;
+
+	// 血を描画する用
+	constexpr int kbloodNum = 100;
+
+	// プレイヤー、エネミーの初期位置
+	const VECTOR kInitPlayerPos = VGet(-300.0f, 300.0f, 0.0f);
+	const VECTOR kInitEnemyPos = VGet(300.0f, 300.0f, 0.0f);
 }
 
 SceneMain::SceneMain(DifficultyData data):
@@ -88,8 +94,8 @@ void SceneMain::Init()
 	m_pUpdateFunc = &SceneMain::UpdateGamePlay;
 
 	// キャラクタークラス
-	m_pCharacter[kPlayerNo] = std::make_shared<Player>(m_difficultyData, VGet(-300.0f, 300.0f, 0.0f)); 
-	m_pCharacter[kEnemyNo]  = std::make_shared<Enemy>(m_difficultyData, VGet(300.0f, 300.0f, 0.0f)); 
+	m_pCharacter[kPlayerNo] = std::make_shared<Player>(m_difficultyData, kInitPlayerPos);
+	m_pCharacter[kEnemyNo]  = std::make_shared<Enemy>(m_difficultyData, kInitEnemyPos);
 
 	m_pCamera   = std::make_unique<Camera>();        // カメラクラス
 	m_pField    = std::make_unique<FieldDrawer>();   // フィールド描画クラス
@@ -135,7 +141,7 @@ void SceneMain::End()
 	m_pField->End();
 	m_pTutorial->End();
 
-	for (int i = 0; i < m_pBlood.size(); i++)
+	for (size_t i = 0; i < m_pBlood.size(); i++)
 	{
 		// デリート処理
 		delete m_pBlood[i];
@@ -217,25 +223,24 @@ SceneBase* SceneMain::UpdateGamePlay()
 		// カメラの更新処理
 	m_pCamera->Update();
 
+	
+	// 血のエフェクトを更新
+	for (auto& blood : m_pBlood)
 	{
-		// 血のエフェクトを更新
-		for (auto& blood : m_pBlood)
+		blood->Update();
+	}
+	for (int i = 0; i < m_pBlood.size(); i++)
+	{
+		if (m_pBlood[i]->IsGetErase())
 		{
-			blood->Update();
-		}
-		for (int i = 0; i < m_pBlood.size(); i++)
-		{
-			if (m_pBlood[i]->IsGetErase())
-			{
-				// デリート処理
-				delete m_pBlood[i];
-				m_pBlood[i] = nullptr;
-				// 要素の削除
-				m_pBlood.erase(m_pBlood.begin() + i);
-			}
+			// デリート処理
+			delete m_pBlood[i];
+			m_pBlood[i] = nullptr;
+			// 要素の削除
+			m_pBlood.erase(m_pBlood.begin() + i);
 		}
 	}
-
+	
 	// 勝敗条件処理
 	{
 		// HPが0になった場合
@@ -391,7 +396,9 @@ void SceneMain::Draw()
 
 // 当たり判定
 // 武器と体の判定
-bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckWeaponAndBodyHit(
+	std::shared_ptr<CharacterBase> character1,
+	std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetCollWeaponPos(), character2->GetCollPos(),
@@ -403,7 +410,10 @@ bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1,
 }
 
 // 武器と盾の判定
-bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckWeaponAndShieldHIt(
+	std::shared_ptr<CharacterBase> character1,
+	
+std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetCollWeaponPos(), character2->GetShieldPos(),
@@ -415,7 +425,9 @@ bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> character
 }
 
 // 武器と体範囲の判定
-bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckWeaponAndModelAboutHIt(
+	std::shared_ptr<CharacterBase> character1,
+	std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetCollWeaponPos(), character2->GetCollPos(),
@@ -427,7 +439,9 @@ bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> chara
 }
 
 // 体範囲と体範囲の判定
-bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckModelAboutHIt(
+	std::shared_ptr<CharacterBase> character1,
+	std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetPos(), character2->GetCollPos(),
@@ -457,26 +471,6 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 	{
 		// 当たった情報キャラクターにを渡す
 		character->SetFieldHit();
-
-#if _DEBUG
-
-		if (fabs(HitPolyDim.Dim->Normal.x) > 0.9f)
-		{					
-			if (HitPolyDim.Dim->Position->x < character->GetPos().x + character->GetModelRadius() / 2)
-			{
-			//	printfDx("横 = X+\n");
-				character->IsCheckHitWall(true,HitPos::XP);
-			}			
-		}
-		if (fabs(HitPolyDim.Dim->Normal.z) > 0.9f)
-		{
-			if (HitPolyDim.Dim->Position->z < character->GetPos().z + character->GetModelRadius() / 2)
-			{
-				//	printfDx("横 = Z+\n");
-				character->IsCheckHitWall(true, HitPos::ZP);
-			}
-		}
-#endif
 	}
 
 	// モデルとカプセルとの当たり判定
@@ -612,7 +606,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 				const bool isGruad = character2->GetBattleState() != BattleState::GUARD;
 				if (isGruad)
 				{
-					for (int i = 0; i < 100; i++)
+					for (int i = 0; i < kbloodNum; i++)
 					{
 						m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
 						m_pBlood.back()->Init(i);

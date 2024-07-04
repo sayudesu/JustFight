@@ -45,8 +45,6 @@ protected:
 private:
 	// 位置情報の更新
 	void UpdatePos(int shiftX = 0, int shiftY = 0, int shiftZ = 0);
-	// 盾に攻撃が当たって弾く場合
-	void WeaponAttacksShield();
 	// フレームで向かいたい座標まで動かす
 	float MoveByFrame(const float relativePos, const float EndPos, const int nowFrame, const int maxFrame);
 

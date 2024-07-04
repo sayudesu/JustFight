@@ -21,13 +21,49 @@ namespace
 {
 	// 3Dオブジェクトの角度
 	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
-	const VECTOR kLoserRota = VGet(
-		0,
-		180 * DX_PI_F / 180.0f,
-		-90 * DX_PI_F / 180.0f);
+	const VECTOR kLoserRota = VGet(0, 180 * DX_PI_F / 180.0f, -90 * DX_PI_F / 180.0f);
 	// 3Dオブジェクトのサイズ
 	constexpr float kChessModelSize = 12.0f;
 	const VECTOR k3DModelSize = VGet(kChessModelSize, kChessModelSize, kChessModelSize);
+
+	//画像パス
+	const char* const kBgImagePath = "Data/Image/UI/GameDifficultySelectionBase.png";
+	const char* const kWinPath = "Data/Image/UI/Win.png";
+	const char* const kLosePath = "Data/Image/UI/Lose.png";
+
+	// テキスト
+	const char* const kNextButton = "A ボタンでタイトルに戻る";
+
+	// テキスト位置
+	constexpr int kNextTextPosUpX = Game::kScreenWidth / 2 - 470.0f;
+	constexpr int kNextTextPosUpY = Game::kScreenHeight / 2 + 200;
+	constexpr int kNextTextPosDownX = kNextTextPosUpX + 5;
+	constexpr int kNextTextPosDownY = kNextTextPosUpY + 5;
+
+	// テキストカラー
+	constexpr int kNextTextUpColor = 0x000000;
+	constexpr int kNextTextDownColor = 0xffffff;
+
+	// 背景画像
+	constexpr int kBgPosX = Game::kScreenWidth / 2;
+	constexpr int kBgPosY = Game::kScreenHeight / 2;
+	constexpr float kBgSize = 1.0f;
+
+	// 勝敗結果
+	constexpr int kResultGraphPosX = Game::kScreenWidth / 2;
+	constexpr int kResultGraphPosY = Game::kScreenHeight / 2;
+
+	// 負けた場合の画像の角度
+	constexpr float kResultGraphRotaMax = 0.1f;
+	constexpr float kResultGraphRate = 0.001f;
+
+	// 3Dモデルを描画する為に2Dから3Dへ座標を変換する
+	const VECTOR kWinModel2DPos = VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f);
+	const VECTOR kLoseModel2DPos = VGet(Game::kScreenWidth / 2 + 400.0f, Game::kScreenHeight / 2, 0.5f);
+
+	// カメラ位置
+	const VECTOR kCameraPos = VGet(0.0f, 0.0f, -10000.0f);
+
 }
 
 SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
@@ -53,7 +89,7 @@ SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
 
 	m_pCamera = std::make_unique<Camera>();
 
-	m_pCamera->SetPos(VGet(0.0f,0.0f,-10000.0f));
+	m_pCamera->SetPos(kCameraPos);
 	m_pCamera->Setting();
 }
 
@@ -64,8 +100,8 @@ SceneResult::~SceneResult()
 void SceneResult::Init()
 {
 	// コンストラクタでカメラの情報を設定後スクリーン座標から3D空間座標への変換を行う
-	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 - 500.0f, Game::kScreenHeight / 2 + 150.0f, 0.5f));
-	const VECTOR kLoserPos = ConvScreenPosToWorldPos(VGet(Game::kScreenWidth / 2 + 400.0f, Game::kScreenHeight / 2, 0.5f));
+	const VECTOR kWinnerPos = ConvScreenPosToWorldPos(kWinModel2DPos);
+	const VECTOR kLoserPos  = ConvScreenPosToWorldPos(kLoseModel2DPos);
 
 	VECTOR playerScreenToWorldPos{};
 	VECTOR playerRota{};
@@ -73,10 +109,12 @@ void SceneResult::Init()
 	VECTOR enemyScreenToWorldPos{};
 	VECTOR enemyRota{};
 
-	m_hImageResultBg = LoadGraph("Data/Image/UI/GameDifficultySelectionBase.png");
+	// 背景画像読み込み
+	m_hImageResultBg = LoadGraph(kBgImagePath);
+
 	if (m_resultData == GameResultData::CREAR)
 	{
-		m_hImageResult = LoadGraph("Data/Image/UI/Win.png");
+		m_hImageResult = LoadGraph(kWinPath);
 
 		playerScreenToWorldPos = kWinnerPos;
 		enemyScreenToWorldPos = kLoserPos;
@@ -85,7 +123,7 @@ void SceneResult::Init()
 	}
 	else if (m_resultData == GameResultData::OVER)
 	{
-		m_hImageResult = LoadGraph("Data/Image/UI/Lose.png");
+		m_hImageResult = LoadGraph(kLosePath);
 
 		playerScreenToWorldPos = kLoserPos;
 		enemyScreenToWorldPos = kWinnerPos;
@@ -128,9 +166,9 @@ SceneBase* SceneResult::Update()
 	{
 		SoundManager::GetInstance().Play(SoundName::LOSE,true);
 
-		if (m_imageAngle < 0.1f)
+		if (m_imageAngle < kResultGraphRotaMax)
 		{
-			m_imageAngle += 0.001f;
+			m_imageAngle += kResultGraphRate;
 		}
 	}
 
@@ -157,19 +195,15 @@ SceneBase* SceneResult::Update()
 
 void SceneResult::Draw()
 {
-#if _DEBUG
-	DrawString(0, 0, "SceneResult", 0xffffff);
-#endif
-	
 	// 背景を描画
-	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 1, 0.0f, m_hImageResultBg, true);
-	DrawRotaGraph(Game::kScreenWidth / 2, Game::kScreenHeight / 2 + m_y, 1, m_imageAngle, m_hImageResult, true);
+	DrawRotaGraph(kBgPosX, kBgPosY, kBgSize, 0.0f, m_hImageResultBg, true);
+	DrawRotaGraph(kResultGraphPosX, kResultGraphPosY + m_y, 1, m_imageAngle, m_hImageResult, true);
 
 	// キャラクターの描画
 	m_pPlayer->Draw();
 	m_pEnemy->Draw();
 
 	// ボタン説明
-	FontManager::GetInstance().DrawString(Game::kScreenWidth / 2 - 470.0f + 5, Game::kScreenHeight / 2 + 200 + 5, "A ボタンでタイトルに戻る", 0x000000, FontSize::GENEITERAMIN_MEDIUM);
-	FontManager::GetInstance().DrawString(Game::kScreenWidth / 2 - 470.0f, Game::kScreenHeight / 2 + 200, "A ボタンでタイトルに戻る", 0xffffff, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(kNextTextPosDownX, kNextTextPosDownY, kNextButton, kNextTextDownColor, FontSize::GENEITERAMIN_MEDIUM);
+	FontManager::GetInstance().DrawString(kNextTextPosUpX, kNextTextPosUpY, kNextButton, kNextTextUpColor, FontSize::GENEITERAMIN_MEDIUM);
 }

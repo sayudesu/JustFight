@@ -35,6 +35,11 @@ namespace
 
 	// 追跡速度
 	constexpr float kTargetMoveingSpeed = 5.0f;
+
+	// オブジェクトサイズ
+	const VECTOR kModelSize = VGet(40.0f, 40.0f, 40.0f);
+	const VECTOR kWeaponSize = VGet(3.0f, 3.0f, 3.0f);
+	const VECTOR kShieldSize = VGet(3.0f, 3.0f, 3.0f);
 }
 
 CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
@@ -113,21 +118,21 @@ void CharacterBase::Init()
 		m_parameter.fileName.c_str(),
 		m_pos,
 		VGet(0.0f, m_angle, kAngleZ),
-		VGet(40.0f, 40.0f, 40.0f));
+		kModelSize);
 
 	// 武器オブジェクトの生成
 	m_pWeapon = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::WEAPON),
 		m_weaponPos,
 		VGet(0.0f, m_angle, kAngleZ),
-		VGet(3.0f, 3.0f, 3.0f));
+		kWeaponSize);
 
 	// 盾オブジェクトの生成
 	m_pShield = new GameObject(
 		ModelManager::GetInstance().ModelType(ModelName::SHIELD),
 		VGet(100, m_weaponPos.y, 100),
 		VGet(0.0f, m_angle, kAngleZ),
-		VGet(3.0f, 3.0f, 3.0f));
+		kShieldSize);
 
 	// 位置情報の更新
 	UpdatePos();
@@ -1034,29 +1039,6 @@ void CharacterBase::UpdatePos(int shiftX, int shiftY, int shiftZ)
 
 	// ノックバックされた場合
 	KnockBack();
-}
-
-void CharacterBase::WeaponAttacksShield()
-{
-//	// 位置  =  相対位置　+ 向かいたい座標 - 相対位置　*　　現在のフレーム　/　最大フレーム　　
-////	m_vecSield.x = m_parameter.sieldRelativePos.x + (0.0f - m_parameter.sieldRelativePos.x) * (float(m_guardFrame) / m_parameter.guardFrameMax );
-//	m_recoilFrame++;
-//
-//	if (m_recoilFrame < 30)
-//	{
-//		m_vecWeapon.z = MoveByFrame(m_parameter.weaponRelativePos.z,100.0f, m_recoilFrame, 30);
-//		m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.z,-100.0f, m_recoilFrame, 30);
-//	}
-//
-//
-//	if (m_recoilFrame > 30)
-//	{
-//		m_recoilFrame = 0;
-//		m_pFunc = &CharacterBase::Idle;
-//	}
-//
-//	// 位置情報の更新
-//	UpdatePos();
 }
 
 float CharacterBase::MoveByFrame(const float relativePos, const float EndPos, const int nowFrame, const int maxFrame)
