@@ -146,9 +146,7 @@ void SceneManager::UpdateFadeIn()
 		{
 			m_blendRate = 0;
 
-			m_fadeIn = false;
-
-			
+			m_fadeIn = false;			
 
 			m_isLoading = false;
 		}

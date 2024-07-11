@@ -99,6 +99,8 @@ private:
 	// “ïˆÕ“x•¶š‚Ì‘å‚«‚³
 	float m_difficulty;
 
+	int m_arrowTimer;
+
 	// ƒJƒƒ‰’â~—p
 	enum CameraStopData
 	{

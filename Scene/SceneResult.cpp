@@ -64,11 +64,16 @@ namespace
 	// ƒJƒƒ‰ˆÊ’u
 	const VECTOR kCameraPos = VGet(0.0f, 0.0f, -10000.0f);
 
+	// Ÿ”sŒ‹‰Ê‰æ‘œ
+	// U“®‚ÌŽü”g”
+	constexpr float kFrequency = 0.07f;
+	// U“®‚ÌU•
+	constexpr float kAmplitude = 5.0f;
 }
 
 SceneResult::SceneResult(GameResultData resultData, DifficultyData data):
 	m_imageAngle(0.0f),
-	m_y(0.0f)
+	m_resultY(0.0f)
 {
 	// ƒŠƒUƒ‹ƒgƒf[ƒ^‚ðŽæ“¾‚·‚é
 	m_resultData = resultData;
@@ -168,7 +173,7 @@ SceneBase* SceneResult::Update()
 	m_pEnemy->Update();
 
 	static int timer = 0;
-	m_y = cos(timer * 0.07f) * 5.0f;
+	m_resultY = cos(timer * kFrequency) * kAmplitude;
 	timer++;
 
 	// ”s–k‚µ‚½ê‡‚Í‰æ‘œ‚ðŒX‚¯‚é
@@ -210,7 +215,7 @@ void SceneResult::Draw()
 {
 	// ”wŒi‚ð•`‰æ
 	DrawRotaGraph(kBgPosX, kBgPosY, kBgSize, 0.0f, m_hImageResultBg, true);
-	DrawRotaGraph(kResultGraphPosX, kResultGraphPosY + m_y, 1, m_imageAngle, m_hImageResult, true);
+	DrawRotaGraph(kResultGraphPosX, kResultGraphPosY + m_resultY, 1, m_imageAngle, m_hImageResult, true);
 
 	// ƒLƒƒƒ‰ƒNƒ^[‚Ì•`‰æ
 	m_pPlayer->Draw();

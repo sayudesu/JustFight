@@ -24,6 +24,29 @@ namespace
 	constexpr float kMoveSpeed = 10.0f;
 
 	const char* const kModelPath = "Data/Model/Knight_W.mv1";
+
+	// プレイヤーのパラメーター調整
+	constexpr float kattackFrameMax = 10;
+	constexpr float kattackFrameGapMax = 20;
+	constexpr float kattackTotalFrame = kattackFrameMax + kattackFrameGapMax;
+	constexpr float kattackAfterStopFrameMax = 60;
+	constexpr float kstrongAttackFrameMax = 60;
+	constexpr float kstrongAttackFrameGapMax = 25;
+	constexpr float kStrongAttackTotalFrame = kstrongAttackFrameMax + kstrongAttackFrameGapMax;
+	constexpr float kGuardFrameMax = 5;
+	constexpr float kJustGuardFrameMax = 10;
+	constexpr float kStunFrameMax = 60 * 3;
+	constexpr float kHpMax = 6;
+	constexpr float kFightingMeterMax = 100;
+	const VECTOR kWeaponRelativePos = { -80.0f, 100.0f, 0.0f };
+	const VECTOR kShieldRelativePos = { 100.0f, 100.0f, 10.0f };
+	constexpr float kWeaponAttackRadius = 100.0f;
+	constexpr float kShieldRadius = 50.0f;
+	constexpr float kModelRadius = 180.0f;
+	const VECTOR kWeaponAttackPos = { 0.0f, 0.0f, -210.0f };
+	const VECTOR kKnockBackPos = { 0.0f,0.0f ,-20.0f };
+	constexpr float kWeaponBackSpeed = 30.0f;
+	constexpr float kShieldBackSpeed = 30.0f;
 }
 
 Player::Player(DifficultyData data,VECTOR pos):
@@ -59,36 +82,27 @@ Player::Player(DifficultyData data,VECTOR pos):
 
 	m_parameter.fileName = kModelPath;
 	// パラメーター調整
-	m_parameter.attackFrameMax = 10;
-	m_parameter.attackFrameGapMax = 20;
-	m_parameter.attackTotalFrame = m_parameter.attackFrameMax + m_parameter.attackFrameGapMax;
-
-	m_parameter.attackAfterStopFrameMax = 60;
-
-	m_parameter.strongAttackFrameMax = 60;
-	m_parameter.strongAttackFrameGapMax = 25;
-	m_parameter.strongAttackTotalFrame = m_parameter.strongAttackFrameMax + m_parameter.strongAttackFrameGapMax;
-
-	m_parameter.guardFrameMax = 5;
-	m_parameter.justGuardFrameMax = 10;
-
-	m_parameter.stunFrameMax = 60 * 3;
-
-	m_parameter.hpMax = 6;
-	m_parameter.fightingMeterMax = 100;
-
-	m_parameter.weaponRelativePos = { -80.0f, 100.0f, 0.0f };
-	m_parameter.shieldRelativePos = { 100.0f, 100.0f, 10.0f };
-
-	m_parameter.weaponAttackRadius = 100.0f;
-	m_parameter.shieldRadius = 50.0f;
-	m_parameter.modelRadius = 180.0f;
-
-	m_parameter.weaponAttackPos = { 0.0f, 0.0f, -210.0f };
-	m_parameter.knockBackPos = { 0.0f,0.0f ,-20.0f };
-
-	m_parameter.weaponBackSpeed = 30.0f;
-	m_parameter.shieldBackSpeed = 30.0f;
+	m_parameter.attackFrameMax    = kattackFrameMax;
+	m_parameter.attackFrameGapMax = kattackFrameGapMax;
+	m_parameter.attackTotalFrame  = kattackTotalFrame;
+	m_parameter.attackAfterStopFrameMax = kattackAfterStopFrameMax;
+	m_parameter.strongAttackFrameMax    = kstrongAttackFrameMax;
+	m_parameter.strongAttackFrameGapMax = kstrongAttackFrameGapMax;
+	m_parameter.strongAttackTotalFrame  = kStrongAttackTotalFrame;
+	m_parameter.guardFrameMax     = kGuardFrameMax;
+	m_parameter.justGuardFrameMax = kJustGuardFrameMax;
+	m_parameter.stunFrameMax = kStunFrameMax;
+	m_parameter.hpMax = kHpMax;
+	m_parameter.fightingMeterMax  = kFightingMeterMax;
+	m_parameter.weaponRelativePos = kWeaponRelativePos;
+	m_parameter.shieldRelativePos = kShieldRelativePos;
+	m_parameter.weaponAttackRadius = kWeaponAttackRadius;
+	m_parameter.shieldRadius       = kShieldRadius;
+	m_parameter.modelRadius        = kModelRadius;
+	m_parameter.weaponAttackPos = kWeaponAttackPos;
+	m_parameter.knockBackPos    = kKnockBackPos;
+	m_parameter.weaponBackSpeed = kWeaponBackSpeed;
+	m_parameter.shieldBackSpeed = kShieldBackSpeed;
 }
 
 Player::~Player()
@@ -131,7 +145,7 @@ void Player::Input()
 			frameCount = 0;
 		}
 	}
-#endif
+#endifs
 }
 
 void Player::InputTutorial()

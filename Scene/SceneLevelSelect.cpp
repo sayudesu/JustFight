@@ -92,6 +92,12 @@ namespace
 	constexpr float kModelSlideRate = 5.0f;
 	// 背景のスライド
 	constexpr float kBgSlideRate = 60.0f;
+
+	// 勝敗結果画像
+	// 振動の周波数
+	constexpr float kFrequency = 0.07f;
+	// 振動の振幅
+	constexpr float kAmplitude = 5.0f;
 }
 
 SceneLevelSelect::SceneLevelSelect():
@@ -99,7 +105,8 @@ SceneLevelSelect::SceneLevelSelect():
 	m_isInputController(false),
 	m_bgPos(VGet(static_cast<float>(Game::kScreenWidth / 2), -static_cast<float>(Game::kScreenHeight / 2), 0.0f)),
 	m_cameraSpeed(0.1f),
-	m_modelSlidePosY(30.0f)
+	m_modelSlidePosY(30.0f),
+	m_arrowTimer(0)
 {
 	m_arrowPosX[0] = 0.0f;
 	m_arrowPosX[1] = 0.0f;
@@ -576,10 +583,9 @@ void SceneLevelSelect::ModelMoveing()
 
 void SceneLevelSelect::Input()
 {
-	// ボタン{
-	static int timer = 0;
-	float y = cos(timer * 0.07f) * 5.0f;
-	timer++;
+	// ボタン誘導用
+	float y = cos(m_arrowTimer * kFrequency) * kAmplitude;
+	m_arrowTimer++;
 
 	// 位置の更新
 	m_hArrow[0]->SetPos({ m_arrowPosX[0] + m_arrowShakeX[0],m_arrowPosY[0] + m_arrowShakeY[0] + y,0 }

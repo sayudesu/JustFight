@@ -69,6 +69,12 @@ namespace
 	// プレイヤー、エネミーの初期位置
 	const VECTOR kInitPlayerPos = VGet(-300.0f, 300.0f, 0.0f);
 	const VECTOR kInitEnemyPos = VGet(300.0f, 300.0f, 0.0f);
+
+	// 勝敗結果画像
+	// 振動の周波数
+	constexpr float kFrequency = 0.07f;
+	// 振動の振幅
+	constexpr float kAmplitude = 100.0f + static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
 }
 
 SceneMain::SceneMain(DifficultyData data):
@@ -275,7 +281,7 @@ SceneBase* SceneMain::UpdateGameResult()
 	}
 
 	// 画像の位置を動かす計算
-	m_checkmatePosY = cosf(static_cast<float>(m_frameCount) * 0.07f) * 100.0f + static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
+	m_checkmatePosY = cosf(static_cast<float>(m_frameCount) * kFrequency) * kAmplitude;
 
 	// 予めでかくしたサイズを1にする
 	if (m_checkmateSize > kCheckmateGraphSizeMax)

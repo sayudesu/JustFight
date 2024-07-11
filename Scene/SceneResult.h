@@ -29,16 +29,21 @@ private:
 	// 画像の読み込み
 	int m_hImageResultBg;
 	int m_hImageResult;
+
 	// 画像の角度
 	float m_imageAngle;
 
+	// 3Dオブジェクト生成用
 	std::unique_ptr<GameObject> m_pPlayer;
 	std::unique_ptr<GameObject> m_pEnemy;
 
+	// カメラ生成用
 	std::unique_ptr<Camera> m_pCamera;
 
+	// 敵パスの名前
 	std::string m_enemyPath;
 
-	float m_y;
+	// 勝敗結果画像位置調整用
+	float m_resultY;
 };
 
