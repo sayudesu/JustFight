@@ -145,7 +145,7 @@ void Player::Input()
 			frameCount = 0;
 		}
 	}
-#endifs
+#endif
 }
 
 void Player::InputTutorial()
