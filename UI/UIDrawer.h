@@ -21,11 +21,6 @@ public:
 	/// <param name="param">名前で指定したキャラのパラメーター</param>
 	void SetParam(CharacterName name, int hpNum, int hpMax, float skillNum, float skillMax, int fightMeterNum);
 private:
-	//void UpdateHp(int x,int y);
-	//void UpdateSkill(int x, int y);
-	void DrawAreaResult(int x,int y,int x1,int y1);
-	void DrawAreaALL();
-private:
 	enum class HandleType
 	{
 		BG,// 背景

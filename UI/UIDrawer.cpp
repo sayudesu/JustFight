@@ -212,6 +212,13 @@ UIDrawer::UIDrawer()
 
 UIDrawer::~UIDrawer()
 {
+	for (int i = 0; i < static_cast<int>(CharacterName::MAX); i++)
+	{
+		for (int j = 0; j < static_cast<int>(HandleType::MAX); j++)
+		{
+			DeleteGraph(m_handle[i][j]);
+		}
+	}
 }
 
 void UIDrawer::Draw()

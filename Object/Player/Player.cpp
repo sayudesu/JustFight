@@ -6,8 +6,6 @@
 
 #include "../../CSVData/SoundManager.h"
 #include "../../Util/SoundName.h"
-#include "../../Util/HitPos.h"
-
 
 namespace
 {

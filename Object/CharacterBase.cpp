@@ -1340,12 +1340,6 @@ bool CharacterBase::GetCheckHitWall()
 	return m_isHItWall;
 }
 
-void CharacterBase::IsCheckHitWall(bool isHit,HitPos hitPos)
-{
-	m_isHItWall = isHit;
-	m_hitPos = hitPos;
-}
-
 bool CharacterBase::IsJustGuard() const
 {
 	return m_isJustGuard;

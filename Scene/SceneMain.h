@@ -67,7 +67,7 @@ private:
 	// キャラクタークラス
 	std::shared_ptr<CharacterBase> m_pCharacter[kCharacterNum];
 	// 血描画クラス
-	std::vector<BloodDrawer*>m_pBlood;
+	std::vector<BloodDrawer*> m_pBlood;
 	// フィールドクラス
 	std::unique_ptr<FieldDrawer>m_pField; 
 	// UIクラス

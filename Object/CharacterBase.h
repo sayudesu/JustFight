@@ -8,7 +8,6 @@
 #include "../Util/DifficultyData.h"
 
 #include "../Util/Tips.h"
-#include "../Util/HitPos.h"
 
 // ゲームオブジェクト
 class GameObject;
@@ -148,9 +147,6 @@ public:
 	// チュートリアル用
 	// 現在できる行動を渡す
 	bool GetTipsMove(Tips tips);
-
-	// 壁に当たったかどうか
-	void IsCheckHitWall(bool isHit, HitPos hitPos);
 
 	// ジャストガードできたかどうか
 	bool IsJustGuard()const;
@@ -297,7 +293,7 @@ protected:
 	// メンバ関数ポインタ
 	void(CharacterBase::*m_pFunc)();
 
-	// 
+	// 重力
 	bool m_isGravity;
 
 	// 位置
@@ -341,8 +337,5 @@ protected:
 	// チュートリアル用
 	// どの行動ができるか決める
 	bool m_isTipsMove[static_cast<int>(Tips::MAX)];
-
-	// オブジェクトに当たった位置
-	HitPos m_hitPos;
 };
 

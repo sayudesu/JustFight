@@ -73,8 +73,9 @@ namespace
 	// 勝敗結果画像
 	// 振動の周波数
 	constexpr float kFrequency = 0.07f;
+	constexpr float kFrequencyTimes = 100.0f;
 	// 振動の振幅
-	constexpr float kAmplitude = 100.0f + static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
+	constexpr float kAmplitude = static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
 }
 
 SceneMain::SceneMain(DifficultyData data):
@@ -281,8 +282,7 @@ SceneBase* SceneMain::UpdateGameResult()
 	}
 
 	// 画像の位置を動かす計算
-	m_checkmatePosY = cosf(static_cast<float>(m_frameCount) * kFrequency) * kAmplitude;
-
+	m_checkmatePosY = cosf(static_cast<float>(m_frameCount) * kFrequency) * kFrequencyTimes + kAmplitude;
 	// 予めでかくしたサイズを1にする
 	if (m_checkmateSize > kCheckmateGraphSizeMax)
 	{
@@ -458,7 +458,6 @@ bool SceneMain::CheckModelAboutHIt(
 // 地面のモデルとプレイヤーの判定
 bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 {
-	character->IsCheckHitWall(false,HitPos::NONE);
 	MV1_COLL_RESULT_POLY_DIM HitPolyDim;
 
 	// モデルとカプセルとの当たり判定

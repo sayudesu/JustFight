@@ -27,7 +27,7 @@ private:
 	void DrawFade();
 private:
 	// シーン切り替え用
-	std::unique_ptr<SceneBase>	m_pScene;
+	std::unique_ptr<SceneBase> m_pScene;
 	// 移行したいシーンを記録する
 	SceneBase* m_pTempScene;
 
