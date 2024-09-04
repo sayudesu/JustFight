@@ -1,28 +1,28 @@
 #include <DxLib.h>
 
 #include "SceneMain.h"
-#include "SceneResult.h"// リザルトシーン
+#include "SceneResult.h"
 
-#include "../Object/Camera/Camera.h"    // カメラ
-#include "../Object/Player/Player.h"    // プレイヤー
-#include "../Object/Enemy/Enemy.h"      // エネミー
-#include "../Object/CharacterBase.h"    // キャラクター
-#include "../Object/Stage/FIeldDrawer.h"// マップ描画
+#include "../Object/Camera/Camera.h"
+#include "../Object/Player/Player.h"
+#include "../Object/Enemy/Enemy.h"
+#include "../Object/CharacterBase.h"
+#include "../Object/Stage/FIeldDrawer.h"
 
-#include "../Util/Collision3D.h"    // 当たり判定
-#include "../Util/EffekseerDrawer.h"// 3Dエフェクト
-#include "../Util/Game.h"           // ゲーム基本設定
-#include "../Util/Pad.h"            // パッド
-#include "../Util/BloodDrawer.h"    // 血のエフェクト
-#include "../Util/CharacterName.h"  // キャラクターの名前
-#include "../Util/BlurScreen.h";    // 画面加工
-#include "../Util/TutorialDrawer.h" // チュートリアル用の描画
-#include "../Util/Tips.h"           // チュートリアル用構造体
-#include "../Util/SoundName.h"      // サウンド再生用の名前
+#include "../Util/Collision3D.h"
+#include "../Util/EffekseerDrawer.h"
+#include "../Util/Game.h"
+#include "../Util/Pad.h"
+#include "../Util/BloodDrawer.h"
+#include "../Util/CharacterName.h"
+#include "../Util/BlurScreen.h"
+#include "../Util/TutorialDrawer.h"
+#include "../Util/Tips.h"
+#include "../Util/SoundName.h"
 
-#include "../UI/UIDrawer.h";        // UI描画
+#include "../UI/UIDrawer.h";
 
-#include "../CSVData/SoundManager.h"// サウンド再生用
+#include "../CSVData/SoundManager.h"
 
 namespace
 {
@@ -76,6 +76,14 @@ namespace
 	constexpr float kFrequencyTimes = 100.0f;
 	// 振動の振幅
 	constexpr float kAmplitude = static_cast<float>(Game::kScreenHeight) / 2.0f - 160.0f;
+
+	// 強攻撃ノックバック
+	constexpr float kStrongAttackKnockBack = -30.0f;
+	// 通常攻撃ノックバック
+	constexpr float kNormalAttackKnockBack = -10.0f;
+
+	// ガードしてた場合のノックバック
+	constexpr float kGuardKnockBack = -20.0f;
 }
 
 SceneMain::SceneMain(DifficultyData data):
@@ -89,7 +97,12 @@ SceneMain::SceneMain(DifficultyData data):
 	m_checkmateRota(10.0f),
 	m_checkmateBgBlendRate(0),
 	m_checkmatePosY(0.0f),
-	m_isBlur(false)
+	m_isBlur(false),
+	m_isHitStop(false),
+	m_isHit(false),
+	m_isOneHit(false),
+	m_isNoHit(false),
+	m_hitFrameCount(0)
 {
 }
 
@@ -190,8 +203,16 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	}
 
+	//if (!m_isHitStop)
+	//{
+	//	// キャラクターの更新処理
+	//	UpdateCharacter(m_pCharacter[kPlayerNo],m_pCharacter[kEnemyNo], true);
+	//	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
+	//}
+
+
 	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[kPlayerNo],m_pCharacter[kEnemyNo], true);
+	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
 	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 
 	// UIにパラメーターの状態を渡す
@@ -243,7 +264,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 	}
 
 	// 勝敗の確認
-	CheckResult();	
+	CheckResult();
 
 	// プレイヤーに攻撃がヒットしたかどうか
 	bool isDamageBlur = m_pCharacter[kPlayerNo]->IsHitDamage() && !m_pCharacter[kPlayerNo]->IsGuard();
@@ -520,6 +541,8 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	// ガード成功いない状態
 	character1->SetWeaponAttacksShield(false);
 
+	m_isHit = false;
+
 	// ジャストガード処理
 	// 攻撃が当たっていた場合
 	// 相手がスタン状態ではない場合
@@ -531,6 +554,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		// ジャストガードフレーム
 		if(character1->GetGuardFrame() < character1->GetJustGuardFrameMax())
 		{
+			m_isHit = false;
+			m_hitFrameCount = 0;
+
 			// ジャストガードが成功したかどうか
 			character1->SetJustGuard(true);
 
@@ -556,8 +582,11 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		// 攻撃が盾に当たったかどうか
 		if (CheckWeaponAndShieldHIt(character2, character1))
 		{
+			m_isHit = false;
+			m_hitFrameCount = 0;
+
 			// ノックバック
-			character1->SetGuardKnockBack(true, -20);
+			character1->SetGuardKnockBack(true, kGuardKnockBack);
 
 			// 強攻撃するための力を溜める
 			character1->SetStrongPower(20);
@@ -571,8 +600,9 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	}
 	else
 	{
-		const bool isAttack = character1->GetBattleState()       == BattleState::ATTACK;
-		const bool isAttackTow = character1->GetBattleState()    == BattleState::ATTACKTWO;
+		// 攻撃をしたかどうか
+		const bool isAttack       = character1->GetBattleState() == BattleState::ATTACK;
+		const bool isAttackTow    = character1->GetBattleState() == BattleState::ATTACKTWO;
 		const bool isStrongAttack = character1->GetBattleState() == BattleState::STRONGATTACK;
 
 		// 攻撃を与える処理
@@ -581,20 +611,30 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			// 攻撃が当たったかどうか
 			if (CheckWeaponAndBodyHit(character1, character2))
 			{
+				m_isHit = true;
+
+				m_hitFrameCount++;
+
+				// ヒットストップを有効にする
+				m_isHitStop = true;		
+
 				// ダメージを与える
 				character2->SetDamage(true);
 
 				// ノックバック
+				// 強攻撃だった場合			
 				if (character1->GetBattleState() == BattleState::STRONGATTACK)
 				{
-					character2->SetGuardKnockBack(true, -30);
+					character2->SetGuardKnockBack(true, kStrongAttackKnockBack);
 				}
 				else
 				{
-					character2->SetGuardKnockBack(true, -10);
+					character2->SetGuardKnockBack(true, kNormalAttackKnockBack);
 				}
 
+				// ダメージエフェクトのカラー調整
 				int color = 0xffffff;
+				// プレイヤーだった場合
 				if (isPlayer)
 				{
 					color = 0x000000;
@@ -619,9 +659,22 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 				StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
 
 				return;
-			}
+			}			
 		}
 	}
+	static int count = 0;
+	if (m_hitFrameCount == 1)
+	{
+		printfDx("停止中\n");
+	}
+
+	if (character1->IsAttackEnd())
+	{
+		m_hitFrameCount = 0;
+		printfDx("リセット\n");
+		character1->IsResetAttackEnd();
+	}
+
 #endif
 }
 

@@ -96,4 +96,17 @@ private:
 
 	// ブラーをかけるかどうか
 	bool m_isBlur;
+
+	// ヒットストップ
+	bool m_isHitStop;
+
+	// 現在攻撃されている
+	bool m_isHit;
+	// 攻撃をされて一度だけ判定をとる
+	bool m_isOneHit;
+	// 攻撃をされていいない場合
+	bool m_isNoHit;
+
+	// 攻撃が当たった場合のカウント
+	int m_hitFrameCount;
 };
