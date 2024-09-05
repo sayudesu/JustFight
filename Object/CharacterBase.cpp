@@ -78,8 +78,7 @@ CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
 	m_attackAfterStopFrame(0),
 	m_isSceneChange(false),
 	m_comboAttack   (0),
-	m_difficultyData(data),
-	m_isAttackEnd(false)
+	m_difficultyData(data)
 {
 	// メンバ関数の初期
 	m_pFunc = &CharacterBase::Idle;
@@ -285,9 +284,6 @@ void CharacterBase::Attack()
 	// 次のコンボ攻撃に切り替える
 	if (m_comboAttack == 2)
 	{
-		// 攻撃終了
-		m_isAttackEnd = true;
-
 		m_weaponRotaY = -(90.0f * 3.0f) * DX_PI_F / 180.0f;
 		m_tempWeaponRotaY = m_weaponRotaY;
 		// 攻撃を開始する
@@ -343,8 +339,6 @@ void CharacterBase::Attack()
 	if (m_attackFrame == m_parameter.attackFrameMax)
 	{
 		m_isSceneChange = true;
-		// 攻撃終了
-		m_isAttackEnd = true;
 	}
 	
 	// シーンを切り替える事ができるなら
@@ -1243,16 +1237,6 @@ void CharacterBase::SetStrongPower(int power)
 	{
 		m_strongAttackPower = 100;
 	}
-}
-
-bool CharacterBase::IsAttackEnd()
-{
-	return m_isAttackEnd;
-}
-
-void CharacterBase::IsResetAttackEnd()
-{
-	m_isAttackEnd = false;
 }
 
 void CharacterBase::SetStrongPowerReset()

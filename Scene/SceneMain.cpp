@@ -192,11 +192,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 		m_hitStopFrame--;
 	}
-	
-
-	//// キャラクターの更新処理
-	//UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
-	//UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 
 	// UIにパラメーターの状態を渡す
 	for (int i = 0; i < kCharactorMaxNum; i++)
@@ -251,7 +246,8 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	// プレイヤーに攻撃がヒットしたかどうか
 	const bool isDamageBlur = m_pCharacter[kPlayerNo]->IsHitDamage() && !m_pCharacter[kPlayerNo]->IsGuard();
-	const bool isDamageBlur2 = m_pCharacter[kEnemyNo]->IsHitDamage() && !m_pCharacter[kEnemyNo]->IsGuard();
+	// エネミーに攻撃がヒットしたかどうか
+	const bool isDamageBlurEnemy = m_pCharacter[kEnemyNo]->IsHitDamage() && !m_pCharacter[kEnemyNo]->IsGuard();
 
 	// プレイヤーが回避行動しているかどうか
 	const bool isAwayBlur = m_pCharacter[kPlayerNo]->IsAway();
@@ -265,7 +261,7 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 		m_hitFrameCount++;
 	}
-	else if (isDamageBlur2)
+	else if (isDamageBlurEnemy)
 	{
 		m_hitFrameCount++;
 	}
@@ -274,11 +270,13 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_hitFrameCount = 0;
 	}
 
+	// ヒット判定がある場合
 	if (m_hitFrameCount == 1)
 	{
 		m_isHit = true;
 	}
 
+	// 攻撃が当たった場合停止フレームをしていする
 	if (m_isHit)
 	{
 		m_hitStopFrame = kHitStopFrameMax;

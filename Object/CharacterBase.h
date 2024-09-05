@@ -199,12 +199,6 @@ public:
 
 	// 強攻撃を出すための力を溜める
 	void SetStrongPower(int power);
-
-	// 攻撃が終了したかどうか
-	bool IsAttackEnd();
-
-	// 攻撃が終了したかフラグをリセットする
-	void IsResetAttackEnd();
 private:
 	// エフェクトハンドル
 	int m_effectHandle;
@@ -289,9 +283,6 @@ private:
 
 	// スタンした場合の回転(ラジアン)
 	float m_stunRota = 0.0f;
-
-	// 攻撃がアクションが終わったかどうか
-	bool m_isAttackEnd;
 
 #if _DEBUG
 	std::string Dname;
