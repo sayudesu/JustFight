@@ -7,9 +7,9 @@
 namespace CSVCharactorData
 {
 	// ファイル位置
-	const char* const fileSmallPath = "Data/CSV/CharactorSmallStrength.csv";
+	const char* const fileSmallPath  = "Data/CSV/CharactorSmallStrength.csv";
 	const char* const fileMediumPath = "Data/CSV/CharactorMediumStrengthData.csv";
-	const char* const fileLargePath = "Data/CSV/CharactorLargeStrengthData.csv";
+	const char* const fileLargePath  = "Data/CSV/CharactorLargeStrengthData.csv";
 
 	// 書き込むデータ
 	std::vector<std::vector<std::string>> firstSmallData =

@@ -317,6 +317,7 @@ protected:
 	// ターゲットの距離
 	VECTOR m_targetRange;
 
+	// 自身のIDを取得する
 	CharacterName m_myId;
 
 	// ターゲットの行動を記録
