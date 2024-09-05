@@ -197,17 +197,8 @@ SceneBase* SceneMain::UpdateGamePlay()
 		m_hitStopFrame--;
 	}
 
-	// UIにパラメーターの状態を渡す
-	for (int i = 0; i < kCharactorMaxNum; i++)
-	{
-		m_pUi->SetParam(
-			m_pCharacter[i]->GetMyId(),
-			m_pCharacter[i]->GetHp(),
-			m_pCharacter[i]->GetMaxHp(),
-			m_pCharacter[i]->GetStrongPower(),
-			m_pCharacter[i]->GetkStrongAttackPowerMax(),
-			static_cast<int>(m_pCharacter[i]->GetFightingMeter()));
-	}
+	// パラメータの更新
+	CheckParameter();
 
 	// 敵の攻撃可能範囲にいるかどうか
 	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]))
@@ -239,7 +230,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	// 攻撃がヒットしている、プレイヤーが回避している場合にブラー効果をオンにする
 	m_isBlur = isDamageBlur || isAwayBlur;
-
 
 	// 攻撃をされた場合
 	if (isDamageBlur)
@@ -368,6 +358,21 @@ void SceneMain::UpdateCharacter()
 	// キャラクターの更新処理
 	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
 	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
+}
+
+void SceneMain::CheckParameter()
+{
+	// UIにパラメーターの状態を渡す
+	for (int i = 0; i < kCharactorMaxNum; i++)
+	{
+		m_pUi->SetParam(
+			m_pCharacter[i]->GetMyId(),
+			m_pCharacter[i]->GetHp(),
+			m_pCharacter[i]->GetMaxHp(),
+			m_pCharacter[i]->GetStrongPower(),
+			m_pCharacter[i]->GetkStrongAttackPowerMax(),
+			static_cast<int>(m_pCharacter[i]->GetFightingMeter()));
+	}
 }
 
 void SceneMain::Draw()

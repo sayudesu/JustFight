@@ -45,6 +45,8 @@ private:
 	// 操作系
 	void InputCharacter();
 	void UpdateCharacter();
+	// パラメーター調整用
+	void CheckParameter();
 	// 勝敗の確認
 	void CheckResult();
 
