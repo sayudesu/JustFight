@@ -323,7 +323,7 @@ void CharacterBase::Attack()
 		{
 			// イージングを使用し武器を振る速度を徐々に早くする
 			m_weaponRotaY = Easing::InSine(m_attackFrame, m_parameter.attackFrameMax, (90 * 3) * DX_PI / 180.0f,0.0f);
-
+			
 			m_vecWeapon.z = MoveByFrame(m_tempWeaponPos.z, -30.0f, m_attackFrame, m_parameter.attackFrameMax);
 			m_vecWeapon.x = MoveByFrame(m_parameter.weaponRelativePos.x, 0.0f, m_attackFrame, m_parameter.attackFrameMax);
 

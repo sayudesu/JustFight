@@ -24,10 +24,6 @@
 // プログラムはWinMainから始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-#if _DEBUG
-	// メモリリークの確認
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
 	// windowモード設定
 	ChangeWindowMode(Game::kWindowMode);
 	// ウインドウ名設定
