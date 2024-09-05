@@ -184,12 +184,16 @@ SceneBase* SceneMain::UpdateGamePlay()
 
 	if (m_hitStopFrame == 0)
 	{
+		// 入力処理
 		InputCharacter();
+		// 更新処理
 		UpdateCharacter();
+		// ヒットストップフレームのリセット
 		m_hitStopFrame = 0;
 	}
 	else
 	{
+		// ヒットストップフレームを数を減らす
 		m_hitStopFrame--;
 	}
 
@@ -221,25 +225,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 	m_pCamera->SetPlayerAngle(m_pCharacter[kPlayerNo]->GetAngle());
 		// カメラの更新処理
 	m_pCamera->Update();
-	
-	// 血のエフェクトを更新
-	for (auto& blood : m_pBlood)
-	{
-		blood->Update();
-	}
-
-	// 削除できる要素を探す
-	for (int i = 0; i < m_pBlood.size(); i++)
-	{
-		if (m_pBlood[i]->IsGetErase())
-		{
-			// デリート処理
-			delete m_pBlood[i];
-			m_pBlood[i] = nullptr;
-			// 要素の削除
-			m_pBlood.erase(m_pBlood.begin() + i);
-		}
-	}
 
 	// 勝敗の確認
 	CheckResult();
@@ -281,7 +266,25 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 		m_hitStopFrame = kHitStopFrameMax;
 		m_isHit = false;
-	}	
+	}
+
+	// ダメージエフェクトを更新
+	for (auto& blood : m_pBlood)
+	{
+		blood->Update();
+	}
+	// 削除できる要素を探す
+	for (int i = 0; i < m_pBlood.size(); i++)
+	{
+		if (m_pBlood[i]->IsGetErase())
+		{
+			// デリート処理
+			delete m_pBlood[i];
+			m_pBlood[i] = nullptr;
+			// 要素の削除
+			m_pBlood.erase(m_pBlood.begin() + i);
+		}
+	}
 
 
 	// 画面振動更新処理
