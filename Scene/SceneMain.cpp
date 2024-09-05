@@ -70,6 +70,9 @@ namespace
 	const VECTOR kInitPlayerPos = VGet(-300.0f, 300.0f, 0.0f);
 	const VECTOR kInitEnemyPos = VGet(300.0f, 300.0f, 0.0f);
 
+	// ヒットストップ停止フレーム
+	const int kHitStopFrameMax = 10;
+
 	// 勝敗結果画像
 	// 振動の周波数
 	constexpr float kFrequency = 0.07f;
@@ -102,7 +105,8 @@ SceneMain::SceneMain(DifficultyData data):
 	m_isHit(false),
 	m_isOneHit(false),
 	m_isNoHit(false),
-	m_hitFrameCount(0)
+	m_hitFrameCount(0),
+	m_hitStopFrame(0)
 {
 }
 
@@ -178,42 +182,21 @@ SceneBase* SceneMain::UpdateGamePlay()
 	// BGMの再生
 	SoundManager::GetInstance().Play(SoundName::PLAY, true);
 
-	// if 難易度が中、大だったら
-	// else if 難易度が小だったら チュートリアル
-	if (m_difficultyData == DifficultyData::INTERMEDIATE||
-		m_difficultyData == DifficultyData::EXPERT)
+	if (m_hitStopFrame == 0)
 	{
-		m_pCharacter[kPlayerNo]->Input();
-		m_pCharacter[kEnemyNo]->Input();
+		InputCharacter();
+		UpdateCharacter();
+		m_hitStopFrame = 0;
 	}
-	else if(m_difficultyData == DifficultyData::NOIVE)
+	else
 	{
-		m_pCharacter[kPlayerNo]->InputTutorial();
-		m_pCharacter[kEnemyNo]->InputTutorial();
-		m_pTutorial->SetTips(Tips::MOVE);
-
-		if (m_pCharacter[kPlayerNo]->GetTipsMove(Tips::ATTACK))
-		{
-			m_pTutorial->SetTips(Tips::ATTACK);
-		}
-		if (m_pCharacter[kPlayerNo]->GetTipsMove(Tips::GUARD))
-		{
-			m_pTutorial->SetTips(Tips::GUARD);
-		}
-
+		m_hitStopFrame--;
 	}
+	
 
-	//if (!m_isHitStop)
-	//{
-	//	// キャラクターの更新処理
-	//	UpdateCharacter(m_pCharacter[kPlayerNo],m_pCharacter[kEnemyNo], true);
-	//	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
-	//}
-
-
-	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
-	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
+	//// キャラクターの更新処理
+	//UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
+	//UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 
 	// UIにパラメーターの状態を渡す
 	for (int i = 0; i < kCharactorMaxNum; i++)
@@ -267,13 +250,41 @@ SceneBase* SceneMain::UpdateGamePlay()
 	CheckResult();
 
 	// プレイヤーに攻撃がヒットしたかどうか
-	bool isDamageBlur = m_pCharacter[kPlayerNo]->IsHitDamage() && !m_pCharacter[kPlayerNo]->IsGuard();
+	const bool isDamageBlur = m_pCharacter[kPlayerNo]->IsHitDamage() && !m_pCharacter[kPlayerNo]->IsGuard();
+	const bool isDamageBlur2 = m_pCharacter[kEnemyNo]->IsHitDamage() && !m_pCharacter[kEnemyNo]->IsGuard();
 
 	// プレイヤーが回避行動しているかどうか
-	bool isAwayBlur = m_pCharacter[kPlayerNo]->IsAway();
+	const bool isAwayBlur = m_pCharacter[kPlayerNo]->IsAway();
 
 	// 攻撃がヒットしている、プレイヤーが回避している場合にブラー効果をオンにする
 	m_isBlur = isDamageBlur || isAwayBlur;
+
+
+	// 攻撃をされた場合
+	if (isDamageBlur)
+	{
+		m_hitFrameCount++;
+	}
+	else if (isDamageBlur2)
+	{
+		m_hitFrameCount++;
+	}
+	else
+	{
+		m_hitFrameCount = 0;
+	}
+
+	if (m_hitFrameCount == 1)
+	{
+		m_isHit = true;
+	}
+
+	if (m_isHit)
+	{
+		m_hitStopFrame = kHitStopFrameMax;
+		m_isHit = false;
+	}	
+
 
 	// 画面振動更新処理
 	EffectScreen::GetInstance().QuakeUpdate();
@@ -322,6 +333,40 @@ SceneBase* SceneMain::UpdateGameResult()
 	}
 
 	return this;
+}
+
+void SceneMain::InputCharacter()
+{
+	// if 難易度が中、大だったら
+	// else if 難易度が小だったら チュートリアル
+	if (m_difficultyData == DifficultyData::INTERMEDIATE ||
+		m_difficultyData == DifficultyData::EXPERT)
+	{
+		m_pCharacter[kPlayerNo]->Input();
+		m_pCharacter[kEnemyNo]->Input();
+	}
+	else if (m_difficultyData == DifficultyData::NOIVE)
+	{
+		m_pCharacter[kPlayerNo]->InputTutorial();
+		m_pCharacter[kEnemyNo]->InputTutorial();
+		m_pTutorial->SetTips(Tips::MOVE);
+
+		if (m_pCharacter[kPlayerNo]->GetTipsMove(Tips::ATTACK))
+		{
+			m_pTutorial->SetTips(Tips::ATTACK);
+		}
+		if (m_pCharacter[kPlayerNo]->GetTipsMove(Tips::GUARD))
+		{
+			m_pTutorial->SetTips(Tips::GUARD);
+		}
+	}
+}
+
+void SceneMain::UpdateCharacter()
+{
+	// キャラクターの更新処理
+	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
+	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 }
 
 void SceneMain::Draw()
@@ -541,8 +586,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	// ガード成功いない状態
 	character1->SetWeaponAttacksShield(false);
 
-	m_isHit = false;
-
 	// ジャストガード処理
 	// 攻撃が当たっていた場合
 	// 相手がスタン状態ではない場合
@@ -554,9 +597,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		// ジャストガードフレーム
 		if(character1->GetGuardFrame() < character1->GetJustGuardFrameMax())
 		{
-			m_isHit = false;
-			m_hitFrameCount = 0;
-
 			// ジャストガードが成功したかどうか
 			character1->SetJustGuard(true);
 
@@ -582,9 +622,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		// 攻撃が盾に当たったかどうか
 		if (CheckWeaponAndShieldHIt(character2, character1))
 		{
-			m_isHit = false;
-			m_hitFrameCount = 0;
-
 			// ノックバック
 			character1->SetGuardKnockBack(true, kGuardKnockBack);
 
@@ -611,13 +648,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			// 攻撃が当たったかどうか
 			if (CheckWeaponAndBodyHit(character1, character2))
 			{
-				m_isHit = true;
-
-				m_hitFrameCount++;
-
-				// ヒットストップを有効にする
-				m_isHitStop = true;		
-
 				// ダメージを与える
 				character2->SetDamage(true);
 
@@ -662,19 +692,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			}			
 		}
 	}
-	static int count = 0;
-	if (m_hitFrameCount == 1)
-	{
-		printfDx("停止中\n");
-	}
-
-	if (character1->IsAttackEnd())
-	{
-		m_hitFrameCount = 0;
-		printfDx("リセット\n");
-		character1->IsResetAttackEnd();
-	}
-
 #endif
 }
 

@@ -1088,7 +1088,6 @@ void CharacterBase::InputParamType(int type)
 		CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RELATIVE_POS, type).element[2]
 	};
 
-
 	m_parameter.weaponAttackRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::WEAPON_ATTACK_RADIUS, type).element[0];
 	m_parameter.shieldRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::SHIELD_RADIUS, type).element[0];
 	m_parameter.modelRadius = CharactorDataManager::GetInstance().GetParamData(ParamData::MODEL_RADIUS, type).element[0];

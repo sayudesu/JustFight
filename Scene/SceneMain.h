@@ -42,6 +42,9 @@ private:
 	// ゲームオーバー
 	SceneBase* UpdateGameResult();
 private:
+	// 操作系
+	void InputCharacter();
+	void UpdateCharacter();
 	// 勝敗の確認
 	void CheckResult();
 
@@ -109,4 +112,7 @@ private:
 
 	// 攻撃が当たった場合のカウント
 	int m_hitFrameCount;
+
+	// ヒットストップするフレーム
+	int m_hitStopFrame;
 };

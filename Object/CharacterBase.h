@@ -320,8 +320,6 @@ protected:
 	bool m_isJustGuard;
 	bool m_isJustGuardCounter;
 
-	float pitchAngle = 0.0f;
-
 	// ‰ñ”ð
 	bool m_isAway;
 
