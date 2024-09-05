@@ -106,7 +106,7 @@ SceneBase* SceneTitle::Update()
 
 	// モデルの回転の計算
 	static float rota = 0.0f;
-	float rotaModel = cos(rota * 0.001f) * 15.0f;
+	float rotaModel = cos(rota * 0.007f) * 15.0f;
 	rota++;
 
 	// ボタンをおした場合
