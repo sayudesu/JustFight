@@ -89,7 +89,7 @@ namespace
 	constexpr float kOptionBottonAngle = 1;
 
 	// モデルのスライド
-	constexpr float kModelSlideRate = 5.0f;
+	constexpr float kModelSlideRate = 9.0f;
 	// 背景のスライド
 	constexpr float kBgSlideRate = 60.0f;
 
