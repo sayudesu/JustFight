@@ -13,6 +13,14 @@ namespace
 
 UIDrawer::UIDrawer()
 {
+	m_hDamageEffect[0] = LoadGraph("Data/Image/UI/DamageEffect.png");
+	m_hDamageEffect[1] = LoadGraph("Data/Image/UI/DamageEffect2.png");
+	m_hDamageEffect[2] = LoadGraph("Data/Image/UI/DamageEffect3.png");
+	m_hDamageEffect[3] = LoadGraph("Data/Image/UI/DamageEffect4.png");
+	m_hDamageEffect[4] = LoadGraph("Data/Image/UI/DamageEffect5.png");
+
+	m_damageCount = -1;
+
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]					= LoadGraph("Data/Image/UI/StatusBaseWhite.png");
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]		    = LoadGraph("Data/Image/UI/HoseWhite.png");
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]					= LoadGraph("Data/Image/UI/HPGauge.png");
@@ -208,10 +216,18 @@ UIDrawer::UIDrawer()
 	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)]->Update();
 	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
 	m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
+
+	m_damageEffect = false;
+
+	m_damageEffectFrame = 0;
 }
 
 UIDrawer::~UIDrawer()
 {
+	for (int i = 0; i < 5; i++)
+	{
+		DeleteGraph(m_hDamageEffect[i]);
+	}
 	for (int i = 0; i < static_cast<int>(CharacterName::MAX); i++)
 	{
 		for (int j = 0; j < static_cast<int>(HandleType::MAX); j++)
@@ -490,13 +506,47 @@ void UIDrawer::Draw()
 		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::ENEMY)] / m_skillMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0xaaaa00, true);
 	}
 
+	if (m_damageEffect)
+	{
+		m_damageEffectFrame = 30;
+	}
+
+	if (m_isHit)
+	{
+		m_damageCount++;
+		if (m_damageCount > 4)
+		{
+			m_damageCount = 4;
+		}
+	}
+
+	if (m_damageEffectFrame != 0)
+	{
+		m_damageEffectFrame--;
+		// 描画ブレンドモードでアルファブレンドを変更する
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_damageEffectFrame * 5);
+		int posY = 0;
+		if (m_damageCount == 0)
+		{
+			posY = 300;
+		}
+		// 血のエフェクト
+		DrawRotaGraph(Game::kScreenWidth/2,Game::kScreenHeight/2 + posY, 1, 0.0f, m_hDamageEffect[m_damageCount], true);	
+		// 描画ブレンドモードをノーブレンドにする
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	}
+
 }
 
-void UIDrawer::SetParam(CharacterName name,int hpNum,int hpMax,float skillNum, float skillMax,int fightMeterNum)
+void UIDrawer::SetParam(CharacterName name, int hpNum, int hpMax, float skillNum, float skillMax, int fightMeterNum, bool damageEffect,bool isHit)
 {
 	m_hpNum[static_cast<int>(name)] = hpNum;
 	m_hpMax[static_cast<int>(name)] = hpMax;
 	m_skillNum[static_cast<int>(name)] = static_cast<int>(skillNum);
 	m_skillMax[static_cast<int>(name)] = static_cast<int>(skillMax);
 	m_fightMeterNum[static_cast<int>(name)] = fightMeterNum;
+
+	m_damageEffect = damageEffect;
+	m_isHit = isHit;
 }

@@ -46,7 +46,7 @@ private:
 	void InputCharacter();
 	void UpdateCharacter();
 	// パラメーター調整用
-	void CheckParameter();
+	void CheckParameter(bool isDamage, bool isHit);
 	// 勝敗の確認
 	void CheckResult();
 

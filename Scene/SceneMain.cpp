@@ -71,7 +71,7 @@ namespace
 	const VECTOR kInitEnemyPos = VGet(300.0f, 300.0f, 0.0f);
 
 	// ヒットストップ停止フレーム
-	const int kHitStopFrameMax = 10;
+	constexpr int kHitStopFrameMax = 4;
 
 	// 勝敗結果画像
 	// 振動の周波数
@@ -138,17 +138,8 @@ void SceneMain::Init()
 	// チェックメイト画像の読み込み
 	m_hCheckmate = LoadGraph(kCheckmateGraphPath);
 
-	// UIにパラメーターの状態を渡す
-	for (int i = 0; i < kCharactorMaxNum; i++)
-	{
-		m_pUi->SetParam(
-			m_pCharacter[i]->GetMyId(),
-			m_pCharacter[i]->GetHp(),
-			m_pCharacter[i]->GetMaxHp(),
-			m_pCharacter[i]->GetStrongPower(),
-			m_pCharacter[i]->GetkStrongAttackPowerMax(),
-			static_cast<int>(m_pCharacter[i]->GetFightingMeter()));
-	}
+	// パラメータの更新
+	CheckParameter(false,false);
 
 	// スクリーン効果の初期化
 	EffectScreen::GetInstance().BlurIReplayInit();	
@@ -196,9 +187,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 		// ヒットストップフレームを数を減らす
 		m_hitStopFrame--;
 	}
-
-	// パラメータの更新
-	CheckParameter();
 
 	// 敵の攻撃可能範囲にいるかどうか
 	if (CheckModelAboutHIt(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo]))
@@ -250,6 +238,9 @@ SceneBase* SceneMain::UpdateGamePlay()
 	{
 		m_isHit = true;
 	}
+
+	// パラメータの更新
+	CheckParameter(isDamageBlur, m_isHit);
 
 	// 攻撃が当たった場合停止フレームをしていする
 	if (m_isHit)
@@ -360,7 +351,7 @@ void SceneMain::UpdateCharacter()
 	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 }
 
-void SceneMain::CheckParameter()
+void SceneMain::CheckParameter(bool isDamage,bool isHit)
 {
 	// UIにパラメーターの状態を渡す
 	for (int i = 0; i < kCharactorMaxNum; i++)
@@ -371,7 +362,9 @@ void SceneMain::CheckParameter()
 			m_pCharacter[i]->GetMaxHp(),
 			m_pCharacter[i]->GetStrongPower(),
 			m_pCharacter[i]->GetkStrongAttackPowerMax(),
-			static_cast<int>(m_pCharacter[i]->GetFightingMeter()));
+			static_cast<int>(m_pCharacter[i]->GetFightingMeter()),
+			isDamage,
+			isHit);
 	}
 }
 

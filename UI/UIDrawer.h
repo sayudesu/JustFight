@@ -19,7 +19,7 @@ public:
 	/// </summary>
 	/// <param name="name">名前を指定</param>
 	/// <param name="param">名前で指定したキャラのパラメーター</param>
-	void SetParam(CharacterName name, int hpNum, int hpMax, float skillNum, float skillMax, int fightMeterNum);
+	void SetParam(CharacterName name, int hpNum, int hpMax, float skillNum, float skillMax, int fightMeterNum,bool damageEffect, bool isHit);
 private:
 	enum class HandleType
 	{
@@ -54,9 +54,23 @@ private:
 	int m_skillMax[static_cast<int>(CharacterName::MAX)];
 	int m_fightMeterNum[static_cast<int>(CharacterName::MAX)];
 
+	// ダメージエフェクトがあるかどうか
+	bool m_damageEffect;
+
 	std::unique_ptr<GameObject> m_image[static_cast<int>(CharacterName::MAX)][static_cast<int>(HandleType::MAX)];
 
 	VECTOR m_playerPos;
 	VECTOR m_enemyPos;
+
+	// ダメージエフェクト
+	int m_hDamageEffect[5];
+
+	// ダメージエフェクトを描画するフレームを管理
+	int m_damageEffectFrame;
+
+	int m_damageCount;
+
+	bool m_isHit;
+
 };
 
