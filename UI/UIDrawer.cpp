@@ -13,13 +13,12 @@ namespace
 
 UIDrawer::UIDrawer()
 {
+	// ダメージエフェクト画像の読み込み
 	m_hDamageEffect[0] = LoadGraph("Data/Image/UI/DamageEffect.png");
 	m_hDamageEffect[1] = LoadGraph("Data/Image/UI/DamageEffect2.png");
 	m_hDamageEffect[2] = LoadGraph("Data/Image/UI/DamageEffect3.png");
 	m_hDamageEffect[3] = LoadGraph("Data/Image/UI/DamageEffect4.png");
 	m_hDamageEffect[4] = LoadGraph("Data/Image/UI/DamageEffect5.png");
-
-	m_damageCount = -1;
 
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]					= LoadGraph("Data/Image/UI/StatusBaseWhite.png");
 	m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)]		    = LoadGraph("Data/Image/UI/HoseWhite.png");
@@ -46,6 +45,7 @@ UIDrawer::UIDrawer()
 	m_handle[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)] = LoadGraph("Data/Image/UI/GaugeOutSide.png");
 
 
+	m_damageCount = -1;
 
 	// 描画位置テスト
 	int x = 0;
@@ -534,7 +534,6 @@ void UIDrawer::Draw()
 		DrawRotaGraph(Game::kScreenWidth/2,Game::kScreenHeight/2 + posY, 1, 0.0f, m_hDamageEffect[m_damageCount], true);	
 		// 描画ブレンドモードをノーブレンドにする
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	}
 
 }

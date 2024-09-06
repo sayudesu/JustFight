@@ -267,7 +267,6 @@ SceneBase* SceneMain::UpdateGamePlay()
 		}
 	}
 
-
 	// 画面振動更新処理
 	EffectScreen::GetInstance().QuakeUpdate();
 
@@ -627,8 +626,10 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 			// 強攻撃するための力を溜める
 			character1->SetStrongPower(20);
 
+			// エフェクトの再生
 			character1->SetCollGuardEffect();
 
+			// 攻撃を盾で防いだ
 			character1->SetWeaponAttacksShield(true);
 
 			return;
