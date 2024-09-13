@@ -37,7 +37,7 @@ namespace CSVCharactorData
 		{"13","weaponRelativePos","3","-80","100","-50"},
 		{"14","shieldRelativePos","3","100","100","-50"},
 
-		{"15","weaponAttackRadius","1","40"},
+		{"15","weaponAttackRadius","1","45"},
 		{"16","shieldRadius","1","50"},
 		{"17","modelRadius","1","180"},
 
@@ -55,9 +55,9 @@ namespace CSVCharactorData
 	{
 		{"No","Name","ValueNum","Parameter"},
 
-		{"1","attackFrameMax","1","30"},
+		{"1","attackFrameMax","1","35"},
 		{"2","attackFrameGapMax","1","15"},
-		{"3","attackTotalFrame","1","45"},
+		{"3","attackTotalFrame","1","50"},
 
 		{"4","attackAfterStopFrameMax","1","60"},
 
@@ -76,7 +76,7 @@ namespace CSVCharactorData
 		{"13","weaponRelativePos","3","-80","100","-50"},
 		{"14","shieldRelativePos","3","100","100","-50"},
 
-		{"15","weaponAttackRadius","1","40"},
+		{"15","weaponAttackRadius","1","45"},
 		{"16","shieldRadius","1","50"},
 		{"17","modelRadius","1","180"},
 
@@ -115,7 +115,7 @@ namespace CSVCharactorData
 		{"13","weaponRelativePos","3","-80","100","-50"},
 		{"14","shieldRelativePos","3","100","100","-50"},
 
-		{"15","weaponAttackRadius","1","40"},
+		{"15","weaponAttackRadius","1","45"},
 		{"16","shieldRadius","1","50"},
 		{"17","modelRadius","1","180"},
 
