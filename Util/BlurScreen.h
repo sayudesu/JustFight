@@ -57,11 +57,11 @@ private:
 		MAX,
 	};
 	// 攻撃をされた場合の画面処理
-	int m_damageScreen[static_cast<int>(DamageEffectNo::MAX)];
+	int m_damageScreen[static_cast<int>(DamageEffectNo::MAX)]{};
 
 	// 画面揺れ用
-	float m_shake;
-	int m_shakeFrame;
+	float m_shake = 0.0f;
+	int m_shakeFrame = 0;
 
 	// ブラーを変える場合の重ねる画面の数
 	enum class ScreenEffectNo
@@ -73,7 +73,7 @@ private:
 	};
 
 	// 攻撃をされた場合の画面処理
-	int m_blurScreen[static_cast<int>(ScreenEffectNo::MAX)];
+	int m_blurScreen[static_cast<int>(ScreenEffectNo::MAX)]{};
 
 	// ブラー専用
 	int m_current = 0;

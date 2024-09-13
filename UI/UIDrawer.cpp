@@ -56,7 +56,7 @@ UIDrawer::UIDrawer()
 
 	// プレイヤー
 	{
-		m_playerPos = VGet(315, Game::kScreenHeight - y + 5, 0);
+		m_playerPos = VGet(315.0f, static_cast<float>(Game::kScreenHeight) - static_cast<float>(y) + 5.0f, 0.0f);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
 			"Data/Image/UI/StatusBaseWhite.png",
@@ -132,7 +132,7 @@ UIDrawer::UIDrawer()
 
 	// エネミー
 	{
-		m_enemyPos = VGet(Game::kScreenWidth - 315,y + 5 + 50, 0);
+		m_enemyPos = VGet(static_cast<float>(Game::kScreenWidth) - 315.0f, static_cast<float>(y) + 5.0f + 50.0f, 0.0f);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)] = std::make_unique<GameObject>(
 			"Data/Image/UI/StatusBaseBlack.png",
@@ -387,31 +387,31 @@ void UIDrawer::Draw()
 
 
 		// 左上
-		int dXL = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x +
-			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().x) -
-			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX() / 2);
+		int dXL = (static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x )+
+			static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().x))-
+			(static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX()) / 2);
 
 		// 右上
-		int dX = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x +
-			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().x) +
-			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX()/2);
+		int dX = (static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x) +
+			static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().x)) +
+			(static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX()) /2);
 
 		// 上
-		int dY = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y +
-			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y -
-			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeY() / 2);
+		int dY = static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y) +
+			static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y) -
+			(static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeY()) / 2);
 
 		int dX2 = dX * (m_hpNum[static_cast<int>(CharacterName::PLAYER)] + 1) / (m_hpMax[static_cast<int>(CharacterName::PLAYER)] + 1);
 
 		// 下
-		int dY2 = (m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y +
-			m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y) +
-			(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeY()/2);
+		int dY2 = (static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().y) +
+			static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->GetPos().y)) +
+			(static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeY()) /2);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)]->Draw();
 
-		int aaa = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
-		DrawBox(dXL, dY, dXL + aaa * m_hpNum[static_cast<int>(CharacterName::PLAYER)] / m_hpMax[static_cast<int>(CharacterName::PLAYER)], dY2, 0x007700, true);
+		int hpSliderX = static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetGraphSizeX());
+		DrawBox(dXL, dY, dXL + hpSliderX * m_hpNum[static_cast<int>(CharacterName::PLAYER)] / m_hpMax[static_cast<int>(CharacterName::PLAYER)], dY2, 0x007700, true);
 
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]->Draw();
 
@@ -434,8 +434,8 @@ void UIDrawer::Draw()
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE) ]->Draw();
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
 
-		aaa = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
-		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::PLAYER)] / m_skillMax[static_cast<int>(CharacterName::PLAYER)], dY2, 0xaaaa00, true);
+		hpSliderX = m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + hpSliderX * m_skillNum[static_cast<int>(CharacterName::PLAYER)] / m_skillMax[static_cast<int>(CharacterName::PLAYER)], dY2, 0xaaaa00, true);
 	}
 
 	// エネミー

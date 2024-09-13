@@ -151,14 +151,14 @@ void EffectScreen::BlurPostRenderBlurScreen(bool isBlurDraw)
 		SetDrawBlendMode(DX_BLENDMODE_ADD, 128);
 	
 		// グラフィックハンドル化した画面を描画させる
-		DrawGraph(m_shake, m_shake, m_blurScreen[m_current], false);
+		DrawGraphF(m_shake, m_shake, m_blurScreen[m_current], false);
 
 		// ガウスでぼかしを入れる
 		GraphFilter(m_damageScreen[static_cast<int>(DamageEffectNo::QUAKE)], DX_GRAPH_FILTER_GAUSS, 32, 1400);
 	}
 
 	// ブラー効果を得た画像を描画する
-	DrawGraph(m_shake, m_shake, m_blurScreen[m_current], false);
+	DrawGraphF(m_shake, m_shake, m_blurScreen[m_current], false);
 
 	// ブラー効果用に使用していなかった配列の番号を計算する
 	m_current = 1 - m_current;

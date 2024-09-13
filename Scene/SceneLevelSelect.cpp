@@ -417,13 +417,13 @@ void SceneLevelSelect::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f,
-			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f),
 			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::NOVICE), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f,
-			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f + 32.0f + 16.0f,
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f + 32.0f + 16.0f),
 			"ŽÀ‘•’†...",
 			0xffffff,
 			FontSize::GENEITERAMIN_SMALL);
@@ -437,8 +437,8 @@ void SceneLevelSelect::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 42.0f,
-			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 42.0f),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f),
 			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::INTERMEDIATE), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 	else if (m_select->GetSelect() == 2)
@@ -450,8 +450,8 @@ void SceneLevelSelect::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			m_hBg->GetPos().x + m_hNovice->GetPos().x - 60.0f,
-			m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f,
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 60.0f),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f),
 			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::EXPERT), 0xffffff, FontSize::GENEITERAMIN_SMALL);
 	}
 

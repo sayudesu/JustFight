@@ -16,11 +16,11 @@ private:
 	// サウンド保存形式データ
 	struct CharactorData
 	{
-		int no;
-		std::string name;
-		int valueNum;
+		int no = 0;
+		std::string name = {};
+		int valueNum = 0;
 
-		std::vector<float> element;
+		std::vector<float> element{};
 	};
 
 private:
@@ -64,6 +64,6 @@ public:
 private:
 	void CSVLoad(std::ifstream& ifs, std::string line, int count, int mapkey, int type);
 	// サウンドのデータを格納
-	std::map<int, CharactorData> m_data[3];
+	std::map<int, CharactorData> m_data[3]{};
 };
 
