@@ -102,15 +102,10 @@ private:
 	// ブラーをかけるかどうか
 	bool m_isBlur;
 
-	// ヒットストップ
-	bool m_isHitStop;
-
 	// 現在攻撃されている
 	bool m_isHit;
-
 	// 攻撃が当たった場合のカウント
 	int m_hitFrameCount;
-
 	// ヒットストップするフレーム
 	int m_hitStopFrame;
 };
