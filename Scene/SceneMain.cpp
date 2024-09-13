@@ -101,10 +101,7 @@ SceneMain::SceneMain(DifficultyData data):
 	m_checkmateBgBlendRate(0),
 	m_checkmatePosY(0.0f),
 	m_isBlur(false),
-	m_isHitStop(false),
 	m_isHit(false),
-	m_isOneHit(false),
-	m_isNoHit(false),
 	m_hitFrameCount(0),
 	m_hitStopFrame(0)
 {
@@ -346,8 +343,8 @@ void SceneMain::InputCharacter()
 void SceneMain::UpdateCharacter()
 {
 	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
-	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
+	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true,false);
+	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false, false);
 }
 
 void SceneMain::CheckParameter(bool isDamage,bool isHit)
@@ -564,7 +561,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 
 // 1が攻撃をする側
 // 2が攻撃を受ける側
-void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer)
+void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer,bool isDamage)
 {
 #if true
 	// プレイヤー更新処理
@@ -584,112 +581,124 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 	// ガード成功いない状態
 	character1->SetWeaponAttacksShield(false);
 
-	// ジャストガード処理
-	// 攻撃が当たっていた場合
-	// 相手がスタン状態ではない場合
-	// 自身がガード状態の場合
-	if (CheckWeaponAndShieldHIt(character2, character1) && 
-		character2->GetBattleState() != BattleState::STUN && 
-		character1->GetBattleState() == BattleState::GUARD)
+	
+	// 攻撃が当たるのが可能な場合
+	// ガードしている場合は無条件で攻撃可能
+	if (!character1->IsAttack() || character1->GetBattleState() == BattleState::GUARD)
 	{
-		// ジャストガードフレーム
-		if(character1->GetGuardFrame() < character1->GetJustGuardFrameMax())
+		// ジャストガード処理
+		// 攻撃が当たっていた場合
+		// 相手がスタン状態ではない場合
+		// 自身がガード状態の場合
+		if (CheckWeaponAndShieldHIt(character2, character1) && 
+			character2->GetBattleState() != BattleState::STUN && 
+			character1->GetBattleState() == BattleState::GUARD)
 		{
-			// ジャストガードが成功したかどうか
-			character1->SetJustGuard(true);
-
-			// エフェクトを再生
-			character1->SetCollJustGuardEffect();
-
-			// 戦いに必要な特殊なメーターを減らす
-			character2->SetFightingMeter(-110.0f);
-
-			// 振動開始
-			StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
-
-			return;
-		}
-	}
-
-	// 通常ガード処理
-	// 通常ガードが出来るかどうか
-	if (character1->GetGuardFrame() > character1->GetGuardFrameMax() &&
-		character2->GetBattleState() != BattleState::STUN)
-	{
-		// 攻撃状態だったら
-		// 攻撃が盾に当たったかどうか
-		if (CheckWeaponAndShieldHIt(character2, character1))
-		{
-			// ノックバック
-			character1->SetGuardKnockBack(true, kGuardKnockBack);
-
-			// 強攻撃するための力を溜める
-			character1->SetStrongPower(20);
-
-			// エフェクトの再生
-			character1->SetCollGuardEffect();
-
-			// 攻撃を盾で防いだ
-			character1->SetWeaponAttacksShield(true);
-
-			return;
-		}		
-	}
-	else
-	{
-		// 攻撃をしたかどうか
-		const bool isAttack       = character1->GetBattleState() == BattleState::ATTACK;
-		const bool isAttackTow    = character1->GetBattleState() == BattleState::ATTACKTWO;
-		const bool isStrongAttack = character1->GetBattleState() == BattleState::STRONGATTACK;
-
-		// 攻撃を与える処理
-		if (isAttack || isAttackTow || isStrongAttack)
-		{
-			// 攻撃が当たったかどうか
-			if (CheckWeaponAndBodyHit(character1, character2))
+			// ジャストガードフレーム
+			if(character1->GetGuardFrame() < character1->GetJustGuardFrameMax())
 			{
-				// ダメージを与える
-				character2->SetDamage(true);
+				// ジャストガードが成功したかどうか
+				character1->SetJustGuard(true);
 
-				// ノックバック
-				// 強攻撃だった場合			
-				if (character1->GetBattleState() == BattleState::STRONGATTACK)
-				{
-					character2->SetGuardKnockBack(true, kStrongAttackKnockBack);
-				}
-				else
-				{
-					character2->SetGuardKnockBack(true, kNormalAttackKnockBack);
-				}
+				// エフェクトを再生
+				character1->SetCollJustGuardEffect();
 
-				// ダメージエフェクトのカラー調整
-				int color = 0xffffff;
-				// プレイヤーだった場合
-				if (isPlayer)
-				{
-					color = 0x000000;
-				}
-				else
-				{
-					color = 0xffffff;
-				}
-
-				// ガードしていなかったら
-				const bool isGruad = character2->GetBattleState() != BattleState::GUARD;
-				if (isGruad)
-				{
-					for (int i = 0; i < kbloodNum; i++)
-					{
-						m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
-						m_pBlood.back()->Init(i);
-					}
-				}
+				// 戦いに必要な特殊なメーターを減らす
+				character2->SetFightingMeter(-110.0f);
 
 				// 振動開始
-				StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
+
+				// 攻撃された場合
+				character1->IsHit();
 
 				return;
-			}			
+			}
+		}
+
+		// 通常ガード処理
+		// 通常ガードが出来るかどうか
+		if (character1->GetGuardFrame() > character1->GetGuardFrameMax() &&
+			character2->GetBattleState() != BattleState::STUN)
+		{
+			// 攻撃状態だったら
+			// 攻撃が盾に当たったかどうか
+			if (CheckWeaponAndShieldHIt(character2, character1))
+			{
+				// ノックバック
+				character1->SetGuardKnockBack(true, kGuardKnockBack);
+
+				// 強攻撃するための力を溜める
+				character1->SetStrongPower(20);
+
+				// エフェクトの再生
+				character1->SetCollGuardEffect();
+
+				// 攻撃を盾で防いだ
+				character1->SetWeaponAttacksShield(true);
+
+				return;
+			}		
+		}
+		else
+		{
+			// 攻撃をしたかどうか
+			const bool isAttack       = character1->GetBattleState() == BattleState::ATTACK;
+			const bool isAttackTow    = character1->GetBattleState() == BattleState::ATTACKTWO;
+			const bool isStrongAttack = character1->GetBattleState() == BattleState::STRONGATTACK;
+
+			// 攻撃を与える処理
+			if (isAttack || isAttackTow || isStrongAttack)
+			{
+				// 攻撃が当たったかどうか
+				if (CheckWeaponAndBodyHit(character1, character2))
+				{
+					// ダメージを与える
+					character2->SetDamage(true);
+
+					// ノックバック
+					// 強攻撃だった場合			
+					if (character1->GetBattleState() == BattleState::STRONGATTACK)
+					{
+						character2->SetGuardKnockBack(true, kStrongAttackKnockBack);
+					}
+					else
+					{
+						character2->SetGuardKnockBack(true, kNormalAttackKnockBack);
+					}
+
+					// ダメージエフェクトのカラー調整
+					int color = 0xffffff;
+					// プレイヤーだった場合
+					if (isPlayer)
+					{
+						color = 0x000000;
+					}
+					else
+					{
+						color = 0xffffff;
+					}
+
+					// ガードしていなかったら
+					const bool isGruad = character2->GetBattleState() != BattleState::GUARD;
+					if (isGruad)
+					{
+						for (int i = 0; i < kbloodNum; i++)
+						{
+							m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
+							m_pBlood.back()->Init(i);
+						}
+					}
+
+					// 振動開始
+					StartJoypadVibration(DX_INPUT_PAD1, 1000 / 3, 1000 / 2, -1);
+
+					// 攻撃された場合
+					character1->IsHit();
+
+					return;
+				}			
+			}
 		}
 	}
 #endif

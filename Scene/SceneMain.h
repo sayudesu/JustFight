@@ -63,7 +63,7 @@ private:
 	bool CheckCollMap(std::shared_ptr<CharacterBase> character);
 
 	// キャラクターの更新処理
-	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2,bool isPlayer);
+	void UpdateCharacter(std::shared_ptr<CharacterBase> chara1, std::shared_ptr<CharacterBase> chara2,bool isPlayer, bool isDamage);
 private:
 	// メンバー関数ポインタ
 	SceneBase* (SceneMain::* m_pUpdateFunc)() = &SceneMain::UpdateGamePlay;
@@ -107,10 +107,6 @@ private:
 
 	// 現在攻撃されている
 	bool m_isHit;
-	// 攻撃をされて一度だけ判定をとる
-	bool m_isOneHit;
-	// 攻撃をされていいない場合
-	bool m_isNoHit;
 
 	// 攻撃が当たった場合のカウント
 	int m_hitFrameCount;

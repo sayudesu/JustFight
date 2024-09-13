@@ -144,6 +144,9 @@ public:
 	// 強攻撃の最大値
 	float GetkStrongAttackPowerMax();
 
+	// 攻撃か可能かどうか
+	bool IsAttack()const;
+
 	// チュートリアル用
 	// 現在できる行動を渡す
 	bool GetTipsMove(Tips tips);
@@ -199,6 +202,9 @@ public:
 
 	// 強攻撃を出すための力を溜める
 	void SetStrongPower(int power);
+
+	// 攻撃をされたかどうか
+	void IsHit();
 private:
 	// エフェクトハンドル
 	int m_effectHandle;
@@ -283,6 +289,9 @@ private:
 
 	// スタンした場合の回転(ラジアン)
 	float m_stunRota = 0.0f;
+
+	// 攻撃が当たったかどうか
+	bool m_isHit;
 
 #if _DEBUG
 	std::string Dname;

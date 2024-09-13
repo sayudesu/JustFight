@@ -78,7 +78,8 @@ CharacterBase::CharacterBase(DifficultyData data ,VECTOR pos):
 	m_attackAfterStopFrame(0),
 	m_isSceneChange(false),
 	m_comboAttack   (0),
-	m_difficultyData(data)
+	m_difficultyData(data),
+	m_isHit(false)
 {
 	// メンバ関数の初期
 	m_pFunc = &CharacterBase::Idle;
@@ -279,6 +280,8 @@ void CharacterBase::Attack()
 		m_battleState = BattleState::ATTACK;
 		// 攻撃サウンドの再生
 		SoundManager::GetInstance().Play(SoundName::ATTACK);
+
+		m_isHit = false;
 	}
 
 	// 次のコンボ攻撃に切り替える
@@ -402,6 +405,8 @@ void CharacterBase::AttackTwo()
 		m_battleState = BattleState::ATTACKTWO;
 		// 攻撃サウンドの再生
 		SoundManager::GetInstance().Play(SoundName::ATTACK);
+
+		m_isHit = false;
 	}
 
 	// 武器動かす
@@ -505,6 +510,8 @@ void CharacterBase::StrongAttack()
 	{
 		// 現在の行動を記録
 		m_battleState = BattleState::STRONGATTACK;
+
+		m_isHit = false;
 	}
 
 	// 武器動かす
@@ -653,7 +660,6 @@ void CharacterBase::Guard()
 	{
 		m_isSceneChange = false;
 		m_guardFrame = 0;
-	//	m_justGuardFrame = 0;
 		m_pFunc = &CharacterBase::JustGuard;
 	}
 
@@ -696,6 +702,8 @@ void CharacterBase::JustGuard()
 		m_battleState = BattleState::JUSTGUARD;
 		// ジャストガードサウンドの再生
 		SoundManager::GetInstance().Play(SoundName::JUSTGUARD);
+
+		m_isHit = false;
 	}
 
 	m_isJustGuardCounter = true;
@@ -1239,6 +1247,11 @@ void CharacterBase::SetStrongPower(int power)
 	}
 }
 
+void CharacterBase::IsHit()
+{
+	m_isHit = true;
+}
+
 void CharacterBase::SetStrongPowerReset()
 {
 	m_strongAttackPower = 0;
@@ -1327,6 +1340,11 @@ float CharacterBase::GetStrongPower()
 float CharacterBase::GetkStrongAttackPowerMax()
 {
 	return kStrongAttackPowerMax;
+}
+
+bool CharacterBase::IsAttack() const
+{
+	return m_isHit;
 }
 
 bool CharacterBase::GetTipsMove(Tips tips)
