@@ -151,12 +151,16 @@ void SceneMain::End()
 	m_pField->End();
 	m_pTutorial->End();
 
+	// ダメージエフェクトのメモリ解放
 	for (size_t i = 0; i < m_pBlood.size(); i++)
 	{
 		// デリート処理
 		delete m_pBlood[i];
 		m_pBlood[i] = nullptr;
 	}
+
+	// チェックメイト画像のメモリ解放
+	DeleteGraph(m_hCheckmate);
 }
 
 SceneBase* SceneMain::Update()
@@ -343,8 +347,8 @@ void SceneMain::InputCharacter()
 void SceneMain::UpdateCharacter()
 {
 	// キャラクターの更新処理
-	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true,false);
-	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false, false);
+	UpdateCharacter(m_pCharacter[kPlayerNo], m_pCharacter[kEnemyNo], true);
+	UpdateCharacter(m_pCharacter[kEnemyNo], m_pCharacter[kPlayerNo], false);
 }
 
 void SceneMain::CheckParameter(bool isDamage,bool isHit)
@@ -561,7 +565,7 @@ bool SceneMain::CheckCollMap(std::shared_ptr<CharacterBase> character)
 
 // 1が攻撃をする側
 // 2が攻撃を受ける側
-void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer,bool isDamage)
+void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::shared_ptr<CharacterBase> character2,bool isPlayer)
 {
 #if true
 	// プレイヤー更新処理
@@ -685,7 +689,10 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 					{
 						for (int i = 0; i < kbloodNum; i++)
 						{
-							m_pBlood.push_back(new BloodDrawer(VGet(character2->GetPos().x, character2->GetPos().y + 100.0f, character2->GetPos().z), color));
+							m_pBlood.push_back(new BloodDrawer(
+								VGet(character2->GetPos().x,
+									 character2->GetPos().y + 100.0f,
+									 character2->GetPos().z), color));
 							m_pBlood.back()->Init(i);
 						}
 					}
