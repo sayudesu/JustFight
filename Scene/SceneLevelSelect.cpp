@@ -98,6 +98,45 @@ namespace
 	constexpr float kFrequency = 0.07f;
 	// 振動の振幅
 	constexpr float kAmplitude = 5.0f;
+
+	// 選択時の揺れフレーム最大
+	constexpr int kShakeSelectFrameMax = 5;
+
+	// 揺れの幅
+	constexpr float kShakePower = 5.0f;
+
+	// 難易度テキスト座標
+	const float kNoviceXOffset = -130.0f;
+	const float kIntermediateXOffset = -42.0f;
+	const float kExpertXOffset = -60.0f;
+	const float kYOffset = 240.0f;
+	const float kExtraYOffset = 32.0f;
+	const float kAdditionalYOffset = 16.0f;
+
+	// テキストカラー
+	const int kTextColor = 0xffffff;
+
+	// モデル移動位置
+	constexpr float modelXOffset = Game::kScreenWidth / 2 + 3900.0f;
+	constexpr float modelYOffset = Game::kScreenHeight / 2 + 1500.0f;
+
+	// カメラ加速
+	constexpr float KCameraSpeedBoost = 1.1f;
+
+	// モデルのスライドする際の位置
+	constexpr float kModelSlidePosYMax = -10.0f;
+
+	// モデルの角度
+	constexpr float kModelRotateX = -90 * DX_PI_F / 180.0f;
+
+	// 矢印画像が上に移動する量
+	const float kArrowMoveUpAmount = 10.0f;    
+	// 矢印画像が下に移動する量
+	const float kArrowMoveDownAmount = 10.0f;  
+	// 矢印画像が矢印が最大で移動する距離
+	const float kArrowMaxOffset = 20.0f;       
+	// 矢印画像が元の位置に戻るときの移動量
+	const float kArrowResetAmount = 15.0f;     
 }
 
 SceneLevelSelect::SceneLevelSelect():
@@ -396,6 +435,7 @@ SceneBase* SceneLevelSelect::Update()
 
 void SceneLevelSelect::Draw()
 {
+	// 描画処理
 	m_pStage->Draw();
 
 	m_hBg->Draw();
@@ -417,16 +457,20 @@ void SceneLevelSelect::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f),
-			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f),
-			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::NOVICE), 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x + kNoviceXOffset),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + kYOffset),
+			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::NOVICE),
+			kTextColor,
+			FontSize::GENEITERAMIN_SMALL
+		);
 
 		FontManager::GetInstance().DrawString(
-			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 130.0f),
-			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f + 32.0f + 16.0f),
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x + kNoviceXOffset),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + kYOffset + kExtraYOffset + kAdditionalYOffset),
 			"実装中...",
-			0xffffff,
-			FontSize::GENEITERAMIN_SMALL);
+			kTextColor,
+			FontSize::GENEITERAMIN_SMALL
+		);
 	}
 	else if (m_select->GetSelect() == 1)
 	{
@@ -437,9 +481,12 @@ void SceneLevelSelect::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 42.0f),
-			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f),
-			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::INTERMEDIATE), 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x + kIntermediateXOffset),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + kYOffset),
+			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::INTERMEDIATE),
+			kTextColor,
+			FontSize::GENEITERAMIN_SMALL
+		);
 	}
 	else if (m_select->GetSelect() == 2)
 	{
@@ -450,11 +497,13 @@ void SceneLevelSelect::Draw()
 		}
 
 		FontManager::GetInstance().DrawString(
-			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x - 60.0f),
-			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + 240.0f),
-			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::EXPERT), 0xffffff, FontSize::GENEITERAMIN_SMALL);
+			static_cast<int>(m_hBg->GetPos().x + m_hNovice->GetPos().x + kExpertXOffset),
+			static_cast<int>(m_hBg->GetPos().y + m_hNovice->GetPos().y + kYOffset),
+			SubtitleManager::GetInstance().SubtitleStringData(Subtitle::EXPERT),
+			kTextColor,
+			FontSize::GENEITERAMIN_SMALL
+		);
 	}
-
 
 #if false
 	// オプションボタンの描画
@@ -496,7 +545,7 @@ void SceneLevelSelect::CameraMoveing()
 		}
 	}
 
-	m_cameraSpeed = (m_cameraSpeed * 1.1f);
+	m_cameraSpeed = (m_cameraSpeed * KCameraSpeedBoost);
 
 	if (m_cameraPosX > kCameraStopX)
 	{
@@ -535,49 +584,42 @@ void SceneLevelSelect::CameraMoveing()
 void SceneLevelSelect::ModelMoveing()
 {
 	// 3Dモデルの描画
+	// 指定の座標を超えると固定
+	if (m_modelSlidePosY < kModelSlidePosYMax)
 	{
-		if (m_modelSlidePosY < -10.0f)
-		{
-			m_modelSlidePosY = -10.0f;
-		}
+		m_modelSlidePosY = kModelSlidePosYMax;
+	}
 
-		const VECTOR  modelPos = ConvScreenPosToWorldPos
+	// モデルの位置をスクリーン座標からワールド座標に変換
+	const VECTOR  modelPos = ConvScreenPosToWorldPos({modelXOffset,modelYOffset,0});
+
+	for (int i = 0; i < 3; i++)
+	{
+		// 位置の更新
+		m_hModel[i]->SetPos
 		(
 			{
-				Game::kScreenWidth / 2 + 3900.0f,
-				Game::kScreenHeight / 2 + 1500.0f,
-				0
+				modelPos.x,
+				modelPos.y + m_modelSlidePosY,
+				modelPos.z
 			}
 		);
 
-		for (int i = 0; i < 3; i++)
-		{
-			// 位置の更新
-			m_hModel[i]->SetPos
-			(
-				{
-					modelPos.x,
-					modelPos.y + m_modelSlidePosY,
-					modelPos.z
-				}
-			);
+		// 回転
+		m_modelRot[i]++;
 
-			// 回転
-			m_modelRot[i]++;
+		// 回転の更新
+		m_hModel[i]->SetRotate
+		(
+			{
+				kModelRotateX,
+				0,
+				m_modelRot[i] * DX_PI_F / 180.0f
+			}
+		);
 
-			// 回転の更新
-			m_hModel[i]->SetRotate
-			(
-				{
-					-90 * DX_PI_F / 180.0f,
-					0,
-					m_modelRot[i] * DX_PI_F / 180.0f
-				}
-			);
-
-			// 3Dモデルの更新
-			m_hModel[i]->Update();
-		}
+		// 3Dモデルの更新
+		m_hModel[i]->Update();
 	}
 }
 
@@ -598,18 +640,18 @@ void SceneLevelSelect::Input()
 	{
 		// 矢印を指定の最大数まで上に上昇させる
 		// 最終地点に到達すると乱数で揺らす
-		m_arrowPosY[0] -= 10.0f;
-		if (m_arrowPosY[0] < m_firstArrowPosY[0] - 20.0f)
+		m_arrowPosY[0] -= kArrowMoveUpAmount;
+		if (m_arrowPosY[0] < m_firstArrowPosY[0] - kArrowMaxOffset)
 		{
-			m_arrowPosY[0] = m_firstArrowPosY[0] - 20.0f;
-			m_arrowShakeX[0] = static_cast<float>(GetRand(5)) - 5.0f;
-			m_arrowShakeY[0] = static_cast<float>(GetRand(5)) - 5.0f;
+			m_arrowPosY[0] = m_firstArrowPosY[0] - kArrowMaxOffset;
+			m_arrowShakeX[0] = static_cast<float>(GetRand(kShakePower)) - kShakePower;
+			m_arrowShakeY[0] = static_cast<float>(GetRand(kShakePower)) - kShakePower;
 		}
 	}
 	else
 	{
 		// 上を押していない場合は元の位置に戻り揺れはしない
-		m_arrowPosY[0] += 15.0f;
+		m_arrowPosY[0] += kArrowResetAmount;
 		if (m_arrowPosY[0] > m_firstArrowPosY[0])
 		{
 			m_arrowPosY[0] = m_firstArrowPosY[0];
@@ -622,18 +664,18 @@ void SceneLevelSelect::Input()
 	{
 		// 矢印を指定の最大数まで下に下降させる
 		// 最終地点に到達すると乱数で揺らす
-		m_arrowPosY[1] += 10.0f;
-		if (m_arrowPosY[1] > m_firstArrowPosY[1] + 20.0f)
+		m_arrowPosY[1] += kArrowMoveDownAmount;
+		if (m_arrowPosY[1] > m_firstArrowPosY[1] + kArrowMaxOffset)
 		{
-			m_arrowPosY[1] = m_firstArrowPosY[1] + 20.0f;
-			m_arrowShakeX[1] = static_cast<float>(GetRand(5)) - 5.0f;
-			m_arrowShakeY[1] = static_cast<float>(GetRand(5)) - 5.0f;
+			m_arrowPosY[1] = m_firstArrowPosY[1] + kArrowMaxOffset;
+			m_arrowShakeX[1] = static_cast<float>(GetRand(kShakePower)) - kShakePower;
+			m_arrowShakeY[1] = static_cast<float>(GetRand(kShakePower)) - kShakePower;
 		}
 	}
 	else
 	{
 		// 下を押していない場合は元の位置に戻り揺れはしない
-		m_arrowPosY[1] -= 15.0f;
+		m_arrowPosY[1] -= kArrowResetAmount;
 		if (m_arrowPosY[1] < m_firstArrowPosY[1])
 		{
 			m_arrowPosY[1] = m_firstArrowPosY[1];
@@ -664,22 +706,28 @@ void SceneLevelSelect::SelectBg()
 	// 指定のフレーム数の間揺らす
 	if (m_isEnemyBgShake)
 	{
+		// 揺らすタイムをカウント
 		m_enemyBgshakeCount++;
 
-		m_enemyBgShakeX = static_cast<float>(GetRand(5)) - 5.0f;
-		m_enemyBgShakeY = static_cast<float>(GetRand(5)) - 5.0f;
+		// 座標の変更
+		m_enemyBgShakeX = static_cast<float>(GetRand(kShakePower)) - kShakePower;
+		m_enemyBgShakeY = static_cast<float>(GetRand(kShakePower)) - kShakePower;
 
-		if (m_enemyBgshakeCount == 5)
+		// 指定のフレームで揺れを終了させる
+		if (m_enemyBgshakeCount == kShakeSelectFrameMax)
 		{
+			// リセット
 			m_enemyBgshakeCount = 0;
 			m_isEnemyBgShake = false;
 		}
 	}
 	else
 	{
+		// 揺れ用座標のリセット
 		m_enemyBgShakeX = 0;
 		m_enemyBgShakeY = 0;
 	}
 
+	// 現在の選択を一時的に記録
 	m_tempSelect = m_select->GetSelect();
 }
