@@ -10,7 +10,6 @@
 #include "../Util/FontSize.h"
 #include "../Util/SoundName.h"
 #include "../Util/SubtitleData.h"
-#include "../Util/PoseScreen.h"
 
 #include "../Object/Camera/Camera.h"
 #include "../CSVData/ModelManager.h"

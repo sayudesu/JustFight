@@ -152,7 +152,6 @@
     <ClCompile Include="CSVData\ModelManager.cpp" />
     <ClCompile Include="CSVData\SoundManager.cpp" />
     <ClCompile Include="Util\Easing.cpp" />
-    <ClCompile Include="Util\PoseScreen.cpp" />
     <ClCompile Include="CSVData\SubtitleManager.cpp" />
     <ClCompile Include="Scene\SceneLevelSelect.cpp" />
     <ClCompile Include="Util\GameObject.cpp" />
@@ -193,7 +192,6 @@
     <ClInclude Include="Scene\SceneLevelSelect.h" />
     <ClInclude Include="Util\SubtitleData.h" />
     <ClInclude Include="Util\Easing.h" />
-    <ClInclude Include="Util\PoseScreen.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CSVData\SubtitleManager.h" />
     <ClInclude Include="Util\DifficultyData.h" />

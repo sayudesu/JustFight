@@ -6,7 +6,6 @@
 
 #include "Util/Game.h"
 #include "Util/EffekseerDrawer.h"
-#include "Util/PoseScreen.h"
 #include "Util/BlurScreen.h"
 
 #include "CSVData/CSVSoundData.h"
@@ -108,9 +107,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// スクリーン加工用
 	EffectScreen::GetInstance().Load();
-
-	// ポーズ画面の設定
-	PoseScreen::GetInstance().Load();
 
 	// シーンマネージャー初期化
 	SceneManager* pScene = new SceneManager();
