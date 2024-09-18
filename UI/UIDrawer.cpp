@@ -8,7 +8,17 @@
 
 namespace
 {
+	// ダメージを受けた場合に描画する演出の最大フレーム数
+	constexpr int kDamageEffectFrameMax = 30;
 
+	// 攻撃を受けた場合の最大カウント数
+	constexpr int kDamageNoCountMax = 4;
+
+	// 画像の位置調整
+	constexpr int kDamageEffectY = 300;
+
+	// アルファ値変更用
+	constexpr int kAlphaRate = 5;
 }
 
 UIDrawer::UIDrawer()
@@ -339,8 +349,8 @@ void UIDrawer::Draw()
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)]->Draw();
 
-		int aaa = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
-		DrawBox(dXL, dY, dXL + aaa * m_hpNum[static_cast<int>(CharacterName::ENEMY)] / m_hpMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0x007700, true);
+		int hpOffset = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + hpOffset * m_hpNum[static_cast<int>(CharacterName::ENEMY)] / m_hpMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0x007700, true);
 
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->Draw();
 
@@ -363,33 +373,37 @@ void UIDrawer::Draw()
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Draw();
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Draw();
 
-		aaa = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
-		DrawBox(dXL, dY, dXL + aaa * m_skillNum[static_cast<int>(CharacterName::ENEMY)] / m_skillMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0xaaaa00, true);
+		hpOffset = m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->GetGraphSizeX();
+		DrawBox(dXL, dY, dXL + hpOffset * m_skillNum[static_cast<int>(CharacterName::ENEMY)] / m_skillMax[static_cast<int>(CharacterName::ENEMY)], dY2, 0xaaaa00, true);
 	}
 
+	// エフェクトを描画するフレームを指定する
 	if (m_damageEffect)
 	{
-		m_damageEffectFrame = 30;
+		m_damageEffectFrame = kDamageEffectFrameMax;
 	}
 
+	// ダメージを受けると
 	if (m_isHit)
 	{
+		// ダメージを受けた数をカウントする
 		m_damageCount++;
-		if (m_damageCount > 4)
+		if (m_damageCount > kDamageNoCountMax)
 		{
-			m_damageCount = 4;
+			m_damageCount = kDamageNoCountMax;
 		}
 	}
 
+	// ダメージエフェクト描画中だった場合
 	if (m_damageEffectFrame != 0)
 	{
 		m_damageEffectFrame--;
 		// 描画ブレンドモードでアルファブレンドを変更する
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_damageEffectFrame * 5);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_damageEffectFrame * kAlphaRate);
 		int posY = 0;
 		if (m_damageCount == 0)
 		{
-			posY = 300;
+			posY = kDamageEffectY;
 		}
 		// 血のエフェクト
 		DrawRotaGraph(Game::kScreenWidth/2,Game::kScreenHeight/2 + posY, 1, 0.0f, m_hDamageEffect[m_damageCount], true);	
