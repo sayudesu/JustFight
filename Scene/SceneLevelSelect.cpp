@@ -186,8 +186,8 @@ void SceneLevelSelect::Init()
 
 	m_hTitle = LoadGraph(kDifficultySelectionBasePath);
 
-	m_select = std::make_unique<SlideSelect>();
-	m_select->Init(kSelectMaxNum, true);
+	m_pSelect = std::make_unique<SlideSelect>();
+	m_pSelect->Init(kSelectMaxNum, true);
 
 	// カメラの座標
 	m_cameraPosX = kCameraStartX;
@@ -195,9 +195,9 @@ void SceneLevelSelect::Init()
 	m_cameraPosZ = kCameraStartZ;
 
 	// カメラインスタンス
-	m_camera = std::make_unique<Camera>();
+	m_pCamera = std::make_unique<Camera>();
 	// カメラターゲット位置初期化
-	m_camera->SetTargetPos(kCameraTargetPos);
+	m_pCamera->SetTargetPos(kCameraTargetPos);
 
 	// 3Dオブジェクト
 	{
@@ -371,7 +371,7 @@ SceneBase* SceneLevelSelect::Update()
 	// カメラが全て指定の位置に着くと処理を通す
 	if (m_isCameraStop[CameraStopData::ALL])
 	{
-		m_select->Update();
+		m_pSelect->Update();
 		m_modelSlidePosY -= kModelSlideRate;
 	}
 
@@ -410,19 +410,19 @@ SceneBase* SceneLevelSelect::Update()
 	{
 		// 難易度調整
 		// 弱い(チュートリアル)
-		if (m_select->GetResult() == static_cast<int>(DifficultyData::NOIVE))
+		if (m_pSelect->GetResult() == static_cast<int>(DifficultyData::NOIVE))
 		{
 			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::NOIVE);
 		}
 		// 普通
-		if (m_select->GetResult() == static_cast<int>(DifficultyData::INTERMEDIATE))
+		if (m_pSelect->GetResult() == static_cast<int>(DifficultyData::INTERMEDIATE))
 		{
 			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::INTERMEDIATE);
 		}
 		// 強い
-		if (m_select->GetResult() == static_cast<int>(DifficultyData::EXPERT))
+		if (m_pSelect->GetResult() == static_cast<int>(DifficultyData::EXPERT))
 		{
 			SoundManager::GetInstance().Stop(SoundName::TITLE);
 			return new SceneMain(DifficultyData::EXPERT);
@@ -447,7 +447,7 @@ void SceneLevelSelect::Draw()
 	m_hArrow[1]->Draw();
 
 	// 難易度
-	if (m_select->GetSelect() == 0)
+	if (m_pSelect->GetSelect() == 0)
 	{
 		m_hNovice->Draw();
 		if (m_isCameraStop[CameraStopData::ALL])
@@ -471,7 +471,7 @@ void SceneLevelSelect::Draw()
 			FontSize::GENEITERAMIN_SMALL
 		);
 	}
-	else if (m_select->GetSelect() == 1)
+	else if (m_pSelect->GetSelect() == 1)
 	{
 		m_hIntermediate->Draw();
 		if (m_isCameraStop[CameraStopData::ALL])
@@ -487,7 +487,7 @@ void SceneLevelSelect::Draw()
 			FontSize::GENEITERAMIN_SMALL
 		);
 	}
-	else if (m_select->GetSelect() == 2)
+	else if (m_pSelect->GetSelect() == 2)
 	{
 		m_hExpert->Draw();
 		if (m_isCameraStop[CameraStopData::ALL])
@@ -522,7 +522,7 @@ void SceneLevelSelect::Draw()
 void SceneLevelSelect::CameraMoveing()
 {
 	// カメラ処理
-	m_camera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
+	m_pCamera->SetPos(VGet(m_cameraPosX, m_cameraPosY, m_cameraPosZ));
 
 	// カメラがx,y,zそれぞれ停止したかをチェックする
 	if (m_isCameraStop[CameraStopData::X] &&
@@ -577,7 +577,7 @@ void SceneLevelSelect::CameraMoveing()
 	}
 
 	// カメラの位置を変更している為設定を変更
-	m_camera->Setting();
+	m_pCamera->Setting();
 }
 
 void SceneLevelSelect::ModelMoveing()
@@ -635,7 +635,7 @@ void SceneLevelSelect::Input()
 	m_hArrow[1]->SetPos({ m_arrowPosX[1] + m_arrowShakeX[1],m_arrowPosY[1] + m_arrowShakeY[1] + (-y),0 });
 
 	// 上を押した場合
-	if (m_select->IsUpBotton())
+	if (m_pSelect->IsUpBotton())
 	{
 		// 矢印を指定の最大数まで上に上昇させる
 		// 最終地点に到達すると乱数で揺らす
@@ -659,7 +659,7 @@ void SceneLevelSelect::Input()
 		}
 	}
 	// 下を押した場合
-	if (m_select->IsDownBotton())
+	if (m_pSelect->IsDownBotton())
 	{
 		// 矢印を指定の最大数まで下に下降させる
 		// 最終地点に到達すると乱数で揺らす
@@ -697,7 +697,7 @@ void SceneLevelSelect::SelectBg()
 	);
 
 	// 選択を変更した場合
-	if (m_tempSelect != m_select->GetSelect())
+	if (m_tempSelect != m_pSelect->GetSelect())
 	{
 		m_isEnemyBgShake = true;
 	}
@@ -728,5 +728,5 @@ void SceneLevelSelect::SelectBg()
 	}
 
 	// 現在の選択を一時的に記録
-	m_tempSelect = m_select->GetSelect();
+	m_tempSelect = m_pSelect->GetSelect();
 }

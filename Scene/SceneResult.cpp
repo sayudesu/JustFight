@@ -163,6 +163,7 @@ void SceneResult::End()
 {
 	// ‰ğ•úˆ—
 	DeleteGraph(m_hImageResult);
+	DeleteGraph(m_hImageResultBg);
 }
 
 SceneBase* SceneResult::Update()

@@ -71,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// ƒ|ƒŠƒSƒ“‚Ì— –Ê‚ğ•`‰æ‚µ‚È‚¢
 	SetUseBackCulling(true);
 
-		
+
 	SetUseLighting(false);
 	
 	// “Ç‚İ‚İ

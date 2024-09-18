@@ -20,7 +20,7 @@
 namespace
 {
 	// 3Dオブジェクトの角度
-	const VECTOR kWinnerRota = VGet(0, 0 * DX_PI_F / 180.0f, 0);
+	const VECTOR kWinnerRota  = VGet(0, 0   * DX_PI_F / 180.0f, 0);
 	const VECTOR kWinnerRota2 = VGet(0, 180 * DX_PI_F / 180.0f, 0);
 
 	//選択ボタン用文字
@@ -34,7 +34,7 @@ namespace
 	constexpr int kTextPosDownY = kTextPosUpY + 5;
 
 	// テキストカラー
-	constexpr int kTextUpColor = 0xffffff;
+	constexpr int kTextUpColor   = 0xffffff;
 	constexpr int kTextDownColor = 0x111111;
 
 	// 画像パス
@@ -50,7 +50,19 @@ namespace
 
 	// タイトル画像
 	constexpr int kTitleGprahPosX = Game::kScreenWidth / 2;
-	constexpr int kTitleGprahPosY = Game::kScreenHeight / 2;
+	constexpr int kTitleGprahPosY = Game::kScreenHeight / 2;	
+
+	// テキストのアルファ値調整用
+	// 振動の周波数
+	constexpr float kTextFrequency = 0.06f;
+	// 振動の振幅
+	constexpr float kTextkAmplitude = 255.0f;
+
+	// モデルの回転用
+	// 振動の周波数
+	constexpr float kModelFrequency = 0.007f;
+	// 振動の振幅
+	constexpr float kModelkAmplitude = 15.0f;
 }
 
 SceneTitle::SceneTitle():
@@ -94,19 +106,21 @@ void SceneTitle::Init()
 
 void SceneTitle::End()
 {
-	
+	// メモリ解放
+	DeleteGraph(m_hTitle);
+	DeleteGraph(m_hBg);
 }
 
 SceneBase* SceneTitle::Update()
 {	
 	// タイトル画像の移動の計算
 	static float timer = 0.0f;
-	m_blendAlpha = cos(timer * 0.06f) * 255.0f;
+	m_blendAlpha = cos(timer * kTextFrequency) * kTextkAmplitude;
 	timer++;
 
 	// モデルの回転の計算
 	static float rota = 0.0f;
-	float rotaModel = cos(rota * 0.007f) * 15.0f;
+	const float rotaModel = cos(rota * kModelFrequency) * kModelkAmplitude;
 	rota++;
 
 	// ボタンをおした場合
@@ -116,7 +130,7 @@ SceneBase* SceneTitle::Update()
 		Pad::IsTrigger(PAD_INPUT_4))
 	{
 		timer = 0;
-		rota = 0;
+		rota  = 0;
 		return new SceneLevelSelect();
 	}
 

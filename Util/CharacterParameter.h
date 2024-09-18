@@ -5,8 +5,7 @@
 // キャラクターのパラメーター
 const struct CharacterParameter
 {
-	// これはあとで変えます
-	std::string fileName;
+	std::string fileName; // ファイルネーム
 
 	int attackFrameMax;    // 攻撃最大フレーム
 	int attackFrameGapMax; // 攻撃予兆の最大フレーム

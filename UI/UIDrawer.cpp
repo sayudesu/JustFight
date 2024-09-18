@@ -237,154 +237,24 @@ UIDrawer::~UIDrawer()
 	}
 }
 
+void UIDrawer::Update()
+{
+	for (int i = 0; i < static_cast<int>(CharacterName::MAX); i++)
+	{
+		for (int j = 0; j < static_cast<int>(HandleType::MAX); j++)
+		{
+			m_image[i][j]->Update();
+		}
+	}	
+}
+
 void UIDrawer::Draw()
 {
-#if false
-	static float frameCount = 0.0f;
-	if (frameCount < 256)
-	{
-		frameCount += 1.0f;
-	}
-
-	// 描画位置テスト
-	int x = 0;
-	int y = 0;
-	int x1 = 0;
-	int y1 = 0;
-	GetGraphSize(
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)],
-		&x, &y);
-
-	// 背景、馬
-	DrawGraph(
-		0 + 50,
-		Game::kScreenHeight - y - 50,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)],
-		true);
-	DrawGraph(x - 10,
-		Game::kScreenHeight - y - 109,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)], 
-		true);
-
-	// HP
-	GetGraphSize(
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)],
-		&x1,
-		&y1);
-	DrawGraph(
-		0 + 106,
-		Game::kScreenHeight - y - 28,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)],
-		true);	    
-
-	DrawAreaResult(
-		0 + 106,
-		Game::kScreenHeight - y - 28,
-		0 + 106 + x1 * m_hpNum[static_cast<int>(CharacterName::PLAYER)] / 6,         //長さ* HP/ HPMAX
-		Game::kScreenHeight - y - 28 + y1);// 描画可能領域を指定
-
-	UpdateHp(
-		0 + 106,
-		Game::kScreenHeight - y - 28);
-
-	DrawAreaALL();
-
-	DrawGraph(
-		0 + 106 - 3,
-		Game::kScreenHeight - y - 28 - 3,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)], 
-		true);
-
-	// 必殺技
-	DrawGraph(
-		0 + 106,
-		Game::kScreenHeight - y + 15,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)], 
-		true);
-	GetGraphSize(
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)],
-		&x1, 
-		&y1);
-
-	DrawAreaResult(
-		0 + 106,
-		Game::kScreenHeight - y + 15,
-		0 + 106 + x1 * m_skillNum[static_cast<int>(CharacterName::PLAYER)] / 100,		   //長さ* HP/ HPMAX
-		Game::kScreenHeight - y + 15 + y1);// 描画可能領域を指定
-
-	UpdateSkill(
-		0 + 106,
-		Game::kScreenHeight - y + 15);
-
-	DrawAreaALL();
-
-	DrawGraph(
-		0 + 106 - 3,
-		Game::kScreenHeight - y + 15 - 3,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE)],
-		true);
-
-	// 体感ゲージの枠
-	DrawRotaGraph(
-		Game::kScreenWidth / 2,
-		Game::kScreenHeight - 100,
-		1,
-		0 * DX_PI_F / 180.0f,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_OUTSIDE)],
-		false,
-		false);
-
-	// 体感背景
-	DrawRotaGraph(
-		Game::kScreenWidth / 2,
-		Game::kScreenHeight - 100,
-		1,
-		0 * DX_PI_F / 180.0f,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_BG)],
-		false,
-		false);
-
-	// 体感
-	DrawRotaGraph(
-		Game::kScreenWidth / 2,
-		Game::kScreenHeight - 100,
-		1,
-		0 * DX_PI_F / 180.0f,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER)],
-		false,
-		false);
-
-	// 体感ゲージの中心
-	DrawRotaGraph(
-		Game::kScreenWidth / 2 + 4,
-		Game::kScreenHeight - 100,
-		1,
-		0 * DX_PI_F / 180.0f,
-		m_handle[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::FIGHT_POWER_CENTER)],
-		false,
-		false);
-
-	DrawFormatString(Game::kScreenWidth / 2, Game::kScreenHeight - 100,0xffffff,"%d", m_fightMeterNum[static_cast<int>(CharacterName::PLAYER)]);
-#endif
-
-//	m_playerPos.x++;
-//	m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)]->Move(m_playerPos);
-
 	// プレイヤー
 	{
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)          ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)   ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP_BG)       ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)          ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP_BG)       ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::SP)          ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE) ]->Update();
-		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
-
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::BG)          ]->Draw();
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::CHARACTOR)   ]->Draw();
 		m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)          ]->Draw();
-
 
 		// 左上
 		int dXL = (static_cast<int>(m_image[static_cast<int>(CharacterName::PLAYER)][static_cast<int>(HandleType::HP)]->GetPos().x )+
@@ -440,15 +310,6 @@ void UIDrawer::Draw()
 
 	// エネミー
 	{
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP_BG)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP_BG)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::SP)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE)]->Update();
-		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BAR_OUTSIDE2)]->Update();
-
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::BG)]->Draw();
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::CHARACTOR)]->Draw();
 		m_image[static_cast<int>(CharacterName::ENEMY)][static_cast<int>(HandleType::HP)]->Draw();

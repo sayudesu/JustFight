@@ -12,6 +12,7 @@ public:
 	UIDrawer();
 	~UIDrawer();
 
+	void Update();
 	void Draw();
 public:
 	/// <summary>

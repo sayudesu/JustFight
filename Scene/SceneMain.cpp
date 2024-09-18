@@ -34,7 +34,7 @@ namespace
 	constexpr int kCharactorMaxNum = 2;
 
 	// 勝敗が付いた時に描画する画像位置
-	const char* const kCheckmateGraphPath = "Data/Image/UI/Checkmate.png";
+	static const char* const kCheckmateGraphPath = "Data/Image/UI/Checkmate.png";
 
 	// 勝敗が決まった際にチェックメイト画像が描画されるまでのフレーム
 	constexpr int kCheckmateDrawFrame = 20;
@@ -67,8 +67,8 @@ namespace
 	constexpr int kbloodNum = 100;
 
 	// プレイヤー、エネミーの初期位置
-	const VECTOR kInitPlayerPos = VGet(-300.0f, 300.0f, 0.0f);
-	const VECTOR kInitEnemyPos = VGet(300.0f, 300.0f, 0.0f);
+	static const VECTOR kInitPlayerPos = VGet(-300.0f, 300.0f, 0.0f);
+	static const VECTOR kInitEnemyPos = VGet(300.0f, 300.0f, 0.0f);
 
 	// ヒットストップ停止フレーム
 	constexpr int kHitStopFrameMax = 4;

@@ -1,7 +1,7 @@
 #pragma once
 
 // タイトル画面でスライドを行い選択をします
-class SlideSelect
+class SlideSelect final
 {
 public:
 	SlideSelect();
@@ -11,7 +11,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="selectMaxNum">選択肢の最大巣 0～ </param>
-	/// <param name="isUpDown">上下に選択するかどうあ</param>
+	/// <param name="isUpDown">上下に選択するかどうか</param>
 	void Init(int selectMaxNum, bool isUpDown);
 
 	// 更新処理
@@ -29,6 +29,7 @@ public:
 	// 現在の選択状態をリセットする
 	void Reset();
 private:
+	// ボタンの種類
 	enum SelectButton
 	{
 		UP,
@@ -37,7 +38,9 @@ private:
 		BUTTONMAX,
 	};
 private:
+	// 選択中の番号
 	int m_selectNo;
+	// 選択結果
 	int m_selectNoResult;
 
 	// 選択できる最大の数
@@ -53,9 +56,12 @@ private:
 	// 選択を変更する為のフレーム
 	int m_selectFrameMax[SelectButton::BUTTONMAX];
 
+	// 上ボタンを押しているかどうか
 	bool m_isUpBotton;
+	// 下ボタンを押しているかどうか
 	bool m_isDownBotton;
 
+	// 上下、左右どちらのボタン使用するかを決める
 	int m_selectButton[2];
 
 

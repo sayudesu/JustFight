@@ -48,9 +48,9 @@ private:
 	// オプションボタン
 	std::shared_ptr<GameObject>m_hOptionBotton;
 
-	std::unique_ptr<Camera> m_camera;
+	std::unique_ptr<Camera> m_pCamera;
 
-	std::unique_ptr<SlideSelect> m_select;
+	std::unique_ptr<SlideSelect> m_pSelect;
 
 	std::unique_ptr<GameObject>m_pStage;
 

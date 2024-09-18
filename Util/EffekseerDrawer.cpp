@@ -4,13 +4,14 @@
 EffekseerDrawer* EffekseerDrawer::m_pInstance = nullptr;
 
 namespace
-{
+{	
 	struct EffekseerData
 	{
 		const char* fileName;
 		float size;
 	};
 
+	// エフェクト管理用変数
 	const EffekseerData kEffectNo[Id::Max] =
 	{
 		// 通常ガードした場合
@@ -61,8 +62,7 @@ void EffekseerDrawer::Update()
 		{
 			// 再生されていない状態だったらもう一度再生開始
 			if (IsEffekseer3DEffectPlaying(*effect.playingHandle) == -1)
-			{
-			//	printfDx("再生中\n");
+			{			
 				*effect.playingHandle = PlayEffekseer3DEffect(m_handle[effect.id]);
 			}
 		}
