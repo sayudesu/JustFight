@@ -2,7 +2,6 @@
 
 #include "CharacterBase.h"
 
-#include "../Util/MyLoadModel.h"
 #include "../Util/EffekseerDrawer.h"
 
 #include "../CSVData/ModelManager.h"

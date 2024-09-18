@@ -1,5 +1,6 @@
 #pragma once
 
+// 各フォントでのサイズ
 enum class FontSize
 {
 	NIKKYOU_VERYSMALL,

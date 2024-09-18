@@ -162,7 +162,6 @@
     <ClCompile Include="Scene\SceneResult.cpp" />
     <ClCompile Include="Scene\SceneTitle.cpp" />
     <ClCompile Include="Util\Collision3D.cpp" />
-    <ClCompile Include="Util\MyLoadModel.cpp" />
     <ClCompile Include="Object\Camera\Camera.cpp" />
     <ClCompile Include="Object\CharacterBase.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -173,7 +172,6 @@
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="util\Pad.cpp" />
     <ClCompile Include="Util\TutorialDrawer.cpp" />
-    <ClCompile Include="util\Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Enemy\EnemyBase.h" />
@@ -213,7 +211,6 @@
     <ClInclude Include="Scene\SceneResult.h" />
     <ClInclude Include="Scene\SceneTitle.h" />
     <ClInclude Include="Util\Collision3D.h" />
-    <ClInclude Include="Util\MyLoadModel.h" />
     <ClInclude Include="Object\Camera\Camera.h" />
     <ClInclude Include="Object\CharacterBase.h" />
     <ClInclude Include="Object\Enemy\Enemy.h" />
@@ -224,7 +221,6 @@
     <ClInclude Include="util\Pad.h" />
     <ClInclude Include="Util\Tips.h" />
     <ClInclude Include="Util\TutorialDrawer.h" />
-    <ClInclude Include="util\Vec2.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="JustFight.rc" />
