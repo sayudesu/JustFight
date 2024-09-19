@@ -51,10 +51,6 @@ private:
 	virtual void JustGuard();
 	// ジャストガードをされた場合
 	virtual void Stun();
-	// 勝利した場合
-	virtual void Winner();
-	// 敗北した場合
-	virtual void Losers();
 
 	// 体力の調整
 	virtual void HitPoint();

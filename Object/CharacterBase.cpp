@@ -196,9 +196,12 @@ void CharacterBase::TargetMove()
 
 void CharacterBase::Idle()
 {
+	// ステータスの更新
 	if (m_battleState != BattleState::IDLE)
 	{
 		m_battleState = BattleState::IDLE;
+
+		m_isHit = false;
 	}	
 
 	m_isSceneChange = false;
@@ -223,14 +226,7 @@ void CharacterBase::Idle()
 	// 体力がなくなった場合
 	if (m_hp <= 0)
 	{
-		m_pFunc = &CharacterBase::Losers;
 		m_vecWeapon.y = 100.0f;
-	}
-
-	// 相手の体力がなくなった場合
-	if (m_targetHp <= 0)
-	{
-		m_pFunc = &CharacterBase::Winner;
 	}
 
 	// 自身がスタンした場合
@@ -273,6 +269,7 @@ void CharacterBase::Idle()
 // 攻撃した場合
 void CharacterBase::Attack()
 {
+	// ステータスの更新
 	if (m_battleState != BattleState::ATTACK)
 	{
 		// 現在の行動を記録
@@ -398,6 +395,7 @@ void CharacterBase::Attack()
 // 攻撃コンボ2
 void CharacterBase::AttackTwo()
 {	
+	// ステータスの更新
 	if (m_battleState != BattleState::ATTACKTWO)
 	{
 		// 現在の行動を記録
@@ -505,6 +503,7 @@ void CharacterBase::AttackTwo()
 // 強攻撃した場合
 void CharacterBase::StrongAttack()
 {
+	// ステータスの更新
 	if (m_battleState != BattleState::STRONGATTACK)
 	{
 		// 現在の行動を記録
@@ -609,6 +608,7 @@ void CharacterBase::Guard()
 	m_vecWeapon.x = -80.0f;
 	m_weaponRotaY = 0;
 
+	// ステータスの更新
 	if (m_battleState != BattleState::GUARD)
 	{
 		// 現在の行動を記録
@@ -695,6 +695,7 @@ void CharacterBase::Guard()
 // ジャストガードした場合
 void CharacterBase::JustGuard()
 {	
+	// ステータスの更新
 	if (m_battleState != BattleState::JUSTGUARD)
 	{
 		// 現在の行動を記録
@@ -763,6 +764,7 @@ void CharacterBase::Stun()
 	// スタン状態のフレームをカウント
 	m_stunFrame++;
 
+	// ステータスの更新
 	if (m_battleState != BattleState::STUN)
 	{
 		// 現在の行動を記録
@@ -802,42 +804,6 @@ void CharacterBase::Stun()
 
 #if _DEBUG
 	Dname = "スタン";
-#endif
-}
-
-void CharacterBase::Winner()
-{
-	// 位置情報の更新
-	UpdatePos();
-
-	m_pWeapon->SetPos(VGet(90 * DX_PI_F / 180.0f, m_angle, 0));
-
-#if _DEBUG
-	Dname = "勝利";
-#endif
-}
-
-void CharacterBase::Losers()
-{
-	static float m_jumpAcc = 60.0f;
-
-	{
-		VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
-		move = VAdd(m_pos, move);
-		static VECTOR Wpos = move;
-		// 重力
-		m_jumpAcc += -2.0f;
-		if (Wpos.y < 300.0f)
-		{
-			m_jumpAcc = 0.0f;
-		}
-		Wpos.y += m_jumpAcc;
-
-		m_pWeapon->SetPos(Wpos);
-	}
-
-#if _DEBUG
-	Dname = "敗北";
 #endif
 }
 
