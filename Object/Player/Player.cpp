@@ -341,26 +341,6 @@ void Player::MoveCharacter(VECTOR moveVector)
 		speedFactor = speedFactor / 2.0f;
 	}
 
-	// 壁の判定(使用しない)
-#if false
-	if (GetCheckHitWall())
-	{		
-		if (HitPos::ZP == m_hitPos)
-		{
-			if(moveVector.z < 0.0f)
-			{
-				moveVector.z = 0.0f;
-			}
-		}
-		if (HitPos::XP == m_hitPos)
-		{
-			if (moveVector.x < 0.0f)
-			{
-				moveVector.x = 0.0f;
-			}
-		}
-	}
-#endif
 	// 速度ベクトルに速度係数を掛ける
 	VECTOR velocity = VScale(moveVector, speedFactor);
 
@@ -384,18 +364,16 @@ VECTOR Player::SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VE
 
 void Player::MoveAway(float x, float z, MATRIX rotMtx)
 {
-	// 回避の仮実装
+	// 回避
+	if (Pad::IsTrigger(PAD_INPUT_3))
 	{
-		if (Pad::IsTrigger(PAD_INPUT_3))
-		{
-			SoundManager::GetInstance().Play(SoundName::SPEEDMOVE);
-			m_isAway = true;
-			m_awayRelativePos.x = x;
-			m_awayRelativePos.z = z;
-			// 速度ベクトルを設定
-			m_awayVec.x = 0.0f;
-			m_awayVec.y = 0.0f;
-			m_awayVec.z = 0.0f;
-		}
+		SoundManager::GetInstance().Play(SoundName::SPEEDMOVE);
+		m_isAway = true;
+		m_awayRelativePos.x = x;
+		m_awayRelativePos.z = z;
+		// 速度ベクトルを設定
+		m_awayVec.x = 0.0f;
+		m_awayVec.y = 0.0f;
+		m_awayVec.z = 0.0f;
 	}
 }

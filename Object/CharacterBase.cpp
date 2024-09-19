@@ -260,10 +260,6 @@ void CharacterBase::Idle()
 
 	// シールドの角度を固定する
 	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
-
-#if _DEBUG
-	Dname = "待機";
-#endif
 }
 
 // 攻撃した場合
@@ -305,7 +301,6 @@ void CharacterBase::Attack()
 
 		return;
 	}
-
 
 	// 武器動かす
 	if (!m_isSceneChange)
@@ -386,10 +381,6 @@ void CharacterBase::Attack()
 	m_pCharactor->SetPos(m_pos);
 	m_pCharactor->SetRotate(VGet(0.0f, m_angle + ((90) * DX_PI_F / 180.0f), 0.0f));
 	m_pCharactor->Update();
-
-#if _DEBUG
-	Dname = "攻撃１";
-#endif
 }
 
 // 攻撃コンボ2
@@ -494,10 +485,6 @@ void CharacterBase::AttackTwo()
 	KnockBack();
 
 	m_shieldRotaY = (90) * DX_PI_F / 180.0f;
-
-#if _DEBUG
-	Dname = "攻撃２";
-#endif
 }
 
 // 強攻撃した場合
@@ -595,10 +582,6 @@ void CharacterBase::StrongAttack()
 	HitPoint();
 	// ノックバックされた場合
 	KnockBack();
-
-#if _DEBUG
-	Dname = "強攻撃";
-#endif
 }
 
 // ガードした場合
@@ -686,10 +669,6 @@ void CharacterBase::Guard()
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
-
-#if _DEBUG
-	Dname = "防御";
-#endif
 }
 
 // ジャストガードした場合
@@ -752,10 +731,6 @@ void CharacterBase::JustGuard()
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
-
-#if _DEBUG
-	Dname = "ジャストガード";
-#endif
 }
 
 // スタンした場合
@@ -801,10 +776,6 @@ void CharacterBase::Stun()
 	HitPoint();
 	// 位置情報の更新
 	UpdatePos();
-
-#if _DEBUG
-	Dname = "スタン";
-#endif
 }
 
 void CharacterBase::HitPoint()

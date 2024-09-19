@@ -71,6 +71,7 @@ private:
 	std::unique_ptr<Camera> m_pCamera;
 	// キャラクタークラス
 	std::shared_ptr<CharacterBase> m_pCharacter[kCharacterNum];
+
 	// 血描画クラス
 	std::vector<BloodDrawer*> m_pBlood;
 	// フィールドクラス

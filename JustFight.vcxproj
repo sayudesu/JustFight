@@ -188,6 +188,7 @@
     <ClInclude Include="CSVData\ModelManager.h" />
     <ClInclude Include="CSVData\SoundManager.h" />
     <ClInclude Include="Scene\SceneLevelSelect.h" />
+    <ClInclude Include="Util\Buttons.h" />
     <ClInclude Include="Util\SubtitleData.h" />
     <ClInclude Include="Util\Easing.h" />
     <ClInclude Include="resource.h" />

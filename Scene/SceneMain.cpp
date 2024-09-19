@@ -464,9 +464,7 @@ void SceneMain::CheckResult()
 
 // 当たり判定
 // 武器と体の判定
-bool SceneMain::CheckWeaponAndBodyHit(
-	std::shared_ptr<CharacterBase> character1,
-	std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckWeaponAndBodyHit(std::shared_ptr<CharacterBase> character1,std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetCollWeaponPos(), character2->GetCollPos(),
@@ -478,10 +476,7 @@ bool SceneMain::CheckWeaponAndBodyHit(
 }
 
 // 武器と盾の判定
-bool SceneMain::CheckWeaponAndShieldHIt(
-	std::shared_ptr<CharacterBase> character1,
-	
-std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckWeaponAndShieldHIt(std::shared_ptr<CharacterBase> character1,std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetCollWeaponPos(), character2->GetShieldPos(),
@@ -493,9 +488,7 @@ std::shared_ptr<CharacterBase> character2)
 }
 
 // 武器と体範囲の判定
-bool SceneMain::CheckWeaponAndModelAboutHIt(
-	std::shared_ptr<CharacterBase> character1,
-	std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckWeaponAndModelAboutHIt(std::shared_ptr<CharacterBase> character1,std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetCollWeaponPos(), character2->GetCollPos(),
@@ -507,9 +500,7 @@ bool SceneMain::CheckWeaponAndModelAboutHIt(
 }
 
 // 体範囲と体範囲の判定
-bool SceneMain::CheckModelAboutHIt(
-	std::shared_ptr<CharacterBase> character1,
-	std::shared_ptr<CharacterBase> character2)
+bool SceneMain::CheckModelAboutHIt(std::shared_ptr<CharacterBase> character1,std::shared_ptr<CharacterBase> character2)
 {
 	if (Coll::IsCheckHit(
 		character1->GetPos(), character2->GetCollPos(),
@@ -584,7 +575,6 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 
 	// ガード成功いない状態
 	character1->SetWeaponAttacksShield(false);
-
 	
 	// 攻撃が当たるのが可能な場合
 	// ガードしている場合は無条件で攻撃可能
@@ -594,9 +584,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		// 攻撃が当たっていた場合
 		// 相手がスタン状態ではない場合
 		// 自身がガード状態の場合
-		if (CheckWeaponAndShieldHIt(character2, character1) && 
-			character2->GetBattleState() != BattleState::STUN && 
-			character1->GetBattleState() == BattleState::GUARD)
+		if (CheckWeaponAndShieldHIt(character2, character1) && character2->GetBattleState() != BattleState::STUN && character1->GetBattleState() == BattleState::GUARD)
 		{
 			// ジャストガードフレーム
 			if(character1->GetGuardFrame() < character1->GetJustGuardFrameMax())
@@ -621,8 +609,7 @@ void SceneMain::UpdateCharacter(std::shared_ptr<CharacterBase> character1, std::
 		}
 		// 通常ガード処理
 		// 通常ガードが出来るかどうか
-		else if (character1->GetGuardFrame() > character1->GetGuardFrameMax() &&
-			     character2->GetBattleState() != BattleState::STUN)
+		if (character1->GetGuardFrame() > character1->GetGuardFrameMax() && character2->GetBattleState() != BattleState::STUN)
 		{
 			// 攻撃状態だったら
 			// 攻撃が盾に当たったかどうか

@@ -289,10 +289,6 @@ private:
 	// 攻撃が当たったかどうか
 	bool m_isHit;
 
-#if _DEBUG
-	std::string Dname;
-#endif
-
 protected:
 	
 	// メンバ関数ポインタ
