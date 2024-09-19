@@ -110,7 +110,7 @@ void CharacterBase::Init()
 	m_vec = m_parameter.knockBackPos;
 	m_fightingMeter = m_parameter.fightingMeterMax;
 
-	VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
+	const VECTOR move = VTransform(m_vecWeapon, m_rotMtx);
 	m_weaponPos = VAdd(m_pos, move);
 
 	// オブジェクトの生成

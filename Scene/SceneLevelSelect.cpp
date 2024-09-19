@@ -340,10 +340,10 @@ void SceneLevelSelect::Init()
 	m_firstArrowPosY[0] = m_hArrow[0]->GetPos().y;
 	m_firstArrowPosX[1] = m_hArrow[1]->GetPos().x;
 	m_firstArrowPosY[1] = m_hArrow[1]->GetPos().y;
-	m_arrowPosX[0] = m_hArrow[0]->GetPos().x;
-	m_arrowPosY[0] = m_hArrow[0]->GetPos().y;
-	m_arrowPosX[1] = m_hArrow[1]->GetPos().x;
-	m_arrowPosY[1] = m_hArrow[1]->GetPos().y;
+	m_arrowPosX[0]      = m_hArrow[0]->GetPos().x;
+	m_arrowPosY[0]      = m_hArrow[0]->GetPos().y;
+	m_arrowPosX[1]      = m_hArrow[1]->GetPos().x;
+	m_arrowPosY[1]      = m_hArrow[1]->GetPos().y;
 
 	// –îˆó‚ÌU“®‚ğ‰Šú‰»
 	m_arrowShakeX[0] = 0.0f;
