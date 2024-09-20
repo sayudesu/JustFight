@@ -3,9 +3,9 @@
 #include "Player.h"
 
 #include "../../Util/Pad.h"
+#include "../../Util/SoundName.h"
 
 #include "../../CSVData/SoundManager.h"
-#include "../../Util/SoundName.h"
 
 namespace
 {
@@ -16,12 +16,21 @@ namespace
 	constexpr VECTOR kVecXP{ 10.0f,0.0f,0.0f };
 
 	// 回避
-	constexpr VECTOR kVecAwayZ{ 0.0f,0.0f,-25.0f };
+	constexpr float kVecAway = 60.0f;
+
+	// 回避が次可能になるまでのフレーム
+	constexpr int kAwayDelayFrame = 10;
 
 	// 移動速度
 	constexpr float kMoveSpeed = 10.0f;
 
+	// モデルのパス
 	const char* const kModelPath = "Data/Model/Knight_W.mv1";
+
+	// スティックでカメラを操作する場合の角度
+	constexpr int kStickRightRata = 30;
+	// スティックでカメラを操作する場合のカメラ移動速度
+	constexpr float kStickRightCameraSpeed = 0.05f;
 
 	// プレイヤーのパラメーター調整
 	constexpr float kattackFrameMax = 10;
@@ -56,7 +65,8 @@ Player::Player(DifficultyData data,VECTOR pos):
 	m_isLeft(false),
 	m_isRight(false),
 	m_isCameraLockon(false),
-	m_isMove(false)
+	m_isMove(false),
+	m_awayFrameCount(0)
 {
 	// 初期待機状態で停止
 	m_pFunc = &Player::Idle;
@@ -80,27 +90,27 @@ Player::Player(DifficultyData data,VECTOR pos):
 
 	m_parameter.fileName = kModelPath;
 	// パラメーター調整
-	m_parameter.attackFrameMax    = kattackFrameMax;
-	m_parameter.attackFrameGapMax = kattackFrameGapMax;
-	m_parameter.attackTotalFrame  = kattackTotalFrame;
+	m_parameter.attackFrameMax          = kattackFrameMax;
+	m_parameter.attackFrameGapMax       = kattackFrameGapMax;
+	m_parameter.attackTotalFrame        = kattackTotalFrame;
 	m_parameter.attackAfterStopFrameMax = kattackAfterStopFrameMax;
 	m_parameter.strongAttackFrameMax    = kstrongAttackFrameMax;
 	m_parameter.strongAttackFrameGapMax = kstrongAttackFrameGapMax;
 	m_parameter.strongAttackTotalFrame  = kStrongAttackTotalFrame;
-	m_parameter.guardFrameMax     = kGuardFrameMax;
-	m_parameter.justGuardFrameMax = kJustGuardFrameMax;
-	m_parameter.stunFrameMax = kStunFrameMax;
-	m_parameter.hpMax = kHpMax;
-	m_parameter.fightingMeterMax  = kFightingMeterMax;
-	m_parameter.weaponRelativePos = kWeaponRelativePos;
-	m_parameter.shieldRelativePos = kShieldRelativePos;
-	m_parameter.weaponAttackRadius = kWeaponAttackRadius;
-	m_parameter.shieldRadius       = kShieldRadius;
-	m_parameter.modelRadius        = kModelRadius;
-	m_parameter.weaponAttackPos = kWeaponAttackPos;
-	m_parameter.knockBackPos    = kKnockBackPos;
-	m_parameter.weaponBackSpeed = kWeaponBackSpeed;
-	m_parameter.shieldBackSpeed = kShieldBackSpeed;
+	m_parameter.guardFrameMax           = kGuardFrameMax;
+	m_parameter.justGuardFrameMax       = kJustGuardFrameMax;
+	m_parameter.stunFrameMax            = kStunFrameMax;
+	m_parameter.hpMax                   = kHpMax;
+	m_parameter.fightingMeterMax        = kFightingMeterMax;
+	m_parameter.weaponRelativePos       = kWeaponRelativePos;
+	m_parameter.shieldRelativePos       = kShieldRelativePos;
+	m_parameter.weaponAttackRadius      = kWeaponAttackRadius;
+	m_parameter.shieldRadius            = kShieldRadius;
+	m_parameter.modelRadius             = kModelRadius;
+	m_parameter.weaponAttackPos         = kWeaponAttackPos;
+	m_parameter.knockBackPos            = kKnockBackPos;
+	m_parameter.weaponBackSpeed         = kWeaponBackSpeed;
+	m_parameter.shieldBackSpeed         = kShieldBackSpeed;
 }
 
 Player::~Player()
@@ -186,13 +196,13 @@ void Player::Direction()
 	if (m_isCameraLockon)
 	{
 		// カメラの回転角度を調整
-		if (m_padInput.Rx > 30)
+		if (m_padInput.Rx > kStickRightRata)
 		{
-			m_angle += 0.05f;
+			m_angle += kStickRightCameraSpeed;
 		}
-		if (m_padInput.Rx < -30)
+		if (m_padInput.Rx < -kStickRightRata)
 		{
-			m_angle -= 0.05f;
+			m_angle -= kStickRightCameraSpeed;
 		}
 	}
 	else
@@ -213,16 +223,13 @@ void Player::InputMove()
 	// 移動or回避
 	if (m_isAway)
 	{
-		static VECTOR away = kVecAwayZ;
-		static int frameCount = 0;
-		int frameCountMax = 10;
-
-		if (frameCount < frameCountMax)
+		// 回避が可能かどうか
+		if (m_awayFrameCount < kAwayDelayFrame)
 		{
-			float t = static_cast<float>(frameCount) / frameCountMax;
+			float t = static_cast<float>(m_awayFrameCount) / kAwayDelayFrame;
 			m_awayVec.x = m_awayRelativePos.x * t;
 			m_awayVec.z = m_awayRelativePos.z * t;
-			frameCount++;
+			m_awayFrameCount++;
 			// 移動ベクトルを正規化
 			VECTOR moveVector = VTransform(m_awayVec, m_platerRotMtx);  // 例としてX方向に移動する場合
 			// キャラクターの位置に速度を加える
@@ -231,7 +238,7 @@ void Player::InputMove()
 		else
 		{
 			m_isAway = false;
-			frameCount = 0;
+			m_awayFrameCount = 0;
 		}
 	}
 	else
@@ -246,30 +253,30 @@ void Player::InputMove()
 		{
 			m_isUp = true;
 			MoveCharacter(VTransform(kVecZ, m_platerRotMtx));
-			MoveAway(0.0f, -60.0f, m_platerRotMtx);
+			MoveAway(0.0f, -kVecAway);
 		}
 		else if (Pad::IsPress(PAD_INPUT_DOWN))
 		{
 			m_isDown = true;
 			MoveCharacter(VTransform(kVecZP, m_platerRotMtx));
-			MoveAway(0.0f, 60.0f, m_platerRotMtx);
+			MoveAway(0.0f, kVecAway);
 		}
 		if (Pad::IsPress(PAD_INPUT_RIGHT))
 		{
 			m_isRight = true;
 			MoveCharacter(VTransform(kVecX, m_platerRotMtx));
-			MoveAway(-60.0f, 0.0f, m_platerRotMtx);
+			MoveAway(-kVecAway, 0.0f);
 		}
 		else if (Pad::IsPress(PAD_INPUT_LEFT))
 		{
 			m_isLeft = true;
 			MoveCharacter(VTransform(kVecXP, m_platerRotMtx));
-			MoveAway(60.0f, 0.0f, m_platerRotMtx);
+			MoveAway(kVecAway, 0.0f);
 		}
 
 		if (!(m_isUp) && !(m_isDown) && !(m_isLeft) && !(m_isRight))
 		{
-			MoveAway(0.0f, 60.0f, m_platerRotMtx);
+			MoveAway(0.0f, kVecAway);
 		}
 	}
 }
@@ -362,7 +369,7 @@ VECTOR Player::SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VE
 	return move;
 }
 
-void Player::MoveAway(float x, float z, MATRIX rotMtx)
+void Player::MoveAway(float x, float z)
 {
 	// 回避
 	if (Pad::IsTrigger(PAD_INPUT_3))

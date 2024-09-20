@@ -30,7 +30,7 @@ private:
 	VECTOR AddMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
 	VECTOR SubMoving(const VECTOR RelativePos, const MATRIX rotMtx, const VECTOR pos);
 	// 回避用関数
-	void MoveAway(float x, float z, MATRIX rotMtx);
+	void MoveAway(float x, float z);
 private:
 	// メンバ関数ポインタ
 	void(Player::* m_pMyFunc)();
@@ -55,5 +55,8 @@ private:
 
 	// 動いているかどうか
 	bool m_isMove;
+
+	// 回避をしてから次の回避が可能になるまでのフレームをカウントする
+	int m_awayFrameCount;
 };
 
