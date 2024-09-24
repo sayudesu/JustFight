@@ -226,9 +226,9 @@ void Player::InputMove()
 		// 回避が可能かどうか
 		if (m_awayFrameCount < kAwayDelayFrame)
 		{
-			float t = static_cast<float>(m_awayFrameCount) / kAwayDelayFrame;
-			m_awayVec.x = m_awayRelativePos.x * t;
-			m_awayVec.z = m_awayRelativePos.z * t;
+			float time = static_cast<float>(m_awayFrameCount) / kAwayDelayFrame;
+			m_awayVec.x = m_awayRelativePos.x * time;
+			m_awayVec.z = m_awayRelativePos.z * time;
 			m_awayFrameCount++;
 			// 移動ベクトルを正規化
 			VECTOR moveVector = VTransform(m_awayVec, m_platerRotMtx);  // 例としてX方向に移動する場合
